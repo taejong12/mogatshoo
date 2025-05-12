@@ -1,7 +1,7 @@
 # 📌 모가슈?
 毛(털모) + 갔슈? (‘가다’의 전라도 사투리)
 <p align="center">
-  <img src="" width="300" alt="Image">
+  <img src="https://sdmntprwestus.oaiusercontent.com/files/00000000-4390-6230-b09d-2023f068ab70/raw?se=2025-05-12T08%3A57%3A32Z&sp=r&sv=2024-08-04&sr=b&scid=00000000-0000-0000-0000-000000000000&skoid=c156db82-7a33-468f-9cdd-06af263ceec8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-12T07%3A34%3A55Z&ske=2025-05-13T07%3A34%3A55Z&sks=b&skv=2024-08-04&sig=Iyz4GQAAjtjSor8y1uoNUDy8OsCKvsd7TYFzJKcn2Ug%3D" width="300" alt="Image">
 </p>
 
 ## 📖 소개
