@@ -1,8 +1,9 @@
 function fu_emailAuthValidation(){
 	
 	let emailAuthInput = document.getElementById('emailAuth');
+	let emailInput = document.getElementById('memberEmail');
 	
-	if(emailAuthInput){
+	if(emailAuthInput && emailInput){
 		
 		let emailAuthVal = emailAuthInput.value.trim();
 			
@@ -29,6 +30,7 @@ function fu_emailAuthValidation(){
 		} else{
 			return true;
 		}	
+	} else{
+		return true;
 	}
-	return false;
 }

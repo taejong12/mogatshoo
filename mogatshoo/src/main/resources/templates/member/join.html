@@ -15,7 +15,6 @@
 				<input type="hidden" name="provider" th:if="${provider != null}" th:value="${provider}" />
 				<input type="hidden" name="providerId" th:if="${providerId != null}"  th:value="${providerId}" />
 				<input type="hidden" name="memberEmail" th:if="${email != null}" th:value="${email}" />
-				<input type="hidden" name="memberAge" th:if="${age != null}" th:value="${age}" />
 				<input type="hidden" name="memberGender" th:if="${gender != null}" th:value="${gender}" />
 				<input type="hidden" name="memberName" th:if="${name != null}" th:value="${name}" />
 				<input type="hidden" name="memberBirth" th:if="${birth != null}" th:value="${birth}" />
@@ -111,21 +110,21 @@
 				<div>
 					<div class="input-wrap d-flex align-items-center">
 						<label for="memberZipcode" style="width: 110px;">우편번호</label>
-						<input class="flex-fill" type="text" id="memberZipcode" name="memberZipcode" required readonly>
+						<input class="flex-fill" type="text" id="memberZipcode" name="memberZipcode" placeholder="우편번호 입력" required readonly>
 						<button type="button" onclick="fu_addrSearch()" class="text-nowrap bg-white border border-black px-3 py-2 d-flex align-items-center justify-content-center" style="margin-left:20px; width: 130px;">주소검색</button>
 					</div>
 				</div>
 				<div>
 					<div class="input-wrap d-flex align-items-center">
 						<label for="memberAddress1" style="width: 110px;">기본주소</label>
-						<input class="flex-fill" type="text" id="memberAddress1" name="memberAddress1" required readonly>
+						<input class="flex-fill" type="text" id="memberAddress1" name="memberAddress1" placeholder="기본주소 입력" required readonly>
 						<div style="margin-left:20px; width: 130px;"></div>
 					</div>
 				</div>
 				<div>
 					<div class="input-wrap d-flex align-items-center">
 						<label for="memberAddress2" style="width: 110px;">상세주소</label>
-						<input class="flex-fill" type="text" id="memberAddress2" name="memberAddress2" required>
+						<input class="flex-fill" type="text" id="memberAddress2" name="memberAddress2" placeholder="상세주소 입력" required>
 						<div style="margin-left:20px; width: 130px;"></div>
 					</div>
 				</div>
