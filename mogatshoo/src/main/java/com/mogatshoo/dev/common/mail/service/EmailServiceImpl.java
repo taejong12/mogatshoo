@@ -23,7 +23,7 @@ public class EmailServiceImpl implements EmailService{
 		try {
 			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "utf-8");
 			
-			messageHelper.setFrom(new InternetAddress("SpringBoot@gmail.com", "SpringBoot"));
+			messageHelper.setFrom(new InternetAddress("mogatshoo@gmail.com", "mogatshoo"));
 			messageHelper.setSubject(title);
 			messageHelper.setTo(memberMail);
 			messageHelper.setText(html, true);

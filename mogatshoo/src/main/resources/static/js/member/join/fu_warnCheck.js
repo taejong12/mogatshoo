@@ -11,6 +11,11 @@ function fu_warnCheck(){
 	let infoCheckWarn = document.querySelector('.warn-div.infoCheck');
 	let authWarn = document.querySelector('.warn-div.auth');
 	let emailAuthWarn = document.querySelector('.warn-div.emailAuth');
+	let genderWarn = document.querySelector('.warn-div.gender');
+	let zipCodeWarn = document.querySelector('.warn-div.zipCode');
+	let addr1Warn = document.querySelector('.warn-div.addr1');
+	let addr2Warn = document.querySelector('.warn-div.addr2');
+	let nickNameWarn = document.querySelector('.warn-div.nickName');
 	
 	if(idWarn){
 		idWarn.closest('.input-wrap').remove();
@@ -54,5 +59,25 @@ function fu_warnCheck(){
 	
 	if(emailAuthWarn){
 		emailAuthWarn.closest('.input-wrap').remove();
+	}
+	
+	if(genderWarn){
+		genderWarn.closest('.input-wrap').remove();
+	}
+	
+	if(zipCodeWarn){
+		zipCodeWarn.closest('.input-wrap').remove();
+	}
+	
+	if(addr1Warn){
+		addr1Warn.closest('.input-wrap').remove();
+	}
+	
+	if(addr2Warn){
+		addr2Warn.closest('.input-wrap').remove();
+	}
+	
+	if(nickNameWarn){
+		nickNameWarn.closest('.input-wrap').remove();
 	}
 }

@@ -27,6 +27,9 @@ public class MemberEntity {
 	private String memberName;
 	
 	@Column(nullable = false)
+	private String memberNickName;
+	
+	@Column(nullable = false)
 	private String memberTel;
 	
 	@Column(nullable = false)
@@ -36,10 +39,10 @@ public class MemberEntity {
 	private String memberEmail;
 	
 	@Column(nullable = false)
-	private String memberZipcode;
+	private String memberGender;
 	
 	@Column(nullable = false)
-	private String memberGender;
+	private String memberZipcode;
 	
 	@Column(nullable = false)
 	private String memberAddress1;

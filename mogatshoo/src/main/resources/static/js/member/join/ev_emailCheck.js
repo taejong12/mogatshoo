@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	let memberEmail = document.getElementById('memberEmail');
 	let emailCheckMessage = document.getElementById('emailCheckMessage');
+	let emailBtn = document.querySelector('.email-btn');
 	
 	// 이메일 입력 시
 	memberEmail.addEventListener('input', function() {
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (memberEmailVal === '') {
 			emailCheckMessage.textContent = '';
 			emailCheckMessage.style.display = 'none';
+			emailBtn.disabled = true;
 			return;
 		}
 		
@@ -43,11 +45,13 @@ document.addEventListener('DOMContentLoaded', function() {
 				emailCheckMessage.textContent = "사용 가능한 이메일입니다.";
 				emailCheckMessage.style.color = "green";
 				emailCheckMessage.style.display = 'inline';
+				emailBtn.disabled = false;
 				emailCheckMessage.classList.add('valid');
 			} else {
 				emailCheckMessage.textContent = "이미 사용 중인 이메일입니다.";
 				emailCheckMessage.style.color = "red";
 				emailCheckMessage.style.display = 'inline';
+				emailBtn.disabled = true;
 			}
 		})
 		.catch(error => {

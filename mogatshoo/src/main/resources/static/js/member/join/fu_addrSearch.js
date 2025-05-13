@@ -1,4 +1,4 @@
-function fu_addressSearch(){
+function fu_addrSearch(){
     new daum.Postcode({
         oncomplete: function(data) {
         	document.getElementById('memberZipcode').value = data.zonecode;
