@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head th:with="layoutTitle='인증실패'">
+	<link rel="stylesheet" th:href="@{/css/oauth2/join.css}">
+</head>
+<body>
+	<div layout:fragment="content">
+		<h1 class="text-center mb-4">중복된 이메일 주소입니다.</h1>
+		
+		<div class="container mb-5" style="max-width: 600px;">
+			이미 이메일 주소가 존재합니다. 존재하는 아이디로 로그인해주세요.
+		</div>
+	</div>
+</body>
+</html>

@@ -1,13 +1,13 @@
-package com.mohgahshoo.dev;
+package com.mogatshoo.dev;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MohgahshooApplication {
+public class MogatshooApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MohgahshooApplication.class, args);
+		SpringApplication.run(MogatshooApplication.class, args);
 	}
 
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head th:with="layoutTitle='내 정보'">
+</head>
+<body>
+<div layout:fragment="content" class="container mt-5">
+
+	<h1 class="text-center mb-5">내 정보</h1>
+
+	<div class="row justify-content-center">
+		<div class="col-md-8 col-lg-6">
+			<div class="card shadow-sm rounded-3">
+				<div class="card-body">
+					<dl class="row">
+						<dt class="col-sm-4">아이디</dt>
+						<dd class="col-sm-8" th:text="${member.memberId}"></dd>
+
+						<dt class="col-sm-4">이름</dt>
+						<dd class="col-sm-8" th:text="${member.memberName}"></dd>
+
+						<dt class="col-sm-4">전화번호</dt>
+						<dd class="col-sm-8" th:text="${member.memberTel}"></dd>
+
+						<dt class="col-sm-4">생년월일</dt>
+						<dd class="col-sm-8" th:text="${member.memberBirth}"></dd>
+
+						<dt class="col-sm-4">이메일</dt>
+						<dd class="col-sm-8" th:text="${member.memberEmail}"></dd>
+
+						<dt class="col-sm-4">가입일</dt>
+						<dd class="col-sm-8" th:text="${member.memberCreate}"></dd>
+					</dl>
+				</div>
+				<div class="card-footer d-flex justify-content-center align-items-center">
+					<a class="btn btn-white me-2 border border-dark" th:href="@{/member/update(memberId=${member.memberId})}">
+					   수정
+					</a>
+					<form id="deleteForm" action="/member/delete" method="post">
+				        <input type="hidden" name="memberId" th:value="${member.memberId}">
+				        
+				        <!-- Thymeleaf의 inline JavaScript 사용 -->
+				        <button type="button" class="btn btn-white border border-dark" th:onclick="'if(confirm(\'정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.\')) document.getElementById(\'deleteForm\').submit();'">
+				            탈퇴
+				        </button>
+				    </form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

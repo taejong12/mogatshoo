@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head th:with="layoutTitle='회원업데이트'">
+	<link rel="stylesheet" th:href="@{/css/member/update.css}">
+</head>
+<body>
+	<div layout:fragment="content" class="container mt-5">
+	
+		<h1 class="text-center mb-5">회원수정</h1>
+		
+		<div class="row justify-content-center">
+			<div class="col-md-6 col-lg-4">
+				<form name="memberUpdateForm" class="card p-4 shadow-sm rounded-3 bg-light">
+					<div class="mb-3">
+						<label for="memberName" class="form-label">이름</label>
+						<input type="text" class="form-control" id="memberName" name="memberName" placeholder="이름 입력">
+						<div id="nameWarnMsg"></div>
+					</div>
+					<button type="button" class="btn btn-white border border-dark" onclick="fu_memberUpdate()">수정</button>
+				</form>
+			</div>
+		</div>
+		
+		<script th:src="@{/js/member/update/fu_memberUpdate.js}"></script>
+	</div>
+</body>
+</html>

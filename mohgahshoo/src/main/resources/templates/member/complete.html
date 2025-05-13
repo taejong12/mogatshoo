@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head th:with="layoutTitle='로그인'">
+	<link rel="stylesheet" th:href="@{/css/member/complete.css}">
+</head>
+<body>
+	<div layout:fragment="content" class="container mt-5">
+		<div th:if="${postMapping == 'join'}" class="complete-wrap">
+			<h1>회원가입완료</h1>
+			<div class="complete-id">
+				<p th:inline="text">[[${memberId}]]님 환영합니다.</p>
+			</div>
+			<div class="complete-menu-btn">
+				<a th:href="@{/member/login}">로그인</a>
+				<a th:href="@{/}">메인</a>
+			</div>
+		</div>
+		<div th:if="${postMapping == 'findById'}" class="complete-wrap">
+			<h1>아이디찾기완료</h1>
+			<div class="complete-id">
+				<p>이메일로 전송해드렸습니다.</p>
+			</div>
+			<div class="complete-menu-btn">
+				<a th:href="@{/member/login}">로그인</a>
+				<a th:href="@{/member/findByPwd}">비밀번호 찾기</a>
+			</div>
+		</div>
+		<div th:if="${postMapping == 'findByPwd'}" class="complete-wrap">
+			<h1>비밀번호 변경완료</h1>
+			<div class="complete-id">
+			</div>
+			<div class="complete-menu-btn">
+				<a th:href="@{/member/login}">로그인</a>
+				<a th:href="@{/}">메인</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
