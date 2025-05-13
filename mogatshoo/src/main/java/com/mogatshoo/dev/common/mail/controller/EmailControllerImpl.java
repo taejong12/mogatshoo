@@ -21,7 +21,7 @@ public class EmailControllerImpl implements EmailController{
 	@Override
 	public Map<String, Object> sendAuthEmail(String memberEmail, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		String title = "[SpringBoot] 인증번호 전송";
+		String title = "[mogatshoo] 인증번호 전송";
 		String authCode = UUID.randomUUID().toString().substring(0, 6);
 		
 		String html = "<html><body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;'>";
@@ -32,7 +32,7 @@ public class EmailControllerImpl implements EmailController{
 		html += "<span style='display: inline-block; padding: 15px 25px; font-size: 24px; border-radius: 6px; border: 1px solid black;'>" + authCode + "</span>";
 		html += "</div>";
 		html += "<p style='font-size: 14px; color: #999999;'>본 이메일은 발신 전용입니다. 문의가 필요하신 경우 웹사이트를 통해 연락해주세요.</p>";
-		html += "<p style='font-size: 14px; color: #999999;'>감사합니다.<br>SpringBoot 드림</p>";
+		html += "<p style='font-size: 14px; color: #999999;'>감사합니다.<br>mogatshoo 드림</p>";
 		html += "</div>";
 		html += "</body></html>";
 		

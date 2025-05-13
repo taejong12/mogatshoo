@@ -31,14 +31,6 @@
 						<div style="width: 110px;"></div>
 						<div id="idCheckMessage"></div>
 					</div>
-					<div class="input-wrap d-flex align-items-center">
-						<div style="width: 110px;"></div>
-						<div>* 닉네임으로 사용</div>
-					</div>
-					<div class="input-wrap d-flex align-items-center">
-						<div style="width: 110px;"></div>
-						<div>* 변경불가</div>
-					</div>
 				</div>
 				<div th:if="${provider == null}">
 					<div class="input-wrap d-flex align-items-center">
@@ -74,6 +66,13 @@
 					<div class="input-wrap d-flex align-items-center">
 						<label for="memberName" style="width: 110px;">이름</label>
 						<input class="flex-fill" type="text" id="memberName" name="memberName" placeholder="이름 입력" required>
+						<div style="margin-left:20px; width: 130px;"></div>
+					</div>
+				</div>
+				<div>
+					<div class="input-wrap d-flex align-items-center">
+						<label for="memberNickName" style="width: 110px;">닉네임</label>
+						<input class="flex-fill" type="text" id="memberNickName" name="memberNickName" placeholder="닉네임 입력" required>
 						<div style="margin-left:20px; width: 130px;"></div>
 					</div>
 				</div>
@@ -113,7 +112,7 @@
 					<div class="input-wrap d-flex align-items-center">
 						<label for="memberZipcode" style="width: 110px;">우편번호</label>
 						<input class="flex-fill" type="text" id="memberZipcode" name="memberZipcode" required readonly>
-						<button type="button" onclick="fu_addressSearch()" class="text-nowrap bg-white border border-black px-3 py-2 d-flex align-items-center justify-content-center" style="margin-left:20px; width: 130px;">주소검색</button>
+						<button type="button" onclick="fu_addrSearch()" class="text-nowrap bg-white border border-black px-3 py-2 d-flex align-items-center justify-content-center" style="margin-left:20px; width: 130px;">주소검색</button>
 					</div>
 				</div>
 				<div>
@@ -213,10 +212,13 @@
 		<!-- 이메일 인증번호 유효성 검사 -->
 		<script th:src="@{/js/member/join/fu_emailAuthValidation.js}"></script>
 		<!-- 주소 API -->
-		<script th:src="@{/js/member/join/fu_addressSearch.js}"></script>
+		<script th:src="@{/js/member/join/fu_addrSearch.js}"></script>
 		<!-- 주소 유효성 검사 -->
-		<script th:src="@{/js/member/join/fu_.js}"></script>
-		
+		<script th:src="@{/js/member/join/fu_addrValidation.js}"></script>
+		<!-- 성별 유효성 검사 -->
+		<script th:src="@{/js/member/join/fu_genderValidation.js}"></script>
+		<!-- 닉네임 유효성 검사 -->
+		<script th:src="@{/js/member/join/fu_nickNameValidation.js}"></script>
 	</div>
 </body>
 </html>

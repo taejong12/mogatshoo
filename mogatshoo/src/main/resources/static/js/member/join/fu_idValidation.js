@@ -4,7 +4,7 @@ function fu_idValidation(){
 	let idVal = idInput.value.trim();
 	
 	if(idVal == '' || idVal.length == 0){
-		idInput.memberId.focus();
+		idInput.focus();
 		
         let spaceDiv = document.createElement('div');
 		spaceDiv.style.width = "110px";
