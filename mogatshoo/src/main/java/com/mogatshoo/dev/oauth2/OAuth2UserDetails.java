@@ -32,4 +32,8 @@ public class OAuth2UserDetails implements UserDetails{
 	public String getUsername() {
 		return memberEntity.getMemberId();
 	}
+	
+	public String getNickName() {
+		return memberEntity.getMemberNickName();
+	}
 }

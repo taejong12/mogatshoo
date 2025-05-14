@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.repository.MemberRepository;
+import com.mogatshoo.dev.oauth2.OAuth2UserDetails;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -62,11 +63,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
         MemberEntity memberEntity = memberRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
 
-        return User.builder()
-                .username(memberEntity.getMemberId())
-                .password(memberEntity.getMemberPwd())
-                .roles("USER")
-                .build();
+        return new OAuth2UserDetails(memberEntity);
 	}
 
 	@Override
@@ -169,5 +166,15 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 		        .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
 
 		member.setMemberName(memberEntity.getMemberName());
+	}
+
+	@Override
+	public MemberEntity findByIdEmailCheck(String memberEmail) {
+		return memberRepository.findByMemberEmail(memberEmail).orElse(null);
+	}
+
+	@Override
+	public MemberEntity findByMemberEmail(String memberEmail) {
+		return memberRepository.findByMemberEmail(memberEmail).orElse(null);
 	}
 }

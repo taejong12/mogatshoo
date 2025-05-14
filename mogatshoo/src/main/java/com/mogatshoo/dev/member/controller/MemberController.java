@@ -52,7 +52,6 @@ public class MemberController {
 		if(postMapping.equals("join")) {
 			String memberId = (String) session.getAttribute("memberId");
 			model.addAttribute("memberId", memberId);
-			System.out.println("memberId: "+memberId);
 		}
 		
 		model.addAttribute("postMapping", postMapping);
@@ -125,8 +124,31 @@ public class MemberController {
 		return "member/findById";
 	}
 	
+	@PostMapping("/findByIdEmailCheck")
+	@ResponseBody
+	public Map<String, Object> findByIdEmailCheck(@RequestBody Map<String, String> request) {
+		MemberEntity member = memberService.findByIdEmailCheck(request.get("memberEmail"));
+		Map<String, Object> map = new HashMap<>();
+		
+		// 이메일이 없으면 true
+		boolean memberEmailCheck = true;
+		
+		// 우리 자체 회원가입 회원만 찾기 가능
+		if (member != null) {
+		    if (member.getProvider().equals("local")) {
+		        memberEmailCheck = false;
+		    }
+		}
+		
+		map.put("memberEmailCheck", memberEmailCheck);
+		return map;
+	}
+	
+
 	@PostMapping("/findById")
-	public String findById(HttpSession session) {
+	public String findByIdSendEmail(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
+		memberEntity = memberService.findByMemberEmail(memberEntity.getMemberEmail());
+		emailController.findByIdSendEmail(memberEntity);
 		session.setAttribute("postMapping", "findById");
 		return "redirect:/member/complete";
 	}
@@ -171,9 +193,7 @@ public class MemberController {
 		}
 		
 		memberEntity.setMemberId(memberId);
-		
 		memberService.memberUpdate(memberEntity);
-		
 		session.removeAttribute("memberId");
 		
 		return "redirect:/member/mypage?memberId="+memberId;

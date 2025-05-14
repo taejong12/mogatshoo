@@ -33,6 +33,7 @@ public class OAuth2Controller {
 		String birth = oauth2User.getAttribute("birth");
 		String mobile = oauth2User.getAttribute("mobile");
 		String gender = oauth2User.getAttribute("gender");
+		String memberId = provider+"_"+providerId;
 		
 		if(mobile != null) {
 			mobile = mobile.replace("-", "");
@@ -45,13 +46,6 @@ public class OAuth2Controller {
 				gender = "여";
 			}
 		}
-		System.out.println("provider: "+provider);
-		System.out.println("providerId: "+providerId);
-		System.out.println("email: "+email);
-		System.out.println("name: "+name);
-		System.out.println("birth: "+birth);
-		System.out.println("mobile: "+mobile);
-		System.out.println("gender: "+gender);
 		
 		if(email != null) {
 			Boolean emailCheck = memberService.memberEmailCheck(oauth2User.getAttribute("email"));
@@ -68,6 +62,7 @@ public class OAuth2Controller {
 		model.addAttribute("birth", birth);
 		model.addAttribute("mobile", mobile);
 		model.addAttribute("gender", gender);
+		model.addAttribute("memberId", memberId);
 		return "member/join";
 	}
 }
