@@ -26,7 +26,7 @@ public class EmailControllerImpl implements EmailController{
 		
 		String html = "<html><body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;'>";
 		html += "<div style='max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>";
-		html += "<h2 style='color: #333333;'>Spring Boot 인증번호 안내</h2>";
+		html += "<h2 style='color: #333333;'>mogatshoo 인증번호 안내</h2>";
 		html += "<p style='font-size: 16px; color: #555555;'>아래 인증번호를 입력하여 본인 확인을 완료해주세요.</p>";
 		html += "<div style='margin: 30px 0; text-align: center;'>";
 		html += "<span style='display: inline-block; padding: 15px 25px; font-size: 24px; border-radius: 6px; border: 1px solid black;'>" + authCode + "</span>";

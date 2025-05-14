@@ -26,7 +26,6 @@ function fu_findById(){
 			emailWarnMsg.style.color = "red";
 			emailWarnMsg.style.display = 'inline';
 		} else {
-			
 			form.method= "post";
 			form.action= "/member/findById";
 			form.submit();

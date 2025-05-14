@@ -10,7 +10,7 @@
 		<div th:if="${postMapping == 'join'}" class="complete-wrap">
 			<h1>회원가입완료</h1>
 			<div class="complete-id">
-				<p th:inline="text">[[${memberId}]]님 환영합니다.</p>
+				<p th:inline="text">[[${memberNickName}]]님 환영합니다.</p>
 			</div>
 			<div class="complete-menu-btn">
 				<a th:href="@{/member/login}">로그인</a>

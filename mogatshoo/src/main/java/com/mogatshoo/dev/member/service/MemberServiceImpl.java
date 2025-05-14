@@ -177,4 +177,9 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 	public MemberEntity findByMemberEmail(String memberEmail) {
 		return memberRepository.findByMemberEmail(memberEmail).orElse(null);
 	}
+
+	@Override
+	public MemberEntity findByPwdIdAndEmailCheck(String memberId, String memberEmail) {
+		return memberRepository.findByMemberIdAndMemberEmail(memberId, memberEmail).orElse(null);
+	}
 }

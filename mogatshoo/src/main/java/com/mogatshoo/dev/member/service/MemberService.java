@@ -22,4 +22,6 @@ public interface MemberService {
 
 	MemberEntity findByMemberEmail(String memberEmail);
 
+	MemberEntity findByPwdIdAndEmailCheck(String memberId, String memberEmail);
+
 }
