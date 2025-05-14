@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class PictureEntity {
 
     @Id
+    @Column(name = "PictureId")
     private String memberId;  // 회원 ID를 PK로 사용
 
     @Column(nullable = false)
