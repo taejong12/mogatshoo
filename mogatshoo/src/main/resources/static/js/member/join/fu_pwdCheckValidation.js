@@ -1,7 +1,9 @@
 function fu_pwdCheckValidation(){
 	
 	let pwdCheckInput = document.getElementById('memberPwdCheck');
-	let pwdCheckVal = pwdCheckInput.value.trim();
+	
+	if(pwdCheckInput){
+		let pwdCheckVal = pwdCheckInput.value.trim();
 		
 		if(pwdCheckVal == '' || pwdCheckVal.length == 0){
 			document.joinForm.memberPwdCheck.focus();
@@ -26,4 +28,7 @@ function fu_pwdCheckValidation(){
 		} else{
 			return true;
 		}
+	}else{
+		return true;
+	}
 }

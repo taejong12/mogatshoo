@@ -104,7 +104,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 		    String birthyear = response.get("birthyear").toString();
 		    String birthday = response.get("birthday").toString();
 		    String mobile = response.get("mobile").toString();
-		    
+		    String gender = response.get("gender").toString();
 		    String birth = birthyear + "-" + birthday;
 		    
 		    Map<String, Object> map = new HashMap<>();
@@ -114,6 +114,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 			map.put("name", name);
 			map.put("birth", birth);
 			map.put("mobile", mobile);
+			map.put("gender", gender);
 		    
 		    return new DefaultOAuth2User(
 					// 권한 목록

@@ -48,8 +48,6 @@ public class MemberController {
 		if(postMapping == null) {
 			return "redirect:/";
 		}
-
-		System.out.println("postMapping: "+postMapping);
 		
 		if(postMapping.equals("join")) {
 			String memberId = (String) session.getAttribute("memberId");
