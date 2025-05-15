@@ -1,104 +1,108 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
-<head th:with="layoutTitle='질문 상세 - 질문 관리 시스템'">
-    <link rel="stylesheet" th:href="@{/static/css/question/detail.css}">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>질문 수정</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/question/list.css}">
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="page-header">
-        <h2>질문 상세</h2>
-        <a th:href="@{/questions}" class="btn btn-text">
-            <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
-        </a>
-    </div>
-
-    <!-- 메인 수정 폼 -->
-    <form th:action="@{/questions/{id}(id=${question.serialNumber})}" method="post" th:object="${question}" id="questionForm">
-        <div class="question-detail-container">
-            <div class="detail-header">
-                <div class="serial-badge" th:text="${question.serialNumber}">Q0001</div>
-                <!-- hidden 필드로 serial number 유지 -->
-                <input type="hidden" th:field="*{serialNumber}" />
-                <!-- isPublic 값을 저장하는 히든 필드 추가 -->
-                <input type="hidden" th:field="*{isPublic}" id="isPublicField" />
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>질문 수정</h2>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/questions/{serialNumber}(serialNumber=${question.serialNumber})}" 
+                      th:object="${question}" method="post" id="questionForm">
+                    
+                    <!-- 일련번호 표시 -->
+                    <div class="serial-number">
+                        질문 번호: <span th:text="*{serialNumber}"></span>
+                        <input type="hidden" th:field="*{serialNumber}" />
+                    </div>
+                    
+                    <!-- 공개 상태 토글 버튼 -->
+                    <div class="visibility-controls">
+                        <label>공개 상태:</label>
+                        <div class="ms-3">
+                            <button type="button" class="visibility-btn public" 
+                                    th:classappend="${question.isPublic == 'yes'} ? 'active' : ''" 
+                                    data-value="yes">공개</button>
+                            <button type="button" class="visibility-btn private" 
+                                    th:classappend="${question.isPublic == 'no'} ? 'active' : ''" 
+                                    data-value="no">비공개</button>
+                            <input type="hidden" th:field="*{isPublic}" id="isPublicInput" />
+                        </div>
+                        <div class="status-label">
+                            현재 상태: <span id="currentStatus" th:text="${question.isPublic == 'yes'} ? '공개' : '비공개'"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- 질문 내용 -->
+                    <div class="form-group">
+                        <label for="question" class="form-label">질문</label>
+                        <textarea class="form-control" th:field="*{question}" rows="3" required></textarea>
+                    </div>
+                    
+                    <!-- 보기 4개 -->
+                    <div class="form-group">
+                        <label for="option1" class="form-label">보기 1</label>
+                        <input type="text" class="form-control" th:field="*{option1}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="option2" class="form-label">보기 2</label>
+                        <input type="text" class="form-control" th:field="*{option2}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="option3" class="form-label">보기 3</label>
+                        <input type="text" class="form-control" th:field="*{option3}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="option4" class="form-label">보기 4</label>
+                        <input type="text" class="form-control" th:field="*{option4}">
+                    </div>
+                    
+                    <!-- 생성일 (읽기 전용) -->
+                    <div class="form-group">
+                        <label class="form-label">생성일</label>
+                        <div class="created-date" th:text="${#temporals.format(question.createdAt, 'yyyy-MM-dd HH:mm')}">
+                            2023-01-01 12:00
+                        </div>
+                    </div>
+                    
+                    <!-- 버튼 그룹 -->
+                    <div class="btn-action-row">
+                        <a th:href="@{/questions/{serialNumber}/delete(serialNumber=${question.serialNumber})}" 
+                           class="btn btn-danger" id="deleteBtn" 
+                           onclick="return confirm('정말 이 질문을 삭제하시겠습니까?');">삭제하기</a>
+                        
+                        <div>
+                            <a th:href="@{/questions}" class="btn btn-secondary me-2">취소</a>
+                            <button type="submit" class="btn btn-primary" id="saveBtn">저장하기</button>
+                        </div>
+                    </div>
+                </form>
                 
-				<!-- 공개 상태 토글 버튼 -->
-				<div class="detail-actions">
-				    <!-- 비공개로 전환 폼 (현재 공개 상태일 때) -->
-				    <form th:if="${question.isPublic == 'yes'}" 
-				          th:action="@{/questions/{id}/public(id=${question.serialNumber})}" 
-				          method="post" 
-				          style="display: inline;">
-				        <input type="hidden" name="isPublic" value="no" />
-				        <button type="submit" class="btn btn-toggle btn-danger">
-				            <i class="fas fa-eye-slash" id="toggleIcon"></i>
-				            <span id="toggleText">비공개로 전환</span>
-				        </button>
-				    </form>
-				     
-				    <!-- 공개로 전환 폼 (현재 비공개 상태일 때) -->
-				    <form th:if="${question.isPublic == 'no'}" 
-				          th:action="@{/questions/{id}/public(id=${question.serialNumber})}" 
-				          method="post" 
-				          style="display: inline;">
-				        <input type="hidden" name="isPublic" value="yes" />
-				        <button type="submit" class="btn btn-toggle btn-success">
-				            <i class="fas fa-eye" id="toggleIcon"></i>
-				            <span id="toggleText">공개로 전환</span>
-				        </button>
-				    </form>
-				</div>
-            </div>
-            
-            <!-- 질문 부분을 편집 가능한 textarea로 변경 -->
-            <div class="question-content">
-                <h3>질문</h3>
-                <textarea class="content-box" th:field="*{question}" rows="3" required></textarea>
-            </div>
-            
-            <!-- 보기 부분을 편집 가능한 input으로 변경 -->
-            <div class="options-grid">
-                <div class="option-box">
-                    <div class="option-label">보기 1</div>
-                    <input type="text" class="option-content" th:field="*{option1}" required />
-                </div>
-                <div class="option-box">
-                    <div class="option-label">보기 2</div>
-                    <input type="text" class="option-content" th:field="*{option2}" required />
-                </div>
-                <div class="option-box">
-                    <div class="option-label">보기 3</div>
-                    <input type="text" class="option-content" th:field="*{option3}" required />
-                </div>
-                <div class="option-box">
-                    <div class="option-label">보기 4</div>
-                    <input type="text" class="option-content" th:field="*{option4}" required />
-                </div>
-            </div>
-            
-            <div class="detail-footer">
-                <div class="creation-date">
-                    <i class="fas fa-calendar"></i>
-                    생성일: <span th:text="${#temporals.format(question.createdAt, 'yyyy년 MM월 dd일 HH:mm')}">
-                        2025년 05월 14일 15:30
-                    </span>
-                </div>
-                
-                <!-- 저장 버튼 추가 -->
-                <div class="form-actions" style="margin-top: 20px; text-align: right;">
-                    <button type="submit" class="btn btn-primary" id="saveBtn">
-                        <i class="fas fa-save"></i> 저장하기
-                    </button>
+                <!-- 상태 알림을 위한 토스트 메시지 -->
+                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                    <div id="statusToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">알림</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body" id="toastMessage"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </form>
-</div>
+    </div>
 
-<th:block layout:fragment="scripts">
-    <script th:src="@{/static/js/question/detail.js}"></script>
-</th:block>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/question/detail.js}"></script>
 </body>
 </html>

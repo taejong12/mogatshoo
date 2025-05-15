@@ -1,168 +1,85 @@
-/**
- * 질문 상세 페이지 기능
- */
 document.addEventListener('DOMContentLoaded', function() {
-    // 공개 상태 변경 버튼 처리
-    const setupVisibilityToggle = () => {
-        const toggleBtn = document.getElementById('toggleVisibilityBtn');
-        const isPublicField = document.getElementById('isPublicField');
-        const toggleIcon = document.getElementById('toggleIcon');
-        const toggleText = document.getElementById('toggleText');
-        
-        if (!toggleBtn || !isPublicField) {
-            console.error('공개 상태 토글 버튼 또는 필드를 찾을 수 없습니다.');
-            return;
+    // 공개 상태 토글 버튼 이벤트
+    const publicBtn = document.querySelector('.visibility-btn.public');
+    const privateBtn = document.querySelector('.visibility-btn.private');
+    const isPublicInput = document.getElementById('isPublicInput');
+    const currentStatus = document.getElementById('currentStatus');
+    const serialNumber = document.querySelector('input[name="serialNumber"]').value;
+    
+    // 공개 버튼 클릭
+    publicBtn.addEventListener('click', function() {
+        updateVisibility('yes', this);
+    });
+    
+    // 비공개 버튼 클릭
+    privateBtn.addEventListener('click', function() {
+        updateVisibility('no', this);
+    });
+    
+    // 공개 상태 업데이트 함수
+    function updateVisibility(value, clickedBtn) {
+        // UI 업데이트
+        if (value === 'yes') {
+            publicBtn.classList.add('active');
+            privateBtn.classList.remove('active');
+            currentStatus.textContent = '공개';
+        } else {
+            publicBtn.classList.remove('active');
+            privateBtn.classList.add('active');
+            currentStatus.textContent = '비공개';
         }
         
-        // 현재 상태 확인
-        console.log('현재 isPublic 값:', isPublicField.value);
+        // 폼 입력값 업데이트
+        isPublicInput.value = value;
         
-        // 토글 버튼 클릭 이벤트
-        toggleBtn.addEventListener('click', function() {
-            // 현재 상태 확인
-            const currentValue = isPublicField.value;
-            console.log('클릭 전 상태:', currentValue);
-            
-            // 상태 토글
-            const newValue = currentValue === 'yes' ? 'no' : 'yes';
-            isPublicField.value = newValue;
-            console.log('변경 후 상태:', isPublicField.value);
-            
-            // UI 업데이트
-            updateVisibilityUI(newValue);
-        });
-        
-        // UI 상태 업데이트 함수
-        function updateVisibilityUI(isPublic) {
-            console.log('UI 업데이트:', isPublic);
-            
-            if (isPublic === 'yes') {
-                // 공개 상태 UI
-                toggleBtn.classList.remove('btn-success');
-                toggleBtn.classList.add('btn-danger');
-                toggleIcon.className = 'fas fa-eye-slash';
-                toggleText.textContent = '비공개로 전환';
+        // AJAX 요청 (즉시 서버에 상태 변경 알림 - 선택사항)
+        fetch(`/questions/${serialNumber}/visibility`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `isPublic=${value}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
             } else {
-                // 비공개 상태 UI
-                toggleBtn.classList.remove('btn-danger');
-                toggleBtn.classList.add('btn-success');
-                toggleIcon.className = 'fas fa-eye';
-                toggleText.textContent = '공개로 전환';
+                showToast(data.message || '상태 변경 중 오류가 발생했습니다.', 'danger');
             }
-        }
-    };
-    
-    // 폼 유효성 검사
-    const setupFormValidation = () => {
-        const form = document.getElementById('questionForm');
-        
-        if (!form) return;
-        
-        form.addEventListener('submit', (e) => {
-            let isValid = true;
-            const requiredFields = form.querySelectorAll('[required]');
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('error');
-                    
-                    // 에러 메시지 표시
-                    let errorMsg = field.parentNode.querySelector('.error-message');
-                    if (!errorMsg) {
-                        errorMsg = document.createElement('div');
-                        errorMsg.className = 'error-message';
-                        errorMsg.textContent = '이 필드는 필수입니다.';
-                        field.parentNode.appendChild(errorMsg);
-                    }
-                } else {
-                    field.classList.remove('error');
-                    const errorMsg = field.parentNode.querySelector('.error-message');
-                    if (errorMsg) {
-                        errorMsg.remove();
-                    }
-                }
-            });
-            
-            if (!isValid) {
-                e.preventDefault();
-                // 첫 번째 에러 필드로 스크롤
-                const firstError = form.querySelector('.error');
-                if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            } else {
-                // 폼 제출 시 공개 상태 값이 제대로 전송되는지 확인
-                const isPublicField = document.getElementById('isPublicField');
-                console.log('폼 제출 시 isPublic 값:', isPublicField?.value);
-            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('네트워크 오류가 발생했습니다.', 'danger');
         });
-    };
+    }
     
-    // URL 파라미터 확인해서 필요시 알림 표시
-    const checkUrlParams = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const status = urlParams.get('status');
-        const message = urlParams.get('message');
+    // 토스트 메시지 표시 함수
+    function showToast(message, type = 'info') {
+        const toastEl = document.getElementById('statusToast');
+        const toast = new bootstrap.Toast(toastEl);
         
-        if (status && message) {
-            showNotification(decodeURIComponent(message), status);
-        }
-    };
-    
-    // 알림 메시지 표시
-    const showNotification = (message, type = 'info') => {
-        // 이미 존재하는 알림이 있으면 제거
-        const existingNotif = document.querySelector('.notification');
-        if (existingNotif) {
-            existingNotif.remove();
+        document.getElementById('toastMessage').textContent = message;
+        
+        // 토스트 배경색 설정
+        toastEl.classList.remove('bg-success', 'bg-danger', 'bg-info');
+        if (type === 'success') {
+            toastEl.classList.add('bg-success', 'text-white');
+        } else if (type === 'danger') {
+            toastEl.classList.add('bg-danger', 'text-white');
+        } else {
+            toastEl.classList.add('bg-info', 'text-white');
         }
         
-        // 알림 요소 생성
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                <span>${message}</span>
-            </div>
-            <button class="notification-close">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        
-        // 알림 닫기 버튼
-        const closeBtn = notification.querySelector('.notification-close');
-        closeBtn.addEventListener('click', () => {
-            notification.classList.add('hide');
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        });
-        
-        // 자동으로 4초 후 사라짐
-        setTimeout(() => {
-            notification.classList.add('hide');
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 4000);
-        
-        // 문서에 알림 추가
-        document.body.appendChild(notification);
-        
-        // 애니메이션 효과를 위한 지연
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 10);
-    };
+        toast.show();
+    }
     
-    // 페이지 로드 시 실행되는 초기화 함수
-    const initDetailPage = () => {
-        setupVisibilityToggle();
-        setupFormValidation();
-        checkUrlParams();
-    };
+    // URL 파라미터에서 상태 메시지 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    const message = urlParams.get('message');
     
-    initDetailPage();
+    if (status && message) {
+        showToast(message, status === 'success' ? 'success' : 'danger');
+    }
 });

@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!cancelBtn) return;
         
-        cancelBtn.addEventListener('click', () => {
+        cancelBtn.addEventListener('click', (e) => {
             // 변경 사항이 있는지 확인
             const form = document.getElementById('questionForm');
             const hasChanges = Array.from(form.elements).some(el => {
@@ -45,12 +45,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             if (hasChanges) {
-                if (confirm('변경 사항이 저장되지 않습니다. 정말 취소하시겠습니까?')) {
-                    window.location.href = '/questions';
+                if (!confirm('변경 사항이 저장되지 않습니다. 정말 취소하시겠습니까?')) {
+                    e.preventDefault(); // 사용자가 취소를 선택하면 링크 이동 방지
                 }
-            } else {
-                window.location.href = '/questions';
+                // 확인을 선택하면 링크가 정상적으로 동작하여 목록 페이지로 이동
             }
+            // 변경 사항이 없으면 링크가 정상적으로 동작하여 목록 페이지로 이동
         });
     };
     

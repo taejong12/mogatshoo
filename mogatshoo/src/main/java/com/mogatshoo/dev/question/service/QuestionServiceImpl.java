@@ -79,4 +79,17 @@ public class QuestionServiceImpl implements QuestionService {
 	    // 저장 및 반환
 	    return questionRepository.save(existingQuestion);
 	}
+	
+	@Override
+	public void deleteQuestion(String serialNumber) {
+		// 질문 존재 여부 확인
+		QuestionEntity question = getQuestionBySerialNumber(serialNumber);
+		
+		// 존재하면 삭제
+		if (question != null) {
+			questionRepository.delete(question);
+		} else {
+			throw new RuntimeException("삭제할 질문을 찾을 수 없습니다: " + serialNumber);
+		}
+	}
 }

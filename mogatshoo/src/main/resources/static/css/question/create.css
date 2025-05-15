@@ -52,10 +52,68 @@
     margin-top: 2rem;
 }
 
+/* 폼 정보 메시지 스타일 */
+.form-info {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: var(--gray-100);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 4px;
+}
+
+.form-info p {
+    margin: 0;
+    color: var(--gray-700);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-info i {
+    color: var(--primary-color);
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+/* 취소 버튼을 링크로 사용하는 경우의 스타일 */
+.btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--gray-300);
+    background-color: white;
+    color: var(--gray-700);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.btn-outline:hover {
+    background-color: var(--gray-100);
+    border-color: var(--gray-400);
+}
+
+/* 에러 상태의 글자 수 카운터 */
+.character-counter .error {
+    color: var(--danger-color);
+    font-weight: 600;
+}
+
 @media (max-width: 768px) {
     .form-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
     }
 }

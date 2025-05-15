@@ -3,78 +3,83 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='질문 생성 - 질문 관리 시스템'">
-    <link rel="stylesheet" th:href="@{/static/css/question/create.css}">
+    <link rel="stylesheet" th:href="@{/css/question/create.css}">
 </head>
 <body>
-    <div layout:fragment="content">
-        <div class="page-header">
-            <h2>질문 생성</h2>
-            <a th:href="@{/questions}" class="btn btn-text">
-                <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
-            </a>
-        </div>
-        
-        <div class="question-form-container">
-            <form th:action="@{/questions}" method="post" th:object="${question}" id="questionForm">
-                <div class="form-header">
-                    <div class="serial-number-display">
-                        <label>일련번호:</label>
-                        <div class="serial-number" th:text="*{serialNumber}">Q0001</div>
-                        <input type="hidden" th:field="*{serialNumber}" />
-                    </div>
-                    <div class="status-badge private">
-                        <i class="fas fa-eye-slash"></i> 비공개 상태로 생성됩니다
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="question">질문 내용 <span class="required">*</span></label>
-                    <textarea id="question" th:field="*{question}" rows="3" required
-                        placeholder="질문 내용을 입력하세요"></textarea>
-                    <div class="character-counter">
-                        <span id="questionCharCount">0</span> / 500
-                    </div>
-                </div>
-                
-                <div class="options-container">
-                    <h3>보기 항목</h3>
-                    <div class="form-group">
-                        <label for="option1">보기 1 <span class="required">*</span></label>
-                        <input type="text" id="option1" th:field="*{option1}" required
-                            placeholder="보기 1 내용을 입력하세요" />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="option2">보기 2 <span class="required">*</span></label>
-                        <input type="text" id="option2" th:field="*{option2}" required
-                            placeholder="보기 2 내용을 입력하세요" />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="option3">보기 3 <span class="required">*</span></label>
-                        <input type="text" id="option3" th:field="*{option3}" required
-                            placeholder="보기 3 내용을 입력하세요" />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="option4">보기 4 <span class="required">*</span></label>
-                        <input type="text" id="option4" th:field="*{option4}" required
-                            placeholder="보기 4 내용을 입력하세요" />
-                    </div>
-                </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn btn-outline" id="cancelBtn">취소</button>
-                    <button type="submit" class="btn btn-primary" id="saveBtn">
-                        <i class="fas fa-save"></i> 저장하기
-                    </button>
-                </div>
-            </form>
-        </div>
+<div layout:fragment="content">
+    <div class="page-header">
+        <h2>질문 생성</h2>
+        <a th:href="@{/questions}" class="btn btn-text">
+            <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
+        </a>
     </div>
-    
-    <th:block layout:fragment="scripts">
-        <script th:src="@{/static/js/question/create.js}"></script>
-    </th:block>
+
+    <div class="question-form-container">
+        <form th:action="@{/questions}" method="post" th:object="${question}" id="questionForm">
+            <div class="form-header">
+                <div class="serial-number-display">
+                    <label>일련번호:</label>
+                    <div class="serial-number" th:text="*{serialNumber}">Q0001</div>
+                    <input type="hidden" th:field="*{serialNumber}" />
+                </div>
+                <div class="status-badge private">
+                    <i class="fas fa-eye-slash"></i> 비공개 상태로 생성됩니다
+                    <input type="hidden" name="isPublic" value="no" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="question">질문 내용 <span class="required">*</span></label>
+                <textarea id="question" th:field="*{question}" rows="3" required
+                    placeholder="질문 내용을 입력하세요"></textarea>
+                <div class="character-counter">
+                    <span id="questionCharCount">0</span> / 500
+                </div>
+            </div>
+
+            <div class="options-container">
+                <h3>보기 항목</h3>
+                <div class="form-group">
+                    <label for="option1">보기 1 <span class="required">*</span></label>
+                    <input type="text" id="option1" th:field="*{option1}" required
+                        placeholder="보기 1 내용을 입력하세요" />
+                </div>
+
+                <div class="form-group">
+                    <label for="option2">보기 2 <span class="required">*</span></label>
+                    <input type="text" id="option2" th:field="*{option2}" required
+                        placeholder="보기 2 내용을 입력하세요" />
+                </div>
+
+                <div class="form-group">
+                    <label for="option3">보기 3 <span class="required">*</span></label>
+                    <input type="text" id="option3" th:field="*{option3}" required
+                        placeholder="보기 3 내용을 입력하세요" />
+                </div>
+
+                <div class="form-group">
+                    <label for="option4">보기 4 <span class="required">*</span></label>
+                    <input type="text" id="option4" th:field="*{option4}" required
+                        placeholder="보기 4 내용을 입력하세요" />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="/questions" class="btn btn-outline" id="cancelBtn">취소</a>
+                <button type="submit" class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-save"></i> 저장하기
+                </button>
+            </div>
+            
+            <div class="form-info">
+                <p><i class="fas fa-info-circle"></i> 질문 저장 후 수정 페이지에서 공개 상태로 전환할 수 있습니다.</p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/question/create.js}"></script>
+</th:block>
 </body>
 </html>

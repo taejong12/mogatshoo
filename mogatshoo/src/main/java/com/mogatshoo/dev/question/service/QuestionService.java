@@ -20,4 +20,7 @@ public interface QuestionService {
 	// 공개 여부 변경 (관리자용)
 	QuestionEntity updatePublicStatus(String serialNumber, String isPublic);
 	QuestionEntity updateQuestion(QuestionEntity questionEntity);
+	
+	// 질문 삭제
+	void deleteQuestion(String serialNumber);
 }
