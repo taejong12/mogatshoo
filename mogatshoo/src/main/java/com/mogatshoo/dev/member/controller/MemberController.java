@@ -172,30 +172,32 @@ public class MemberController {
 	}
 	
 	@GetMapping("/update")
-	public String memberUpdatePage(@RequestParam("memberId") String memberId, HttpSession session) {
+	public String memberUpdatePage(@RequestParam("memberId") String memberId, HttpSession session, Model model) {
 		MemberEntity member = memberService.findByMemberId(memberId);
 		
 		if(member == null) {
 			return "redirect:/member/login";
 		}
 		
-		session.setAttribute("memberId", memberId);
+		session.setAttribute("member", member);
+		model.addAttribute("member", member);
 		return "member/update";
 	}
 	
 	@PostMapping("/update")
 	public String memberUpdate(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
 		
-		String memberId = (String)session.getAttribute("memberId");
+		MemberEntity member = (MemberEntity) session.getAttribute("member");
 		
-		if(memberId == null) {
-			return "redirect:/";
+		if(member == null) {
+			return "redirect:/member/login";
 		}
+		
+		String memberId = member.getMemberId();
 		
 		memberEntity.setMemberId(memberId);
 		memberService.memberUpdate(memberEntity);
-		session.removeAttribute("memberId");
-		
+		session.removeAttribute("member");
 		return "redirect:/member/mypage?memberId="+memberId;
 	}
 	

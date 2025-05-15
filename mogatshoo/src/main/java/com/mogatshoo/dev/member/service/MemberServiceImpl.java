@@ -165,7 +165,12 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 		MemberEntity member = memberRepository.findById(memberEntity.getMemberId())
 		        .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
 
+		member.setMemberNickName(memberEntity.getMemberNickName());
 		member.setMemberName(memberEntity.getMemberName());
+		member.setMemberZipcode(memberEntity.getMemberZipcode());
+		member.setMemberAddress1(memberEntity.getMemberAddress1());
+		member.setMemberAddress2(memberEntity.getMemberAddress2());
+		member.setMemberTel(memberEntity.getMemberTel());
 	}
 
 	@Override
