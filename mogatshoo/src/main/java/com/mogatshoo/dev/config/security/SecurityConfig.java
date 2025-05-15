@@ -37,6 +37,7 @@ public class SecurityConfig {
 						,new AntPathRequestMatcher("/member/complete")
 						,new AntPathRequestMatcher("/member/idCheck")
 						,new AntPathRequestMatcher("/member/emailCheck")
+						,new AntPathRequestMatcher("/member/nickNameCheck")
 						,new AntPathRequestMatcher("/member/sendEmail")
 						,new AntPathRequestMatcher("/member/emailAuthCodeConfirm")
 						,new AntPathRequestMatcher("/member/lost")

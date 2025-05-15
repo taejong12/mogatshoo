@@ -192,4 +192,9 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 
 		member.setMemberPwd(pwdInput);
 	}
+
+	@Override
+	public Boolean memberNickNameCheck(String memberNickName) {
+		return memberRepository.findByMemberNickName(memberNickName).isEmpty();
+	}
 }

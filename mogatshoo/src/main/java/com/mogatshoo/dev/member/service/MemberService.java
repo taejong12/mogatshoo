@@ -26,4 +26,6 @@ public interface MemberService {
 
 	void pwdUpdate(MemberEntity memberEntity);
 
+	Boolean memberNickNameCheck(String memberNickName);
+
 }

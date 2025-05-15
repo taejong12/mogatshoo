@@ -22,7 +22,7 @@
 	line-height: 1.5;
 }
 
-#idCheckMessage, #pwdCheckMessage, #emailCheckMessage {
+#idCheckMessage, #pwdCheckMessage, #emailCheckMessage, #nickNameCheckMessage {
 	font-size: 0.8em;
 	display: none;
 }

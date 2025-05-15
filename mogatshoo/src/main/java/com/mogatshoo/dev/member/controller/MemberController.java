@@ -86,6 +86,15 @@ public class MemberController {
 		return map;
 	}
 	
+	@PostMapping("/nickNameCheck")
+	@ResponseBody
+	public Map<String, Boolean> memberNickNameCheck(@RequestBody Map<String, String> request){
+		Boolean memberNickNameCheck = memberService.memberNickNameCheck(request.get("memberNickName"));
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("memberNickNameCheck", memberNickNameCheck);
+		return map;
+	}
+	
 	@PostMapping("/sendEmail")
 	@ResponseBody
 	public Map<String, Object> memberSendEmail(@RequestBody Map<String, String> request, HttpSession session){
