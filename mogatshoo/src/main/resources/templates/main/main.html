@@ -21,7 +21,7 @@
             padding: 0;
             height: 100%;
             font-family: 'Press Start 2P', cursive;
-            background-color: #1616FB;
+            background-color: #2B2BD8;
             overflow: hidden;
         }
 
@@ -33,12 +33,17 @@
             overflow: hidden;
         }
 
-        /* 비디오 스타일 */
-        .video-bg {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+		/* 비디오 스타일 - 수정 */
+		.video-bg {
+		  width: 100%; /* 너비 10% 확대 */
+		  height: 100%; /* 높이 10% 확대 */
+		  object-fit: cover;
+		  transform: translateY(-7%); /* 5% 아래로 이동 */
+		  position: absolute;
+		  top: 0;
+		  transform: translateZ(3%);
+		  transform: translate
+		}
 
         /* 헤더 영역 */
         .header {
@@ -347,7 +352,7 @@
             // 비디오 로드 오류 처리
             video.addEventListener('error', function(e) {
                 console.error('비디오 로드 오류:', e);
-                container.style.backgroundColor = '#1616FB';
+                container.style.backgroundColor = '#2B2BD8';
             });
             
             // 비디오 크기 및 위치 조정 함수

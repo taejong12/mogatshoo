@@ -170,6 +170,11 @@ public class MemberController {
 		return "redirect:/";
 	}
 	
+	@GetMapping("/selectHair")
+	private String selectHair() {
+		return "hair/teachablemachine-classifier";
+	}
+	
 	@GetMapping("/update")
 	public String memberUpdatePage(@RequestParam("memberId") String memberId, HttpSession session) {
 		MemberEntity member = memberService.findByMemberId(memberId);
