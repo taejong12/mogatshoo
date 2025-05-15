@@ -1,0 +1,89 @@
+.visibility-btn {
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.3s;
+    margin-right: 10px;
+}
+
+.visibility-btn.active {
+    font-weight: bold;
+}
+
+.visibility-btn.public {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+}
+
+.visibility-btn.private {
+    background-color: #dc3545;
+    color: white;
+    border: 1px solid #dc3545;
+}
+
+.visibility-btn.public:not(.active) {
+    background-color: white;
+    color: #28a745;
+}
+
+.visibility-btn.private:not(.active) {
+    background-color: white;
+    color: #dc3545;
+}
+
+.status-label {
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.btn-action-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+#deleteBtn {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+#saveBtn {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.serial-number {
+    background-color: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.created-date {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 8px;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.visibility-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
