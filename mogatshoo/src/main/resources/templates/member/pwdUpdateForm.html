@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head th:with="layoutTitle='비밀번호 수정'">
+	<style>
+	</style>
+</head>
+<body>
+	<div layout:fragment="content" class="container mt-5">
+	
+		<h1 class="text-center mb-5">비밀번호 수정</h1>
+		
+		<div class="row justify-content-center">
+			<div class="col-md-6 col-lg-4">
+				<form name="pwdUpdateForm" class="card p-4 shadow-sm rounded-3 bg-light">
+					<input type="hidden" id="memberId" name="memberId" th:value="${memberId}">
+					<div class="mb-3">
+						<label for="memberPwd" class="form-label">비밀번호</label>
+						<input type="text" class="form-control" id="memberPwd" name="memberPwd" placeholder="비밀번호 입력">
+						<div id="pwdWarnMsg"></div>
+					</div>
+					<div class="mb-3">
+						<label for="memberPwdCheck" class="form-label">비밀번호 확인</label>
+						<input type="text" class="form-control" id="memberPwdCheck" name="memberPwdCheck" placeholder="비밀번호 확인입력">
+						<div id="pwdCheckWarnMsg"></div>
+					</div>
+					<div class="mb-3">
+						<div id="findByPwdError" class="text-center mb-3" style="color: red;"></div>
+					</div>
+					<div class="d-grid gap-2 mb-3">
+						<button type="button" class="btn btn-white btn-lg border border-dark" onclick="fu_pwdUpdate()">비밀번호 수정</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<script th:src="@{/js/member/find/fu_pwdUpdate.js}"></script>
+	</div>
+</body>
+</html>

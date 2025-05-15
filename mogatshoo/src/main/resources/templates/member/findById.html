@@ -3,6 +3,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='아이디 찾기'">
+	<style>
+		#emailWarnMsg {
+			color: red;
+			font-size: 0.8em;
+			padding: .375rem .75rem;
+		}
+	</style>
 </head>
 <body>
 	<div layout:fragment="content" class="container mt-5">
@@ -15,6 +22,7 @@
 					<div class="mb-3">
 						<label for="memberEmail" class="form-label">이메일</label>
 						<input type="email" class="form-control" id="memberEmail" name="memberEmail" placeholder="이메일 입력">
+						<div id="emailWarnMsg"></div>
 					</div>
 					<div class="d-grid gap-2 mb-3">
 						<button type="button" class="btn btn-white btn-lg border border-dark" onclick="fu_findById()">아이디 찾기</button>
@@ -22,6 +30,8 @@
 				</form>
 			</div>
 		</div>
+		
+		<script th:src="@{/js/member/find/fu_findById.js}"></script>
 	</div>
 </body>
 </html>

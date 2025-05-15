@@ -184,7 +184,6 @@ function fu_sendEmailBtn(){
 		    		authInputWarp.insertAdjacentElement('afterend', emailAuthWrap);
 	                
 	            } else {
-		    		
 	            	emailAuthInput.focus();
 	            	
 		    		emailAuthWrap.appendChild(spaceDiv);

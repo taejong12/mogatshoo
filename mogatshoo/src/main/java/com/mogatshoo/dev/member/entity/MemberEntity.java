@@ -26,7 +26,7 @@ public class MemberEntity {
 	@Column(nullable = false)
 	private String memberName;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String memberNickName;
 	
 	@Column(nullable = false)

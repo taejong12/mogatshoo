@@ -34,5 +34,24 @@ public class EmailServiceImpl implements EmailService{
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void findByIdSendEmail(String title, String memberEmail, String html) {
+		MimeMessage message = mailSender.createMimeMessage();
+		
+		try {
+			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "utf-8");
+			
+			messageHelper.setFrom(new InternetAddress("mogatshoo@gmail.com", "mogatshoo"));
+			messageHelper.setSubject(title);
+			messageHelper.setTo(memberEmail);
+			messageHelper.setText(html, true);
+			
+			mailSender.send(message);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

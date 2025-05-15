@@ -18,4 +18,10 @@ public interface MemberService {
 
 	void memberUpdate(MemberEntity memberEntity);
 
+	MemberEntity findByIdEmailCheck(String memberEmail);
+
+	MemberEntity findByMemberEmail(String memberEmail);
+
+	MemberEntity findByPwdIdAndEmailCheck(String memberId, String memberEmail);
+
 }

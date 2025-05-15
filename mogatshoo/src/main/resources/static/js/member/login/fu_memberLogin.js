@@ -32,5 +32,4 @@ function fu_memberLogin(){
 		loginForm.action= "/member/login";
 		loginForm.submit();
 	}
-	
 }

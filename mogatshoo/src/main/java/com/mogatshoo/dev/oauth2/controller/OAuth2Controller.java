@@ -32,6 +32,20 @@ public class OAuth2Controller {
 		String name = oauth2User.getAttribute("name");
 		String birth = oauth2User.getAttribute("birth");
 		String mobile = oauth2User.getAttribute("mobile");
+		String gender = oauth2User.getAttribute("gender");
+		String memberId = provider+"_"+providerId;
+		
+		if(mobile != null) {
+			mobile = mobile.replace("-", "");
+		}
+		
+		if(gender != null) {
+			if(gender.equals("M")) {
+				gender = "남";
+			}else {
+				gender = "여";
+			}
+		}
 		
 		if(email != null) {
 			Boolean emailCheck = memberService.memberEmailCheck(oauth2User.getAttribute("email"));
@@ -47,6 +61,8 @@ public class OAuth2Controller {
 		model.addAttribute("name", name);
 		model.addAttribute("birth", birth);
 		model.addAttribute("mobile", mobile);
-		return "oauth2/join";
+		model.addAttribute("gender", gender);
+		model.addAttribute("memberId", memberId);
+		return "member/join";
 	}
 }

@@ -48,13 +48,11 @@ public class MemberController {
 		if(postMapping == null) {
 			return "redirect:/";
 		}
-
-		System.out.println("postMapping: "+postMapping);
 		
 		if(postMapping.equals("join")) {
-			String memberId = (String) session.getAttribute("memberId");
-			model.addAttribute("memberId", memberId);
-			System.out.println("memberId: "+memberId);
+			String memberNickName = (String) session.getAttribute("memberNickName");
+			model.addAttribute("memberNickName", memberNickName);
+			session.removeAttribute("memberNickName");
 		}
 		
 		model.addAttribute("postMapping", postMapping);
@@ -67,7 +65,7 @@ public class MemberController {
 	public String memberSave(@ModelAttribute MemberEntity memberEntity, Model model, HttpSession session) {
 		memberService.memberSave(memberEntity);
 		session.setAttribute("postMapping", "join");
-		session.setAttribute("memberId", memberEntity.getMemberId());
+		session.setAttribute("memberNickName", memberEntity.getMemberNickName());
 		return "redirect:/member/complete";
 	}
 	
@@ -127,8 +125,29 @@ public class MemberController {
 		return "member/findById";
 	}
 	
+	@PostMapping("/findByIdEmailCheck")
+	@ResponseBody
+	public Map<String, Object> findByIdEmailCheck(@RequestBody Map<String, String> request) {
+		MemberEntity member = memberService.findByIdEmailCheck(request.get("memberEmail"));
+		Map<String, Object> map = new HashMap<>();
+		
+		// 이메일이 없으면 true
+		boolean memberEmailCheck = true;
+		
+		// 우리 자체 회원가입 회원만 찾기 가능
+		if (member != null && "local".equals(member.getProvider())) {
+			memberEmailCheck = false;
+		}
+		
+		map.put("memberEmailCheck", memberEmailCheck);
+		return map;
+	}
+	
+
 	@PostMapping("/findById")
-	public String findById(HttpSession session) {
+	public String findByIdSendEmail(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
+		memberEntity = memberService.findByMemberEmail(memberEntity.getMemberEmail());
+		emailController.findByIdSendEmail(memberEntity);
 		session.setAttribute("postMapping", "findById");
 		return "redirect:/member/complete";
 	}
@@ -173,11 +192,46 @@ public class MemberController {
 		}
 		
 		memberEntity.setMemberId(memberId);
-		
 		memberService.memberUpdate(memberEntity);
-		
 		session.removeAttribute("memberId");
 		
 		return "redirect:/member/mypage?memberId="+memberId;
+	}
+	
+	@PostMapping("/pwdUpdateForm")
+	public String pwdUpdateForm(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
+		/*
+		 * String authSuccess = (String) session.getAttribute("authSuccess");
+		 * 
+		 * if(authSuccess == null) { return "redirect:/"; }
+		 */
+		
+		session.setAttribute("memberId", memberEntity.getMemberId());
+		return "member/pwdUpdateForm";
+	}
+	
+	@PostMapping("/idAndEmailCheck")
+	@ResponseBody
+	public Map<String, Object> findByPwdIdAndEmailCheck(@RequestBody Map<String, String> request) {
+		
+		String memberId = request.get("memberId");
+		String memberEmail = request.get("memberEmail");
+		
+		MemberEntity member = memberService.findByPwdIdAndEmailCheck(memberId, memberEmail);
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		// 회원이 없으면 true
+		boolean idAndEmailCheck = true;
+		
+		// 우리 자체 회원가입 회원만 찾기 가능
+		if (member != null && "local".equals(member.getProvider())) {
+		    if (memberId != null && memberEmail != null) {
+		    	idAndEmailCheck = false;
+		    }
+		}
+		
+		map.put("idAndEmailCheck", idAndEmailCheck);
+		return map;
 	}
 }
