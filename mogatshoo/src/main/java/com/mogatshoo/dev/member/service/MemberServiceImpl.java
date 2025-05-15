@@ -182,4 +182,14 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 	public MemberEntity findByPwdIdAndEmailCheck(String memberId, String memberEmail) {
 		return memberRepository.findByMemberIdAndMemberEmail(memberId, memberEmail).orElse(null);
 	}
+
+	@Override
+	public void pwdUpdate(MemberEntity memberEntity) {
+		String pwdInput = passwordEncoder.encode(memberEntity.getMemberPwd());
+		
+		MemberEntity member = memberRepository.findById(memberEntity.getMemberId())
+		        .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+
+		member.setMemberPwd(pwdInput);
+	}
 }

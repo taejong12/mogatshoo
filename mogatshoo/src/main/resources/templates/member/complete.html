@@ -39,13 +39,17 @@
 		    </div>
 		</div>
 		<div th:if="${postMapping == 'findByPwd'}" class="complete-wrap">
-			<h1>비밀번호 변경완료</h1>
-			<div class="complete-id">
-			</div>
-			<div class="complete-menu-btn">
-				<a th:href="@{/member/login}">로그인</a>
-				<a th:href="@{/}">메인</a>
-			</div>
+		    <h1 class="complete-title">비밀번호 변경이 완료되었습니다</h1>
+		    
+		    <div class="complete-message">
+		        <p>비밀번호가 성공적으로 변경되었습니다.</p>
+		        <p>다시 로그인해주세요.</p>
+		    </div>
+		    
+		    <div class="complete-menu-btn">
+		        <a th:href="@{/member/login}" class="btn btn-login">로그인</a>
+		        <a th:href="@{/}" class="btn btn-main">메인으로</a>
+		    </div>
 		</div>
 	</div>
 </body>

@@ -6,7 +6,7 @@ function fu_pwdCheckValidation(){
 		let pwdCheckVal = pwdCheckInput.value.trim();
 		
 		if(pwdCheckVal == '' || pwdCheckVal.length == 0){
-			document.joinForm.memberPwdCheck.focus();
+			pwdCheckInput.focus();
 			
 	        let spaceDiv = document.createElement('div');
 			spaceDiv.style.width = "110px";
