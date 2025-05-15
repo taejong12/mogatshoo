@@ -47,7 +47,7 @@ public class SecurityConfig {
 						,new AntPathRequestMatcher("/member/pwdUpdate")
 						,new AntPathRequestMatcher("/oauth2/join")
 						,new AntPathRequestMatcher("/img/**")
-						,new AntPathRequestMatcher("/video/**")
+						,new AntPathRequestMatcher("/videos/**")
 						,new AntPathRequestMatcher("/css/**")
 						,new AntPathRequestMatcher("/js/**")
 						,new AntPathRequestMatcher("/fragments/**")
