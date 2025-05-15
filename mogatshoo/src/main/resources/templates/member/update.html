@@ -48,6 +48,7 @@
 					<div class="mb-3">
 						<label for="memberTel" class="form-label">전화번호</label>
 						<input type="text" class="form-control" id="memberTel" name="memberTel" th:value="${member.memberTel}" placeholder="전화번호 입력">
+						<div style="color: gray; font-size: 0.8em;">* (-) 하이픈을 빼고 입력해주세요.</div>
 						<div id="telWarnMsg"></div>
 					</div>
 					<button type="button" class="btn btn-white border border-dark" onclick="fu_memberUpdate()">수정</button>

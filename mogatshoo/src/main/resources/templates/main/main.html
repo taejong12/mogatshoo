@@ -315,6 +315,9 @@
                         <!-- 비로그인 상태일 때 표시되는 링크 -->
                         <ul class="navbar-nav" sec:authorize="isAnonymous()">
                             <li class="nav-item">
+                                <a class="nav-link" th:href="@{/fortune/start}">오늘운세</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" th:href="@{/member/login}">login</a>
                             </li>
                             <li class="nav-item">

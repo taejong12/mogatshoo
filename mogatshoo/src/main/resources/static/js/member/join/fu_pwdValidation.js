@@ -29,6 +29,8 @@ function fu_pwdValidation(){
 			return true;
 		}
 	} else {
+		pwdInputCheck = true;
+		pwdCheckEqual = true;
 		return true;
 	}
 }

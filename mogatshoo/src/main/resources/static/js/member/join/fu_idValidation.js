@@ -29,6 +29,7 @@ function fu_idValidation(){
 			return true;
 		}
 	} else {
+		idCheck = true;
 		return true;
 	}
 }

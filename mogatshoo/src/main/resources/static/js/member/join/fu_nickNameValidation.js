@@ -29,6 +29,7 @@ function fu_nickNameValidation(){
 			return true;
 		}
 	} else {
+		nickNameCheck = true;
 		return true;
 	}
 }

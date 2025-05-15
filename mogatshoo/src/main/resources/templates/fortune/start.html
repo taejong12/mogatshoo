@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head th:with="layoutTitle='탈모운세'">
+	<style>
+		body {
+			font-family: 'Press Start 2P', cursive;
+			background-color: #2B2BD8;
+			overflow: hidden;
+			height: 100vh;
+			margin: 0;
+			padding: 0;
+		}
+		
+		.title {
+			color: rgb(255, 255, 0);
+		}
+		
+	</style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+	<div layout:fragment="content" class="flex-fill container d-flex justify-content-center align-items-center flex-column">
+	
+		<h1 class="text-white mb-3">탈모운세</h1>
+		
+		<div class="mb-3">
+			<div id="fortuneItem" class="fw-bold fs-5 title"></div>
+			<div id="fortuneMsg" class="text-white"></div>
+			<div id="btnDiv" class="d-flex justify-content-center align-items-center">
+				<button class="btn btn-warning btn-lg" id="fortuneBtn" onclick="fu_fortuneStart()">시작</button>
+			</div>
+		</div>
+		
+		<!-- 운세 시작 -->
+		<script th:src="@{/js/fortune/fu_fortuneStart.js}"></script>
+	</div>
+</body>
+</html>
