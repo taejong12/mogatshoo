@@ -7,7 +7,7 @@ function fu_findByPwd(){
 	let emailWarnMsg = document.getElementById('emailWarnMsg');
 	let idWarnMsg = document.getElementById('idWarnMsg');
 	let findByPwdError = document.getElementById('findByPwdError');
-	
+
 	idWarnMsg.textContent = '';
 	emailWarnMsg.textContent = '';
 	findByPwdError.textContent = '';
@@ -46,6 +46,12 @@ function fu_findByPwd(){
 				findByPwdError.textContent = "일치하는 회원이 없습니다.";
 			} else {
 				
+				let sendEmailBtn = document.getElementById('sendEmailBtn');
+				sendEmailBtn.disabled = true;
+				
+				idInput.readOnly = true;
+				emailInput.readOnly = true;
+				
 				findByPwdError.textContent = "";
 				
 				let emailAuthDiv = document.getElementById('emailAuthDiv');
@@ -63,9 +69,12 @@ function fu_findByPwd(){
 				emailAuthInput.placeholder = '인증번호 입력';
 
 				let timerDiv = document.createElement('div');
+				timerDiv.classList.add('timer-div');
 				
 				let authWarnMsg = document.createElement('div');
 				authWarnMsg.id = 'authWarnMsg';
+				authWarnMsg.style.color = 'red';
+				authWarnMsg.classList.add('text-center', 'mb-3');
 				
 				emailAuthDiv.appendChild(emailAuthLabel);
 				emailAuthDiv.appendChild(emailAuthInput);
@@ -115,9 +124,12 @@ function fu_findByPwd(){
 				.then(data => {
 					
 					if (data.result === true) {
+						
 						authBtn.addEventListener("click", function(){
 							
 							let emailAuthCode = document.getElementById('emailAuth').value.trim();
+							
+							authWarnMsg.textContent = '';
 							
 							fetch("/member/emailAuthCodeConfirm", {
 					            method: "POST",
@@ -133,8 +145,9 @@ function fu_findByPwd(){
 									form.method= "post";
 									form.action= "/member/pwdUpdateForm";
 									form.submit();
+								} else {
+									authWarnMsg.textContent = '인증번호가 일치하지 않습니다.';
 								}
-								
 							})
 							.catch(error => {
 								console.error("비밀번호 찾기 인증번호 전송 오류:", error);
