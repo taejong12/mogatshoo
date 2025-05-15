@@ -14,12 +14,24 @@
 			<div class="card shadow-sm rounded-3">
 				<div class="card-body">
 					<dl class="row">
-						<dt class="col-sm-4">아이디</dt>
-						<dd class="col-sm-8" th:text="${member.memberId}"></dd>
+						<dt class="col-sm-4">닉네임</dt>
+						<dd class="col-sm-8" th:text="${member.memberNickName}"></dd>
 
 						<dt class="col-sm-4">이름</dt>
 						<dd class="col-sm-8" th:text="${member.memberName}"></dd>
+						
+						<dt class="col-sm-4">성별</dt>
+						<dd class="col-sm-8" th:text="${member.memberGender}"></dd>
 
+						<dt class="col-sm-4">우편번호</dt>
+						<dd class="col-sm-8" th:text="${member.memberZipcode}"></dd>
+						
+						<dt class="col-sm-4">기본주소</dt>
+						<dd class="col-sm-8" th:text="${member.memberAddress1}"></dd>
+						
+						<dt class="col-sm-4">상세주소</dt>
+						<dd class="col-sm-8" th:text="${member.memberAddress2}"></dd>
+						
 						<dt class="col-sm-4">전화번호</dt>
 						<dd class="col-sm-8" th:text="${member.memberTel}"></dd>
 

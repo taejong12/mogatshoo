@@ -4,7 +4,7 @@
       layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='비밀번호 찾기'">
 	<style>
-		#idWarnMsg, #emailWarnMsg {
+		#idWarnMsg, #emailWarnMsg, .timer-div{
 			color: red;
 			font-size: 0.8em;
 			padding: .375rem .75rem;
@@ -29,11 +29,10 @@
 						<input type="text" class="form-control" id="memberEmail" name="memberEmail" placeholder="이메일 입력">
 						<div id="emailWarnMsg"></div>
 					</div>
-					<div class="mb-3">
-						<div id="findByPwdError" class="text-center mb-3" style="color: red;"></div>
+					<div id="findByPwdError" class="text-center mb-3" style="color: red;">
 					</div>
 					<div class="d-grid gap-2 mb-3">
-						<button type="button" class="btn btn-white btn-lg border border-dark" onclick="fu_findByPwd()">이메일 인증</button>
+						<button type="button" id="sendEmailBtn" class="btn btn-white btn-lg border border-dark" onclick="fu_findByPwd()">이메일 인증</button>
 					</div>
 					<div id="emailAuthDiv" class="mb-3">
 					</div>

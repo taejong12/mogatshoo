@@ -1,17 +1,25 @@
 function fu_memberUpdate(){
 	let updateForm = document.memberUpdateForm;
-	let nameInput = updateForm.memberName;
-	let nameWarnMsg = document.getElementById('nameWarnMsg');
 	
-	nameWarnMsg.textContent = '';
+	let telVali = fu_telVali();
+	let addr2Vali = fu_addr2Vali();
+	let addr1Vali = fu_addr1Vali();
+	let zipCodeVali = fu_zipCodeVali();
+	let nameVali = fu_nameVali();
+	let nickNameVali = fu_nickNameVali();
 	
-	if(nameInput.value == "" || nameInput.value.length == 0){
-		updateForm.focus();
-		nameWarnMsg.textContent = '이름을 입력해주세요.';
-		return;
+	if(!nickNameCheck){
+		updateForm.memberNickName.focus();
+		let nickNameWarnMsg = document.getElementById("nickNameWarnMsg");
+		nickNameWarnMsg.textContent = '이미 사용 중인 닉네임입니다.';
 	}
 	
-	updateForm.method="post";
-	updateForm.action="/member/update";
-	updateForm.submit();
+	if(nickNameVali && nameVali && zipCodeVali
+		&& addr1Vali && addr2Vali && telVali
+		&& nickNameCheck
+	){
+		updateForm.method="post";
+		updateForm.action="/member/update";
+		updateForm.submit();
+	}
 }

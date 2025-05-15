@@ -53,5 +53,4 @@ public class EmailServiceImpl implements EmailService{
 			e.printStackTrace();
 		}
 	}
-	
 }

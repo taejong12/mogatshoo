@@ -22,6 +22,11 @@ function fu_memberJoin(){
 	
 	let birthValidation = fu_birthValidation();
 	let telValidation = fu_telValidation();
+	
+	if(!nickNameCheck){
+		form.memberNickName.focus();
+	}
+	
 	let nickNameValidation = fu_nickNameValidation();
 	let nameValidation = fu_nameValidation();
 	let pwdCheckValidation = fu_pwdCheckValidation();
@@ -35,13 +40,19 @@ function fu_memberJoin(){
 	}
 	
 	let pwdValidation = fu_pwdValidation();
+	
+	if(!idCheck){
+		form.memberId.focus();
+	}
+	
 	let idValidation = fu_idValidation();
 	
 	if(idValidation && pwdValidation && pwdCheckValidation 
 		&& nameValidation && telValidation && birthValidation 
 		&& emailValidation && infoCheckValidation && pwdInputCheck 
 		&& pwdCheckEqual && emailAuthCheck && emailAuthValidation 
-		&& addrValidation && genderValidation && nickNameValidation){
+		&& addrValidation && genderValidation && nickNameValidation
+		&& idCheck && nickNameCheck){
 		form.method= "post";
 		form.action = "/member/join";
 		form.submit();

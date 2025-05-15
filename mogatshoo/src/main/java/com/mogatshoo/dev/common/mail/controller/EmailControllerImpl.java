@@ -5,12 +5,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mogatshoo.dev.common.mail.service.EmailService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 
 import jakarta.servlet.http.HttpSession;
+
 
 @RestController
 public class EmailControllerImpl implements EmailController{
@@ -55,6 +57,7 @@ public class EmailControllerImpl implements EmailController{
 		
 		if(authCode != null && authCode.equals(memberAuthCode)) {
 			session.removeAttribute("authCode");
+			session.setAttribute("authSuccess", "authEmail");
 			msg = "인증 성공";
 			map.put("result", true);
 			map.put("msg", msg);
@@ -67,6 +70,7 @@ public class EmailControllerImpl implements EmailController{
 		}
 	}
 
+	@Async
 	@Override
 	public void findByIdSendEmail(MemberEntity memberEntity) {
 		
@@ -87,10 +91,5 @@ public class EmailControllerImpl implements EmailController{
 		html += "</body></html>";
 		
 		mailService.findByIdSendEmail(title, memberEntity.getMemberEmail(), html);
-		
-		
 	}
-	
-
-	
 }

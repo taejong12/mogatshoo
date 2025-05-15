@@ -12,7 +12,7 @@ function fu_findById(){
 		return;
 	}
 	
-	fetch("/member/emailCheck", {
+	fetch("/member/findByIdEmailCheck", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
@@ -21,6 +21,7 @@ function fu_findById(){
 	})
 	.then(response => response.json())
 	.then(data => {
+		
 		if (data.memberEmailCheck) {
 			emailWarnMsg.textContent = "없는 이메일입니다.";
 			emailWarnMsg.style.color = "red";

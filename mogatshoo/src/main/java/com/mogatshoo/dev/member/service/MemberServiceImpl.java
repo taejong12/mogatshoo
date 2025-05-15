@@ -165,7 +165,12 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 		MemberEntity member = memberRepository.findById(memberEntity.getMemberId())
 		        .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
 
+		member.setMemberNickName(memberEntity.getMemberNickName());
 		member.setMemberName(memberEntity.getMemberName());
+		member.setMemberZipcode(memberEntity.getMemberZipcode());
+		member.setMemberAddress1(memberEntity.getMemberAddress1());
+		member.setMemberAddress2(memberEntity.getMemberAddress2());
+		member.setMemberTel(memberEntity.getMemberTel());
 	}
 
 	@Override
@@ -181,5 +186,20 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 	@Override
 	public MemberEntity findByPwdIdAndEmailCheck(String memberId, String memberEmail) {
 		return memberRepository.findByMemberIdAndMemberEmail(memberId, memberEmail).orElse(null);
+	}
+
+	@Override
+	public void pwdUpdate(MemberEntity memberEntity) {
+		String pwdInput = passwordEncoder.encode(memberEntity.getMemberPwd());
+		
+		MemberEntity member = memberRepository.findById(memberEntity.getMemberId())
+		        .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+
+		member.setMemberPwd(pwdInput);
+	}
+
+	@Override
+	public Boolean memberNickNameCheck(String memberNickName) {
+		return memberRepository.findByMemberNickName(memberNickName).isEmpty();
 	}
 }

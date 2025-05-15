@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,6 +86,15 @@ public class MemberController {
 		return map;
 	}
 	
+	@PostMapping("/nickNameCheck")
+	@ResponseBody
+	public Map<String, Boolean> memberNickNameCheck(@RequestBody Map<String, String> request){
+		Boolean memberNickNameCheck = memberService.memberNickNameCheck(request.get("memberNickName"));
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("memberNickNameCheck", memberNickNameCheck);
+		return map;
+	}
+	
 	@PostMapping("/sendEmail")
 	@ResponseBody
 	public Map<String, Object> memberSendEmail(@RequestBody Map<String, String> request, HttpSession session){
@@ -143,7 +151,6 @@ public class MemberController {
 		return map;
 	}
 	
-
 	@PostMapping("/findById")
 	public String findByIdSendEmail(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
 		memberEntity = memberService.findByMemberEmail(memberEntity.getMemberEmail());
@@ -155,12 +162,6 @@ public class MemberController {
 	@GetMapping("/findByPwd")
 	public String findByPwdPage() {
 		return "member/findByPwd";
-	}
-	
-	@PostMapping("/findByPwd")
-	public String findByPwd(HttpSession session) {
-		session.setAttribute("postMapping", "findByPwd");
-		return "redirect:/member/complete";
 	}
 	
 	@PostMapping("/delete")
@@ -176,42 +177,46 @@ public class MemberController {
 	}
 	
 	@GetMapping("/update")
-	public String memberUpdatePage(@RequestParam("memberId") String memberId, HttpSession session) {
+	public String memberUpdatePage(@RequestParam("memberId") String memberId, HttpSession session, Model model) {
 		MemberEntity member = memberService.findByMemberId(memberId);
 		
 		if(member == null) {
 			return "redirect:/member/login";
 		}
 		
-		session.setAttribute("memberId", memberId);
+		session.setAttribute("member", member);
+		model.addAttribute("member", member);
 		return "member/update";
 	}
 	
 	@PostMapping("/update")
 	public String memberUpdate(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
 		
-		String memberId = (String)session.getAttribute("memberId");
+		MemberEntity member = (MemberEntity) session.getAttribute("member");
 		
-		if(memberId == null) {
-			return "redirect:/";
+		if(member == null) {
+			return "redirect:/member/login";
 		}
+		
+		String memberId = member.getMemberId();
 		
 		memberEntity.setMemberId(memberId);
 		memberService.memberUpdate(memberEntity);
-		session.removeAttribute("memberId");
-		
+		session.removeAttribute("member");
 		return "redirect:/member/mypage?memberId="+memberId;
 	}
 	
 	@PostMapping("/pwdUpdateForm")
 	public String pwdUpdateForm(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
-		/*
-		 * String authSuccess = (String) session.getAttribute("authSuccess");
-		 * 
-		 * if(authSuccess == null) { return "redirect:/"; }
-		 */
+		String authSuccess = (String) session.getAttribute("authSuccess");
 		
-		session.setAttribute("memberId", memberEntity.getMemberId());
+		if(authSuccess == null) {
+			return "redirect:/";
+		}
+		
+		String memberId = memberEntity.getMemberId();
+		session.setAttribute("memberId", memberId);
+		session.removeAttribute("authSuccess");
 		return "member/pwdUpdateForm";
 	}
 	
@@ -238,5 +243,15 @@ public class MemberController {
 		
 		map.put("idAndEmailCheck", idAndEmailCheck);
 		return map;
+	}
+	
+	@PostMapping("/pwdUpdate")
+	public String pwdUpdate(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
+		String memberId = (String) session.getAttribute("memberId");
+		memberEntity.setMemberId(memberId);
+		memberService.pwdUpdate(memberEntity);
+		session.setAttribute("postMapping", "findByPwd");
+		session.removeAttribute("memberId");
+		return "redirect:/member/complete";
 	}
 }
