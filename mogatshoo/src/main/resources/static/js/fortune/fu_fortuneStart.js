@@ -38,7 +38,7 @@ function fu_fortuneStart(){
 		btnDiv.appendChild(hairLossBtn);
 		
 		hairLossBtn.addEventListener('click', function(){
-			document.location.href="/탈모/진단";
+			document.location.href="/hairLossTest/testHair";
 		})
 		
 		let point = document.getElementById('point');
