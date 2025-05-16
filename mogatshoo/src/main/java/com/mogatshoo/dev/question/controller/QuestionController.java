@@ -1,5 +1,6 @@
 package com.mogatshoo.dev.question.controller;
 
+import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
 import com.mogatshoo.dev.question.entity.QuestionEntity;
 import com.mogatshoo.dev.question.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,10 @@ public class QuestionController {
 
 	// 새 질문 생성 페이지
 	@GetMapping("/new")
-	public String newQuestionForm(Model model) {
+	public String newQuestionForm(Model model, @ModelAttribute("PictureEntity") PictureEntity pic) {
 		// 빈 질문 객체 생성
 		QuestionEntity question = new QuestionEntity();
-
+		
 		// 다음 일련번호 생성
 		String nextSerialNumber = questionService.generateNextSerialNumber();
 		question.setSerialNumber(nextSerialNumber);
