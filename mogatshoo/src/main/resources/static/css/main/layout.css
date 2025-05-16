@@ -1,0 +1,7 @@
+@charset "UTF-8";
+
+#idWarnMsg, #pwdWarnMsg {
+	color: red;
+	font-size: 0.8em;
+	padding: .375rem .75rem;
+}
