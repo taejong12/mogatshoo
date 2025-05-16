@@ -27,10 +27,23 @@
         
         /* 본문 영역 스타일 */
         .content-wrapper {
+        	display: flex;
+        	justify-content: center;
+        	align-items: center;
+        	flex-direction: column;
             min-height: calc(100vh - 80px); /* 헤더 높이를 제외한 최소 높이 */
             padding: 20px;
             box-sizing: border-box;
+            font-family: 'Press Start 2P', cursive; 
+            background-color: #2B2BD8;
         }
+        
+		.footer{
+			background-color: #2B2BD8; 
+			font-size: 24px; 
+			font-weight: bolder; 
+			color: rgb(255, 255, 0);
+		}
     </style>
     <!-- 페이지별 추가 스타일 -->
     <th:block layout:fragment="additionalStyles"></th:block>
@@ -40,9 +53,7 @@
     <div th:replace="~{fragments/header :: header}"></div>
 
     <!-- 본문 영역 -->
-    <div class="content-wrapper">
-        <div layout:fragment="content"></div>
-    </div>
+    <div layout:fragment="content" class="content-wrapper"></div>
 
     <!-- 공통 푸터 -->
     <div th:replace="~{fragments/footer :: footer}"></div>

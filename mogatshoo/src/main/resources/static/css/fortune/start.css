@@ -1,21 +1,10 @@
 @charset "UTF-8";
 
-body {
-	font-family: 'Press Start 2P', cursive;
-	background-color: #2B2BD8;
-	overflow: hidden;
-	height: 100vh;
-	margin: 0;
-	padding: 0;
-}
-
 #fortuneItem {
 	color: rgb(255, 255, 0);
 }
 
 .point {
-	top: 30px; 
-	left: 0px;
 	color: rgb(255, 255, 0);
 }
 

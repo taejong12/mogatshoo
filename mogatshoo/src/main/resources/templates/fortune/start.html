@@ -5,9 +5,9 @@
 <head th:with="layoutTitle='탈모운세'">
 	<link rel="stylesheet" th:href="@{/css/fortune/start.css}">
 </head>
-<body class="d-flex flex-column min-vh-100">
-	<div layout:fragment="content" class="position-relative flex-fill container d-flex justify-content-center align-items-center flex-column">
-		<div class="point position-absolute">보유 포인트: <span id="point" th:text="${point}"></span></div>
+<body>
+	<div layout:fragment="content">
+		<div>보유 포인트: <span id="point" th:text="${point}"></span></div>
 		<h1 class="text-white mb-3">탈모운세</h1>
 		
 		<div class="mb-3">

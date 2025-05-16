@@ -85,9 +85,7 @@ public class PointServiceImpl implements PointService {
 
 		PointEntity pointEntity = pointRepository.findById(memberId).orElse(null);
 		int point = pointEntity.getPoint();
-		
-		System.out.println("count: "+count);
-		
+
 		// 출석 포인트 지급
 		if (count == 0) {
 			int savePoint = 10;
