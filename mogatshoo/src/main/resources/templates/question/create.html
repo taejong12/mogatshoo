@@ -15,12 +15,12 @@
     </div>
 
     <div class="question-form-container">
-        <form th:action="@{/questions}" method="post" th:object="${question}" id="questionForm">
+        <form th:action="@{/questions}" method="post" id="questionForm">
             <div class="form-header">
                 <div class="serial-number-display">
                     <label>일련번호:</label>
-                    <div class="serial-number" th:text="*{serialNumber}">Q0001</div>
-                    <input type="hidden" th:field="*{serialNumber}" />
+                    <div class="serial-number" th:text="${question.serialNumber}">Q0001</div>
+                    <input type="hidden" name="serialNumber" th:value="${question.serialNumber}" />
                 </div>
                 <div class="status-badge private">
                     <i class="fas fa-eye-slash"></i> 비공개 상태로 생성됩니다
@@ -29,8 +29,8 @@
             </div>
 
             <div class="form-group">
-                <label for="question">질문 내용 <span class="required">*</span></label>
-                <textarea id="question" th:field="*{question}" rows="3" required
+                <label for="questionText">질문 내용 <span class="required">*</span></label>
+                <textarea id="questionText" name="question" rows="3" required
                     placeholder="질문 내용을 입력하세요"></textarea>
                 <div class="character-counter">
                     <span id="questionCharCount">0</span> / 500
@@ -39,28 +39,77 @@
 
             <div class="options-container">
                 <h3>보기 항목</h3>
-                <div class="form-group">
-                    <label for="option1">보기 1 <span class="required">*</span></label>
-                    <input type="text" id="option1" th:field="*{option1}" required
-                        placeholder="보기 1 내용을 입력하세요" />
-                </div>
 
-                <div class="form-group">
-                    <label for="option2">보기 2 <span class="required">*</span></label>
-                    <input type="text" id="option2" th:field="*{option2}" required
-                        placeholder="보기 2 내용을 입력하세요" />
+                <!-- 보기 1 + 사진 1 -->
+                <div class="option-row">
+                    <div class="form-group">
+                        <label for="option1">보기 1 <span class="required">*</span></label>
+                        <input type="text" id="option1" name="option1" required th:value="${member.memberNickName}">
+                    </div>
+                    <!-- 간단한 이미지 표시 -->
+                    <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 0}">
+                        <img th:src="@{'/uploads/' + ${randomPictures[0].hairPicture}}"
+                             alt="참고 이미지 1" class="option-image"/>
+                        <input type="hidden" name="imageReference1" th:value="${randomPictures[0].hairPicture}" />
+                    </div>
+                    <!-- 이미지가 없을 경우 대체 표시 -->
+                    <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 0}">
+                        <span>이미지 없음</span>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="option3">보기 3 <span class="required">*</span></label>
-                    <input type="text" id="option3" th:field="*{option3}" required
-                        placeholder="보기 3 내용을 입력하세요" />
+                
+                <!-- 보기 2 + 사진 2 -->
+                <div class="option-row">
+                    <div class="form-group">
+                        <label for="option2">보기 2 <span class="required">*</span></label>
+                        <input type="text" id="option1" name="option1" required th:value="${member.memberNickName}">
+                    </div>
+                    <!-- 간단한 이미지 표시 -->
+                    <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 1}">
+                        <img th:src="@{'/uploads/' + ${randomPictures[1].hairPicture}}"
+                             alt="참고 이미지 2" class="option-image"/>
+                        <input type="hidden" name="imageReference2" th:value="${randomPictures[1].hairPicture}" />
+                    </div>
+                    <!-- 이미지가 없을 경우 대체 표시 -->
+                    <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 1}">
+                        <span>이미지 없음</span>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="option4">보기 4 <span class="required">*</span></label>
-                    <input type="text" id="option4" th:field="*{option4}" required
-                        placeholder="보기 4 내용을 입력하세요" />
+                
+                <!-- 보기 3 + 사진 3 -->
+                <div class="option-row">
+                    <div class="form-group">
+                        <label for="option3">보기 3 <span class="required">*</span></label>
+                        <input type="text" id="option1" name="option1" required th:value="${member.memberNickName}">
+                    </div>
+                    <!-- 간단한 이미지 표시 -->
+                    <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 2}">
+                        <img th:src="@{'/uploads/' + ${randomPictures[2].hairPicture}}"
+                             alt="참고 이미지 3" class="option-image"/>
+                        <input type="hidden" name="imageReference3" th:value="${randomPictures[2].hairPicture}" />
+                    </div>
+                    <!-- 이미지가 없을 경우 대체 표시 -->
+                    <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 2}">
+                        <span>이미지 없음</span>
+                    </div>
+                </div>
+                
+                <!-- 보기 4 + 사진 4 -->
+                <div class="option-row">
+                    <div class="form-group">
+                        <label for="option4">보기 4 <span class="required">*</span></label>
+                        <input type="text" id="option1" name="option1" required th:value="${member.memberNickName}">
+                    </div>
+                    <!-- 간단한 이미지 표시 -->
+                    <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 3}">
+                        <img th:src="@{'/uploads/' + ${randomPictures[3].hairPicture}}"
+                             alt="참고 이미지 4" class="option-image"/>
+                        <input type="hidden" name="imageReference4" th:value="${randomPictures[3].hairPicture}" />
+                    </div>
+                    <!-- 이미지가 없을 경우 대체 표시 -->
+                    <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 3}">
+                        <span>이미지 없음</span>
+                    </div>
                 </div>
             </div>
 

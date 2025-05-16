@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +132,34 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 	     */
 	    public PictureEntity getPictureByMemberId(String memberId) {
 	        return pictureRepository.findById(memberId).orElse(null);
+	    }
+	    
+	    /**
+	     * 랜덤하게 지정된 개수의 사진을 가져옵니다.
+	     * 
+	     * @param count 가져올 사진 개수
+	     * @return 랜덤하게 선택된 사진 목록
+	     */
+	    public List<PictureEntity> getRandomPictures(int count) {
+	        // 방법 1: JPA에서 모든 사진을 가져와서 자바에서 랜덤 선택
+	        List<PictureEntity> allPictures = pictureRepository.findAll();
+	        
+	        // 사진이 count보다 적으면 있는 만큼만 반환
+	        if (allPictures.size() <= count) {
+	            return allPictures;
+	        }
+	        
+	        // 랜덤 선택을 위한 리스트 섞기
+	        Collections.shuffle(allPictures);
+	        
+	        // 앞에서부터 count개 선택
+	        return allPictures.subList(0, count);
+	        
+	        /*
+	        // 방법 2: 데이터베이스에서 직접 랜덤 선택 (MySQL 예시)
+	        // 이 방법을 사용하려면 PictureRepository에 해당 메소드 추가 필요
+	        return pictureRepository.findRandomPictures(count);
+	        */
 	    }
 	
 }

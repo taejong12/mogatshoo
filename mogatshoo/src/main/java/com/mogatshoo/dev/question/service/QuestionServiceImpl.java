@@ -1,9 +1,13 @@
 package com.mogatshoo.dev.question.service;
 
+import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
+import com.mogatshoo.dev.hair_loss_test.repository.PictureRepository;
 import com.mogatshoo.dev.question.entity.QuestionEntity;
 import com.mogatshoo.dev.question.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -11,6 +15,8 @@ public class QuestionServiceImpl implements QuestionService {
 	
 	@Autowired
 	private QuestionRepository questionRepository;
+	@Autowired
+	PictureRepository picRepository;
 	
 	@Override
 	public QuestionEntity createQuestion(QuestionEntity questionEntity) {
@@ -23,6 +29,8 @@ public class QuestionServiceImpl implements QuestionService {
 		
 		return questionRepository.save(questionEntity);
 	}
+	
+	
 	
 	@Override
 	public String generateNextSerialNumber() {
