@@ -1,0 +1,178 @@
+/* 픽셀 스타일 글꼴 */
+	@font-face {
+		font-family: 'DOSGothic';
+		src: url('/fonts/DOSGothic.woff2') format('woff2'),
+			 url('/fonts/DOSGothic.woff') format('woff'),
+			 url('/fonts/DOSGothic.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
+		font-display: swap;
+	}
+	
+	:root {
+		--primary-color: #2B2BD8; /* 메인 파란색 */
+		--accent-color: #FFC107; /* 강조 노란색 */
+		--text-light: #FFFFFF;
+		--text-dark: #000000;
+		--pixel-grid: rgba(255, 255, 255, 0.1);
+	}
+	
+	/* 레트로 픽셀 배경 */
+	.pixel-bg {
+		background-color: var(--primary-color);
+		background-image: linear-gradient(var(--pixel-grid) 1px, transparent 1px),
+			linear-gradient(90deg, var(--pixel-grid) 1px, transparent 1px);
+		background-size: 20px 20px;
+		background-position: center;
+		font-family: 'DOSGothic', sans-serif;
+		color: var(--text-light);
+		letter-spacing: -0.03em;
+	}
+	
+	/* 레트로 픽셀 컨테이너 */
+	.retro-container {
+		max-width: 1200px;
+		
+		margin: 0 auto;
+		padding: 2rem;
+		background-color: rgba(43, 43, 216, 0.8);
+		border: 8px solid white;
+		border-radius: 8px;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+	}
+	
+	/* 레트로 픽셀 제목 */
+	.retro-title {
+		font-family: 'DOSGothic', sans-serif;
+		color: var(--accent-color);
+		text-align: center;
+		font-size: 2.5rem;
+		text-shadow: 3px 3px 0 var(--text-dark);
+		margin-bottom: 2rem;
+	}
+	
+	/* 레트로 픽셀 패널 */
+	.retro-panel {
+		background-color: rgba(255, 255, 255, 0.1);
+		border: 3px solid var(--accent-color);
+		border-radius: 5px;
+		padding: 2rem;
+		margin-bottom: 2rem;
+		color: white;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	}
+	
+	/* 레트로 입력 필드 */
+	.retro-input {
+		width: 100%;
+		padding: 0.75rem;
+		font-family: 'DOSGothic', sans-serif;
+		background-color: rgba(255, 255, 255, 0.8);
+		border: 3px solid var(--accent-color);
+		border-radius: 5px;
+		color: var(--text-dark);
+		margin-bottom: 1.5rem;
+	}
+	
+	/* 레트로 버튼 */
+	.retro-button {
+		font-family: 'DOSGothic', sans-serif;
+		background-color: #EE5A5A;
+		border: 3px solid var(--text-dark);
+		border-radius: 5px;
+		color: var(--text-light);
+		padding: 0.75rem 1.5rem;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		font-size: 1.1rem;
+	}
+	
+	.retro-button:hover {
+		transform: scale(1.05);
+		background-color: #FF7070;
+	}
+	
+	/* 레트로 결과 컨테이너 */
+	.retro-result {
+		background-color: rgba(255, 255, 255, 0.9);
+		border-radius: 5px;
+		padding: 1.5rem;
+		color: var(--text-dark);
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	}
+	
+	/* 레트로 결과 아이템 */
+	.result-item {
+		margin-bottom: 0.5rem;
+		padding: 0.5rem;
+		border-bottom: 1px solid #eee;
+		font-size: 1.1rem;
+	}
+	
+	/* 레트로 이미지 미리보기 */
+	#image-preview-container {
+		text-align: center;
+		margin: 1rem 0;
+	}
+	
+	#image-preview {
+		max-width: 100%;
+		max-height: 300px;
+		border: 3px solid var(--accent-color);
+		border-radius: 5px;
+		object-fit: contain;
+		background-color: white;
+	}
+	
+	/* 하단 메시지 바 */
+	.bottom-message-bar {
+		background-color: var(--primary-color);
+		color: var(--text-light);
+		padding: 15px;
+		text-align: center;
+		font-family: 'DOSGothic', sans-serif;
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		border-top: 3px solid var(--accent-color);
+	}
+	
+	#label-container {
+		background-color: white;
+		padding: 1rem;
+		border-radius: 5px;
+		border: 2px solid #ddd;
+	}
+	
+	#debug-info {
+		margin-top: 1rem;
+		font-size: 0.8rem;
+		color: #666;
+		text-align: center;
+	}
+	
+	/* 반응형 레이아웃 */
+	@media (max-width: 768px) {
+		.retro-container {
+			padding: 1rem;
+		}
+		
+		.page-title {
+			font-size: 2rem;
+		}
+		
+		.retro-button {
+			padding: 0.5rem 1rem;
+			font-size: 1rem;
+		}
+	}
+	
+	@media (max-width: 576px) {
+		.retro-title {
+			font-size: 1.8rem;
+		}
+		
+		#image-preview {
+			max-height: 200px;
+		}
+	}
