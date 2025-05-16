@@ -1,0 +1,351 @@
+/* 헤더 컴포넌트에만 적용되는 스타일 */
+.main-header-component {
+    /* 기존 헤더 스타일을 이 클래스 내부로 범위 지정 */
+    font-family: 'Press Start 2P', cursive !important;
+}
+
+/* 픽셀 폰트 클래스 - 명시적으로 도트 폰트 사용을 강제 */
+.main-header-component .pixel-font {
+    font-family: 'Press Start 2P', cursive !important;
+    font-weight: normal !important;
+}
+
+/* 헤더 영역 */
+.main-header-component .header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    box-sizing: border-box; /* 패딩을 너비에 포함 */
+	background-color: #2B2BD8;
+}
+
+/* 로고 컨테이너 */
+.main-header-component .logo-container {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    height: 60px;
+}
+
+/* 로고 이미지 */
+.main-header-component .logo-img {
+    padding-left: 30px;
+    height: 60px;
+    transition: transform 0.3s ease;
+}
+
+/* 호버 효과 - 로고 */
+.main-header-component .logo-container:hover .logo-img {
+    transform: translateY(-100%);
+}
+
+/* 대체 텍스트 (로고 호버 시 나타남) */
+.main-header-component .logo-container::after {
+    content: "HI~";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255, 255, 0);
+    font-weight: bold;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    padding-left: 30px;
+    font-family: 'Press Start 2P', cursive !important;
+}
+
+/* 호버 효과 - 대체 텍스트 */
+.main-header-component .logo-container:hover::after {
+    transform: translateY(0);
+}
+
+/* 네비게이션 바 커스터마이징 */
+.main-header-component .navbar {
+    background-color: transparent !important;
+    padding: 0;
+}
+
+.main-header-component .navbar-collapse {
+    justify-content: flex-end;
+}
+
+.main-header-component .navbar-nav {
+    align-items: center;
+}
+
+/* 네비게이션 링크 스타일 */
+.main-header-component .nav-link {
+    color: rgb(255, 255, 0) !important;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    font-size: 20px;
+    padding: 5px 0;
+    margin: 0 20px;
+    font-family: 'Press Start 2P', cursive !important;
+}
+
+/* 링크 밑줄 효과 */
+.main-header-component .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    transform: translateX(-101%);
+    transition: transform 0.3s ease;
+}
+
+.main-header-component .nav-link:hover::after {
+    transform: translateX(0);
+}
+
+/* 인증된 사용자 영역 */
+.main-header-component .auth-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row; /* 데스크톱에서는 가로로 나란히 */
+}
+
+.main-header-component .navbar-text {
+    color: rgb(255, 255, 0) !important;
+    font-size: 20px;
+    margin-right: 15px;
+    font-family: 'Press Start 2P', cursive !important;
+}
+
+.main-header-component .navbar-text a,
+.main-header-component .navbar-text span {
+    font-family: 'Press Start 2P', cursive !important;
+}
+
+.main-header-component .btn-white {
+    background: transparent;
+    color: rgb(255, 255, 0);
+    border: none;
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 20px;
+    padding: 5px 0;
+    margin: 0 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-header-component .btn-white::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    transform: translateX(-101%);
+    transition: transform 0.3s ease;
+}
+
+.main-header-component .btn-white:hover::after {
+    transform: translateX(0);
+}
+
+/* 햄버거 메뉴 (모바일) */
+.main-header-component .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.main-header-component .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* 모바일 메뉴 스타일 개선 */
+.main-header-component .navbar-collapse.show,
+.main-header-component .navbar-collapse.collapsing {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 200px;
+    background-color: rgba(43, 43, 216, 0.9);
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.main-header-component .navbar-collapse.show .navbar-nav,
+.main-header-component .navbar-collapse.collapsing .navbar-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.main-header-component .navbar-collapse.show .nav-link,
+.main-header-component .navbar-collapse.collapsing .nav-link {
+    margin: 8px 0;
+}
+
+/* 반응형 디자인: 태블릿 */
+@media screen and (max-width: 768px) {
+    /* 로고 이미지 크기 조정 */
+    .main-header-component .logo-img {
+        height: 50px;
+        padding-left: 20px;
+    }
+    
+    .main-header-component .logo-container {
+        height: 50px;
+    }
+    
+    .main-header-component .logo-container::after {
+        padding-left: 20px;
+        font-size: 14px;
+    }
+    
+    /* 네비게이션 링크 조정 */
+    .main-header-component .nav-link, .main-header-component .btn-white {
+        font-size: 18px;
+        margin: 0 10px;
+    }
+    
+    .main-header-component .navbar-text {
+        font-size: 16px;
+    }
+}
+
+/* 반응형 디자인: 모바일 - 햄버거 메뉴 표시됨 */
+@media screen and (max-width: 991px) { /* Bootstrap lg 브레이크포인트 */
+    /* 모바일에서 로그인 영역 세로 배치 */
+    .main-header-component .navbar-collapse.show .auth-container,
+    .main-header-component .navbar-collapse.collapsing .auth-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    
+    .main-header-component .navbar-collapse.show .navbar-text,
+    .main-header-component .navbar-collapse.collapsing .navbar-text {
+        margin: 8px 0;
+        width: 100%;
+    }
+    
+    .main-header-component .navbar-collapse.show .logout-form,
+    .main-header-component .navbar-collapse.collapsing .logout-form {
+        width: 100%;
+        margin-top: 8px;
+    }
+    
+    .main-header-component .navbar-collapse.show .btn-white,
+    .main-header-component .navbar-collapse.collapsing .btn-white {
+        width: 100%;
+        text-align: left;
+        margin: 8px 0;
+    }
+}
+
+/* 반응형 디자인: 모바일 */
+@media screen and (max-width: 480px) {
+    /* 로고 이미지 크기 조정 */
+    .main-header-component .logo-img {
+        height: 40px;
+        padding-left: 10px;
+    }
+    
+    .main-header-component .logo-container {
+        height: 40px;
+    }
+    
+    .main-header-component .logo-container::after {
+        padding-left: 10px;
+        font-size: 12px;
+    }
+    
+    /* 네비게이션 링크 조정 */
+    .main-header-component .nav-link, .main-header-component .btn-white {
+        font-size: 14px;
+        margin: 0 5px;
+    }
+    
+    .main-header-component .navbar-text {
+        font-size: 12px;
+        margin-right: 5px;
+    }
+    
+    /* 헤더 패딩 축소 */
+    .main-header-component .header {
+        padding: 8px;
+    }
+}
+
+/* 작은 모바일 화면 */
+@media screen and (max-width: 320px) {
+    .main-header-component .nav-link, .main-header-component .btn-white {
+        font-size: 12px;
+    }
+    
+    /* 더 작은 로고 */
+    .main-header-component .logo-img {
+        height: 30px;
+    }
+    
+    .main-header-component .logo-container {
+        height: 30px;
+    }
+}
+
+/* 높이가 매우 낮은 화면 (가로 모드 모바일 등) */
+@media screen and (max-height: 450px) {
+    .main-header-component .header {
+        padding: 5px;
+    }
+    
+    .main-header-component .logo-img {
+        height: 30px;
+    }
+    
+    .main-header-component .logo-container {
+        height: 30px;
+    }
+    
+    .main-header-component .nav-link, .main-header-component .btn-white {
+        font-size: 14px;
+    }
+}
+
+/* 웃는 얼굴 로고 스타일 */
+.main-header-component .smiley-logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 60px;
+    height: 60px;
+    display: block;
+    cursor: pointer;
+    z-index: 10;
+}
+/* 로고 컨테이너의 링크가 클릭 가능하도록 수정 */
+.main-header-component .logo-container a {
+    display: block;
+    position: relative;
+    z-index: 11; /* 더 높은 z-index로 상호작용 우선순위 높임 */
+    cursor: pointer;
+}
+
+/* 로고 이미지가 클릭 가능하도록 수정 */
+.main-header-component .logo-img {
+    padding-left: 30px;
+    height: 60px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
