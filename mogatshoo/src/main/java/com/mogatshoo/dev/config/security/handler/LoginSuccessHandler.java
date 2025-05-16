@@ -32,5 +32,4 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler{
         // 로그인 후 이동할 경로로 리다이렉트
         response.sendRedirect("/");
 	}
-
 }

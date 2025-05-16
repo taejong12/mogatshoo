@@ -19,6 +19,7 @@
 					<span th:text="${#authentication.principal.nickName}"></span> 님
 				</div>
 			    <a class="btn btn-white" th:href="@{/member/mypage(memberId=${#authentication.name})}">내 정보</a>
+			    <a class="btn btn-white" th:href="@{/point/list(memberId=${#authentication.name})}">포인트내역</a>
 			    <form th:action="@{/logout}" method="post">
 				    <button type="submit" class="btn btn-white">로그아웃</button>
 				</form>

@@ -2,7 +2,10 @@ package com.mogatshoo.dev.point.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +43,11 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 		LocalDateTime start = today.atStartOfDay();
 		LocalDateTime end = today.plusDays(1).atStartOfDay().minusSeconds(1);
 		return pointHistoryRepository.countByMemberIdAndReasonAndPointCreateBetween(memberId, reason, start, end);
+	}
+
+	@Override
+	public Page<PointHistoryEntity> findByMemberId(String memberId, Pageable pageable) {
+		return pointHistoryRepository.findByMemberId(memberId, pageable);
 	}
 	
 }
