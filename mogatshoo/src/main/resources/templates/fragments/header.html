@@ -1,30 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<div th:fragment="header">
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<div class="container-fluid">
-			<a class="navbar-brand" th:href="@{/}">mogatshoo</a>
-			<div class="collapse navbar-collapse">
-				<ul class="navbar-nav">
-					<li class="nav-item"><a class="nav-link" th:href="@{/fortune/start}">오늘운세</a></li>
-				</ul>
-				<ul class="navbar-nav" sec:authorize="isAnonymous()">
-					<li class="nav-item"><a class="nav-link" th:href="@{/member/login}">로그인</a></li>
-					<li class="nav-item"><a class="nav-link" th:href="@{/member/join}">회원가입</a></li>
-				</ul>
-			</div>
-			
-			<div sec:authorize="isAuthenticated()" style="display: flex; align-items: center;">
-				<div class="navbar-text">
-					<span th:text="${#authentication.principal.nickName}"></span> 님
-				</div>
-			    <a class="btn btn-white" th:href="@{/member/mypage(memberId=${#authentication.name})}">내 정보</a>
-			    <form th:action="@{/logout}" method="post">
-				    <button type="submit" class="btn btn-white">로그아웃</button>
-				</form>
-			</div>
-		</div>
-	</nav>
-</div>
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- 다른 페이지에 포함될 헤더 조각 -->
+    <div th:fragment="header" class="main-header-component">
+        <div class="header">
+            <!-- 로고 (호버 시 "HI~"로 변경) - 메인 페이지 링크 확인 -->
+            <div class="logo-container">
+                <a th:href="@{/}">
+                    <img src="/img/logo/mogetshooLogo.PNG" alt="mogatshoo" class="logo-img">
+                </a>
+            </div>
+            
+            <!-- 네비게이션 바 -->
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <div class="collapse navbar-collapse" id="navbarContent">
+                        <!-- 비로그인 상태일 때 표시되는 링크 -->
+                        <ul class="navbar-nav" sec:authorize="isAnonymous()">
+							<li class="nav-item"><a class="nav-link" th:href="@{/fortune/start}">오늘운세</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link pixel-font" th:href="@{/member/login}">login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link pixel-font" th:href="@{/member/join}">join</a>
+                            </li>
+                        </ul>
+                        
+                        <!-- 로그인 상태일 때 표시되는 내용 -->
+                        <div sec:authorize="isAuthenticated()" class="auth-container">
+                            <div class="navbar-text">
+                                <a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="nav-link pixel-font">
+                                    <span sec:authentication="name" class="pixel-font"></span>
+                                </a>
+                            </div>
+                            <form th:action="@{/logout}" method="post" class="logout-form">
+                                <button type="submit" class="btn btn-white pixel-font" style="color: red;">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</body>
 </html>
