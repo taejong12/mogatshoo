@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.hair_loss_test.hair_loss_picture.entity;
+package com.mogatshoo.dev.hair_loss_test.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

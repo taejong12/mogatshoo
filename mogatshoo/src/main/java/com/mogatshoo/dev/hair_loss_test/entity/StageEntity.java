@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.hair_loss_test.hair_loss_stage.entity;
+package com.mogatshoo.dev.hair_loss_test.entity;
 
 import java.time.LocalDateTime;
 
