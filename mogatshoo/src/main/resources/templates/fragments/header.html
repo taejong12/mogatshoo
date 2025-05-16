@@ -8,13 +8,17 @@
     <!-- 다른 페이지에 포함될 헤더 조각 -->
     <div th:fragment="header" class="main-header-component">
         <div class="header">
-            <!-- 로고 (호버 시 "HI~"로 변경) - 메인 페이지 링크 확인 -->
-            <div class="logo-container">
-                <a th:href="@{/}">
-                    <img src="/img/logo/mogetshooLogo.PNG" alt="mogatshoo" class="logo-img">
-                </a>
-            </div>
-            
+			<div class="d-flex align-items-center">
+	            <!-- 로고 (호버 시 "HI~"로 변경) - 메인 페이지 링크 확인 -->
+	            <div class="logo-container me-4">
+	                <a th:href="@{/}">
+	                    <img src="/img/logo/mogetshooLogo.PNG" alt="mogatshoo" class="logo-img">
+	                </a>
+	            </div>
+	            <div>
+	                <a class="nav-link pixel-font" th:href="@{/fortune/start}">오늘운세</a>
+	            </div>
+	        </div>
             
             <!-- 네비게이션 바 -->
             <nav class="navbar navbar-expand-lg">
@@ -22,11 +26,7 @@
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-					
                     <div class="collapse navbar-collapse" id="navbarContent">
-                    	<ul class="navbar-nav">
-							<li class="nav-item"><a class="nav-link pixel-font" th:href="@{/fortune/start}">오늘운세</a></li>
-						</ul>
                         <!-- 비로그인 상태일 때 표시되는 링크 -->
                         <ul class="navbar-nav" sec:authorize="isAnonymous()">
                             <li class="nav-item">
