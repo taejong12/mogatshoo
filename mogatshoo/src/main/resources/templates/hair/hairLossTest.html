@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}">
+
+<head th:with="layoutTitle='탈모 테스트'">
+	<link rel="stylesheet" th:href="@{/css/hairLossTest/hairLossTest.css}">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>탈모 테스트</title>
+	<!-- 부트스트랩 5 -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+
+<body class="pixel-bg">
+	<div class="main-container" layout:fragment="content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-9">
+					<div class="retro-panel">
+						<h1 class="retro-title">탈모 테스트</h1>
+
+						<form method="post" enctype="multipart/form-data" id="boardForm" class="row">
+							<div class="form-group col-md-6 mb-3">
+								<label for="idInput" class="form-label"
+									style="color: var(--accent-color); font-size: 1.2rem;">닉네임</label>
+								<input type="text" id="idInput" name="id"
+									th:value="${member != null ? member.memberId : ''}" class="retro-input">
+							</div>
+
+							<div class="form-group col-md-12 mb-3">
+								<label for="imageInput" class="form-label"
+									style="color: var(--accent-color); font-size: 1.2rem;">이미지 업로드</label>
+								<input type="file" id="imageInput" name="files" accept="image/*"
+									onchange="previewImage()" class="retro-input">
+								<div id="image-preview-container">
+									<img id="image-preview" style="display:none;">
+								</div>
+							</div>
+
+							<div class="form-group col-md-12 text-center mb-3">
+								<button type="button" id="analyzeButton" style="display:none;" onclick="analyzeImage()"
+									class="retro-button">탈모 단계 분석하기</button>
+							</div>
+
+							<!-- 숨겨진 필드: 예측 결과 JSON 데이터를 서버로 전송 -->
+							<input type="hidden" id="predictionJson" name="predictionData" value="">
+
+							<!-- 분석 완료 후 표시될 제출 버튼 -->
+							<div class="form-group col-md-12 text-center mb-3">
+								<button type="button" id="submitButton" style="display:none;" class="retro-button"
+									onclick="saveResult()">결과 저장하기</button>
+							</div>
+						</form>
+					</div>
+
+					<div id="prediction-container" class="retro-result" style="display:none;">
+						<h4 class="retro-title" style="color: var(--primary-color); font-size: 1.4rem;">탈모 분석 결과</h4>
+						<div id="label-container"></div>
+						<div id="debug-info">
+							<p>모델 상태: <span id="model-status">로드 중...</span></p>
+						</div>
+					</div>
+
+					<!-- 결과 저장 후 표시되는, 성공/실패 알림 모달 -->
+					<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content"
+								style="background-color: rgba(43, 43, 216, 0.9); border: 3px solid var(--accent-color);">
+								<div class="modal-header" style="border-bottom: 2px solid var(--accent-color);">
+									<h5 class="modal-title" id="resultModalLabel" style="color: var(--accent-color);">저장
+										결과</h5>
+									<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body" style="color: white; font-family: 'DOSGothic', sans-serif;">
+									<p id="modalMessage"></p>
+								</div>
+								<div class="modal-footer" style="border-top: 2px solid var(--accent-color);">
+									<button type="button" class="retro-button" data-bs-dismiss="modal">확인</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<script type="text/javascript">
+			// 모델 파일의 경로 - Spring Boot의 정적 리소스 경로에 맞게 수정
+			const MODEL_PATH = "/my_model/";
+			let model, maxPredictions;
+			let modelLoaded = false;
+		</script>
+		<script th:src="@{/js/hairLossTest/ev_hairLossTestModel.js}"></script>
+		<script th:src="@{/js/hairLossTest/fu_hairLossTestAnalyzeImage.js}"></script>
+		<script th:src="@{/js/hairLossTest/fu_hairLossTestImage.js}"></script>
+		<script th:src="@{/js/hairLossTest/fu_hairLossTestSaveImage.js}"></script>
+		<script th:src="@{/js/hairLossTest/ev_hairLossTestAJX.js}"></script>
+		<script th:src="@{/js/hairLossTest/fu_hairLossTestValidateForm.js}"></script>
+	</div>
+</body>
+
+</html>

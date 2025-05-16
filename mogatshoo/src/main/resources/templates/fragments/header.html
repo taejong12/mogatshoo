@@ -14,6 +14,7 @@
 					<li class="nav-item"><a class="nav-link" th:href="@{/member/join}">회원가입</a></li>
 				</ul>
 			</div>
+			
 			<div sec:authorize="isAuthenticated()" style="display: flex; align-items: center;">
 				<div class="navbar-text">
 					<span th:text="${#authentication.principal.nickName}"></span> 님
