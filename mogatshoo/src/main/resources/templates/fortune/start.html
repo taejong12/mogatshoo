@@ -3,33 +3,26 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='탈모운세'">
-	<style>
-		body {
-			font-family: 'Press Start 2P', cursive;
-			background-color: #2B2BD8;
-			overflow: hidden;
-			height: 100vh;
-			margin: 0;
-			padding: 0;
-		}
-		
-		.title {
-			color: rgb(255, 255, 0);
-		}
-		
-	</style>
+	<link rel="stylesheet" th:href="@{/css/fortune/start.css}">
 </head>
 <body class="d-flex flex-column min-vh-100">
-	<div layout:fragment="content" class="flex-fill container d-flex justify-content-center align-items-center flex-column">
-	
+	<div layout:fragment="content" class="position-relative flex-fill container d-flex justify-content-center align-items-center flex-column">
+		<div class="point position-absolute">보유 포인트: <span id="point" th:text="${point}"></span></div>
 		<h1 class="text-white mb-3">탈모운세</h1>
 		
 		<div class="mb-3">
-			<div id="fortuneItem" class="fw-bold fs-5 title"></div>
+			<div id="fortuneItem" class="fw-bold fs-5"></div>
 			<div id="fortuneMsg" class="text-white"></div>
 			<div id="btnDiv" class="d-flex justify-content-center align-items-center">
-				<button class="btn btn-warning btn-lg" id="fortuneBtn" onclick="fu_fortuneStart()">시작</button>
+				<th:block th:if="${point >= 10}">
+					<button class="btn btn-warning btn-lg" id="fortuneBtn" onclick="fu_fortuneStart()">시작</button>
+				</th:block>
+				<th:block th:unless="${point >= 10}">
+					<div>포인트가 부족합니다.</div>
+					<a class="btn btn-warning btn-lg" th:href="@{/vote}">투표하러 가기</a>
+				</th:block>
 			</div>
+			<p>* 10 포인트 차감</p>
 		</div>
 		
 		<!-- 운세 시작 -->

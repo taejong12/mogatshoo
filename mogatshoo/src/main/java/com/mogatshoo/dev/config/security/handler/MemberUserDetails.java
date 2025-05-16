@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.oauth2;
+package com.mogatshoo.dev.config.security.handler;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,11 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 
 
-public class OAuth2UserDetails implements UserDetails{
+public class MemberUserDetails implements UserDetails{
 
 	private final MemberEntity memberEntity;
 
-    public OAuth2UserDetails(MemberEntity memberEntity) {
+    public MemberUserDetails(MemberEntity memberEntity) {
         this.memberEntity = memberEntity;
     }
 	

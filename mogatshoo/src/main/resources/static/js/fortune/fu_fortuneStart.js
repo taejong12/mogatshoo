@@ -41,6 +41,9 @@ function fu_fortuneStart(){
 			document.location.href="/탈모/진단";
 		})
 		
+		let point = document.getElementById('point');
+		point.textContent = map.point;
+		
 	})
 	.catch(error => {
 		console.error("운세 확인 오류:", error);

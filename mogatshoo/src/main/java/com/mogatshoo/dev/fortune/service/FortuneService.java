@@ -5,6 +5,6 @@ import java.util.Map;
 
 public interface FortuneService {
 
-	Map<String, Object> fortuneMsg(String name, LocalDate birth, String gender);
+	Map<String, Object> fortuneMsg(String memberId, String name, LocalDate birth, String gender);
 
 }

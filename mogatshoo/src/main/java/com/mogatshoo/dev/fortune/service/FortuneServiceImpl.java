@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.mogatshoo.dev.fortune.entity.FortuneEntity;
 import com.mogatshoo.dev.fortune.repository.FortuneRepository;
+import com.mogatshoo.dev.point.service.PointService;
 
 import jakarta.transaction.Transactional;
 @Service
@@ -19,8 +20,11 @@ public class FortuneServiceImpl implements FortuneService{
 	@Autowired
 	private FortuneRepository fortuneRepository;
 	
+	@Autowired
+	private PointService pointService;
+	
 	@Override
-	public Map<String, Object> fortuneMsg(String name, LocalDate birth, String gender) {
+	public Map<String, Object> fortuneMsg(String memberId, String name, LocalDate birth, String gender) {
 		
 		Map<String, Object> map = new HashMap<>();
 		
@@ -44,6 +48,10 @@ public class FortuneServiceImpl implements FortuneService{
 		
 		map.put("fortuneMsg", fortuneMsg);
 		map.put("fortuneItem", fortuneItem);
+		
+		int point = pointService.fortunePointUse(memberId);
+		
+		map.put("point", point);
 		
 		return map;
 	}

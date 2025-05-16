@@ -10,8 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.mogatshoo.dev.config.security.handler.LoginSuccessHandler;
+import com.mogatshoo.dev.config.security.handler.OAuth2LoginSuccessHandler;
 import com.mogatshoo.dev.member.service.MemberServiceImpl;
-import com.mogatshoo.dev.oauth2.OAuth2LoginSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +23,9 @@ public class SecurityConfig {
 
     @Autowired
     private OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
+    
+    @Autowired
+    private LoginSuccessHandler loginSuccessHandler;
     
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -63,7 +67,7 @@ public class SecurityConfig {
 				.loginProcessingUrl("/member/login")
 				.usernameParameter("memberId")
 				.passwordParameter("memberPwd")
-				.defaultSuccessUrl("/", true)
+				.successHandler(loginSuccessHandler)
 				.failureUrl("/member/login?error")
 				.permitAll())
 		

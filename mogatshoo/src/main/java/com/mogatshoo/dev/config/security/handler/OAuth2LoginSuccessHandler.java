@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.oauth2;
+package com.mogatshoo.dev.config.security.handler;
 
 import java.io.IOException;
 
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
+import com.mogatshoo.dev.point.service.PointService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
 
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private PointService pointService;
 	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -40,12 +44,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
         if (memberEntity != null) {
         	
             // 기존 회원: 로그인 처리
-            UserDetails userDetails = new OAuth2UserDetails(memberEntity);
+            UserDetails userDetails = new MemberUserDetails(memberEntity);
 
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             
             SecurityContextHolder.getContext().setAuthentication(auth);
+            
+            // 출석 포인트 처리
+            pointService.checkAttendancePoint(userDetails.getUsername());
 
             response.sendRedirect("/");
             

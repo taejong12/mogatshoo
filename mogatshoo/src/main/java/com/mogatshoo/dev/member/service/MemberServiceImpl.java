@@ -18,12 +18,12 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.mogatshoo.dev.config.security.handler.MemberUserDetails;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.repository.MemberRepository;
-import com.mogatshoo.dev.oauth2.OAuth2UserDetails;
+import com.mogatshoo.dev.point.service.PointService;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import jakarta.transaction.Transactional;
 
@@ -37,6 +37,9 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 	@Autowired
     private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private PointService pointService;
+	
 	@Override
 	public void memberSave(MemberEntity memberEntity) {
 		if(memberEntity.getProviderId() == null) {			
@@ -45,6 +48,10 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 			memberEntity.setMemberPwd(passwordEncoder.encode(UUID.randomUUID().toString()));
 		}
 		memberRepository.save(memberEntity);
+		
+		// 포인트 컬럼 생성
+		String memberId = memberEntity.getMemberId();
+		pointService.memberJoinPointSave(memberId);
 	}
 
 	@Override
@@ -62,8 +69,8 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 		
         MemberEntity memberEntity = memberRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
-
-        return new OAuth2UserDetails(memberEntity);
+        
+        return new MemberUserDetails(memberEntity);
 	}
 
 	@Override
