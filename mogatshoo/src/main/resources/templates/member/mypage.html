@@ -8,56 +8,63 @@
 
 <div layout:fragment="content">
 
-	<h1 class="text-center mb-5">내 정보</h1>
-	<div class="row justify-content-center">
-		<div class="col-md-8 col-lg-6">
-			<div class="card shadow-sm rounded-3">
-				<div class="card-body">
-					<dl class="row">
-						<dt class="col-sm-4">닉네임</dt>
-						<dd class="col-sm-8" th:text="${member.memberNickName}"></dd>
-
-						<dt class="col-sm-4">이름</dt>
+	<div class="justify-content-center align-items-center">
+		<div class="col-md-12 col-lg-12">
+			<div class="row p-4 rounded-3 d-flex flex-column align-items-center justify-content-center ">
+				<h1 class="text-center mb-5">내 정보</h1>
+					<div class="gap-2 d-flex align-self-start">
+						<div class="text-white col-sm-4">닉네임</div>
+						<div class="col-sm-8" th:text="${member.memberNickName}"></div>
+					</div>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">이름</dt>
 						<dd class="col-sm-8" th:text="${member.memberName}"></dd>
-						
-						<dt class="col-sm-4">성별</dt>
-						<dd class="col-sm-8" th:text="${member.memberGender}"></dd>
-
-						<dt class="col-sm-4">우편번호</dt>
-						<dd class="col-sm-8" th:text="${member.memberZipcode}"></dd>
-						
-						<dt class="col-sm-4">기본주소</dt>
-						<dd class="col-sm-8" th:text="${member.memberAddress1}"></dd>
-						
-						<dt class="col-sm-4">상세주소</dt>
-						<dd class="col-sm-8" th:text="${member.memberAddress2}"></dd>
-						
-						<dt class="col-sm-4">전화번호</dt>
-						<dd class="col-sm-8" th:text="${member.memberTel}"></dd>
-
-						<dt class="col-sm-4">생년월일</dt>
-						<dd class="col-sm-8" th:text="${member.memberBirth}"></dd>
-
-						<dt class="col-sm-4">이메일</dt>
-						<dd class="col-sm-8" th:text="${member.memberEmail}"></dd>
-
-						<dt class="col-sm-4">가입일</dt>
-						<dd class="col-sm-8" th:text="${member.memberCreate}"></dd>
 					</dl>
-				</div>
-				<div class="card-footer d-flex justify-content-center align-items-center">
-					<a class="btn btn-white me-2 border border-dark" th:href="@{/member/update(memberId=${member.memberId})}">
-					   수정
-					</a>
-					<form id="deleteForm" action="/member/delete" method="post">
-				        <input type="hidden" name="memberId" th:value="${member.memberId}">
-				        
-				        <!-- Thymeleaf의 inline JavaScript 사용 -->
-				        <button type="button" class="btn btn-white border border-dark" th:onclick="'if(confirm(\'정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.\')) document.getElementById(\'deleteForm\').submit();'">
-				            탈퇴
-				        </button>
-				    </form>
-				</div>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">성별</dt>
+						<dd class="col-sm-8" th:text="${member.memberGender}"></dd>
+					</dl>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">우편번호</dt>
+						<dd class="rounded-3 px-2 col-sm-4" th:text="${member.memberZipcode}"></dd>
+					</dl>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">기본주소</dt>
+						<dd class="rounded-3 px-2 col-sm-4" th:text="${member.memberAddress1}"></dd>
+					</dl>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">상세주소</dt>
+						<dd class="rounded-3 px-2 col-sm-4" th:text="${member.memberAddress2}"></dd>
+					</dl>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">전화번호</dt>
+						<dd class="rounded-3 px-2" th:text="${member.memberTel}"></dd>
+					</dl>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">생년월일</dt>
+						<dd class="rounded-3 px-2" th:text="${member.memberBirth}"></dd>
+					</dl>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">이메일</dt>
+						<dd class="rounded-3 px-2" th:text="${member.memberEmail}"></dd>
+					</dl>
+					<dl class="gap-2 d-flex align-self-start">
+						<dt class="text-white col-sm-4">가입일</dt>
+						<dd class="rounded-3 px-2" th:text="${member.memberCreate}"></dd>
+					</dl>
+			</div>
+			<div class="card-footer d-flex justify-content-center align-items-center">
+				<a class="btn btn-white me-2 border border-dark" th:href="@{/member/update(memberId=${member.memberId})}">
+				   수정
+				</a>
+				<form id="deleteForm" action="/member/delete" method="post">
+			        <input type="hidden" name="memberId" th:value="${member.memberId}">
+			        
+			        <!-- Thymeleaf의 inline JavaScript 사용 -->
+			        <button type="button" class="btn btn-white border border-dark" th:onclick="'if(confirm(\'정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.\')) document.getElementById(\'deleteForm\').submit();'">
+			            탈퇴
+			        </button>
+			    </form>
 			</div>
 		</div>
 	</div>
