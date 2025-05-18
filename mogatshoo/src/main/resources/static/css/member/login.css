@@ -5,3 +5,39 @@
 	font-size: 0.8em;
 	padding: .375rem .75rem;
 }
+
+.title{
+	color: rgb(233,161,59);
+}
+
+.loginForm, .loginFormBtn{
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+}
+
+.loginFormBtn:hover{
+	background-color: rgb(53,34,44);
+	border-color: rgb(146,40,27);
+}
+
+
+input{
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+	color: white;
+}
+
+input::placeholder {
+	color: white;
+	opacity: 1;
+}
+
+label{
+	font-size: 24px;
+	width: 100px;
+}
+
+img {
+	width: 100px;
+	height: 100px;
+}
