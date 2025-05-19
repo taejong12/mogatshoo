@@ -17,7 +17,7 @@
     <style>
         /* 헤더 높이만큼 상단 여백 추가 */
         body {
-            padding-top: 80px; /* 헤더 높이와 동일하게 설정 */
+            height: 100%;
         }
         
         /* 메인 페이지에서는 패딩 제거 (비디오 배경이 있는 페이지) */
@@ -31,14 +31,15 @@
         	justify-content: center;
         	align-items: center;
         	flex-direction: column;
-            min-height: calc(100vh - 80px); /* 헤더 높이를 제외한 최소 높이 */
             padding: 20px;
             box-sizing: border-box;
             font-family: 'Press Start 2P', cursive; 
             background-color: #2B2BD8;
+            min-height: 100vh;
         }
         
 		.footer{
+			font-family: 'Press Start 2P', cursive; 
 			background-color: #2B2BD8; 
 			font-size: 24px; 
 			font-weight: bolder; 
