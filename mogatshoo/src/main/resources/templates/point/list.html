@@ -7,12 +7,11 @@
 <body>
 	<div layout:fragment="content">
 	
-		<h1 class="text-center mb-5">포인트 사용내역</h1>
+		<h1 class="text-center mb-5">포인트내역</h1>
 		
 		<table class="table table-bordered">
 		    <thead>
 		        <tr>
-		            <th>번호</th>
 		            <th>내역</th>
 		            <th>포인트변동</th>
 		            <th>타입</th>
@@ -21,7 +20,6 @@
 		    </thead>
 		    <tbody>
 		        <tr th:each="point : ${pointHistoryList}">
-		            <td th:text="${point.pointHistoryId}">번호</td>
 		            <td th:text="${point.reason}">내역</td>
 		            <td th:text="${point.changePoint}">포인트변동</td>
 		            <td th:text="${point.type}">타입</td>
