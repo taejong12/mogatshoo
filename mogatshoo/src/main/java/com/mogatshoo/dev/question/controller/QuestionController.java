@@ -1,18 +1,27 @@
 package com.mogatshoo.dev.question.controller;
 
+import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
+import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
+import com.mogatshoo.dev.member.entity.MemberEntity;
+import com.mogatshoo.dev.member.service.MemberService;
 import com.mogatshoo.dev.question.entity.QuestionEntity;
 import com.mogatshoo.dev.question.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -21,6 +30,11 @@ public class QuestionController {
 
 	@Autowired
 	private QuestionService questionService;
+	@Autowired
+	HairLossTestService pictureService;
+	@Autowired
+	MemberService memberService;
+	
 
 	// 질문 목록 페이지
 	@GetMapping
@@ -29,21 +43,75 @@ public class QuestionController {
 		return "question/list";
 	}
 
-	// 새 질문 생성 페이지
 	@GetMapping("/new")
-	public String newQuestionForm(Model model) {
-		// 빈 질문 객체 생성
-		QuestionEntity question = new QuestionEntity();
+	public String newQuestionForm(Model model, @ModelAttribute("MemberEntity") MemberEntity member) {
+	    try {
+	        // 빈 질문 객체 생성 - null이 아닌지 확인
+	        QuestionEntity question = new QuestionEntity();
+	        System.out.println("Question 객체 생성됨: " + question); // 디버깅용
 
-		// 다음 일련번호 생성
-		String nextSerialNumber = questionService.generateNextSerialNumber();
-		question.setSerialNumber(nextSerialNumber);
+	        // 다음 일련번호 생성
+	        String nextSerialNumber = questionService.generateNextSerialNumber();
+	        question.setSerialNumber(nextSerialNumber);
+	        System.out.println("일련번호 설정됨: " + nextSerialNumber); // 디버깅용
+	        
+	        // 기본값은 항상 비공개로 설정
+	        question.setIsPublic("no");
 
-		// 기본값은 항상 비공개로 설정
-		question.setIsPublic("no");
+	        // 랜덤으로 4개의 사진 가져오기 (더 많은 디버깅 정보 추가)
+	        List<PictureEntity> randomPictures = new ArrayList<>();
 
-		model.addAttribute("question", question);
-		return "question/create";
+	        List<PictureEntity> fetchedPictures = pictureService.getRandomPictures(4);
+	        
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String memberId = authentication.getName();
+			
+			System.out.println("memberId : "+ memberId);
+			member = memberService.findByMemberId(memberId);
+			model.addAttribute("member", member);
+	        
+	        if (fetchedPictures != null) {
+	            System.out.println("가져온 사진 수: " + fetchedPictures.size());
+
+	            for (int i = 0; i < fetchedPictures.size(); i++) {
+	                PictureEntity pic = fetchedPictures.get(i);
+	                if (pic != null) {
+	                    System.out.println("사진 " + i + " - ID: " + pic.getMemberId() + ", Path: " + pic.getHairPicture());
+
+	                    // 유효한 사진만 추가
+	                    if (pic.getHairPicture() != null && !pic.getHairPicture().isEmpty()) {
+	                        randomPictures.add(pic);
+	                    }
+	                } else {
+	                    System.out.println("사진 " + i + "는 null입니다");
+	                }
+	            }
+
+	            System.out.println("최종 유효한 사진 수: " + randomPictures.size());
+	        } else {
+	            System.out.println("가져온 사진 목록이 null입니다");
+	        }
+
+	        model.addAttribute("question", question);
+	        
+	        // 모델에 사진 목록 추가
+	        model.addAttribute("randomPictures", randomPictures);
+
+	        // 추가 디버깅 정보
+	        System.out.println("모델에 추가된 사진 목록 크기: " + randomPictures.size());
+
+	        // 필요하다면 각 사진의 경로 출력
+	        for (int i = 0; i < randomPictures.size(); i++) {
+	            System.out.println("모델에 추가된 사진 " + i + " 경로: " + randomPictures.get(i).getHairPicture());
+	        }
+
+	        return "question/create";
+	    } catch (Exception e) {
+	        System.err.println("오류 발생: " + e.getMessage());
+	        e.printStackTrace();
+	        model.addAttribute("errorMessage", "질문 생성 중 오류가 발생했습니다: " + e.getMessage());
+	        return "error"; // 에러 페이지로 리다이렉트
+	    }
 	}
 
 	// 질문 저장
