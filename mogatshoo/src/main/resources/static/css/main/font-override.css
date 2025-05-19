@@ -1,4 +1,12 @@
 /* 픽셀 폰트 강제 적용을 위한 CSS */
+/* 폰트 설정 */
+@font-face {
+  font-family: 'dalmoori';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .main-header-component,
 .main-header-component *,
 .main-header-component .nav-link,
@@ -7,7 +15,7 @@
 .main-header-component .navbar-text span,
 .main-header-component .btn-white,
 .main-header-component .pixel-font {
-    font-family: 'Press Start 2P', cursive !important;
+    font-family: 'dalmoori', cursive !important;
 }
 
 /* 버튼 내부 텍스트에도 적용 */
@@ -15,10 +23,10 @@
 .main-header-component button *,
 .main-header-component .btn,
 .main-header-component .btn * {
-    font-family: 'Press Start 2P', cursive !important;
+    font-family: 'dalmoori', cursive !important;
 }
 
 /* 인증 정보에도 적용 */
 span[sec\:authentication="name"] {
-    font-family: 'Press Start 2P', cursive !important;
+    font-family: 'dalmoori', cursive !important;
 }

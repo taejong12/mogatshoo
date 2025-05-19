@@ -10,7 +10,15 @@
 	color: rgb(233,161,59);
 }
 
-.loginForm, .loginFormBtn{
+.loginForm {
+	width: 570px;
+	height: 500px;
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+} 
+
+
+.loginFormBtn{
 	background-color: rgb(54,45,62);
 	border: 10px solid rgb(195,54,38);
 }
