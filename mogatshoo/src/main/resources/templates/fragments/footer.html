@@ -1,8 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="footer">
-	<div class="footer text-center py-5">
-		&copy; 2025 mogatshoo. All rights reserved.
-	</div>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/footer.css}">
+    <script defer th:src="@{/js/footer.js}"></script>
+</head>
+<body>
+<div th:fragment="footer" class="footer">
+    <div style="display: flex; align-items: center;">
+        <div class="win-button" id="win-button">
+            <img th:src="@{/api/placeholder/20/20}" alt="Windows" />
+        </div>
+        <div class="footer-folders">
+            <div class="footer-folder" onclick="openModal('terms')">
+                <img th:src="@{/api/placeholder/20/20}" alt="Terms" />
+                <span>이용약관</span>
+            </div>
+            <div class="footer-folder" onclick="openModal('company')">
+                <img th:src="@{/api/placeholder/20/20}" alt="Company" />
+                <span>회사 소개</span>
+            </div>
+        </div>
+    </div>
+    <div class="clock" id="clock">--:--</div>
+
+    <!-- ✅ 모달 창 -->
+    <div id="modal" class="modal-window" style="display:none;">
+        <div class="modal-header">
+            <span id="modal-title">제목</span>
+            <button onclick="closeModal()">X</button>
+        </div>
+        <div class="modal-content" id="modal-content">내용</div>
+    </div>
 </div>
+</body>
 </html>

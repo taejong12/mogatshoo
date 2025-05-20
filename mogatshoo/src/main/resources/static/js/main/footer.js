@@ -1,85 +1,40 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // 공개 상태 토글 버튼 이벤트
-    const publicBtn = document.querySelector('.visibility-btn.public');
-    const privateBtn = document.querySelector('.visibility-btn.private');
-    const isPublicInput = document.getElementById('isPublicInput');
-    const currentStatus = document.getElementById('currentStatus');
-    const serialNumber = document.querySelector('input[name="serialNumber"]').value;
-    
-    // 공개 버튼 클릭
-    publicBtn.addEventListener('click', function() {
-        updateVisibility('yes', this);
-    });
-    
-    // 비공개 버튼 클릭
-    privateBtn.addEventListener('click', function() {
-        updateVisibility('no', this);
-    });
-    
-    // 공개 상태 업데이트 함수
-    function updateVisibility(value, clickedBtn) {
-        // UI 업데이트
-        if (value === 'yes') {
-            publicBtn.classList.add('active');
-            privateBtn.classList.remove('active');
-            currentStatus.textContent = '공개';
-        } else {
-            publicBtn.classList.remove('active');
-            privateBtn.classList.add('active');
-            currentStatus.textContent = '비공개';
-        }
-        
-        // 폼 입력값 업데이트
-        isPublicInput.value = value;
-        
-        // AJAX 요청 (즉시 서버에 상태 변경 알림 - 선택사항)
-        fetch(`/questions/${serialNumber}/visibility`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `isPublic=${value}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast(data.message, 'success');
-            } else {
-                showToast(data.message || '상태 변경 중 오류가 발생했습니다.', 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('네트워크 오류가 발생했습니다.', 'danger');
-        });
-    }
-    
-    // 토스트 메시지 표시 함수
-    function showToast(message, type = 'info') {
-        const toastEl = document.getElementById('statusToast');
-        const toast = new bootstrap.Toast(toastEl);
-        
-        document.getElementById('toastMessage').textContent = message;
-        
-        // 토스트 배경색 설정
-        toastEl.classList.remove('bg-success', 'bg-danger', 'bg-info');
-        if (type === 'success') {
-            toastEl.classList.add('bg-success', 'text-white');
-        } else if (type === 'danger') {
-            toastEl.classList.add('bg-danger', 'text-white');
-        } else {
-            toastEl.classList.add('bg-info', 'text-white');
-        }
-        
-        toast.show();
-    }
-    
-    // URL 파라미터에서 상태 메시지 확인
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
-    const message = urlParams.get('message');
-    
-    if (status && message) {
-        showToast(message, status === 'success' ? 'success' : 'danger');
-    }
+document.addEventListener("DOMContentLoaded", () => {
+    updateClock();
+    setInterval(updateClock, 1000);
 });
+
+function updateClock() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById("clock").textContent = `${hh}:${mm}`;
+}
+
+function openModal(type) {
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modal-title");
+    const modalContent = document.getElementById("modal-content");
+
+    if (type === "terms") {
+        modalTitle.textContent = "이용약관";
+        modalContent.innerHTML = `
+            <p>이 사이트를 사용함으로써 다음 조건에 동의하는 것으로 간주됩니다...</p>
+            <ul>
+                <li>데이터 수집 동의</li>
+                <li>개인정보 보호 준수</li>
+            </ul>
+        `;
+    } else if (type === "company") {
+        modalTitle.textContent = "회사 소개";
+        modalContent.innerHTML = `
+            <p>우리는 창의적이고 혁신적인 솔루션을 제공합니다.</p>
+            <p>주소: 서울특별시 어딘가</p>
+        `;
+    }
+
+    modal.style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("modal").style.display = "none";
+}
