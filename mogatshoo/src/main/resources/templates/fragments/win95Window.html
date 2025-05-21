@@ -1,0 +1,48 @@
+<!-- 윈도우95 스타일 창 컴포넌트 -->
+<!-- fragments/win95Window.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <!-- 윈도우95 창 컴포넌트 -->
+    <div th:fragment="win95Window(title, contentUrl)" class="win95-window-component">
+        <div class="win95-window">
+            <!-- 타이틀 바 -->
+            <div class="win95-title-bar">
+                <div class="win95-title-icon">
+                    <img src="/img/icons/document.png" alt="문서" class="title-icon">
+                </div>
+                <div class="win95-title-text" th:text="${title}">창 제목</div>
+                <div class="win95-controls">
+                    <button class="win95-control win95-minimize">_</button>
+                    <button class="win95-control win95-maximize">□</button>
+                    <button class="win95-control win95-close">×</button>
+                </div>
+            </div>
+            
+            <!-- 메뉴 바 -->
+            <div class="win95-menu-bar">
+                <div class="win95-menu-item">파일</div>
+                <div class="win95-menu-item">편집</div>
+                <div class="win95-menu-item">보기</div>
+                <div class="win95-menu-item">도움말</div>
+            </div>
+            
+            <!-- 내용 영역 -->
+            <div class="win95-window-content" th:insert="${contentUrl} ?: _">
+                <!-- 기본 콘텐츠 또는 th:insert로 주입된 콘텐츠 -->
+            </div>
+            
+            <!-- 상태 바 -->
+            <div class="win95-statusbar">
+                <span>준비</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

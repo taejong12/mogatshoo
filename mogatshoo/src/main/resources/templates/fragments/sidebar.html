@@ -115,6 +115,86 @@
                 </button>
             </div>
         </div>
+		
+		<!-- 윈도우95 창 템플릿 -->
+		   <div id="win95Window" class="win95-window">
+		       <div class="win95-title-bar">
+		           <div class="win95-title-text">문서</div>
+		           <div class="win95-close">×</div>
+		       </div>
+		       <div class="win95-content">
+		           <!-- 여기에 Ajax로 로드된 내용이 들어갑니다 -->
+		           <div id="windowContent">로딩 중...</div>
+		       </div>
+		   </div>
+		
+		<!-- jQuery 사용 (간편한 Ajax 처리를 위해) -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+		<script>
+		    $(document).ready(function() {
+		        // 사이드바 항목 클릭 시
+		        $('.menu-item a').click(function(e) {
+		            e.preventDefault();
+		            
+		            // 파일 정보 가져오기
+		            const file = $(this).data('file');
+		            const title = $(this).data('title') || '문서';
+		            
+		            // 제목 설정
+		            $('.win95-title-text').text(title);
+		            
+		            // Ajax로 내용 로드
+		            $('#windowContent').html('로딩 중...');
+		            
+		            $.ajax({
+		                url: file,
+		                success: function(data) {
+		                    // 내용 삽입
+		                    $('#windowContent').html(data);
+		                    
+		                    // 창 표시
+		                    $('#win95Window').show();
+		                },
+		                error: function() {
+		                    $('#windowContent').html('파일을 로드할 수 없습니다.');
+		                    $('#win95Window').show();
+		                }
+		            });
+		        });
+		        
+		        // 닫기 버튼 클릭 시
+		        $('.win95-close').click(function() {
+		            $('#win95Window').hide();
+		        });
+		        
+		        // 드래그 기능 (간단 구현)
+		        let isDragging = false;
+		        let offsetX, offsetY;
+		        
+		        $('.win95-title-bar').mousedown(function(e) {
+		            isDragging = true;
+		            offsetX = e.clientX - $('#win95Window').position().left;
+		            offsetY = e.clientY - $('#win95Window').position().top;
+		            
+		            $(document).mousemove(function(e) {
+		                if (isDragging) {
+		                    $('#win95Window').css({
+		                        left: e.clientX - offsetX,
+		                        top: e.clientY - offsetY,
+		                        transform: 'none'
+		                    });
+		                }
+		            });
+		            
+		            $(document).mouseup(function() {
+		                isDragging = false;
+		                $(document).off('mousemove');
+		                $(document).off('mouseup');
+		            });
+		        });
+		    });
+		</script>
     </div>
 </body>
 
