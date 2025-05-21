@@ -37,7 +37,10 @@ public class SecurityConfig {
 		http
 			// CSRF 비활성화
 			.csrf(csrf -> csrf.disable())
-			
+			 // X-Frame-Options 설정 추가 - iframe 사용 허용 (여기에 추가)
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.sameOrigin())
+            )
 			// 모두 접근 가능한 경로
 			.authorizeHttpRequests(request -> request
 				.requestMatchers(new AntPathRequestMatcher("/")

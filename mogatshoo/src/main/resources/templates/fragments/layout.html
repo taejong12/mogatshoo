@@ -15,8 +15,6 @@
     <link th:href="@{/css/main/sidebar.css}" rel="stylesheet">
     <link th:href="@{/css/main/footer.css}" rel="stylesheet">
 
-    <!-- 픽셀 폰트 -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <!-- 페이지별 추가 스타일 -->
     <th:block layout:fragment="additionalStyles"></th:block>
@@ -36,8 +34,7 @@
                     <!-- 콘텐츠 -->
                     <section class="content-with-sidebar flex-grow-1">
 						<!-- 본문 영역 -->
-						    <div layout:fragment="content"></div>
-
+						<div layout:fragment="content"></div>
                     </section>
                 </div>
             </div>

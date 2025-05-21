@@ -42,6 +42,7 @@ public class FortuneController {
 		return "fortune/start";
 	}
 	
+	
 	@PostMapping("/start")
 	@ResponseBody
 	public Map<String, Object> fortuneStart() {
