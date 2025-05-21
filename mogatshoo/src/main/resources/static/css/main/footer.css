@@ -1,28 +1,230 @@
 @charset "UTF-8";
-
-.eight, .special, .continu{
-	color: gray;
-	font-size: 0.5em;
+/* Footer Styles */
+.footer {
+  height: 40px;
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 5;
+  font-family: Tahoma, sans-serif;
+  font-size: 12px;
 }
 
-.warn-div {
-	color: red;
-	font-size: 0.8em;
+/* 푸터 왼쪽 영역 (로고, 폴더, 로그인) */
+.footer-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  overflow-x: auto; /* 공간이 부족하면 스크롤 */
+  white-space: nowrap;
+  min-width: 0;
 }
 
-#privacyBox {
-	border: 1px solid #ccc;
-	padding: 0px; 
-	width: 100%; 
-	max-width: 10px; 
-	height: 10px; 
-	overflow-y: scroll; 
-	background-color: #f9f9f9; 
-	font-size: 14px; 
-	line-height: 1.5;
+/* 화면이 좁아질 때 스크롤바 숨기기 */
+.footer-left::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+  background: transparent;
 }
 
-#idCheckMessage, #pwdCheckMessage, #emailCheckMessage, #nickNameCheckMessage {
-	font-size: 0.8em;
-	display: none;
+.footer-folders {
+  display: flex;
+  margin-left: 10px;
+}
+
+.footer-folder {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  padding: 2px 6px;
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  cursor: pointer;
+  height: 24px;
+  white-space: nowrap;
+}
+
+.footer-folder:active, .footer-folder:hover:active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+}
+
+.footer-folder img {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+
+/* 윈도우 시작 버튼 */
+.win-button {
+  display: flex;
+  align-items: center;
+  padding: 2px 8px;
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  margin-right: 10px;
+  cursor: pointer;
+  height: 24px;
+  white-space: nowrap;
+}
+
+.win-button:active, .win-button:hover:active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+}
+
+.win-button img {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+
+/* 시계 */
+.clock {
+  background-color: #c0c0c0;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-family: monospace;
+  margin-left: auto; /* 오른쪽 정렬 */
+}
+
+/* 모달 창 */
+.modal-window {
+  position: fixed;
+  bottom: 60px;
+  left: 20px;
+  width: 300px;
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  z-index: 10;
+  font-family: Tahoma, sans-serif;
+  font-size: 12px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000080;
+  color: #ffffff;
+  padding: 4px 8px;
+  font-weight: bold;
+  border-bottom: 2px solid #808080;
+}
+
+.modal-header button {
+  background-color: #c0c0c0;
+  border: 2px outset #ffffff;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.modal-content {
+  padding: 10px;
+  background-color: #ffffff;
+  color: #000000;
+  border-top: 2px inset #808080;
+}
+
+/* 로그인 영역 스타일 */
+.footer-auth {
+  display: flex;
+  align-items: center;
+}
+
+.footer-spacer {
+  flex: 1;
+  min-width: 20px;
+  max-width: 50px;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: blue;
+  height: 100%;
+  width: 100%;
+}
+
+.footer-logout {
+  padding: 0 !important; /* 로그아웃 버튼 패딩 제거 */
+}
+
+.logout-form {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  font-family: 'dalmoori', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  width: 100%;
+  height: 100%;
+  color: red;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .footer-folder span {
+    display: none; /* 작은 화면에서 텍스트 숨기기 */
+  }
+  
+  .footer-folder {
+    padding: 2px 4px;
+    margin-right: 4px;
+  }
+  
+  .footer-folder img {
+    margin-right: 0;
+  }
+  
+  .win-button span {
+    display: none;
+  }
+  
+  .win-button img {
+    margin-right: 0;
+  }
+  
+  .footer-spacer {
+    min-width: 10px;
+    max-width: 20px;
+  }
 }

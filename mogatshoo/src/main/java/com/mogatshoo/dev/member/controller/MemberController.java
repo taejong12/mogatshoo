@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mogatshoo.dev.common.mail.controller.EmailController;
+import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
 
@@ -29,6 +30,8 @@ public class MemberController {
 	
 	@Autowired
 	private EmailController emailController;
+	@Autowired
+	HairLossTestService hairService;
 	
 	@GetMapping("/login")
 	public String loginPage() {

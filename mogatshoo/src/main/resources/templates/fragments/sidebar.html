@@ -1,0 +1,121 @@
+<!-- 윈도우 95/98 스타일 사이드바 HTML -->
+<!-- fragments/sidebar.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <!-- 다른 페이지에 포함될 사이드바 조각 -->
+    <div th:fragment="sidebar" class="sidebar-component">
+        <div class="sidebar">
+            <!-- 로고 영역 -->
+            <div class="sidebar-logo">
+                <a th:href="@{/}">
+                    <div class="menu-icon">
+                        <img src="/img/icons/computer.png" alt="mogatshoo" class="logo-img">
+                    </div>
+                    <div class="logo-text">탈모왕중왕</div>
+                </a>
+            </div>
+            
+            <!-- 메뉴 아이템 -->
+            <div class="sidebar-menu">
+                <div class="menu-item">
+                    <a class="nav-link" th:href="@{/}">
+                        <div class="menu-icon">
+                            <img src="/img/icons/computer.png" alt="홈">
+                        </div>
+                        <span class="menu-text">홈</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="nav-link" th:href="@{/fortune/start}">
+                        <div class="menu-icon">
+                            <img src="/img/icons/computer.png" alt="운세">
+                        </div>
+                        <span class="menu-text">오늘운세</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="nav-link" th:href="@{/hairLossTest/testHair}">
+                        <div class="menu-icon">
+                            <img src="/img/icons/computer.png" alt="탈모진단">
+                        </div>
+                        <span class="menu-text">탈모진단</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="nav-link" th:href="@{/hospitalMap/hospitals}">
+                        <div class="menu-icon">
+                            <img src="/img/icons/computer.png" alt="병원지도">
+                        </div>
+                        <span class="menu-text">병원지도</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 로그인 상태에 따른 메뉴 -->
+            <!-- 비로그인 상태일 때 표시되는 링크 -->
+            <div class="sidebar-auth" sec:authorize="isAnonymous()">
+                <div class="auth-item">
+                    <a class="nav-link" th:href="@{/member/login}">
+                        <div class="menu-icon">
+                            <img src="/img/icons/computer.png" alt="로그인">
+                        </div>
+                        <span class="menu-text">로그인</span>
+                    </a>
+                </div>
+                <div class="auth-item">
+                    <a class="nav-link" th:href="@{/member/join}">
+                        <div class="menu-icon">
+                            <img src="/img/icons/computer.png" alt="회원가입">
+                        </div>
+                        <span class="menu-text">회원가입</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 로그인 상태일 때 표시되는 내용 -->
+            <div class="sidebar-auth" sec:authorize="isAuthenticated()">
+                <div class="auth-profile">
+                    <a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="nav-link">
+                        <div class="menu-icon">
+                            <img src="/img/icons/computer.png" alt="마이페이지">
+                        </div>
+                        <span class="menu-text" th:text="${#authentication.principal.nickName}"></span>
+                    </a>
+                </div>
+                <div class="auth-item">
+                    <a class="nav-link" th:href="@{/point/list(memberId=${#authentication.name})}">
+                        <div class="menu-icon">
+                            <img src="/img/icons/computer.png" alt="포인트">
+                        </div>
+                        <span class="menu-text">포인트</span>
+                    </a>
+                </div>
+                <div class="auth-item">
+                    <form th:action="@{/logout}" method="post" class="logout-form">
+                        <button type="submit" class="logout-btn">
+                            <div class="menu-icon">
+                                <img src="/img/icons/computer.png" alt="로그아웃">
+                            </div>
+                            <span class="menu-text">로그아웃</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 토글 버튼 (모바일 뷰에서만 보임) -->
+            <div class="sidebar-toggle">
+                <button id="sidebarToggleBtn">
+                    <span class="toggle-icon">☰</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
