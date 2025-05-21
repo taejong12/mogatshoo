@@ -194,6 +194,7 @@ function fu_sendEmailBtn(){
 	        })
 	        .catch(error => {
 	            console.error("메일 인증 오류 발생:", error);
+				window.location.href = "/error/globalError";
 	        });
 	    });
 	    
@@ -216,5 +217,6 @@ function fu_sendEmailBtn(){
 	})
 	.catch(error => {
 		console.error("이메일 인증번호 전송 오류:", error);
+		window.location.href = "/error/globalError";
 	});
 }

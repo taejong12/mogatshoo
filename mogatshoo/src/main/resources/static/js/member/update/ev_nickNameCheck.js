@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			})
 			.catch(error => {
 				console.error("닉네임 중복 확인 오류:", error);
+				window.location.href = "/error/globalError";
 			});
 		});
 	}

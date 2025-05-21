@@ -34,5 +34,6 @@ function fu_findById(){
 	})
 	.catch(error => {
 		console.error("아이디 찾기 이메일 확인 오류:", error);
+		window.location.href = "/error/globalError";
 	});
 }

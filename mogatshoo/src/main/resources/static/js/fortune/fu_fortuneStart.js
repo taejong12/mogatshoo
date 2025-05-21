@@ -3,7 +3,12 @@ function fu_fortuneStart(){
 	fetch("/fortune/start", {
 		method: "POST"
 	})
-	.then(response => response.json())
+	.then(response => {
+		if (!response.ok) {
+	        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+	    }
+		return response.json();
+	})
 	.then(map => {
 		
 		let fortuneItem = document.getElementById('fortuneItem');
@@ -47,5 +52,6 @@ function fu_fortuneStart(){
 	})
 	.catch(error => {
 		console.error("운세 확인 오류:", error);
+		window.location.href = "/error/globalError";
 	});
 }
