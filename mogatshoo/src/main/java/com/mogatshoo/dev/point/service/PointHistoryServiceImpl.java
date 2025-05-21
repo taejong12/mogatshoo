@@ -49,5 +49,10 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 	public Page<PointHistoryEntity> findByMemberId(String memberId, Pageable pageable) {
 		return pointHistoryRepository.findByMemberId(memberId, pageable);
 	}
+
+	@Override
+	public void memberDelete(String memberId) {
+		pointHistoryRepository.deleteAllByMemberId(memberId);
+	}
 	
 }

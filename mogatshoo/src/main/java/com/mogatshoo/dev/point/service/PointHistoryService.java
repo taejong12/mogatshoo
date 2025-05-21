@@ -14,4 +14,6 @@ public interface PointHistoryService {
 	int checkAttendancePoint(String memberId);
 
 	Page<PointHistoryEntity> findByMemberId(String memberId, Pageable pageable);
+
+	void memberDelete(String memberId);
 }

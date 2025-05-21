@@ -13,4 +13,6 @@ public interface PointHistoryRepository extends JpaRepository<PointHistoryEntity
 	int countByMemberIdAndReasonAndPointCreateBetween(String memberId, String reason, LocalDateTime start, LocalDateTime end);
 
 	Page<PointHistoryEntity> findByMemberId(String memberId, Pageable pageable);
+
+	void deleteAllByMemberId(String memberId);
 }

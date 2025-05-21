@@ -9,4 +9,6 @@ public interface PointService {
 	int fortunePointUse(String memberId);
 
 	void checkAttendancePoint(String memberId);
+
+	void memberDelete(String memberId);
 }
