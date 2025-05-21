@@ -1,86 +1,239 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-<meta charset="UTF-8">
-<link rel="stylesheet" th:href="@{/css/footer.css}">
-<script defer th:src="@{/js/footer.js}"></script>
-</head>
-<body>
-<div th:fragment="footer" class="footer">
-  <div class="footer-left">
-    <!-- Windows 시작 버튼 -->
-    <div class="win-button" id="win-button">
-      <img th:src="@{/api/placeholder/20/20}" alt="Windows" />
-      <span>시작</span>
-    </div>
-    
-    <!-- 폴더 영역 -->
-    <div class="footer-folders">
-      <div class="footer-folder" onclick="openModal('terms')">
-        <img th:src="@{/api/placeholder/20/20}" alt="Terms" />
-        <span>이용약관</span>
-      </div>
-      <div class="footer-folder" onclick="openModal('company')">
-        <img th:src="@{/api/placeholder/20/20}" alt="Company" />
-        <span>회사 소개</span>
-      </div>
-    </div>
-    
-    <!-- 로그인 영역 (스페이서) -->
-    <div class="footer-spacer"></div>
-    
-    <!-- 비로그인 상태일 때 표시되는 링크 -->
-    <div sec:authorize="isAnonymous()" class="footer-auth">
-      <div class="footer-folder">
-        <a th:href="@{/member/login}" class="footer-link">
-          <img th:src="@{/api/placeholder/20/20}" alt="로그인" />
-          <span>로그인</span>
-        </a>
-      </div>
-      <div class="footer-folder">
-        <a th:href="@{/member/join}" class="footer-link">
-          <img th:src="@{/api/placeholder/20/20}" alt="회원가입" />
-          <span>회원가입</span>
-        </a>
-      </div>
-    </div>
-    
-    <!-- 로그인 상태일 때 표시되는 내용 -->
-    <div sec:authorize="isAuthenticated()" class="footer-auth">
-      <div class="footer-folder">
-        <a th:href="@{/point/list(memberId=${#authentication.name})}" class="footer-link">
-          <img th:src="@{/api/placeholder/20/20}" alt="포인트" />
-          <span>포인트</span>
-        </a>
-      </div>
-      <div class="footer-folder">
-        <a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="footer-link">
-          <img th:src="@{/api/placeholder/20/20}" alt="마이페이지" />
-          <span th:text="${#authentication.principal.nickName}"></span>
-        </a>
-      </div>
-      <div class="footer-folder footer-logout">
-        <form th:action="@{/logout}" method="post" class="logout-form">
-          <button type="submit" class="logout-btn">
-            <img th:src="@{/api/placeholder/20/20}" alt="로그아웃" />
-            <span>로그아웃</span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-  
-  <!-- 시계 영역 -->
-  <div class="clock" id="clock">--:--</div>
 
-  <!-- 모달 창 -->
-  <div id="modal" class="modal-window" style="display:none;">
-    <div class="modal-header">
-      <span id="modal-title">제목</span>
-      <button onclick="closeModal()">X</button>
-    </div>
-    <div class="modal-content" id="modal-content">내용</div>
-  </div>
-</div>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+
+<body>
+	<div th:fragment="footer" class="footer">
+		<div class="footer-left">
+			<!-- Windows 시작 버튼 -->
+			<div class="win-button" id="win-button">
+				<img th:src="@{/api/placeholder/20/20}" alt="Windows" />
+				<span>시작</span>
+			</div>
+
+			<!-- 폴더 영역 -->
+			<div class="footer-folders">
+				<div class="footer-folder" onclick="openModal('terms')">
+					<img th:src="@{/api/placeholder/20/20}" alt="Terms" />
+					<span>이용약관</span>
+				</div>
+				<div class="footer-folder" onclick="openModal('company')">
+					<img th:src="@{/api/placeholder/20/20}" alt="Company" />
+					<span>회사 소개</span>
+				</div>
+			</div>
+
+			<!-- 로그인 영역 (스페이서) -->
+			<div class="footer-spacer"></div>
+
+			<!-- 비로그인 상태일 때 표시되는 링크 -->
+			<div sec:authorize="isAnonymous()" class="footer-auth">
+				<div class="footer-folder">
+					<a th:href="@{/member/login}" class="footer-link">
+						<img th:src="@{/api/placeholder/20/20}" alt="로그인" />
+						<span>로그인</span>
+					</a>
+				</div>
+				<div class="footer-folder">
+					<a th:href="@{/member/join}" class="footer-link">
+						<img th:src="@{/api/placeholder/20/20}" alt="회원가입" />
+						<span>회원가입</span>
+					</a>
+				</div>
+			</div>
+
+			<!-- 로그인 상태일 때 표시되는 내용 -->
+			<div sec:authorize="isAuthenticated()" class="footer-auth">
+				<div class="footer-folder">
+					<a th:href="@{/point/list(memberId=${#authentication.name})}" class="footer-link">
+						<img th:src="@{/api/placeholder/20/20}" alt="포인트" />
+						<span>포인트</span>
+					</a>
+				</div>
+				<div class="footer-folder">
+					<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="footer-link">
+						<img th:src="@{/api/placeholder/20/20}" alt="마이페이지" />
+						<span th:text="${#authentication.principal.nickName}"></span>
+					</a>
+				</div>
+				<div class="footer-folder footer-logout">
+					<form th:action="@{/logout}" method="post" class="logout-form">
+						<button type="submit" class="logout-btn">
+							<img th:src="@{/api/placeholder/20/20}" alt="로그아웃" />
+							<span>로그아웃</span>
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- 시계 영역 -->
+		<div class="clock" id="clock">--:--</div>
+
+		<!-- 모달 창 -->
+		<div id="modal" class="modal-window" style="display:none;">
+			<div class="modal-header">
+				<span id="modal-title">제목</span>
+				<button onclick="closeModal()">X</button>
+			</div>
+			<div class="modal-content" id="modal-content">내용</div>
+		</div>
+		<!-- 윈도우95 창 템플릿 -->
+		<div id="win95Window" class="win95-window">
+			<div class="win95-title-bar">
+				<div class="win95-title-text">문서</div>
+				<div class="win95-close">×</div>
+			</div>
+			<div class="win95-content">
+				<iframe id="windowContentFrame" style="width:1300px; height:500px; border:none; overflow:auto;"
+					src="about:blank"></iframe>
+			</div>
+		</div>
+
+		<!-- jQuery 사용 (간편한 Ajax 처리를 위해) -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script defer th:src="@{/js/footer.js}"></script>
+		<script>
+			$(document).ready(function () {
+				// 푸터항목 클릭 시
+				$('.footer-link, .logout-form').click(function (e) {
+					e.preventDefault(); // 기본 링크 동작 방지
+
+					// 클릭된 링크의 href 속성에서 파일 경로를 가져옵니다.
+					const file = $(this).attr('href');
+					// 메뉴 텍스트에서 창의 제목을 가져오거나 기본값 '문서'를 사용합니다.
+					const title = $(this).find('.menu-text').text() || '문서';
+
+					// '/' 링크는 일반적인 페이지 이동을 수행합니다.
+					if (file === '/') {
+						window.location.href = file;
+						return;
+					}
+
+					// 윈도우 제목 설정
+					$('.win95-title-text').text(title);
+
+					// 윈도우 표시 및 위치 설정
+					$('#win95Window').css({
+						'display': 'block',
+						'position': 'fixed',
+						'left': '150px', // 사이드바 너비(120px) + 여유 공간
+						'top': '50px',
+						'transform': 'none'
+					});
+
+					// iframe 소스 설정
+					$('#windowContentFrame').attr('src', file);
+				});
+
+				// iframe 로드 완료 후 base target 설정
+				$('#windowContentFrame').on('load', function () {
+					try {
+						// iframe 내부 문서에 접근
+						const iframeDoc = this.contentDocument || this.contentWindow.document;
+
+						// base 태그가 있는지 확인
+						let baseElement = iframeDoc.querySelector('base');
+
+						// base 태그가 없으면 새로 생성
+						if (!baseElement) {
+							baseElement = iframeDoc.createElement('base');
+							iframeDoc.head.appendChild(baseElement);
+						}
+
+						// target 속성을 '_self'로 설정하여 링크가 iframe 내에서 열리도록 함
+						baseElement.setAttribute('target', '_self');
+
+						console.log("iframe 내부에 base target 설정 완료");
+					} catch (e) {
+						console.error("iframe 내부 문서 접근 오류:", e);
+					}
+				});
+
+				// 닫기 버튼 클릭 시
+				$('.win95-close').click(function () {
+					$('#win95Window').hide();
+					// iframe 내용 제거
+					// 변경 후 (절대 경로로 변환)
+					if (file.startsWith('/')) {
+						// 이미 절대 경로인 경우
+						$('#windowContentFrame').attr('src', file);
+					} else {
+						// 상대 경로인 경우 절대 경로로 변환
+						$('#windowContentFrame').attr('src', '/' + file);
+					}
+				});
+
+				// 드래그 기능
+				let isDragging = false;
+				let offsetX, offsetY;
+
+				$('.win95-title-bar').mousedown(function (e) {
+					isDragging = true;
+					offsetX = e.clientX - $('#win95Window').position().left;
+					offsetY = e.clientY - $('#win95Window').position().top;
+
+					$(document).mousemove(function (e) {
+						if (isDragging) {
+							$('#win95Window').css({
+								left: e.clientX - offsetX,
+								top: e.clientY - offsetY,
+								transform: 'none'
+							});
+						}
+					});
+
+					$(document).mouseup(function () {
+						isDragging = false;
+						$(document).off('mousemove');
+						$(document).off('mouseup');
+					});
+				});
+			});
+			// iframe 로드 완료 후 사이드바와 푸터 숨기기
+			$('#windowContentFrame').on('load', function () {
+				try {
+					const iframe = document.getElementById('windowContentFrame');
+					const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+					// 사이드바 숨기기 (다양한 선택자 시도)
+					const sidebars = iframeDoc.querySelectorAll('.sidebar, .sidebar-component, .side-nav, #sidebar, nav[role="navigation"]');
+					sidebars.forEach(sidebar => {
+						if (sidebar) sidebar.style.display = 'none';
+					});
+
+					// 푸터 숨기기 (다양한 선택자 시도)
+					const footers = iframeDoc.querySelectorAll('footer, .footer, .site-footer, #footer');
+					footers.forEach(footer => {
+						if (footer) footer.style.display = 'none';
+					});
+
+					// 메인 콘텐츠 영역에 전체 너비 적용
+					const mainContents = iframeDoc.querySelectorAll('.content-with-sidebar, main, #main, .main-content');
+					mainContents.forEach(content => {
+						if (content) {
+							content.style.marginLeft = '0';
+							content.style.width = '100%';
+						}
+					});
+
+					// body에 직접 스타일 적용
+					if (iframeDoc.body) {
+						iframeDoc.body.style.margin = '0';
+						iframeDoc.body.style.padding = '0';
+					}
+
+					console.log("iframe 내부 요소 정리 완료");
+				} catch (e) {
+					console.error("iframe 내부 요소 접근 오류:", e);
+				}
+			});
+		</script>
+	</div>
 </body>
+
 </html>

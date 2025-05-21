@@ -272,7 +272,6 @@
 	background-color: #ffffff;
 	height: calc(100% - 40px);
 	overflow: auto;
-	margin: 2px;
 	border: 1px inset #a0a0a0;
 }
 
