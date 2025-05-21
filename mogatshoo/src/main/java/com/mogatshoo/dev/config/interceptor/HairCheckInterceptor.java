@@ -35,6 +35,7 @@ public class HairCheckInterceptor implements HandlerInterceptor {
         // 탈모 진단 여부 확인
         boolean hairCheck = hairLossTestService.loginMemberHairCheck(memberId);
 
+        System.out.println("hairCheck: "+hairCheck);
         if (!hairCheck && !request.getRequestURI().startsWith("/hairLossTest")) {
             response.sendRedirect("/hairLossTest/testHair");
             return false;
