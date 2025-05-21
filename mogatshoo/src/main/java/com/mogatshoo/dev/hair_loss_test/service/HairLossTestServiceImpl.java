@@ -177,13 +177,7 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 
 	@Override
 	public boolean loginMemberHairCheck(String memberId) {
-		PictureEntity pictureEntity = pictureRepository.findById(memberId).orElse(null);
-		StageEntity stageEntity = stageRepository.findById(memberId).orElse(null);
-		
-		if(pictureEntity != null && stageEntity != null) {
-			return true;
-		}
-		return false;
+		return pictureRepository.existsById(memberId) && stageRepository.existsById(memberId);
 	}
 
 	@Override

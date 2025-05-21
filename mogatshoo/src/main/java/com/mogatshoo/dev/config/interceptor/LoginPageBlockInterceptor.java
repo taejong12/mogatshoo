@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.config.security;
+package com.mogatshoo.dev.config.interceptor;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

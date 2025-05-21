@@ -151,17 +151,20 @@ function fu_findByPwd(){
 							})
 							.catch(error => {
 								console.error("비밀번호 찾기 인증번호 전송 오류:", error);
+								window.location.href = "/error/globalError";
 							});
 						})
 					}
 				})
 				.catch(error => {
 					console.error("비밀번호 찾기 인증번호 전송 오류:", error);
+					window.location.href = "/error/globalError";
 				});
 			}
 		})
 		.catch(error => {
 			console.error("비밀번호 찾기 회원 확인 오류:", error);
+			window.location.href = "/error/globalError";
 		});
 		
 	}
