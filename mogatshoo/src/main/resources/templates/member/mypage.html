@@ -8,7 +8,6 @@
 	<link rel="stylesheet" th:href="@{/css/member/mypage.css}">
 </head>
 <body>
-
 	<div layout:fragment="content">
 		<div class="container">
 			<div class="d-flex gap-5">
@@ -81,21 +80,22 @@
 					</div>
 				</div>
 				<div class="member-info-container">
-					<h1 class="main-title">탈모진단</h1>
+					<h1 class="main-title">탈모분석결과</h1>
 					<div class="info-scroll-container">
 						<div>
-							이미지 <img th:src="@{${picture.hairPicture}}" class="w-100">
+							내 이미지 <img th:src="@{${picture.hairPicture}}" class="w-100">
 						</div>
 						<div>
-							<span th:text="${stage.hairStage}"></span> stage
-						</div>
-						<div>
-							설명
+							<div id="hairMsg"></div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<script type="text/javascript">
+			let hairStage = "[[${stage.hairStage}]]".trim();
+		</script>
+		<script th:src="@{/js/member/mypage/hairMypage.js}"></script>
 	</div>
 </body>
 </html>

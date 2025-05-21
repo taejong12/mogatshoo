@@ -174,4 +174,40 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 		map.put("stage", stageEntity);
 		return map;
 	}
+
+	@Override
+	public boolean loginMemberHairCheck(String memberId) {
+		PictureEntity pictureEntity = pictureRepository.findById(memberId).orElse(null);
+		StageEntity stageEntity = stageRepository.findById(memberId).orElse(null);
+		
+		if(pictureEntity != null && stageEntity != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void memberDelete(String memberId) {
+		
+		PictureEntity pictureEntity = pictureRepository.findById(memberId).orElse(null);
+		
+		if(pictureEntity != null) {
+			deleteImageFile(pictureEntity.getHairPicture());
+		}
+		
+		stageRepository.deleteById(memberId);
+		pictureRepository.deleteById(memberId);
+	}
+	
+	// 회원탈퇴시 이미지 삭제
+	public void deleteImageFile(String imagePath) {
+		try {
+			String fullPath = uploadDir + imagePath.replace("/uploads", "");
+			Path filePath = Paths.get(fullPath);
+			Files.delete(filePath);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
 import com.mogatshoo.dev.point.service.PointService;
 
 import jakarta.servlet.ServletException;
@@ -19,6 +20,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler{
 	@Autowired
 	private PointService pointService;
 	
+	@Autowired
+	private HairLossTestService hairLossTestService;
+	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
@@ -29,7 +33,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler{
         // 출석 포인트 처리
         pointService.checkAttendancePoint(memberId);
         
-        // 로그인 후 이동할 경로로 리다이렉트
-        response.sendRedirect("/");
+        // 탈모진단 확인
+        boolean hairCheck = hairLossTestService.loginMemberHairCheck(memberId);
+        
+        if(hairCheck) {
+        	// 로그인 후 이동할 경로로 리다이렉트
+        	response.sendRedirect("/");
+        } else {
+        	// 탈모진단페이지로 이동
+        	response.sendRedirect("/hairLossTest/testHair");
+        }
 	}
 }

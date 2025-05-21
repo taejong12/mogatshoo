@@ -22,4 +22,8 @@ public interface HairLossTestService {
 	public List<PictureEntity> getRandomPictures(int count);
 
 	Map<String, Object> hairMypage(String memberId);
+
+	boolean loginMemberHairCheck(String memberId);
+
+	void memberDelete(String memberId);
 }
