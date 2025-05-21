@@ -177,6 +177,9 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 
 	@Override
 	public boolean loginMemberHairCheck(String memberId) {
+		System.out.println("memberId: "+memberId);
+		System.out.println("pictureRepository.existsById(memberId): "+pictureRepository.existsById(memberId));
+		System.out.println("stageRepository.existsById(memberId): "+stageRepository.existsById(memberId));
 		return pictureRepository.existsById(memberId) && stageRepository.existsById(memberId);
 	}
 
