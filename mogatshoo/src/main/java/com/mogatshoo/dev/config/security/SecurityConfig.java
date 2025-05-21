@@ -53,6 +53,7 @@ public class SecurityConfig {
 							,new AntPathRequestMatcher("/videos/**")
 							,new AntPathRequestMatcher("/css/**")
 							,new AntPathRequestMatcher("/js/**")
+							,new AntPathRequestMatcher("/favicon.ico")
 							,new AntPathRequestMatcher("/fragments/**")
 							).permitAll()
 				
