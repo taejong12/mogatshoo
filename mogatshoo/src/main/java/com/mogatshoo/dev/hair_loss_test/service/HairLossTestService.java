@@ -2,6 +2,7 @@ package com.mogatshoo.dev.hair_loss_test.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,4 +20,6 @@ public interface HairLossTestService {
 	public PictureEntity getPictureByMemberId(String memberId);
 	
 	public List<PictureEntity> getRandomPictures(int count);
+
+	Map<String, Object> hairMypage(String memberId);
 }

@@ -40,7 +40,7 @@ public class SecurityConfig {
 			
 			// 모두 접근 가능한 경로
 			.authorizeHttpRequests(request -> request
-					.requestMatchers(new AntPathRequestMatcher("/")
+				.requestMatchers(new AntPathRequestMatcher("/")
 							,new AntPathRequestMatcher("/member/idCheck")
 							,new AntPathRequestMatcher("/member/emailCheck")
 							,new AntPathRequestMatcher("/member/nickNameCheck")
@@ -66,6 +66,9 @@ public class SecurityConfig {
 						,new AntPathRequestMatcher("/member/pwdUpdateForm")
 						,new AntPathRequestMatcher("/oauth2/join")
 						).anonymous()
+				
+				// 관리자만 접근 가능
+				.requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
 				
 				// 그 외 모든 요청은 인증 필요(로그인)
 				.anyRequest().authenticated())
