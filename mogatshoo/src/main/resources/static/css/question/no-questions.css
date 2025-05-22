@@ -1,0 +1,136 @@
+/* Windows 95 스타일 - no-questions 페이지 전용 CSS */
+
+/* 기본 컨테이너 스타일 */
+.vote-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+}
+
+/* 투표 완료 컨테이너 */
+.vote-complete-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+/* Windows 95 창 스타일 */
+.win95-window {
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    width: 450px;
+    animation: windowOpen 0.3s ease-out;
+}
+
+@keyframes windowOpen {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Windows 95 제목 표시줄 */
+.win95-titlebar {
+    background-color: #000080;
+    color: white;
+    padding: 2px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Windows 95 내용 영역 */
+.win95-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 아이콘 스타일 */
+.win95-icon {
+    font-size: 36px;
+    color: #000080;
+    margin-bottom: 15px;
+}
+
+/* 메시지 스타일 */
+.win95-message {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.win95-message h3 {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #000;
+    font-weight: bold;
+}
+
+.win95-message p {
+    font-size: 14px;
+    margin: 5px 0;
+    color: #000;
+}
+
+/* 버튼 컨테이너 */
+.win95-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+/* Windows 95 버튼 스타일 */
+.win95-button {
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+    font-size: 12px;
+    text-decoration: none;
+    color: #000;
+    text-align: center;
+    min-width: 75px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.win95-button:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.win95-button:hover {
+    background-color: #d0d0d0;
+}
+
+/* Windows 95 마우스 커서 */
+html, body {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAElBMVEUAAAAAAAD///8AAAD///8AAABknGCQAAAABXRSTlP9/NtjCH+oUcUAAABSSURBVCjPY2CAAkYhIQEGKFDU13c3gDJFBQUFHaCMoaAgg6EBlBEUFHQ1NAJLCQo6GQkJwqQMDZ0EhKBSLEpAUoJgg0IFYQYJCQpCDRISQhkHAE/JCv9JNpiIAAAAAElFTkSuQmCC'), auto;
+}
+
+.win95-button {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAElBMVEUAAAAAAAD///8AAAD///8AAABknGCQAAAABXRSTlP9/NtjCH+oUcUAAABSSURBVCjPY2CAAkYhIQEGKFDU13c3gDJFBQUFHaCMoaAgg6EBlBEUFHQ1NAJLCQo6GQkJwqQMDZ0EIVJCQrCAoaGhkSBUSkhIEGhQAWetEcIzEQAujAr/Wlg5gwAAAABJRU5ErkJggg=='), auto;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .win95-window {
+        width: 90%;
+        max-width: 450px;
+    }
+}

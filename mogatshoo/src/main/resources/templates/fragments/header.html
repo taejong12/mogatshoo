@@ -52,20 +52,13 @@
 						<!-- 로그인 상태일 때 표시되는 내용 -->
 						<div sec:authorize="isAuthenticated()" class="auth-container">
 							<div class="navbar-text">
+								<a class="nav-link pixel-font" th:href="@{/point/list(memberId=${#authentication.name})}">포인트내역</a>
+							</div>
+							<div class="navbar-text">
 								<a th:href="@{/member/mypage(memberId=${#authentication.name})}"
 									class="nav-link pixel-font">
 									<span class="pixel-font" th:text="${#authentication.principal.nickName}"></span> 님
 								</a>
-							</div>
-							<div>
-								<a class="nav-link pixel-font"
-									th:href="@{/point/list(memberId=${#authentication.name})}">포인트내역</a>
-							</div>
-							<div>
-								<a class="nav-link pixel-font" th:href="@{/hairLossTest/testHair}">탈모진단</a>
-							</div>
-							<div>
-								<a class="nav-link pixel-font" th:href="@{/hospitalMap/hospitals}">병원지도</a>
 							</div>
 							<form th:action="@{/logout}" method="post" class="logout-form">
 								<button type="submit" class="btn btn-white pixel-font"

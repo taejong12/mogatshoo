@@ -1,109 +1,158 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}"
-      th:with="layoutTitle='mogatshoo'">
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/layout}"
+th:with="layoutTitle='mogatshoo'">
 
 <head>
-    <!-- 페이지별 CSS 추가 -->
-    <th:block layout:fragment="additionalStyles">
-        <style>
-            /* 기본 스타일 */
-            body,
-            html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                font-family: 'Press Start 2P', cursive;
-                background-color: #2B2BD8;
-                overflow: hidden;
-            }
+<!-- 페이지별 CSS 추가 -->
+<th:block layout:fragment="additionalStyles">
+<style>
+/* 기본 스타일 */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Press Start 2P', cursive;
+  background-color: #008080;
+  overflow-x: hidden;
+}
 
-            /* 비디오 컨테이너 */
-            .video-container {
-                position: relative;
-                width: 100%;
-                height: 100vh;
-                overflow: hidden;
-            }
+/* 비디오 컨테이너 조정 - 최상위 레이어로 설정 */
+.video-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 999999; /* 최상위 z-index */
+  overflow: hidden;
+}
 
-            /* 비디오 스타일 - 수정 */
-            .video-bg {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transform: translateY(-7%);
-                position: absolute;
-                top: 0;
-                transform: translateZ(3%);
-            }
-        </style>
-    </th:block>
+/* 비디오 스타일 */
+.video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+}
+
+/* Windows 98 컨테이너 */
+#win98Container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  background-color: #008080;
+  overflow: auto;
+}
+</style>
+</th:block>
 </head>
 
 <body>
-    <!-- 본문 영역 -->
-    <div layout:fragment="content">
-        <!-- 비디오 컨테이너 -->
-        <div class="video-container">
-            <!-- 비디오 요소 -->
-            <video class="video-bg" autoplay muted loop playsinline>
-                <source src="/videos/main2.mp4" type="video/mp4">
-            </video>
-        </div>
-    </div>
+<!-- 본문 영역 -->
+<div layout:fragment="content">
+  <!-- 비디오 컨테이너 -->
+  <div class="video-container" id="videoContainer">
+    <video class="video-bg" autoplay muted playsinline>
+      <source src="/videos/main2.mp4" type="video/mp4">
+    </video>
+  </div>
+  
+  <!-- Windows 98 스타일 인터페이스 -->
+  <div id="win98Container">
+    <!-- 이 부분에 Windows 98 인터페이스가 로드됩니다 -->
+  </div>
+</div>
 
-    <!-- 페이지별 스크립트 -->
-    <th:block layout:fragment="additionalScripts">
-        <script th:inline="javascript">
-            document.addEventListener('DOMContentLoaded', function() {
-                const video = document.querySelector('.video-bg');
-                const container = document.querySelector('.video-container');
-                
-                // 비디오 로드 오류 처리
-                video.addEventListener('error', function(e) {
-                    console.error('비디오 로드 오류:', e);
-                    container.style.backgroundColor = '#2B2BD8';
-                });
-                
-                // 비디오 크기 및 위치 조정 함수
-                function adjustVideo() {
-                    const windowWidth = window.innerWidth;
-                    const windowHeight = window.innerHeight;
-                    const aspectRatio = 16 / 9; // 비디오의 가로세로 비율
-                    
-                    // 컨테이너 크기 설정
-                    container.style.height = windowHeight + 'px';
-                    
-                    // 화면 비율과 비디오 비율 비교
-                    const windowRatio = windowWidth / windowHeight;
-                    
-                    if (windowRatio < aspectRatio) {
-                        // 화면이 비디오보다 세로로 길 경우
-                        video.style.width = 'auto';
-                        video.style.height = '100%';
-                    } else {
-                        // 화면이 비디오보다 가로로 넓을 경우
-                        video.style.width = '100%';
-                        video.style.height = 'auto';
-                    }
-                }
-                
-                // 초기 설정
-                adjustVideo();
-                
-                // 창 크기 변경 시 재조정
-                window.addEventListener('resize', adjustVideo);
-                
-                // 비디오 자동 재생 시도
-                video.play().catch(function(err) {
-                    console.log('비디오 자동 재생 실패:', err);
-                    video.muted = true;
-                    video.play();
-                });
-            });
-        </script>
-    </th:block>
+<!-- 페이지별 스크립트 -->
+<th:block layout:fragment="additionalScripts">
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  const video = document.querySelector('.video-bg');
+  const videoContainer = document.getElementById('videoContainer');
+  const win98Container = document.getElementById('win98Container');
+  
+  // 비디오가 DOM에 로드되었는지 확인
+  console.log('비디오 요소 확인:', video);
+  console.log('비디오 컨테이너 확인:', videoContainer);
+  
+  // 비디오 로드 오류 처리
+  video.addEventListener('error', function(e) {
+    console.error('비디오 로드 오류:', e);
+    videoContainer.style.backgroundColor = '#2B2BD8';
+    
+    // 오류 발생 시에도 3초 후 전환
+    setTimeout(function() {
+      videoContainer.style.display = 'none';
+      loadWindows98Interface();
+    }, 3000);
+  });
+  
+
+  
+  // 3초 후 비디오가 자동으로 사라지고 Windows 98 인터페이스로 전환
+  setTimeout(function() {
+    videoContainer.style.display = 'none';
+    loadWindows98Interface();
+  }, 3000);
+  
+  
+  
+  // 비디오 최적화 함수
+  function optimizeVideo() {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    
+    // 16:9 비율 유지하며 화면에 맞추기
+    const aspectRatio = 16 / 9;
+    const windowRatio = windowWidth / windowHeight;
+    
+    if (windowRatio < aspectRatio) {
+      // 화면이 더 세로로 긴 경우
+      video.style.width = '100%';
+      video.style.height = 'auto';
+    } else {
+      // 화면이 더 가로로 넓은 경우
+      video.style.width = 'auto';
+      video.style.height = '100%';
+    }
+  }
+  
+  // 초기 설정
+  optimizeVideo();
+  
+  // 창 크기 변경 시 재조정
+  window.addEventListener('resize', optimizeVideo);
+  
+  // 비디오 URL이 올바른지 확인
+  console.log('비디오 소스 URL:', video.querySelector('source').src);
+  
+  // 비디오 자동 재생 시도 - 더 강력한 방식으로
+  const playPromise = video.play();
+  if (playPromise !== undefined) {
+    playPromise.then(_ => {
+      // 자동 재생 성공
+      console.log('비디오 자동 재생 성공');
+    }).catch(error => {
+      // 자동 재생 실패
+      console.log('비디오 자동 재생 실패:', error);
+      // 사용자 상호작용이 필요하지 않은 muted 모드로 다시 시도
+      video.muted = true;
+      video.play().catch(e => console.error('음소거 모드에서도 재생 실패:', e));
+    });
+  }
+});
+</script>
+</th:block>
 </body>
-
 </html>

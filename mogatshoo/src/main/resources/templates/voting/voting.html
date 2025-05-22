@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>투표하기 - Mogatshoo</title>
+    
+    <!-- 페이지별 추가 스타일 -->
+    <th:block layout:fragment="additionalStyles">
+        <!-- 폰트어썸 -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        
+        <!-- 투표 페이지 전용 CSS -->
+        <link rel="stylesheet" th:href="@{/css/voting/voting.css}">
+    </th:block>
+</head>
+<body>
+    <!-- 레이아웃 컨텐츠 영역 -->
+    <div layout:fragment="content">
+        <div class="container vote-container">
+            <!-- 시작 화면 (기본으로 표시) -->
+            <div id="start-screen" class="start-screen-container">
+                <div class="win95-window start-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">투표 시스템</div>
+                    </div>
+                    <div class="win95-content">
+                        <div class="win95-icon start-icon">
+                            <i class="fas fa-poll"></i>
+                        </div>
+                        <div class="win95-message">
+                            <h2>Mogatshoo 투표 시스템</h2>
+                            <p>질문에 대해 마음에 드는 사진을 클릭하여 투표해주세요.</p>
+                            <p>당신의 참여가 소중합니다!</p>
+                        </div>
+                        <div class="win95-buttons start-buttons">
+                            <button id="start-voting" class="win95-button start-button">
+                                <i class="fas fa-play"></i> 시작하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 투표 없음 메시지 (초기에는 숨김) -->
+            <div id="no-more-questions" class="vote-complete-container" style="display: none;">
+                <div class="win95-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">안내</div>
+                        <div class="win95-close-btn">✕</div>
+                    </div>
+                    <div class="win95-content">
+                        <div class="win95-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="win95-message">
+                            <h3>투표 완료!</h3>
+                            <p>모든 질문에 투표해 주셔서 감사합니다.</p>
+                        </div>
+                        <div class="win95-buttons">
+                            <a href="/" class="win95-button">홈으로 가기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 투표 컨텐츠 영역 (초기에는 숨김) -->
+            <div id="vote-content" th:if="${question != null}" style="display: none;">
+                <div class="vote-header">
+                    <h1>투표하기</h1>
+                    <p class="vote-instructions">마음에 드는 사진을 클릭해서 투표해주세요</p>
+                </div>
+                
+                <!-- 질문 내용 -->
+                <div class="question-container win95-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">질문</div>
+                    </div>
+                    <div class="win95-content">
+                        <h2 th:text="${question.question}" class="question-text">질문 텍스트</h2>
+                        <p class="question-serial" th:text="'질문 번호: ' + ${question.serialNumber}">질문 번호: Q00001</p>
+                    </div>
+                </div>
+                
+                <!-- 투표 옵션 (사진) -->
+                <div class="options-container">
+                    <form id="vote-form" th:action="@{/voting/submit}" method="post">
+                        <input type="hidden" name="serialNumber" th:value="${question.serialNumber}">
+                        <input type="hidden" id="voted-id" name="votedId" value="">
+                        
+                        <div class="options-grid">
+                            <!-- 4개의 사진 옵션 -->
+                            <div th:each="picture, status : ${randomPictures}" class="option-item">
+                                <div class="picture-option win95-interactive" th:data-member-id="${picture.memberId}">
+                                    <div class="win95-pic-container">
+                                        <img th:src="@{'/uploads/' + ${picture.hairPicture}}" alt="투표 옵션 이미지">
+                                    </div>
+                                    <div class="option-text" th:text="${question.getOption1()}" th:if="${status.index == 0}">옵션 1</div>
+                                    <div class="option-text" th:text="${question.getOption2()}" th:if="${status.index == 1}">옵션 2</div>
+                                    <div class="option-text" th:text="${question.getOption3()}" th:if="${status.index == 2}">옵션 3</div>
+                                    <div class="option-text" th:text="${question.getOption4()}" th:if="${status.index == 3}">옵션 4</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- 진행 상황 -->
+                <div class="progress-container win95-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">투표 진행 상황</div>
+                    </div>
+                    <div class="win95-content">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="vote-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text">진행 중...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 팝업 윈도우 (투표 확인용) -->
+            <div id="win95-popup" class="win95-popup" style="display: none;">
+                <div class="win95-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">투표 확인</div>
+                        <div class="win95-close-btn" id="popup-close">✕</div>
+                    </div>
+                    <div class="win95-content">
+                        <div class="win95-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="win95-message">
+                            <p>이 선택지에 투표하시겠습니까?</p>
+                            <p id="selected-option-text"></p>
+                        </div>
+                        <div class="win95-buttons">
+                            <button id="confirm-vote" class="win95-button">예 (Y)</button>
+                            <button id="cancel-vote" class="win95-button">아니오 (N)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 로딩 오버레이 -->
+            <div id="loading-overlay" class="loading-overlay" style="display: none;">
+                <div class="win95-window loading-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">처리 중...</div>
+                    </div>
+                    <div class="win95-content">
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <p>잠시만 기다려주세요...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 페이지별 추가 스크립트 -->
+    <th:block layout:fragment="additionalScripts">
+        <!-- 투표 페이지 전용 JavaScript -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script th:src="@{/js/voting/voting.js}"></script>
+    </th:block>
+</body>
+</html>

@@ -100,4 +100,18 @@ public class QuestionServiceImpl implements QuestionService {
 			throw new RuntimeException("삭제할 질문을 찾을 수 없습니다: " + serialNumber);
 		}
 	}
+	
+	@Override
+	public List<QuestionEntity> getQuestionsByPublicStatus(String isPublic) {
+	    try {
+	        // QuestionRepository의 findByIsPublic 메소드를 호출하여 공개 상태에 따른 질문 목록 반환
+	        List<QuestionEntity> questions = questionRepository.findByIsPublic(isPublic);
+	        return questions != null ? questions : Collections.emptyList();
+	    } catch (Exception e) {
+	        System.err.println("공개 상태 질문 조회 실패: " + e.getMessage());
+	        e.printStackTrace();
+	        // 오류 발생 시 빈 리스트 반환 (null 대신)
+	        return Collections.emptyList();
+	    }
+	}
 }

@@ -23,4 +23,6 @@ public interface QuestionService {
 	
 	// 질문 삭제
 	void deleteQuestion(String serialNumber);
+
+	List<QuestionEntity> getQuestionsByPublicStatus(String string);
 }

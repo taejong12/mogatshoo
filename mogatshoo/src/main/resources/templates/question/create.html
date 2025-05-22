@@ -44,7 +44,13 @@
                 <div class="option-row">
                     <div class="form-group">
                         <label for="option1">보기 1 <span class="required">*</span></label>
-                        <input type="text" id="option1" name="option1" required th:value="${member.memberNickName}">
+                        <input type="text" id="option1" name="option1" required 
+                               th:value="${randomPictures != null && randomPictures.size() > 0 && memberNicknames != null ? 
+                                        memberNicknames.get(randomPictures[0].memberId) : ''}">
+                        <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 0 && memberNicknames != null}">
+                            <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[0].memberId)}">닉네임</span>
+                            <span class="member-id" th:text="'(ID: ' + ${randomPictures[0].memberId} + ')'">회원 ID</span>
+                        </div>
                     </div>
                     <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 0}">
@@ -62,7 +68,13 @@
                 <div class="option-row">
                     <div class="form-group">
                         <label for="option2">보기 2 <span class="required">*</span></label>
-                        <input type="text" id="option1" name="option1" required th:value="${member.memberNickName}">
+                        <input type="text" id="option2" name="option2" required 
+                               th:value="${randomPictures != null && randomPictures.size() > 1 && memberNicknames != null ? 
+                                        memberNicknames.get(randomPictures[1].memberId) : ''}">
+                        <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 1 && memberNicknames != null}">
+                            <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[1].memberId)}">닉네임</span>
+                            <span class="member-id" th:text="'(ID: ' + ${randomPictures[1].memberId} + ')'">회원 ID</span>
+                        </div>
                     </div>
                     <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 1}">
@@ -80,7 +92,13 @@
                 <div class="option-row">
                     <div class="form-group">
                         <label for="option3">보기 3 <span class="required">*</span></label>
-                        <input type="text" id="option1" name="option1" required th:value="${member.memberNickName}">
+                        <input type="text" id="option3" name="option3" required 
+                               th:value="${randomPictures != null && randomPictures.size() > 2 && memberNicknames != null ? 
+                                        memberNicknames.get(randomPictures[2].memberId) : ''}">
+                        <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 2 && memberNicknames != null}">
+                            <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[2].memberId)}">닉네임</span>
+                            <span class="member-id" th:text="'(ID: ' + ${randomPictures[2].memberId} + ')'">회원 ID</span>
+                        </div>
                     </div>
                     <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 2}">
@@ -98,7 +116,13 @@
                 <div class="option-row">
                     <div class="form-group">
                         <label for="option4">보기 4 <span class="required">*</span></label>
-                        <input type="text" id="option1" name="option1" required th:value="${member.memberNickName}">
+                        <input type="text" id="option4" name="option4" required 
+                               th:value="${randomPictures != null && randomPictures.size() > 3 && memberNicknames != null ? 
+                                        memberNicknames.get(randomPictures[3].memberId) : ''}">
+                        <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 3 && memberNicknames != null}">
+                            <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[3].memberId)}">닉네임</span>
+                            <span class="member-id" th:text="'(ID: ' + ${randomPictures[3].memberId} + ')'">회원 ID</span>
+                        </div>
                     </div>
                     <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 3}">

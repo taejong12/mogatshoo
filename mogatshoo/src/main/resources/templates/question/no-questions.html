@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>투표 불가</title>
+    
+    <!-- 페이지별 추가 스타일 -->
+    <th:block layout:fragment="additionalStyles">
+        <!-- 폰트어썸 -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        
+        <!-- Windows 95 스타일 CSS -->
+        <link rel="stylesheet" th:href="@{/css/question/no-questions.css}">
+    </th:block>
+</head>
+<body>
+    <!-- 레이아웃 컨텐츠 영역 -->
+    <div layout:fragment="content">
+        <div class="container vote-container">
+            <div class="vote-complete-container">
+                <div class="win95-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">안내</div>
+                    </div>
+                    <div class="win95-content">
+                        <div class="win95-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="win95-message">
+                            <h3>투표 가능한 질문이 없습니다</h3>
+                            <p th:if="${message}" th:text="${message}">투표할 질문이 없습니다.</p>
+                            <p th:unless="${message}">현재 투표 가능한 질문이 없습니다. 나중에 다시 시도해주세요.</p>
+                        </div>
+                        <div class="win95-buttons">
+                            <a href="/" class="win95-button">
+                                <i class="fas fa-home" style="margin-right: 5px;"></i>
+                                홈으로 가기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 페이지별 추가 스크립트 -->
+    <th:block layout:fragment="additionalScripts">
+        <script>
+            // Windows 95 시스템 소리 효과 (선택 사항)
+            window.addEventListener('DOMContentLoaded', function() {
+                try {
+                    var errorSound = new Audio('/sounds/windows-error.mp3');
+                    errorSound.volume = 0.5;
+                    errorSound.play();
+                } catch(e) {
+                    console.log('오디오 재생 실패:', e);
+                }
+            });
+        </script>
+    </th:block>
+</body>
+</html>
