@@ -30,8 +30,9 @@ public class MemberController {
 	
 	@Autowired
 	private EmailController emailController;
+	
 	@Autowired
-	HairLossTestService hairService;
+	private HairLossTestService hairService;
 	
 	@GetMapping("/login")
 	public String loginPage() {
@@ -122,7 +123,12 @@ public class MemberController {
 			return "redirect:/member/login";
 		}
 		
+		Map<String, Object> map = new HashMap<>();
+		map = hairService.hairMypage(memberId);
+		
 		model.addAttribute("member", member);
+		model.addAttribute("picture", map.get("picture"));
+		model.addAttribute("stage", map.get("stage"));
 		return "member/mypage";
 	}
 	

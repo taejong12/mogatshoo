@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			})
 			.catch(error => {
 				console.error("이메일 중복 확인 오류:", error);
+				window.location.href = "/error/globalError";
 			});
 		});
 	}

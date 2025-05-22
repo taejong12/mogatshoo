@@ -38,7 +38,6 @@ public class HairLossTestController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String memberId = authentication.getName();
 		
-		System.out.println("memberId : "+ memberId);
 		member = memberService.findByMemberId(memberId);
 		model.addAttribute("member", member);
 		return "hair/hairLossTest";

@@ -68,10 +68,6 @@ body, html {
     </video>
   </div>
   
-  <!-- Windows 98 스타일 인터페이스 -->
-  <div id="win98Container">
-    <!-- 이 부분에 Windows 98 인터페이스가 로드됩니다 -->
-  </div>
 </div>
 
 <!-- 페이지별 스크립트 -->
@@ -94,7 +90,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 오류 발생 시에도 3초 후 전환
     setTimeout(function() {
       videoContainer.style.display = 'none';
-      loadWindows98Interface();
     }, 3000);
   });
   
@@ -103,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // 3초 후 비디오가 자동으로 사라지고 Windows 98 인터페이스로 전환
   setTimeout(function() {
     videoContainer.style.display = 'none';
-    loadWindows98Interface();
   }, 3000);
   
   

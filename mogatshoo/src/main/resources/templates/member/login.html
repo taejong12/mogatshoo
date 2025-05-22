@@ -45,9 +45,9 @@
 						<a class="btn text-white loginFormBtn" th:href="@{/member/lost}">ID/PW 찾기</a>
 					</div>
 					<div class="gap-2 mb-3 d-flex align-items-center justify-content-center" style="grid-template-columns: repeat(3, 1fr);">
-						<span><a th:href="@{/oauth2/authorization/kakao}"><img th:src="@{/img/member/login/kakao_logo.png}" alt="카톡이미지"></a></span>
-						<span><a th:href="@{/oauth2/authorization/naver}"><img th:src="@{/img/member/login/naver_logo.png}" alt="네이버이미지"></a></span>
-						<span><a th:href="@{/oauth2/authorization/google}"><img th:src="@{/img/member/login/google_logo.png}" alt="구글이미지"></a></span>
+						<span><a onclick="fu_openAndClose('/oauth2/authorization/kakao')" th:href="@{#}"><img th:src="@{/img/member/login/kakao_logo.png}" alt="카톡이미지"></a></span>
+						<span><a onclick="fu_openAndClose('/oauth2/authorization/naver')" th:href="@{#}"><img th:src="@{/img/member/login/naver_logo.png}" alt="네이버이미지"></a></span>
+						<span><a onclick="fu_openAndClose('/oauth2/authorization/google')" th:href="@{#}"><img th:src="@{/img/member/login/google_logo.png}" alt="구글이미지"></a></span>
 					</div>
 				</form>
 			</div>
@@ -57,6 +57,8 @@
 		<script th:src="@{/js/member/login/ev_enter.js}"></script>
 		<!-- 로그인 버튼 -->
 		<script th:src="@{/js/member/login/fu_memberLogin.js}"></script>
+		<!-- 새 창 열고 현재 창 닫기 -->
+		<script th:src="@{/js/member/login/fu_openAndClose.js}"></script>
 	</div>
 </body>
 </html>

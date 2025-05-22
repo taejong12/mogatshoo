@@ -1,0 +1,197 @@
+/* Windows 95 스타일 CSS */
+/* static/css/win95/window.css */
+
+/* 윈도우 컨테이너 */
+.win95-window {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 800px;
+    max-width: 800px;
+    height: 500px;
+    background-color: #c0c0c0;
+    border: 2px outset #ffffff;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    z-index: 1000;
+    resize: both;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 타이틀 바 */
+.win95-title-bar {
+    background-color: #000080;
+    color: white;
+    padding: 2px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    user-select: none;
+}
+
+.win95-title-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 4px;
+}
+
+.win95-title-icon img {
+    width: 16px;
+    height: 16px;
+}
+
+.win95-title-text {
+    flex-grow: 1;
+    font-weight: bold;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 창 컨트롤 버튼 */
+.win95-controls {
+    display: flex;
+}
+
+.win95-control {
+    width: 16px;
+    height: 14px;
+    background-color: #c0c0c0;
+    border: 1px outset #ffffff;
+    margin-left: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.win95-control:active {
+    border: 1px inset #ffffff;
+}
+
+/* 메뉴 바 */
+.win95-menu-bar {
+    display: flex;
+    border-bottom: 1px solid #808080;
+    padding: 1px 0;
+    user-select: none;
+    background-color: #c0c0c0;
+}
+
+.win95-menu-item {
+    padding: 2px 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.win95-menu-item:hover {
+    background-color: #000080;
+    color: white;
+}
+
+/* 윈도우 내용 영역 */
+.win95-window-content {
+    flex-grow: 1;
+    padding: 2px;
+    background-color: #ffffff;
+    border: 1px inset #a0a0a0;
+    overflow: auto;
+    margin: 2px;
+    position: relative;
+}
+
+/* 윈도우95 스타일 스크롤바 */
+.win95-window-content::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+.win95-window-content::-webkit-scrollbar-track {
+    background: #c0c0c0;
+    border-left: 1px solid #808080;
+}
+
+.win95-window-content::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border-left: 1px solid #808080;
+    border-top: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+/* 스크롤바 버튼 */
+.win95-window-content::-webkit-scrollbar-button {
+    display: block;
+    background-color: #c0c0c0;
+    border: 1px outset #ffffff;
+    height: 16px;
+    width: 16px;
+}
+
+/* 스크롤바 위쪽 화살표 */
+.win95-window-content::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 100 100'><path d='M 50,20 L 80,60 20,60 z' fill='black'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* 스크롤바 아래쪽 화살표 */
+.win95-window-content::-webkit-scrollbar-button:vertical:increment {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 100 100'><path d='M 20,40 L 80,40 50,80 z' fill='black'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* 상태 바 */
+.win95-statusbar {
+    height: 18px;
+    background-color: #c0c0c0;
+    border-top: 1px solid #808080;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    font-size: 11px;
+}
+
+/* 활성/비활성 창 상태 */
+.win95-window-inactive .win95-title-bar {
+    background-color: #808080;
+    color: #c0c0c0;
+}
+
+/* 창 여러개 있을 때 활성창 표시 */
+.win95-window-active {
+    z-index: 1001;
+}
+
+/* 최대화된 창 스타일 */
+.win95-window-maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-width: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* 최소화 애니메이션 (옵션) */
+@keyframes minimize {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: scale(0.1);
+        opacity: 0;
+    }
+}
+
+.win95-window-minimizing {
+    animation: minimize 0.2s ease-out forwards;
+}

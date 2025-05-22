@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.mogatshoo.dev.config.security.handler.MemberUserDetails;
+import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.repository.MemberRepository;
 import com.mogatshoo.dev.point.service.PointService;
@@ -39,6 +40,9 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 	
 	@Autowired
 	private PointService pointService;
+	
+	@Autowired
+	private HairLossTestService hairLossTestService;
 	
 	@Override
 	public void memberSave(MemberEntity memberEntity) {
@@ -163,6 +167,9 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 
 	@Override
 	public void memberDelete(String memberId) {
+		pointService.memberDelete(memberId);
+		hairLossTestService.memberDelete(memberId);
+		
 		memberRepository.deleteById(memberId);
 	}
 

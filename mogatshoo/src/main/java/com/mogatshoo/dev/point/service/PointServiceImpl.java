@@ -101,4 +101,10 @@ public class PointServiceImpl implements PointService {
 			pointHistoryService.pointHistorySave(pointHistoryEntity);
 		}
 	}
+
+	@Override
+	public void memberDelete(String memberId) {
+		pointHistoryService.memberDelete(memberId);
+		pointRepository.deleteById(memberId);
+	}
 }

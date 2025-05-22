@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			})
 			.catch(error => {
 				console.error("아이디 중복 확인 오류:", error);
+				window.location.href = "/error/globalError";
 			});
 		});
 	}

@@ -4,118 +4,218 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
 </head>
 
 <body>
-    <!-- 다른 페이지에 포함될 사이드바 조각 -->
-    <div th:fragment="sidebar" class="sidebar-component">
-        <div class="sidebar">
-            <!-- 로고 영역 -->
-            <div class="sidebar-logo">
-                <a th:href="@{/voting}">
-                    <div class="menu-icon">
-                        <img src="/img/icons/computer.png" alt="mogatshoo" class="logo-img">
-                    </div>
-                    <div class="logo-text">탈모왕중왕</div>
-                </a>
-            </div>
-            
-            <!-- 메뉴 아이템 -->
-            <div class="sidebar-menu">
-                <div class="menu-item">
-                    <a class="nav-link" th:href="@{/}">
-                        <div class="menu-icon">
-                            <img src="/img/icons/computer.png" alt="홈">
-                        </div>
-                        <span class="menu-text">홈</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="nav-link" th:href="@{/fortune/start}">
-                        <div class="menu-icon">
-                            <img src="/img/icons/computer.png" alt="운세">
-                        </div>
-                        <span class="menu-text">오늘운세</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="nav-link" th:href="@{/hairLossTest/testHair}">
-                        <div class="menu-icon">
-                            <img src="/img/icons/computer.png" alt="탈모진단">
-                        </div>
-                        <span class="menu-text">탈모진단</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="nav-link" th:href="@{/hospitalMap/hospitals}">
-                        <div class="menu-icon">
-                            <img src="/img/icons/computer.png" alt="병원지도">
-                        </div>
-                        <span class="menu-text">병원지도</span>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- 로그인 상태에 따른 메뉴 -->
-            <!-- 비로그인 상태일 때 표시되는 링크 -->
-            <div class="sidebar-auth" sec:authorize="isAnonymous()">
-                <div class="auth-item">
-                    <a class="nav-link" th:href="@{/member/login}">
-                        <div class="menu-icon">
-                            <img src="/img/icons/computer.png" alt="로그인">
-                        </div>
-                        <span class="menu-text">로그인</span>
-                    </a>
-                </div>
-                <div class="auth-item">
-                    <a class="nav-link" th:href="@{/member/join}">
-                        <div class="menu-icon">
-                            <img src="/img/icons/computer.png" alt="회원가입">
-                        </div>
-                        <span class="menu-text">회원가입</span>
-                    </a>
-                </div>
-            </div>
+	<!-- 다른 페이지에 포함될 사이드바 조각 -->
+	<div th:fragment="sidebar" class="sidebar-component">
+		<div class="sidebar">
+			<!-- 로고 영역 -->
+			<div class="sidebar-logo">
+				<a th:href="@{/}">
+					<div class="menu-icon">
+						<img src="/img/icons/computer.png" alt="mogatshoo" class="logo-img">
+					</div>
+					<div class="logo-text">탈모왕중왕</div>
+				</a>
+			</div>
 
-            <!-- 로그인 상태일 때 표시되는 내용 -->
-            <div class="sidebar-auth" sec:authorize="isAuthenticated()">
-                <div class="auth-profile">
-                    <a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="nav-link">
-                        <div class="menu-icon">
-                            <img src="/img/icons/computer.png" alt="마이페이지">
-                        </div>
-                        <span class="menu-text" th:text="${#authentication.principal.nickName}"></span>
-                    </a>
-                </div>
-                <div class="auth-item">
-                    <a class="nav-link" th:href="@{/point/list(memberId=${#authentication.name})}">
-                        <div class="menu-icon">
-                            <img src="/img/icons/computer.png" alt="포인트">
-                        </div>
-                        <span class="menu-text">포인트</span>
-                    </a>
-                </div>
-                <div class="auth-item">
-                    <form th:action="@{/logout}" method="post" class="logout-form">
-                        <button type="submit" class="logout-btn">
-                            <div class="menu-icon">
-                                <img src="/img/icons/computer.png" alt="로그아웃">
-                            </div>
-                            <span class="menu-text">로그아웃</span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- 토글 버튼 (모바일 뷰에서만 보임) -->
-            <div class="sidebar-toggle">
-                <button id="sidebarToggleBtn">
-                    <span class="toggle-icon">☰</span>
-                </button>
-            </div>
-        </div>
-    </div>
+			<!-- 메뉴 아이템 -->
+			<div class="sidebar-menu">
+				<div class="menu-item">
+					<a class="nav-link" th:href="@{/}">
+						<div class="menu-icon">
+							<img src="/img/icons/computer.png" alt="홈">
+						</div>
+						<span class="menu-text">홈</span>
+					</a>
+				</div>
+				<div class="menu-item">
+					<a class="nav-link" th:href="@{/fortune/start}">
+						<div class="menu-icon">
+							<img src="/img/icons/computer.png" alt="운세">
+						</div>
+						<span class="menu-text">오늘운세</span>
+					</a>
+				</div>
+				<div class="menu-item">
+					<a class="nav-link" th:href="@{/hairLossTest/testHair}">
+						<div class="menu-icon">
+							<img src="/img/icons/computer.png" alt="탈모진단">
+						</div>
+						<span class="menu-text">탈모진단</span>
+					</a>
+				</div>
+				<div class="menu-item">
+					<a class="nav-link" th:href="@{/hospitalMap/hospitals}">
+						<div class="menu-icon">
+							<img src="/img/icons/computer.png" alt="병원지도">
+						</div>
+						<span class="menu-text">병원지도</span>
+					</a>
+				</div>
+			</div>
+
+			<!-- 토글 버튼 (모바일 뷰에서만 보임) -->
+			<div class="sidebar-toggle">
+				<button id="sidebarToggleBtn">
+					<span class="toggle-icon">☰</span>
+				</button>
+			</div>
+		</div>
+
+		<!-- 윈도우95 창 템플릿 -->
+		<div id="win95Window" class="win95-window">
+		    <div class="win95-title-bar">
+		        <div class="win95-title-text">문서</div>
+		        <div class="win95-close">×</div>
+		    </div>
+		    <div class="win95-content">
+		        <iframe id="windowContentFrame" style="width:1300px; height:500px; border:none; overflow:auto;" src="about:blank"></iframe>
+		    </div>
+		</div>
+
+		<!-- jQuery 사용 (간편한 Ajax 처리를 위해) -->
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+		<script>
+		    $(document).ready(function () {
+		        // 사이드바 항목 클릭 시
+		        $('.menu-item a, .auth-item a, .auth-profile a').click(function (e) {
+		            e.preventDefault(); // 기본 링크 동작 방지
+
+		            // 클릭된 링크의 href 속성에서 파일 경로를 가져옵니다.
+		            const file = $(this).attr('href');
+		            // 메뉴 텍스트에서 창의 제목을 가져오거나 기본값 '문서'를 사용합니다.
+		            const title = $(this).find('.menu-text').text() || '문서';
+
+		            // '/' 링크는 일반적인 페이지 이동을 수행합니다.
+		            if (file === '/') {
+		                window.location.href = file;
+		                return;
+		            }
+
+		            // 윈도우 제목 설정
+		            $('.win95-title-text').text(title);
+
+		            // 윈도우 표시 및 위치 설정
+		            $('#win95Window').css({
+		                'display': 'block',
+		                'position': 'fixed',
+		                'left': '150px', // 사이드바 너비(120px) + 여유 공간
+		                'top': '50px',
+		                'transform': 'none'
+		            });
+
+		            // iframe 소스 설정
+		            $('#windowContentFrame').attr('src', file);
+		        });
+
+		        // iframe 로드 완료 후 base target 설정
+		        $('#windowContentFrame').on('load', function() {
+		            try {
+		                // iframe 내부 문서에 접근
+		                const iframeDoc = this.contentDocument || this.contentWindow.document;
+		                
+		                // base 태그가 있는지 확인
+		                let baseElement = iframeDoc.querySelector('base');
+		                
+		                // base 태그가 없으면 새로 생성
+		                if (!baseElement) {
+		                    baseElement = iframeDoc.createElement('base');
+		                    iframeDoc.head.appendChild(baseElement);
+		                }
+		                
+		                // target 속성을 '_self'로 설정하여 링크가 iframe 내에서 열리도록 함
+		                baseElement.setAttribute('target', '_self');
+		                
+		                console.log("iframe 내부에 base target 설정 완료");
+		            } catch (e) {
+		                console.error("iframe 내부 문서 접근 오류:", e);
+		            }
+		        });
+
+		        // 닫기 버튼 클릭 시
+		        $('.win95-close').click(function () {
+		            $('#win95Window').hide();
+		            // iframe 내용 제거
+					// 변경 후 (절대 경로로 변환)
+					if (file.startsWith('/')) {
+					    // 이미 절대 경로인 경우
+					    $('#windowContentFrame').attr('src', file);
+					} else {
+					    // 상대 경로인 경우 절대 경로로 변환
+					    $('#windowContentFrame').attr('src', '/' + file);
+					}
+		        });
+
+		        // 드래그 기능
+		        let isDragging = false;
+		        let offsetX, offsetY;
+
+		        $('.win95-title-bar').mousedown(function (e) {
+		            isDragging = true;
+		            offsetX = e.clientX - $('#win95Window').position().left;
+		            offsetY = e.clientY - $('#win95Window').position().top;
+
+		            $(document).mousemove(function (e) {
+		                if (isDragging) {
+		                    $('#win95Window').css({
+		                        left: e.clientX - offsetX,
+		                        top: e.clientY - offsetY,
+		                        transform: 'none'
+		                    });
+		                }
+		            });
+
+		            $(document).mouseup(function () {
+		                isDragging = false;
+		                $(document).off('mousemove');
+		                $(document).off('mouseup');
+		            });
+		        });
+		    });
+			// iframe 로드 완료 후 사이드바와 푸터 숨기기
+			$('#windowContentFrame').on('load', function() {
+			    try {
+			        const iframe = document.getElementById('windowContentFrame');
+			        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+			        
+			        // 사이드바 숨기기 (다양한 선택자 시도)
+			        const sidebars = iframeDoc.querySelectorAll('.sidebar, .sidebar-component, .side-nav, #sidebar, nav[role="navigation"]');
+			        sidebars.forEach(sidebar => {
+			            if(sidebar) sidebar.style.display = 'none';
+			        });
+			        
+			        // 푸터 숨기기 (다양한 선택자 시도)
+			        const footers = iframeDoc.querySelectorAll('footer, .footer, .site-footer, #footer');
+			        footers.forEach(footer => {
+			            if(footer) footer.style.display = 'none';
+			        });
+			        
+			        // 메인 콘텐츠 영역에 전체 너비 적용
+			        const mainContents = iframeDoc.querySelectorAll('.content-with-sidebar, main, #main, .main-content');
+			        mainContents.forEach(content => {
+			            if(content) {
+			                content.style.marginLeft = '0';
+			                content.style.width = '100%';
+			            }
+			        });
+			        
+			        // body에 직접 스타일 적용
+			        if(iframeDoc.body) {
+			            iframeDoc.body.style.margin = '0';
+			            iframeDoc.body.style.padding = '0';
+			        }
+			        
+			        console.log("iframe 내부 요소 정리 완료");
+			    } catch (e) {
+			        console.error("iframe 내부 요소 접근 오류:", e);
+			    }
+			});
+		</script>
+	</div>
 </body>
 
 </html>
