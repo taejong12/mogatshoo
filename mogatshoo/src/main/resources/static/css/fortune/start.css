@@ -1,10 +1,152 @@
 @charset "UTF-8";
 
+/* 복고풍 색상 및 기본 스타일 */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 포인트 표시 영역 */
+.point-indicator {
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  padding: 6px 10px;
+  text-align: right;
+  margin-bottom: 15px;
+}
+
+#point {
+  background-color: #000080; /* 네이비 블루 */
+  color: yellow;
+  padding: 2px 8px;
+  font-weight: bold;
+  margin-left: 5px;
+  display: inline-block;
+}
+
+/* 타이틀 스타일 */
+h1.retro-title {
+  text-align: center;
+  background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff);
+  color: black;
+  text-shadow: 2px 2px 0 white;
+  padding: 10px;
+  font-size: 32px;
+  letter-spacing: 2px;
+  margin: 15px 0;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(2px 2px 0 white);
+}
+
+/* 운세 내용 디스플레이 */
+.fortune-display {
+  background-color: #000080; /* 네이비 블루 */
+  color: white;
+  padding: 20px;
+  margin: 15px 0;
+  min-height: 200px;
+  text-align: center;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* 운세 아이템 */
 #fortuneItem {
-	color: rgb(255, 255, 0);
+  color: yellow;
+  font-size: 24px;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
 }
 
-.point {
-	color: rgb(255, 255, 0);
+/* 운세 메시지 */
+#fortuneMsg {
+  color: #ffffff;
+  font-size: 18px;
+  margin: 20px 0;
+  line-height: 1.5;
 }
 
+/* 버튼 스타일 */
+.retro-button {
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  color: black;
+  padding: 8px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px auto;
+  display: inline-block;
+  min-width: 120px;
+  text-align: center;
+}
+
+.retro-button:active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  background-color: #b0b0b0;
+}
+
+/* 버튼 컨테이너 */
+.button-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* 포인트 부족 메시지 */
+.point-warning {
+  color: #ff0000;
+  background-color: #ffff00;
+  padding: 8px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  border: 2px dashed #ff0000;
+}
+
+/* 하단 정보 */
+.footer-info {
+  background-color: #c0c0c0;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  padding: 8px;
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #800000; /* 어두운 적색 */
+}
+
+/* 깜빡이는 효과 */
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.blink {
+  animation: blink 1.5s infinite;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  h1.retro-title {
+    font-size: 24px;
+  }
+  
+  .retro-button {
+    width: 80%;
+  }
+}

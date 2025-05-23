@@ -99,6 +99,14 @@
   margin-right: 4px;
 }
 
+/* 시작 버튼 눌린 효과 */
+.win-button.pressed {
+  border-top: 2px solid #808080 !important;
+  border-left: 2px solid #808080 !important;
+  border-bottom: 2px solid #ffffff !important;
+  border-right: 2px solid #ffffff !important;
+}
+
 /* 시계 */
 .clock {
   background-color: #c0c0c0;
@@ -112,7 +120,7 @@
   margin-left: auto; /* 오른쪽 정렬 */
 }
 
-/* 모달 창 */
+/* 모달 창 (이용약관, 회사소개, 시작메뉴 공통) */
 .modal-window {
   position: fixed;
   bottom: 60px;
@@ -133,9 +141,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #000080;
+  background: linear-gradient(90deg, #000080 0%, #000040 100%);
   color: #ffffff;
-  padding: 4px 8px;
+  padding: 1px 8px;
   font-weight: bold;
   border-bottom: 2px solid #808080;
 }
@@ -149,9 +157,49 @@
 
 .modal-content {
   padding: 10px;
-  background-color: #ffffff;
+  background-color: #c0c0c0;
   color: #000000;
   border-top: 2px inset #808080;
+}
+
+/* 시작 메뉴 전용 스타일 */
+#start-menu {
+  width: 200px !important;
+  bottom: 50px !important;
+  left: 10px !important;
+}
+
+/* 시작 메뉴 아이템 (모달과 통일된 글씨체) */
+.start-menu-item-95 {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  margin: 2px 0;
+  cursor: pointer;
+  font-family: Tahoma, sans-serif; /* 이용약관과 동일한 글씨체 */
+  font-size: 12px; /* 이용약관과 동일한 크기 */
+  color: #000000;
+  height: 20px;
+}
+
+.start-menu-item-95:hover {
+  background-color: #000080;
+  color: white;
+}
+
+.start-menu-item-95 img.startImg {
+  margin-right: 6px;
+  width: 16px;
+  height: 16px;
+}
+
+/* 윈도우95 구분선 */
+.win95-divider {
+  border: none;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #ffffff;
+  margin: 4px 0;
+  height: 2px;
 }
 
 /* 로그인 영역 스타일 */
@@ -191,7 +239,7 @@
   align-items: center;
   background: none;
   border: none;
-  font-family: 'dalmoori', sans-serif;
+  font-family: Tahoma, sans-serif; /* 다른 푸터 요소와 통일 */
   font-size: 12px;
   cursor: pointer;
   padding: 2px 6px;
@@ -199,7 +247,6 @@
   height: 100%;
   color: red;
 }
-
 
 /* 기본 윈도우95 창 스타일 */
 .win95-window {
@@ -219,10 +266,10 @@
 /* iframe 스타일 (기존 CSS 파일에 추가) */
 #windowContentFrame {
 	width: 1300px;
-		height: 580px;
-    border: none;
-    overflow: auto;
-    background-color: white;
+	height: 580px;
+  border: none;
+  overflow: auto;
+  background-color: white;
 }
 
 .win95-title-bar {
@@ -308,5 +355,137 @@
   .footer-spacer {
     min-width: 10px;
     max-width: 20px;
+  }
+
+  /* 시작 메뉴 반응형 */
+  #start-menu {
+    width: 150px !important;
+  }
+  
+  .start-menu-item-95 {
+    padding: 3px 6px;
+    font-size: 11px;
+    height: 18px;
+  }
+  
+  .start-menu-item-95 img.startImg {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+  }
+}
+
+/* 확인 모달 창 (로그아웃 확인용) */
+#confirm-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  z-index: 10000;
+  font-family: Tahoma, sans-serif;
+  font-size: 12px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  display: none;
+}
+
+.confirm-header {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg, #000080 0%, #000040 100%);
+  color: #ffffff;
+  padding: 4px 8px;
+  font-weight: bold;
+  border-bottom: 2px solid #808080;
+}
+
+.confirm-header img {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+}
+
+.confirm-content {
+  padding: 20px;
+  background-color: #c0c0c0;
+  color: #000000;
+  text-align: center;
+}
+
+.confirm-message {
+  margin-bottom: 20px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.confirm-btn {
+  padding: 4px 16px;
+  background-color: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  cursor: pointer;
+  font-family: Tahoma, sans-serif;
+  font-size: 12px;
+  min-width: 60px;
+}
+
+.confirm-btn:active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+}
+
+.confirm-btn:hover {
+  background-color: #d4d4d4;
+}
+
+@media (max-width: 480px) {
+  #start-menu {
+    width: 120px !important;
+    left: 5px !important;
+  }
+  
+  .start-menu-item-95 {
+    padding: 2px 4px;
+    font-size: 10px;
+    height: 16px;
+  }
+  
+  .start-menu-item-95 img.startImg {
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+  }
+
+  /* 확인 모달 반응형 */
+  #confirm-modal {
+    width: 250px;
+  }
+  
+  .confirm-content {
+    padding: 15px;
+  }
+  
+  .confirm-buttons {
+    gap: 8px;
+  }
+  
+  .confirm-btn {
+    padding: 3px 12px;
+    min-width: 50px;
   }
 }

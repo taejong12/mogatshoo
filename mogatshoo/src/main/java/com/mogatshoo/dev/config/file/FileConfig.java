@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.file.config;
+package com.mogatshoo.dev.config.file;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

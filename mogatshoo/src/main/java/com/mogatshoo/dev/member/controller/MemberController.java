@@ -38,6 +38,7 @@ public class MemberController {
 	public String loginPage() {
 		return "member/login";
 	}
+	
 
 	@GetMapping("/join")
 	public String joinPage() {

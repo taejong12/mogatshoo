@@ -99,7 +99,11 @@
 - **Gradle**
   - 빌드 자동화 도구
 
+## 기능 명세서
+[기능명세서](https://docs.google.com/spreadsheets/d/e/2PACX-1vRVYOygTrTNBNytmTfv5SujokSA3QIlPyaG0SHuP1a-DXaPAcCxu42BoF4t2a5zR7w22IXzEbtwRz_U/pubhtml)
 
+## WBS
+[WBS](https://docs.google.com/spreadsheets/d/e/2PACX-1vQzEtGmdmMyMBthOnJAbT_waEKrh7CrcYlkn0MWF-p-uj1c8A41-e3g4SbYvJcqbloM8_0v5Tlf8lna/pubhtml)
 
 ## 📊 프로젝트 구조
 ```
@@ -115,7 +119,7 @@
 ### 종로 itkgbank 핀테그 풀스텍 수강자 
 - 서하나 : [노션 포트폴리오](https://www.notion.so/1b9db822a28e801eb04af2f96ab48d5a)
 - 최승필 : [노션 포트폴리오](https://www.notion.so/1e3c0872a5f880ac8e10e228219cd836?pvs=4)
-- 유태종 : 링크 걸기
+- 유태종 : [깃허브](https://github.com/taejong12)
 
 
 <div align="center">
