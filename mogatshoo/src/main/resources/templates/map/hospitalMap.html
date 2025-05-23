@@ -236,13 +236,6 @@
 			    
 			    markers.push(marker);
 			    
-			    // 현재 위치 레이블 추가
-			    locationOverlay = new kakao.maps.CustomOverlay({
-			      position: currentPosition,
-			      content: '<div style="padding:5px 10px; background-color:#FF3333; color:#fff; border-radius:5px; font-weight:bold; box-shadow:0 1px 3px rgba(0,0,0,0.3);">내 위치</div>',
-			      yAnchor: 2.5
-			    });
-			    locationOverlay.setMap(map);
 			    
 			    // 반경 변경 이벤트 설정
 			    setupRadiusChangeEvent();
@@ -908,13 +901,7 @@
 			            locationOverlay.setMap(null);
 			          }
 			          
-			          // 현재 위치 레이블 추가
-			          locationOverlay = new kakao.maps.CustomOverlay({
-			            position: currentPosition,
-			            content: '<div style="padding:5px 10px; background-color:#FF3333; color:#fff; border-radius:5px; font-weight:bold; box-shadow:0 1px 3px rgba(0,0,0,0.3);">내 위치</div>',
-			            yAnchor: 2.5
-			          });
-			          locationOverlay.setMap(map);
+			         
 			          
 			          // 검색 반경 시각화
 			          updateSearchRadius();
