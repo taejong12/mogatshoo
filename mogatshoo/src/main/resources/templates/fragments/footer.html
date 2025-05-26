@@ -1,88 +1,90 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" th:href="@{/css/footer.css}">
+	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
 
 <body>
-<div th:fragment="footer" class="footer">
-<div class="footer-left">
-<!-- Windows 시작 버튼 -->
-<div class="win-button" id="win-button">
-<img th:src="@{/api/placeholder/20/20}" alt="Windows" />
-<span>시작</span>
-</div>
+	<div th:fragment="footer" class="footer">
+		<div class="footer-left">
+			<!-- Windows 시작 버튼 -->
+			<div class="win-button" id="win-button">
+				<img th:src="@{/api/placeholder/20/20}" alt="Windows" />
+				<span>시작</span>
+			</div>
 
-<!-- 폴더 영역 -->
-<div class="footer-folders">
-<div class="footer-folder" onclick="openModal('terms')">
-<img th:src="@{/api/placeholder/20/20}" alt="Terms" />
-<span>이용약관</span>
-</div>
-<div class="footer-folder" onclick="openModal2('company')">
-<img th:src="@{/api/placeholder/20/20}" alt="Company" />
-<span>회사 소개</span>
-</div>
-</div>
+			<!-- 폴더 영역 -->
+			<div class="footer-folders">
+				<div class="footer-folder" onclick="openModal('terms')">
+					<img th:src="@{/api/placeholder/20/20}" alt="Terms" />
+					<span>이용약관</span>
+				</div>
+				<div class="footer-folder" onclick="openModal2('company')">
+					<img th:src="@{/api/placeholder/20/20}" alt="Company" />
+					<span>회사 소개</span>
+				</div>
+			</div>
 
-<!-- 로그인 영역 (스페이서) -->
-<div class="footer-spacer"></div>
+			<!-- 로그인 영역 (스페이서) -->
+			<div class="footer-spacer"></div>
 
-<!-- 비로그인 상태일 때 표시되는 링크 -->
-<div sec:authorize="isAnonymous()" class="footer-auth">
-<div class="footer-folder">
-<a th:href="@{/member/login}" class="footer-link">
-<img th:src="@{/api/placeholder/20/20}" alt="로그인" />
-<span>로그인</span>
-</a>
-</div>
-<div class="footer-folder">
-<a th:href="@{/member/join}" class="footer-link">
-<img th:src="@{/api/placeholder/20/20}" alt="회원가입" />
-<span>회원가입</span>
-</a>
-</div>
-</div>
+			<!-- 비로그인 상태일 때 표시되는 링크 -->
+			<div sec:authorize="isAnonymous()" class="footer-auth">
+				<div class="footer-folder">
+					<a th:href="@{/member/login}" class="footer-link">
+						<img th:src="@{/api/placeholder/20/20}" alt="로그인" />
+						<span>로그인</span>
+					</a>
+				</div>
+				<div class="footer-folder">
+					<a th:href="@{/member/join}" class="footer-link">
+						<img th:src="@{/api/placeholder/20/20}" alt="회원가입" />
+						<span>회원가입</span>
+					</a>
+				</div>
+			</div>
 
-<!-- 로그인 상태일 때 표시되는 내용 -->
-<div sec:authorize="isAuthenticated()" class="footer-auth">
-<div class="footer-folder">
-<a th:href="@{/point/list(memberId=${#authentication.name})}" class="footer-link">
-<img th:src="@{/api/placeholder/20/20}" alt="포인트" />
-<span>포인트</span>
-</a>
-</div>
-<div class="footer-folder">
-<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="footer-link">
-<img th:src="@{/api/placeholder/20/20}" alt="마이페이지" />
-<span th:text="${#authentication.principal.nickName}"></span>
-</a>
-</div>
-<div class="footer-folder footer-logout">
-<button type="button" class="logout-btn" onclick="showFooterLogoutModal()">
-<img th:src="@{/api/placeholder/20/20}" alt="로그아웃" />
-<span>로그아웃</span>
-</button>
-</div>
-</div>
-</div>
+			<!-- 로그인 상태일 때 표시되는 내용 -->
+			<div sec:authorize="isAuthenticated()" class="footer-auth">
+				<div class="footer-folder">
+					<a th:href="@{/point/list(memberId=${#authentication.name})}" class="footer-link">
+						<img th:src="@{/api/placeholder/20/20}" alt="포인트" />
+						<span>포인트</span>
+					</a>
+				</div>
+				<div class="footer-folder">
+					<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="footer-link">
+						<img th:src="@{/api/placeholder/20/20}" alt="마이페이지" />
+						<span th:text="${#authentication.principal.nickName}"></span>
+					</a>
+				</div>
+				<div class="footer-folder footer-logout">
+					<button type="button" class="logout-btn" onclick="showFooterLogoutModal()">
+						<img th:src="@{/api/placeholder/20/20}" alt="로그아웃" />
+						<span>로그아웃</span>
+					</button>
+				</div>
+			</div>
+		</div>
 
-<!-- 시계 영역 -->
-<div class="clock" id="clock">--:--</div>
+		<!-- 시계 영역 -->
+		<div class="clock" id="clock">--:--</div>
 
-<!-- 모달 창 -->
-<div id="modal" class="modal-window" style="display:none;">
-<div class="modal-header">
-<span id="modal-title">제목</span>
-<button onclick="closeModal()">X</button>
-</div>
-<div class="modal-content" id="modal-content">내용</div>
-</div>
+		<!-- 모달 창 -->
+		<div id="modal" class="modal-window" style="display:none;">
+			<div class="modal-header">
+				<span id="modal-title">제목</span>
+				<button onclick="closeModal()">X</button>
+			</div>
+			<div class="modal-content" id="modal-content">내용</div>
+		</div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script defer th:src="@{/js/main/footer.js}"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script defer th:src="@{/js/main/footer.js}"></script>
 
-</div>
+	</div>
 </body>
+
 </html>
