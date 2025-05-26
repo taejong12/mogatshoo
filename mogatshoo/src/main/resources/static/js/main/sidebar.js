@@ -1,153 +1,323 @@
-// 윈도우 95/98 스타일 사이드바 JavaScript
-// static/js/main/sidebar.js
+console.log("🚀 사이드바 스크립트 로드됨 - 새 버전!");
 
-document.addEventListener('DOMContentLoaded', function() {
-    // 사이드바 토글 버튼 이벤트 리스너
-    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
-    const sidebarComponent = document.querySelector('.sidebar-component');
-    const contentArea = document.querySelector('.content-with-sidebar');
-    const body = document.body;
-    
-    if (sidebarToggleBtn) {
-        sidebarToggleBtn.addEventListener('click', function() {
-            sidebarComponent.classList.toggle('active');
-            body.classList.toggle('sidebar-active');
-            if (contentArea) {
-                contentArea.classList.toggle('sidebar-active');
-            }
-        });
-    }
-    
-    // 화면 크기 조절 시 사이드바 상태 관리
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            // 큰 화면에서는 사이드바 항상 표시
-            if (sidebarComponent) {
-                sidebarComponent.classList.remove('active');
-            }
-            if (body) {
-                body.classList.remove('sidebar-active');
-            }
-            if (contentArea) {
-                contentArea.classList.remove('sidebar-active');
-            }
-        }
-    });
-    
-    // 메뉴 아이템 활성화 (현재 페이지 표시)
-    function setActiveMenuItem() {
-        const currentPath = window.location.pathname;
-        
-        // 모든 메뉴 아이템 링크 가져오기 (사이드바 메뉴, 인증 영역 메뉴 포함)
-        const menuLinks = document.querySelectorAll('.sidebar-menu .menu-item a, .sidebar-auth a');
-        
-        menuLinks.forEach(link => {
-            // href 속성 가져오기
-            const href = link.getAttribute('href');
-            
-            // Thymeleaf 구문을 처리
-            let fullPath = href;
-            if (href && href.includes('@{')) {
-                // Thymeleaf 구문에서 경로 추출 시도
-                fullPath = href.replace('@{', '').replace('}', '');
-            }
-            
-            // href가 루트 경로(/)인 경우 정확히 루트 경로와 일치할 때만 활성화
-            if (fullPath === '/' && currentPath === '/') {
-                link.closest('.menu-item, .auth-item, .auth-profile').classList.add('active-menu-item');
-                
-                // 클릭 효과 (눌려있는 상태) 추가
-                const menuIcon = link.querySelector('.menu-icon');
-                if (menuIcon) {
-                    menuIcon.style.borderStyle = 'inset';
-                    menuIcon.style.backgroundColor = '#ffffcc';
-                }
-            } 
-            // 현재 경로가 링크의 href로 시작하는 경우 (서브 페이지 포함)
-            else if (fullPath !== '/' && currentPath.startsWith(fullPath)) {
-                link.closest('.menu-item, .auth-item, .auth-profile').classList.add('active-menu-item');
-                
-                // 클릭 효과 (눌려있는 상태) 추가
-                const menuIcon = link.querySelector('.menu-icon');
-                if (menuIcon) {
-                    menuIcon.style.borderStyle = 'inset';
-                    menuIcon.style.backgroundColor = '#ffffcc';
-                }
-            }
-        });
-    }
-    
-    // 페이지 로드 시 현재 메뉴 아이템 활성화
-    setActiveMenuItem();
-    
-    // 메뉴 아이템 클릭 및 호버 효과 (윈도우 95/98 스타일)
-    const menuItems = document.querySelectorAll('.menu-item a, .auth-item a, .auth-profile a, .logout-btn');
-    
-    menuItems.forEach(item => {
-        // 마우스 진입 시 테두리 표시 (활성화된 항목이 아닌 경우만)
-        item.addEventListener('mouseenter', function() {
-            const menuIcon = this.querySelector('.menu-icon') || this.querySelector('.logout-icon');
-            if (menuIcon && !this.closest('.menu-item, .auth-item, .auth-profile').classList.contains('active-menu-item')) {
-                menuIcon.style.borderStyle = 'outset';
-                menuIcon.style.backgroundColor = '#c0c0c0';
-                menuIcon.style.boxShadow = '1px 1px 0 #000000';
-            }
-        });
-        
-        // 마우스 떠날 때 테두리 제거 (활성화된 항목이 아닌 경우만)
-        item.addEventListener('mouseleave', function() {
-            const menuIcon = this.querySelector('.menu-icon') || this.querySelector('.logout-icon');
-            if (menuIcon && !this.closest('.menu-item, .auth-item, .auth-profile').classList.contains('active-menu-item')) {
-                menuIcon.style.borderStyle = '';
-                menuIcon.style.backgroundColor = '';
-                menuIcon.style.boxShadow = '';
-                menuIcon.style.transform = 'translateY(0)';
-            }
-        });
-        
-        // 마우스 클릭 시 눌림 효과
-        item.addEventListener('mousedown', function() {
-            const menuIcon = this.querySelector('.menu-icon') || this.querySelector('.logout-icon');
-            if (menuIcon) {
-                menuIcon.style.borderStyle = 'inset';
-                menuIcon.style.transform = 'translateY(1px)';
-                menuIcon.style.backgroundColor = '#ffffcc';
-            }
-        });
-        
-        // 마우스 클릭 해제 시 효과 제거 (활성화된 항목이 아닌 경우만)
-        item.addEventListener('mouseup', function() {
-            const menuIcon = this.querySelector('.menu-icon') || this.querySelector('.logout-icon');
-            if (menuIcon && !this.closest('.menu-item, .auth-item, .auth-profile').classList.contains('active-menu-item')) {
-                if (this.matches(':hover')) {
-                    // 여전히 호버 상태면 호버 스타일 적용
-                    menuIcon.style.borderStyle = 'outset';
-                    menuIcon.style.backgroundColor = '#c0c0c0';
-                    menuIcon.style.transform = 'translateY(0)';
-                } else {
-                    // 호버 상태가 아니면 모든 스타일 제거
-                    menuIcon.style.borderStyle = '';
-                    menuIcon.style.backgroundColor = '';
-                    menuIcon.style.transform = 'translateY(0)';
-                }
-            }
-        });
-    });
-    
-    // 외부 영역 클릭 시 모바일에서 사이드바 닫기
-    document.addEventListener('click', function(event) {
-        const isClickInsideSidebar = sidebarComponent && sidebarComponent.contains(event.target);
-        const isClickOnToggleBtn = sidebarToggleBtn && sidebarToggleBtn.contains(event.target);
-        
-        if (window.innerWidth <= 768 && !isClickInsideSidebar && !isClickOnToggleBtn && 
-            sidebarComponent && sidebarComponent.classList.contains('active')) {
-            sidebarComponent.classList.remove('active');
-            if (body) {
-                body.classList.remove('sidebar-active');
-            }
-            if (contentArea) {
-                contentArea.classList.remove('sidebar-active');
-            }
-        }
-    });
+$(document).ready(function () {
+	// 현재 모드 상태 관리
+	let isIframeMode = true;
+	let currentPath = '';
+
+	// URL 동기화 함수
+	function updateBrowserURL(path) {
+		if (path && path !== '/') {
+			// History API를 사용하여 브라우저 URL 업데이트 (페이지 새로고침 없이)
+			window.history.pushState({ path: path, mode: 'iframe' }, '', path);
+			currentPath = path;
+		}
+	}
+
+	// 브라우저 뒤로가기/앞으로가기 처리
+	window.addEventListener('popstate', function(event) {
+		if (event.state) {
+			if (event.state.mode === 'iframe' && event.state.path) {
+				// iframe 모드로 해당 경로 로드
+				openInIframe(event.state.path, '문서');
+			} else {
+				// 일반 페이지 이동
+				window.location.href = event.state.path || '/';
+			}
+		}
+	});
+
+	// 로그인이 필요한 경로들 (메인 윈도우에서 처리)
+	const loginRequiredPaths = [
+		'/login', 
+		'/member/login',
+		'/member/join',          // 회원가입
+		'/member/signup',        // 다른 회원가입 경로 (있다면)
+		'/oauth2/authorization/',  // 소셜 로그인도 메인 윈도우에서
+		'/oauth2/join',
+		'/logout'
+	];
+
+	// 로그인 경로 체크 (메인 윈도우에서 처리)
+	function requiresMainWindow(path) {
+		return loginRequiredPaths.some(loginPath => path.includes(loginPath));
+	}
+
+	// iframe에서 콘텐츠 로드 함수
+	function openInIframe(file, title) {
+		console.log('iframe에서 로드:', file);
+		
+		// 윈도우 제목 설정
+		$('.win95-title-text').text(title);
+
+		// 윈도우 표시 및 위치 설정
+		$('#win95Window').css({
+			'display': 'block',
+			'position': 'fixed',
+			'left': '150px',
+			'top': '50px',
+			'transform': 'none'
+		});
+
+		// iframe 소스 설정
+		$('#windowContentFrame').attr('src', file);
+		
+		// URL 동기화
+		updateBrowserURL(file);
+	}
+
+	// 메인 윈도우에서 페이지 로드 함수 (로그인용)
+	function openInMainWindow(file) {
+		console.log('메인 윈도우에서 로드:', file);
+		isIframeMode = false;
+		
+		// 현재 창에서 직접 이동
+		window.location.href = file;
+	}
+
+	// 사이드바 항목 클릭 시
+	$('.menu-item a, .auth-item a, .auth-profile a').click(function (e) {
+		// 🚨 푸터 링크는 제외 (푸터에서 별도 처리)
+		if ($(this).hasClass('footer-link')) {
+			return; // 푸터 링크는 사이드바에서 처리하지 않음
+		}
+
+		e.preventDefault(); // 기본 링크 동작 방지
+
+		// 클릭된 링크의 href 속성에서 파일 경로를 가져옵니다.
+		const file = $(this).attr('href');
+		// 메뉴 텍스트에서 창의 제목을 가져오거나 기본값 '문서'를 사용합니다.
+		const title = $(this).find('.menu-text').text() || '문서';
+
+		console.log('사이드바 링크 클릭:', file, title);
+
+		// '/' 링크는 일반적인 페이지 이동을 수행합니다.
+		if (file === '/') {
+			window.location.href = file;
+			return;
+		}
+
+		// 🚨 회원가입/로그인/소셜로그인 링크는 iframe에서 처리하지 않음
+		if (file.includes('/member/join') || 
+			file.includes('/member/login') || 
+			file.includes('/login') || 
+			file.includes('/oauth2/') ||
+			file.includes('/logout')) {
+			
+			console.log('🔴 로그인/회원가입/소셜로그인은 메인 윈도우에서 처리:', file);
+			
+			// iframe 창이 열려있다면 닫기
+			$('#win95Window').hide();
+			$('#windowContentFrame').attr('src', 'about:blank');
+			
+			// 메인 윈도우에서 직접 이동
+			window.location.href = file;
+			return;
+		}
+
+		// 일반 페이지만 iframe에서 처리
+		console.log('🔵 iframe에서 처리:', file);
+		openInIframe(file, title);
+	});
+
+	// iframe 로드 완료 후 처리 (중복 실행 방지)
+	let isProcessing = false;
+	$('#windowContentFrame').off('load').on('load', function () {
+		// 중복 처리 방지
+		if (isProcessing) {
+			console.log("⚠️ 이미 처리 중, 무시");
+			return;
+		}
+		
+		try {
+			// iframe의 현재 URL 가져오기
+			const iframeURL = this.contentWindow.location.href;
+			const currentHost = window.location.host; // 현재 도메인
+
+			console.log("=== iframe load 이벤트 ===");
+			console.log("iframe 현재 URL:", iframeURL);
+			console.log("시간:", new Date().toLocaleTimeString());
+
+			// about:blank는 무시
+			if (iframeURL === 'about:blank' || iframeURL === '') {
+				console.log("about:blank 무시");
+				return;
+			}
+
+			// 🚨 로그인 페이지인지 먼저 체크
+			if (iframeURL.indexOf('/member/login') !== -1) {
+				console.log("🔴 로그인 페이지 감지됨! 처리 시작");
+				isProcessing = true; // 중복 방지 플래그
+				
+				// iframe 즉시 정리
+				$('#win95Window').hide();
+				$('#windowContentFrame').attr('src', 'about:blank');
+				
+				// 메인 윈도우에서 즉시 로그인 페이지로 이동
+				console.log("🚀 메인 윈도우로 강제 이동");
+				
+				// 여러 방법으로 시도
+				try {
+					window.top.location.href = '/member/login';
+				} catch(e) {
+					try {
+						parent.location.href = '/member/login';
+					} catch(e2) {
+						window.location.href = '/member/login';
+					}
+				}
+				
+				return; // 이후 모든 처리 중단
+			}
+
+			// URL 동기화 (iframe 내에서 내부 네비게이션이 발생한 경우)
+			if (iframeURL.includes(`//${currentHost}/`) && !iframeURL.endsWith('about:blank')) {
+				const path = new URL(iframeURL).pathname + new URL(iframeURL).search;
+				if (path !== currentPath && path !== '/') {
+					updateBrowserURL(path);
+				}
+			}
+
+			// 메인 페이지로 리다이렉트된 경우 (로그인 성공 후 등)
+			if (iframeURL.includes(`//${currentHost}/`) && // 동일 도메인의 루트 경로
+				(iframeURL.endsWith('/') ||
+					iframeURL.endsWith('/index.html') ||
+					iframeURL.includes('/index') ||
+					iframeURL.endsWith('/home') ||
+					iframeURL.includes('login?success') ||
+					iframeURL.includes('?success') ||
+					iframeURL.includes('?loginSuccess'))) {
+
+				console.log("메인 페이지로 이동 감지됨, 창 닫고 최상위 창 리다이렉트");
+
+				// 윈도우 창 숨기기
+				$('#win95Window').hide();
+
+				// iframe 모드 재활성화
+				isIframeMode = true;
+
+				// 부모 창에서 메인으로 이동
+				window.location.href = '/';
+				return; // 이후 코드 실행 중지
+			}
+
+			// iframe 내부 문서에 접근
+			const iframe = document.getElementById('windowContentFrame');
+			const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+			// 사이드바 숨기기 (다양한 선택자 시도)
+			const sidebars = iframeDoc.querySelectorAll('.sidebar, .sidebar-component, .side-nav, #sidebar, nav[role="navigation"]');
+			sidebars.forEach(sidebar => {
+				if (sidebar) sidebar.style.display = 'none';
+			});
+
+			// 푸터 숨기기 (다양한 선택자 시도)
+			const footers = iframeDoc.querySelectorAll('footer, .footer, .site-footer, #footer');
+			footers.forEach(footer => {
+				if (footer) footer.style.display = 'none';
+			});
+
+			// 메인 콘텐츠 영역에 전체 너비 적용
+			const mainContents = iframeDoc.querySelectorAll('.content-with-sidebar, main, #main, .main-content');
+			mainContents.forEach(content => {
+				if (content) {
+					content.style.marginLeft = '0';
+					content.style.width = '100%';
+				}
+			});
+
+			// body에 직접 스타일 적용
+			if (iframeDoc.body) {
+				iframeDoc.body.style.margin = '0';
+				iframeDoc.body.style.padding = '0';
+			}
+
+			// base 태그가 있는지 확인하고 target 설정
+			let baseElement = iframeDoc.querySelector('base');
+			if (!baseElement) {
+				baseElement = iframeDoc.createElement('base');
+				iframeDoc.head.appendChild(baseElement);
+			}
+			baseElement.setAttribute('target', '_self');
+
+			// iframe 내 링크들을 iframe 내에서 처리하도록 설정
+			const links = iframeDoc.querySelectorAll('a');
+			links.forEach(link => {
+				if (!link.hasAttribute('data-processed')) {
+					link.addEventListener('click', function(e) {
+						const href = this.getAttribute('href');
+						
+						// 로그인/회원가입/소셜로그인 관련 링크는 메인 윈도우에서 처리
+						if (href && (href.includes('/member/join') || 
+									href.includes('/member/login') || 
+									href.includes('/login') || 
+									href.includes('/oauth2/') ||
+									href.includes('/logout'))) {
+							e.preventDefault();
+							console.log('🔴 iframe 내부 링크를 메인 윈도우에서 처리:', href);
+							// 부모 윈도우에서 로그인/회원가입/소셜로그인 처리
+							window.parent.location.href = href;
+						}
+					});
+					link.setAttribute('data-processed', 'true');
+				}
+			});
+
+			console.log("iframe 내부 요소 정리 완료");
+			
+			// 처리 완료 후 플래그 리셋
+			setTimeout(() => {
+				isProcessing = false;
+			}, 1000);
+			
+		} catch (e) {
+			console.error("iframe 내부 요소 접근 오류:", e);
+			isProcessing = false; // 에러 시에도 플래그 리셋
+		}
+	});
+
+	// 닫기 버튼 클릭 시
+	$('.win95-close').click(function () {
+		$('#win95Window').hide();
+		// iframe 내용 제거
+		$('#windowContentFrame').attr('src', 'about:blank');
+		
+		// URL을 홈으로 복원
+		window.history.pushState({ path: '/', mode: 'normal' }, '', '/');
+		currentPath = '';
+	});
+
+	// 드래그 기능
+	let isDragging = false;
+	let offsetX, offsetY;
+
+	$('.win95-title-bar').mousedown(function (e) {
+		isDragging = true;
+		offsetX = e.clientX - $('#win95Window').position().left;
+		offsetY = e.clientY - $('#win95Window').position().top;
+
+		$(document).mousemove(function (e) {
+			if (isDragging) {
+				$('#win95Window').css({
+					left: e.clientX - offsetX,
+					top: e.clientY - offsetY,
+					transform: 'none'
+				});
+			}
+		});
+
+		$(document).mouseup(function () {
+			isDragging = false;
+			$(document).off('mousemove');
+			$(document).off('mouseup');
+		});
+	});
+
+	// 페이지 로드 시 URL 기반으로 초기 상태 설정
+	const currentURL = window.location.pathname + window.location.search;
+	if (currentURL !== '/' && !requiresMainWindow(currentURL)) {
+		// 직접 URL로 접근한 경우 iframe으로 해당 페이지 로드
+		const title = '문서'; // 또는 페이지별 제목 매핑
+		openInIframe(currentURL, title);
+	}
 });

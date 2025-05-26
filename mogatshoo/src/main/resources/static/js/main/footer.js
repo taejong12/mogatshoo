@@ -266,11 +266,11 @@ function executeLogout() {
     }
 }
 
-function openModal(type) {
     const modal = document.getElementById("modal");
     const modalTitle = document.getElementById("modal-title");
     const modalContent = document.getElementById("modal-content");
 
+function openModal(type) {
     if (type === "terms") {
         modalTitle.textContent = "이용약관";
         modalContent.innerHTML = `
@@ -280,17 +280,76 @@ function openModal(type) {
                 <li>개인정보 보호 준수</li>
             </ul>
         `;
-    } else if (type === "company") {
+    }
+modal.style.display = "block";
+}
+function openModal2(type) {
+	if (type === "company") {
         modalTitle.textContent = "회사 소개";
         modalContent.innerHTML = `
             <p>우리는 창의적이고 혁신적인 솔루션을 제공합니다.</p>
             <p>주소: 서울특별시 어딘가</p>
         `;
     }
-
     modal.style.display = "block";
 }
 
+$(document).ready(function () {
+    // 🚨 푸터 링크 전용 이벤트 핸들러
+    $('.footer-link').click(function (e) {
+        e.preventDefault(); // 기본 링크 동작 방지
+        e.stopPropagation(); // 이벤트 버블링 중지
+
+        const file = $(this).attr('href');
+        const title = $(this).find('span').text() || '문서';
+
+        console.log('🟡 푸터 링크 클릭:', file, title);
+
+        // '/' 링크는 일반적인 페이지 이동을 수행합니다.
+        if (file === '/') {
+            window.location.href = file;
+            return;
+        }
+
+        // 로그인/회원가입은 메인 윈도우에서 처리
+        if (file.includes('/member/join') || 
+            file.includes('/member/login') || 
+            file.includes('/login') || 
+            file.includes('/oauth2/') ||
+            file.includes('/logout')) {
+            
+            console.log('🔴 푸터에서 메인 윈도우 처리:', file);
+            window.location.href = file;
+        } else {
+            // 포인트, 마이페이지는 iframe에서 처리
+            console.log('🔵 푸터에서 iframe 처리:', file);
+            openFooterInIframe(file, title);
+        }
+    });
+});
+
+// 푸터에서 iframe 열기 (사이드바와 동일한 방식)
+function openFooterInIframe(file, title) {
+    // 윈도우 제목 설정
+    $('.win95-title-text').text(title);
+
+    // 윈도우 표시 및 위치 설정
+    $('#win95Window').css({
+        'display': 'block',
+        'position': 'fixed',
+        'left': '150px',
+        'top': '50px',
+        'transform': 'none'
+    });
+
+    // iframe 소스 설정
+    $('#windowContentFrame').attr('src', file);
+}
+
+// 푸터 로그아웃 모달 함수
+function showFooterLogoutModal() {
+    showConfirmModal();
+}
 function closeModal() {
     document.getElementById("modal").style.display = "none";
 }
