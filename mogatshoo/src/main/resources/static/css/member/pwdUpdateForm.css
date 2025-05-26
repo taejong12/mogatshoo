@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+#pwdWarnMsg, #pwdCheckWarnMsg{
+	color: red;
+	font-size: 0.8em;
+	padding: .375rem .75rem;
+}
+
+.eight, .special, .continu{
+	color: gray;
+	font-size: 0.8em;
+	padding: 0.1rem .75rem
+}

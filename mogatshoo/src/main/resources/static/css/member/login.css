@@ -10,18 +10,10 @@
 	color: rgb(233,161,59);
 }
 
-.loginForm {
-	width: 570px;
-	height: 500px;
+.background-border-color {
 	background-color: rgb(54,45,62);
 	border: 10px solid rgb(195,54,38);
 } 
-
-
-.loginFormBtn{
-	background-color: rgb(54,45,62);
-	border: 10px solid rgb(195,54,38);
-}
 
 .loginFormBtn:hover{
 	background-color: rgb(53,34,44);
@@ -29,23 +21,21 @@
 }
 
 
-input{
+.login-input{
 	background-color: rgb(54,45,62);
 	border: 10px solid rgb(195,54,38);
 	color: white;
 }
 
-input::placeholder {
+.login-input::placeholder {
 	color: white;
 	opacity: 1;
 }
 
-label{
-	font-size: 24px;
-	width: 100px;
+.login-input:focus {
+	box-shadow: rgb(54,45,62);
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+	color: white;
 }
 
-img {
-	width: 100px;
-	height: 100px;
-}

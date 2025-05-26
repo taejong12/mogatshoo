@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{fragments/layout}">
+	layout:decorate="~{fragments/noLoginLayout}">
 
 <head th:with="layoutTitle='회원가입'">
-	
 	<link rel="stylesheet" th:href="@{/css/member/join.css}">
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 
 <body>
 	<div layout:fragment="content">
-		<h1 class="text-center mb-4">회원가입</h1>
-
+		<div class="d-flex align-items-center justify-content-center">
+			<a class="text-nowrap bg-white border border-black px-3 py-2" th:href="@{/member/login}">로그인</a>
+		</div>
 		<div class="container mb-5" style="max-width: 1000px;">
 			<form name="joinForm" class="border border-dark p-4">
+				<h1 class="text-center mb-4">회원가입</h1>
 				<input type="hidden" name="provider" th:if="${provider != null}" th:value="${provider}" />
 				<input type="hidden" name="providerId" th:if="${providerId != null}" th:value="${providerId}" />
 				<input type="hidden" name="memberId" th:if="${memberId != null}" th:value="${memberId}" />

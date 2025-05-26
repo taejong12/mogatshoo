@@ -1,21 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+      layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='비밀번호 수정'">
-	<style>
-		#pwdWarnMsg, #pwdCheckWarnMsg{
-			color: red;
-			font-size: 0.8em;
-			padding: .375rem .75rem;
-		}
-		
-		.eight, .special, .continu{
-			color: gray;
-			font-size: 0.8em;
-			padding: 0.1rem .75rem
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/css/member/pwdUpdateForm.css}">
 </head>
 <body>
 	<div layout:fragment="content">

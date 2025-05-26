@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+      layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='비밀번호 찾기'">
-	<style>
-		#idWarnMsg, #emailWarnMsg, .timer-div{
-			color: red;
-			font-size: 0.8em;
-			padding: .375rem .75rem;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/css/member/findByPwd.css}">
 </head>
 <body>
 	<div layout:fragment="content">
-	
+		<div class="d-flex align-items-center justify-content-center">
+			<a class="text-nowrap bg-white border border-black px-3 py-2" th:href="@{/member/login}">로그인</a>
+		</div>
 		<h1 class="text-center mb-5">비밀번호 찾기</h1>
 		
 		<div class="row justify-content-center">

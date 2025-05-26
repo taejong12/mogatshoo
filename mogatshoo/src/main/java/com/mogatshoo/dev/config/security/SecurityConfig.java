@@ -43,8 +43,8 @@ public class SecurityConfig {
             )
 			// 모두 접근 가능한 경로
 			.authorizeHttpRequests(request -> request
-				.requestMatchers(new AntPathRequestMatcher("/")
-							,new AntPathRequestMatcher("/member/idCheck")
+				.requestMatchers(
+							new AntPathRequestMatcher("/member/idCheck")
 							,new AntPathRequestMatcher("/member/emailCheck")
 							,new AntPathRequestMatcher("/member/nickNameCheck")
 							,new AntPathRequestMatcher("/member/sendEmail")

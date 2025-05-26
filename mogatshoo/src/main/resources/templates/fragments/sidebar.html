@@ -53,15 +53,6 @@
 						<span class="menu-text">병원지도</span>
 					</a>
 				</div>
-				<!-- 로그인 관련 메뉴 (로그인이 필요한 경우) -->
-				<div class="menu-item" sec:authorize="!isAuthenticated()">
-					<a class="nav-link login-link" th:href="@{/login}">
-						<div class="menu-icon">
-							<img src="/img/icons/computer.png" alt="로그인">
-						</div>
-						<span class="menu-text">로그인</span>
-					</a>
-				</div>
 			</div>
 
 			<!-- 토글 버튼 (모바일 뷰에서만 보임) -->

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+      layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='아이디/비밀번호 찾기'">
 </head>
 <body>
 	<div layout:fragment="content">
-	
+		<div class="d-flex align-items-center justify-content-center">
+			<a class="text-nowrap bg-white border border-black px-3 py-2" th:href="@{/member/login}">로그인</a>
+		</div>
 		<h1 class="text-center mb-5">아이디/비밀번호 찾기</h1>
 		
 		<div class="row justify-content-center">
