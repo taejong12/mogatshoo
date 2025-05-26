@@ -75,8 +75,8 @@ $(document).ready(function () {
 		window.location.href = file;
 	}
 
-	// 사이드바 항목 클릭 시
-	$('.menu-item a, .auth-item a, .auth-profile a').click(function (e) {
+	// 사이드바 항목 클릭 시 (로고 링크 포함)
+	$('.menu-item a, .auth-item a, .auth-profile a, .logo-link').click(function (e) {
 		// 🚨 푸터 링크는 제외 (푸터에서 별도 처리)
 		if ($(this).hasClass('footer-link')) {
 			return; // 푸터 링크는 사이드바에서 처리하지 않음
@@ -86,8 +86,14 @@ $(document).ready(function () {
 
 		// 클릭된 링크의 href 속성에서 파일 경로를 가져옵니다.
 		const file = $(this).attr('href');
-		// 메뉴 텍스트에서 창의 제목을 가져오거나 기본값 '문서'를 사용합니다.
-		const title = $(this).find('.menu-text').text() || '문서';
+		
+		// 메뉴 텍스트에서 창의 제목을 가져오거나 기본값 설정
+		let title = $(this).find('.menu-text').text() || '문서';
+		
+		// 로고 링크인 경우 제목을 '탈모왕중왕'으로 설정
+		if ($(this).hasClass('logo-link')) {
+			title = '탈모왕중왕';
+		}
 
 		console.log('사이드바 링크 클릭:', file, title);
 
@@ -115,7 +121,7 @@ $(document).ready(function () {
 			return;
 		}
 
-		// 일반 페이지만 iframe에서 처리
+		// 일반 페이지와 /voting 페이지 모두 iframe에서 처리
 		console.log('🔵 iframe에서 처리:', file);
 		openInIframe(file, title);
 	});
@@ -145,7 +151,7 @@ $(document).ready(function () {
 			}
 
 			// 🚨 로그인 페이지인지 먼저 체크
-			if (iframeURL.indexOf('/member/login') !== -1) {
+			if (iframeURL.indexOf('/member/login') !== -1 || iframeURL.indexOf('/login') !== -1) {
 				console.log("🔴 로그인 페이지 감지됨! 처리 시작");
 				isProcessing = true; // 중복 방지 플래그
 				
@@ -158,12 +164,12 @@ $(document).ready(function () {
 				
 				// 여러 방법으로 시도
 				try {
-					window.top.location.href = '/member/login';
+					window.top.location.href = '/login';
 				} catch(e) {
 					try {
-						parent.location.href = '/member/login';
+						parent.location.href = '/login';
 					} catch(e2) {
-						window.location.href = '/member/login';
+						window.location.href = '/login';
 					}
 				}
 				
@@ -317,7 +323,7 @@ $(document).ready(function () {
 	const currentURL = window.location.pathname + window.location.search;
 	if (currentURL !== '/' && !requiresMainWindow(currentURL)) {
 		// 직접 URL로 접근한 경우 iframe으로 해당 페이지 로드
-		const title = '문서'; // 또는 페이지별 제목 매핑
+		const title = currentURL.includes('/voting') ? '탈모왕중왕' : '문서';
 		openInIframe(currentURL, title);
 	}
 });
