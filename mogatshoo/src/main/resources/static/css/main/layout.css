@@ -77,16 +77,18 @@ body::before {
     overflow-y: auto; /* 세로 스크롤 허용 */
     overflow-x: hidden; /* 가로 스크롤 방지 */
     padding-bottom: 0px; /* 푸터 높이만큼 하단 패딩 추가 */
+	background-color: #008080;
 }
 
 /* 콘텐츠 래퍼 (유지) */
 .content-wrapper {
     width: 100%;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
 }
+
 
 /* 푸터 영역 - 수정 (fixed로 변경) */
 .footer-area {
@@ -111,7 +113,10 @@ body::before {
     font-size: 0.8em;
     padding: .375rem .75rem;
 }
-
+.container-fluid {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
 /* 반응형 조정 (유지) */
 @media (max-width: 768px) {
     .content-area {

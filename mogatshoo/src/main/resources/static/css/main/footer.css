@@ -318,7 +318,7 @@
 }
 
 .win95-content::-webkit-scrollbar-track {
-	background: #c0c0c0;
+	background: rgb(255, 255, 255);
 }
 
 .win95-content::-webkit-scrollbar-thumb {

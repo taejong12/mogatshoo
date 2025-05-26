@@ -1,90 +1,147 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
 <head>
-	<meta charset="UTF-8">
-	<link rel="stylesheet" th:href="@{/css/footer.css}">
+<meta charset="UTF-8">
+<link rel="stylesheet" th:href="@{/css/footer.css}">
 </head>
 
 <body>
-	<div th:fragment="footer" class="footer">
-		<div class="footer-left">
-			<!-- Windows 시작 버튼 -->
-			<div class="win-button" id="win-button">
-				<img th:src="@{/api/placeholder/20/20}" alt="Windows" />
-				<span>시작</span>
-			</div>
+<div th:fragment="footer" class="footer">
+<div class="footer-left">
+<!-- Windows 시작 버튼 -->
+<div class="win-button" id="win-button">
+<img th:src="@{/api/placeholder/20/20}" alt="Windows" />
+<span>시작</span>
+</div>
 
-			<!-- 폴더 영역 -->
-			<div class="footer-folders">
-				<div class="footer-folder" onclick="openModal('terms')">
-					<img th:src="@{/api/placeholder/20/20}" alt="Terms" />
-					<span>이용약관</span>
-				</div>
-				<div class="footer-folder" onclick="openModal2('company')">
-					<img th:src="@{/api/placeholder/20/20}" alt="Company" />
-					<span>회사 소개</span>
-				</div>
-			</div>
+<!-- 폴더 영역 -->
+<div class="footer-folders">
+<div class="footer-folder" onclick="openModal('terms')">
+<img th:src="@{/api/placeholder/20/20}" alt="Terms" />
+<span>이용약관</span>
+</div>
+<div class="footer-folder" onclick="openModal2('company')">
+<img th:src="@{/api/placeholder/20/20}" alt="Company" />
+<span>회사 소개</span>
+</div>
+</div>
 
-			<!-- 로그인 영역 (스페이서) -->
-			<div class="footer-spacer"></div>
+<!-- 로그인 영역 (스페이서) -->
+<div class="footer-spacer"></div>
 
-			<!-- 비로그인 상태일 때 표시되는 링크 -->
-			<div sec:authorize="isAnonymous()" class="footer-auth">
-				<div class="footer-folder">
-					<a th:href="@{/member/login}" class="footer-link">
-						<img th:src="@{/api/placeholder/20/20}" alt="로그인" />
-						<span>로그인</span>
-					</a>
-				</div>
-				<div class="footer-folder">
-					<a th:href="@{/member/join}" class="footer-link">
-						<img th:src="@{/api/placeholder/20/20}" alt="회원가입" />
-						<span>회원가입</span>
-					</a>
-				</div>
-			</div>
+<!-- 비로그인 상태일 때 표시되는 링크 -->
+<div sec:authorize="isAnonymous()" class="footer-auth">
+<div class="footer-folder">
+<a th:href="@{/member/login}" class="footer-link">
+<img th:src="@{/api/placeholder/20/20}" alt="로그인" />
+<span>로그인</span>
+</a>
+</div>
+<div class="footer-folder">
+<a th:href="@{/member/join}" class="footer-link">
+<img th:src="@{/api/placeholder/20/20}" alt="회원가입" />
+<span>회원가입</span>
+</a>
+</div>
+</div>
 
-			<!-- 로그인 상태일 때 표시되는 내용 -->
-			<div sec:authorize="isAuthenticated()" class="footer-auth">
-				<div class="footer-folder">
-					<a th:href="@{/point/list(memberId=${#authentication.name})}" class="footer-link">
-						<img th:src="@{/api/placeholder/20/20}" alt="포인트" />
-						<span>포인트</span>
-					</a>
-				</div>
-				<div class="footer-folder">
-					<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="footer-link">
-						<img th:src="@{/api/placeholder/20/20}" alt="마이페이지" />
-						<span th:text="${#authentication.principal.nickName}"></span>
-					</a>
-				</div>
-				<div class="footer-folder footer-logout">
-					<button type="button" class="logout-btn" onclick="showFooterLogoutModal()">
-						<img th:src="@{/api/placeholder/20/20}" alt="로그아웃" />
-						<span>로그아웃</span>
-					</button>
-				</div>
-			</div>
-		</div>
+<!-- 로그인 상태일 때 표시되는 내용 -->
+<div sec:authorize="isAuthenticated()" class="footer-auth">
+<div class="footer-folder">
+<a th:href="@{/point/list(memberId=${#authentication.name})}" class="footer-link">
+<img th:src="@{/api/placeholder/20/20}" alt="포인트" />
+<span>포인트</span>
+</a>
+</div>
+<div class="footer-folder">
+<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="footer-link">
+<img th:src="@{/api/placeholder/20/20}" alt="마이페이지" />
+<span th:text="${#authentication.principal.nickName}"></span>
+</a>
+</div>
+<div class="footer-folder footer-logout">
+<button type="button" class="logout-btn" onclick="showFooterLogoutModal()">
+<img th:src="@{/api/placeholder/20/20}" alt="로그아웃" />
+<span>로그아웃</span>
+</button>
+</div>
+</div>
+</div>
 
-		<!-- 시계 영역 -->
-		<div class="clock" id="clock">--:--</div>
+<!-- 시계 영역 -->
+<div class="clock" id="clock">--:--</div>
 
-		<!-- 모달 창 -->
-		<div id="modal" class="modal-window" style="display:none;">
-			<div class="modal-header">
-				<span id="modal-title">제목</span>
-				<button onclick="closeModal()">X</button>
-			</div>
-			<div class="modal-content" id="modal-content">내용</div>
-		</div>
+<!-- 모달 창 -->
+<div id="modal" class="modal-window" style="display:none;">
+<div class="modal-header">
+<span id="modal-title">제목</span>
+<button onclick="closeModal()">X</button>
+</div>
+<div class="modal-content" id="modal-content">내용</div>
+</div>
 
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script defer th:src="@{/js/main/footer.js}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script defer th:src="@{/js/main/footer.js}"></script>
 
-	</div>
+<script>
+$(document).ready(function () {
+    // 🚨 푸터 링크 전용 이벤트 핸들러
+    $('.footer-link').click(function (e) {
+        e.preventDefault(); // 기본 링크 동작 방지
+        e.stopPropagation(); // 이벤트 버블링 중지
+
+        const file = $(this).attr('href');
+        const title = $(this).find('span').text() || '문서';
+
+        console.log('🟡 푸터 링크 클릭:', file, title);
+
+        // '/' 링크는 일반적인 페이지 이동을 수행합니다.
+        if (file === '/') {
+            window.location.href = file;
+            return;
+        }
+
+        // 로그인/회원가입은 메인 윈도우에서 처리
+        if (file.includes('/member/join') || 
+            file.includes('/member/login') || 
+            file.includes('/login') || 
+            file.includes('/oauth2/') ||
+            file.includes('/logout')) {
+            
+            console.log('🔴 푸터에서 메인 윈도우 처리:', file);
+            window.location.href = file;
+        } else {
+            // 포인트, 마이페이지는 iframe에서 처리
+            console.log('🔵 푸터에서 iframe 처리:', file);
+            openFooterInIframe(file, title);
+        }
+    });
+});
+
+// 푸터에서 iframe 열기 (사이드바와 동일한 방식)
+function openFooterInIframe(file, title) {
+    // 윈도우 제목 설정
+    $('.win95-title-text').text(title);
+
+    // 윈도우 표시 및 위치 설정
+    $('#win95Window').css({
+        'display': 'block',
+        'position': 'fixed',
+        'left': '150px',
+        'top': '50px',
+        'transform': 'none'
+    });
+
+    // iframe 소스 설정
+    $('#windowContentFrame').attr('src', file);
+}
+
+// 푸터 로그아웃 모달 함수
+function showFooterLogoutModal() {
+    showConfirmModal();
+}
+</script>
+
+</div>
 </body>
-
 </html>

@@ -16,6 +16,135 @@
 
     <!-- 페이지별 추가 스타일 -->
     <th:block layout:fragment="additionalStyles"></th:block>
+	
+
+	<script>
+		(function() {
+		    'use strict';
+
+		    const currentPath = window.location.pathname;
+		    const isInIframe = window.self !== window.top;
+
+		    // 현재 화면 너비
+		    const screenWidth = window.innerWidth;
+
+		    console.log("🔍 페이지 체크:", {
+		        path: currentPath,
+		        iframe: isInIframe,
+		        screenWidth: screenWidth
+		    });
+
+		    // 모바일 화면 크기 범위 (360 ~ 414)
+		    const isMobileWidth = screenWidth >= 360 && screenWidth <= 414;
+
+		    // 아이프레임 전용 경로들
+		    const iframeOnlyPaths = [
+		        '/hairLossTest/',
+		        '/fortune/',
+		        '/hospitalMap/',
+		        '/point/',
+		        '/member/mypage',
+				'/voting/',
+				'/question/'
+				
+		    ];
+
+		    const isIframeOnlyPath = iframeOnlyPaths.some(path => currentPath.startsWith(path));
+
+		    // **모바일 화면일 경우 숨김 기능 실행 안함**
+		    if (isIframeOnlyPath && !isInIframe && !isMobileWidth) {
+		        console.log("🗑️ 직접 접근 감지 - 콘텐츠 완전 제거");
+
+		        function hideContent() {
+		            const contentSelectors = [
+		                '[layout\\:fragment="content"]',
+		                '.content-with-sidebar > div',
+		                '.content-with-sidebar',
+		                '.main-container',
+		                'main .container',
+		                '.container .row',
+		                '.pixel-bg .main-container',
+		                '.retro-panel'
+		            ];
+
+		            let contentFound = false;
+
+		            contentSelectors.forEach(selector => {
+		                const elements = document.querySelectorAll(selector);
+		                elements.forEach(element => {
+		                    if (element && element.innerHTML.trim() !== '') {
+		                        console.log("🗑️ 콘텐츠 제거:", selector);
+		                        element.innerHTML = '';
+		                        element.style.minHeight = 'calc(100vh - 200px)';
+		                        element.style.backgroundColor = '#008080';
+		                        element.style.display = 'flex';
+		                        element.style.alignItems = 'center';
+		                        element.style.justifyContent = 'center';
+		                        contentFound = true;
+		                    }
+		                });
+		            });
+
+		            if (!contentFound) {
+		                console.log("🔨 강제 콘텐츠 숨김");
+		                const style = document.createElement('style');
+		                style.textContent = `
+		                    .retro-panel,
+		                    .main-container > .container,
+		                    .pixel-bg .main-container > .container,
+		                    [layout\\:fragment="content"] > *,
+		                    .content-with-sidebar > div:not(.empty-space) {
+		                        display: none !important;
+		                    }
+		                    
+		                    .content-with-sidebar {
+		                        min-height: calc(100vh - 200px) !important;
+		                        background-color: #008080 !important;
+		                        display: flex !important;
+		                        align-items: center !important;
+		                        justify-content: center !important;
+		                    }
+		                `;
+		                document.head.appendChild(style);
+		            }
+		            console.log("✅ 콘텐츠 숨김 완료");
+		        }
+
+		        if (document.readyState === 'loading') {
+		            document.addEventListener('DOMContentLoaded', hideContent);
+		        } else {
+		            hideContent();
+		        }
+
+		        setTimeout(hideContent, 500);
+		        setTimeout(hideContent, 1000);
+		    }
+
+		    // 아이프레임에서는 사이드바/푸터 숨기기 (기존과 동일)
+		    if (isInIframe) {
+		        setTimeout(() => {
+		            const sidebar = document.querySelector('.sidebar');
+		            const footer = document.querySelector('.footer-area, .footer');
+
+		            if (sidebar) {
+		                sidebar.style.display = 'none';
+		                console.log("🔒 사이드바 숨김");
+		            }
+		            if (footer) {
+		                footer.style.display = 'none';
+		                console.log("🔒 푸터 숨김");
+		            }
+
+		            const contentWithSidebar = document.querySelector('.content-with-sidebar');
+		            if (contentWithSidebar) {
+		                contentWithSidebar.style.marginLeft = '0';
+		                contentWithSidebar.style.width = '100%';
+		            }
+		        }, 100);
+		    }
+		})();
+
+	</script>
 </head>
 
 <body th:classappend="${mainPage} ? 'main-page' : ''">

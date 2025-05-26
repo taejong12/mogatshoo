@@ -1,46 +1,132 @@
+// ⭐ 모든 변수와 함수를 DOMContentLoaded 안으로 이동
 document.addEventListener("DOMContentLoaded", () => {
+    // 아이프레임에서는 푸터 숨기기
+    if (window.self !== window.top) {
+        const footers = document.querySelectorAll('.footer, .footer-area');
+        footers.forEach(footer => {
+            if (footer) footer.style.display = 'none';
+        });
+        return;
+    }
+
     updateClock();
     setInterval(updateClock, 1000);
     
     // 시작 버튼 클릭 이벤트 추가
     const winButton = document.getElementById("win-button");
     
-    winButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleStartMenu();
-    });
+    if (winButton) {
+        winButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleStartMenu();
+        });
+    }
     
     // 다른 곳 클릭 시 시작 메뉴 닫기
     document.addEventListener("click", (e) => {
         const startMenu = document.getElementById("start-menu");
-        if (startMenu && !startMenu.contains(e.target) && !winButton.contains(e.target)) {
+        if (startMenu && !startMenu.contains(e.target) && !winButton?.contains(e.target)) {
             hideStartMenu();
         }
     });
+
+    // ⭐ 모달 요소들을 DOM 로드 후에 가져오기
+    const footerModal = document.getElementById("modal");
+    const footerModalTitle = document.getElementById("modal-title");
+    const footerModalContent = document.getElementById("modal-content");
+    
+    console.log("🦶 푸터 모달 요소 확인:", {
+        modal: !!footerModal,
+        title: !!footerModalTitle,
+        content: !!footerModalContent
+    });
+
+    // ⭐ 모달 함수들을 내부 함수로 정의
+    function openModal(type) {
+        console.log("🦶 openModal 호출:", type);
+        
+        if (footerModal && footerModalTitle && footerModalContent) {
+            if (type === "terms") {
+                footerModalTitle.textContent = "이용약관";
+                footerModalContent.innerHTML = `
+                    <p>이 사이트를 사용함으로써 다음 조건에 동의하는 것으로 간주됩니다...</p>
+                    <ul>
+                        <li>데이터 수집 동의</li>
+                        <li>개인정보 보호 준수</li>
+                    </ul>
+                `;
+            }
+            footerModal.style.display = "block";
+            console.log("✅ 모달 표시 성공");
+        } else {
+            console.log("❌ 모달 요소들을 찾을 수 없음");
+        }
+    }
+
+    function openModal2(type) {
+        console.log("🦶 openModal2 호출:", type);
+        
+        if (footerModal && footerModalTitle && footerModalContent) {
+            if (type === "company") {
+                footerModalTitle.textContent = "회사 소개";
+                footerModalContent.innerHTML = `
+                    <p>우리는 창의적이고 혁신적인 솔루션을 제공합니다.</p>
+                    <p>주소: 서울특별시 어딘가</p>
+                `;
+            }
+            footerModal.style.display = "block";
+            console.log("✅ 모달2 표시 성공");
+        } else {
+            console.log("❌ 모달 요소들을 찾을 수 없음");
+        }
+    }
+
+    function closeModal() {
+        console.log("🦶 closeModal 호출");
+        
+        if (footerModal) {
+            footerModal.style.display = "none";
+            console.log("✅ 모달 닫기 성공");
+        }
+    }
+
+    // ⭐ 전역 함수로 노출
+    window.openModal = openModal;
+    window.openModal2 = openModal2;
+    window.closeModal = closeModal;
+    
+    // 나머지 기존 함수들도 전역으로 노출
+    window.navigateTo = navigateTo;
+    window.navigateToMypage = navigateToMypage;
+    window.confirmLogout = confirmLogout;
+    window.hideStartMenu = hideStartMenu;
+    window.hideConfirmModal = hideConfirmModal;
+    window.executeLogout = executeLogout;
 });
 
+// ⭐ 나머지 함수들은 DOMContentLoaded 밖에 정의 (전역에서 접근 가능하도록)
 function updateClock() {
     const now = new Date();
     const hh = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById("clock").textContent = `${hh}:${mm}`;
+    const clockElement = document.getElementById("clock");
+    if (clockElement) {
+        clockElement.textContent = `${hh}:${mm}`;
+    }
 }
 
 function createStartMenu() {
-    // 시작 메뉴가 이미 있다면 제거하고 새로 생성 (상태 변경 반영)
     let existingMenu = document.getElementById("start-menu");
     if (existingMenu) {
         existingMenu.remove();
     }
     
-    // 로그인 상태 확인 (Spring Security 기반)
     const isLoggedIn = document.querySelector('[sec\\:authorize="isAuthenticated()"]') !== null ||
                       document.querySelector('.footer-auth .logout-btn') !== null;
     
-    // 시작 메뉴 HTML 생성 (이용약관과 동일한 모달 스타일)
     const startMenu = document.createElement("div");
     startMenu.id = "start-menu";
-    startMenu.className = "modal-window"; // 이용약관과 동일한 클래스 사용
+    startMenu.className = "modal-window";
     startMenu.style.cssText = `
         display: none;
         width: 200px;
@@ -52,7 +138,6 @@ function createStartMenu() {
     let menuContent = '';
     
     if (isLoggedIn) {
-        // 로그인된 상태의 모달 스타일 메뉴 (이용약관과 동일한 구조)
         menuContent = `
             <div class="modal-header">
                 <span>시작 메뉴</span>
@@ -88,15 +173,12 @@ function createStartMenu() {
             </div>
         `;
     } else {
-        // 로그아웃된 상태의 모달 스타일 메뉴 (이용약관과 동일한 구조)
         menuContent = `
             <div class="modal-header">
                 <span>시작 메뉴</span>
                 <button onclick="hideStartMenu()" style="background-color: #c0c0c0; border: 2px outset #ffffff; cursor: pointer; font-size: 12px;">×</button>
             </div>
             <div class="modal-content" style="text-align: center; padding: 15px;">
-                <div style="margin-bottom: 10px;">
-                </div>
                 <p style="margin: 10px 0; color: #000080; font-weight: bold;">로그인을 해주세요</p>
                 <hr class="win95-divider">
                 <div class="start-menu-item-95" onclick="navigateTo('/member/login')">
@@ -113,14 +195,11 @@ function createStartMenu() {
     
     startMenu.innerHTML = menuContent;
     document.body.appendChild(startMenu);
-    
     return startMenu;
 }
 
 function toggleStartMenu() {
     const startMenu = createStartMenu();
-    const winButton = document.getElementById("win-button");
-    
     if (startMenu.style.display === "block") {
         hideStartMenu();
     } else {
@@ -131,15 +210,15 @@ function toggleStartMenu() {
 function showStartMenu() {
     const startMenu = createStartMenu();
     const winButton = document.getElementById("win-button");
-    
     startMenu.style.display = "block";
-    winButton.classList.add("pressed");
+    if (winButton) {
+        winButton.classList.add("pressed");
+    }
 }
 
 function hideStartMenu() {
     const startMenu = document.getElementById("start-menu");
     const winButton = document.getElementById("win-button");
-    
     if (startMenu) {
         startMenu.style.display = "none";
     }
@@ -150,15 +229,11 @@ function hideStartMenu() {
 
 function navigateTo(url) {
     hideStartMenu();
-    
-    // 메인 페이지나 홈은 직접 이동
     if (url === '/') {
         window.location.href = url;
         return;
     }
     
-    // 다른 페이지들은 사이드바의 iframe 시스템 활용
-    // 사이드바의 링크를 프로그래밍적으로 클릭
     const sidebarLinks = document.querySelectorAll('.menu-item a');
     for (let link of sidebarLinks) {
         if (link.getAttribute('href') === url) {
@@ -166,22 +241,17 @@ function navigateTo(url) {
             return;
         }
     }
-    
-    // 사이드바에 링크가 없으면 직접 이동
     window.location.href = url;
 }
 
 function navigateToMypage() {
     hideStartMenu();
-    
-    // 마이페이지 링크 찾기 (푸터에서)
     const mypageLink = document.querySelector('a[href*="/member/mypage"]');
     if (mypageLink) {
         mypageLink.click();
         return;
     }
     
-    // 사이드바에서 마이페이지 링크 찾기
     const sidebarLinks = document.querySelectorAll('.menu-item a');
     for (let link of sidebarLinks) {
         if (link.getAttribute('href')?.includes('/member/mypage')) {
@@ -189,8 +259,6 @@ function navigateToMypage() {
             return;
         }
     }
-    
-    // 직접 이동 (인증된 사용자의 마이페이지로)
     window.location.href = '/member/mypage';
 }
 
@@ -200,24 +268,17 @@ function confirmLogout() {
 }
 
 function showConfirmModal() {
-    // 모달이 이미 있다면 제거
     let existingModal = document.getElementById("confirm-modal");
-    if (existingModal) {
-        existingModal.remove();
-    }
+    if (existingModal) existingModal.remove();
     
     let existingOverlay = document.getElementById("modal-overlay");
-    if (existingOverlay) {
-        existingOverlay.remove();
-    }
+    if (existingOverlay) existingOverlay.remove();
 
-    // 배경 오버레이 생성
     const overlay = document.createElement("div");
     overlay.id = "modal-overlay";
     overlay.className = "modal-overlay";
     overlay.style.display = "block";
 
-    // 확인 모달 생성
     const confirmModal = document.createElement("div");
     confirmModal.id = "confirm-modal";
     confirmModal.style.display = "block";
@@ -245,111 +306,16 @@ function showConfirmModal() {
 function hideConfirmModal() {
     const confirmModal = document.getElementById("confirm-modal");
     const overlay = document.getElementById("modal-overlay");
-    
-    if (confirmModal) {
-        confirmModal.remove();
-    }
-    if (overlay) {
-        overlay.remove();
-    }
+    if (confirmModal) confirmModal.remove();
+    if (overlay) overlay.remove();
 }
 
 function executeLogout() {
     hideConfirmModal();
-    
-    // 기존 로그아웃 폼이 있다면 제출
     const logoutForm = document.querySelector('.logout-form');
     if (logoutForm) {
         logoutForm.submit();
     } else {
         window.location.href = '/logout';
     }
-}
-
-    const modal = document.getElementById("modal");
-    const modalTitle = document.getElementById("modal-title");
-    const modalContent = document.getElementById("modal-content");
-
-function openModal(type) {
-    if (type === "terms") {
-        modalTitle.textContent = "이용약관";
-        modalContent.innerHTML = `
-            <p>이 사이트를 사용함으로써 다음 조건에 동의하는 것으로 간주됩니다...</p>
-            <ul>
-                <li>데이터 수집 동의</li>
-                <li>개인정보 보호 준수</li>
-            </ul>
-        `;
-    }
-modal.style.display = "block";
-}
-function openModal2(type) {
-	if (type === "company") {
-        modalTitle.textContent = "회사 소개";
-        modalContent.innerHTML = `
-            <p>우리는 창의적이고 혁신적인 솔루션을 제공합니다.</p>
-            <p>주소: 서울특별시 어딘가</p>
-        `;
-    }
-    modal.style.display = "block";
-}
-
-$(document).ready(function () {
-    // 🚨 푸터 링크 전용 이벤트 핸들러
-    $('.footer-link').click(function (e) {
-        e.preventDefault(); // 기본 링크 동작 방지
-        e.stopPropagation(); // 이벤트 버블링 중지
-
-        const file = $(this).attr('href');
-        const title = $(this).find('span').text() || '문서';
-
-        console.log('🟡 푸터 링크 클릭:', file, title);
-
-        // '/' 링크는 일반적인 페이지 이동을 수행합니다.
-        if (file === '/') {
-            window.location.href = file;
-            return;
-        }
-
-        // 로그인/회원가입은 메인 윈도우에서 처리
-        if (file.includes('/member/join') || 
-            file.includes('/member/login') || 
-            file.includes('/login') || 
-            file.includes('/oauth2/') ||
-            file.includes('/logout')) {
-            
-            console.log('🔴 푸터에서 메인 윈도우 처리:', file);
-            window.location.href = file;
-        } else {
-            // 포인트, 마이페이지는 iframe에서 처리
-            console.log('🔵 푸터에서 iframe 처리:', file);
-            openFooterInIframe(file, title);
-        }
-    });
-});
-
-// 푸터에서 iframe 열기 (사이드바와 동일한 방식)
-function openFooterInIframe(file, title) {
-    // 윈도우 제목 설정
-    $('.win95-title-text').text(title);
-
-    // 윈도우 표시 및 위치 설정
-    $('#win95Window').css({
-        'display': 'block',
-        'position': 'fixed',
-        'left': '150px',
-        'top': '50px',
-        'transform': 'none'
-    });
-
-    // iframe 소스 설정
-    $('#windowContentFrame').attr('src', file);
-}
-
-// 푸터 로그아웃 모달 함수
-function showFooterLogoutModal() {
-    showConfirmModal();
-}
-function closeModal() {
-    document.getElementById("modal").style.display = "none";
 }
