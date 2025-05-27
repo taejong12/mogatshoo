@@ -11,7 +11,6 @@ function fu_agreeVali(){
 	
 	if(!agreeIntegration.checked || agreeIntegration.value != 'Y'){
 		inteWarnMsg.textContent = '모갓슈 통합 서비스 이용약관에 대한 내용 확인 후 동의해주세요.';
-		inteWarnMsg.style.color = 'red';
 		agreeIntegration.focus();
 		inteCheck = false;
 	}else{
@@ -20,7 +19,6 @@ function fu_agreeVali(){
 	
 	if(!agreeInfo.checked || agreeInfo.value != 'Y'){
 		infoWarnMsg.textContent = '개인정보 수집 및 이용에 대한 내용 확인 후 동의해주세요.';
-		infoWarnMsg.style.color = 'red';
 		agreeInfo.focus();
 		infoCheck = false;
 	}else{

@@ -1,23 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
 	
 	let nickNameInput = document.getElementById('memberNickName');
-	let nickNameCheckMessage = document.getElementById('nickNameCheckMessage');
+	let nickNameWarnMsg = document.getElementById('nickNameWarnMsg');
 
 	if(nickNameInput){
+		
+		nickNameWarnMsg.textContent = '';
+		
 		nickNameInput.addEventListener('input', function() {
 			
 			let nickNameVal = nickNameInput.value.trim();
-			let nickNameWarn = document.querySelector('.warn-div.nickName');
 			
 			if (nickNameVal === '' || nickNameVal.length == 0) {
-				nickNameCheckMessage.textContent = '';
-				nickNameCheckMessage.style.display = 'none';
+				nickNameWarnMsg.textContent = '';
+				nickNameWarnMsg.style.color = "rgb(255, 107, 107)";
 				nickNameCheck = false;
 				return;
-			}
-			
-			if(nickNameWarn){
-				nickNameWarn.closest('.input-wrap').remove();
 			}
 			
 			fetch("/member/nickNameCheck", {
@@ -30,14 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			.then(response => response.json())
 			.then(data => {
 				if (data.memberNickNameCheck) {
-					nickNameCheckMessage.textContent = "사용 가능한 닉네임입니다.";
-					nickNameCheckMessage.style.color = "green";
-					nickNameCheckMessage.style.display = 'inline';
+					nickNameWarnMsg.textContent = "사용 가능한 닉네임입니다.";
+					nickNameWarnMsg.style.color = "rgb(129, 199, 132)";
 					nickNameCheck = true;
 				} else {
-					nickNameCheckMessage.textContent = "이미 사용 중인 닉네임입니다.";
-					nickNameCheckMessage.style.color = "red";
-					nickNameCheckMessage.style.display = 'inline';
+					nickNameWarnMsg.textContent = "이미 사용 중인 닉네임입니다.";
+					nickNameWarnMsg.style.color = "rgb(255, 107, 107)";
 					nickNameCheck = false;
 				}
 			})

@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-#idWarnMsg, #pwdWarnMsg {
+.warn-msg {
 	color: rgb(255, 107, 107);
 	font-size: 0.8em;
 	padding: .375rem .75rem;

@@ -3,10 +3,6 @@ function fu_memberJoin(){
 
 	let joingForm = document.joinForm;
 	
-	// 경고 문구 초기화
-	fu_warnCheck();
-	
-	// 유효성 검사
 	let emailAuthValidation = fu_emailAuthValidation();
 
 	if(!emailAuthCheck && joingForm.emailAuth){
@@ -14,10 +10,8 @@ function fu_memberJoin(){
 	}
 	
 	let emailValidation = fu_emailValidation();
-	
 	let addrValidation = fu_addrValidation();
 	let genderValidation = fu_genderValidation();
-	
 	let birthValidation = fu_birthValidation();
 	let telValidation = fu_telValidation();
 	
@@ -50,7 +44,7 @@ function fu_memberJoin(){
 		&& emailValidation && pwdInputCheck 
 		&& pwdCheckEqual && emailAuthCheck && emailAuthValidation 
 		&& addrValidation && genderValidation && nickNameValidation
-		&& idCheck && nickNameCheck){
+		&& idCheck && nickNameCheck && emailCheck){
 		joingForm.method= "post";
 		joingForm.action = "/member/join";
 		joingForm.submit();

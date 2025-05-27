@@ -1,17 +1,32 @@
 @charset "UTF-8";
 
-.title{
-	color: rgb(255, 255, 128);
+.warn-msg {
+	color: rgb(255, 107, 107);
+	font-size: 0.8em;
+	padding: .375rem .75rem;
 }
 
-.background-border-color, .agreeBtn, .modalBtn {
-	background-color: rgb(54,45,62);
-	border: 10px solid rgb(195,54,38);
+.title{
+	color: yellow;
+}
+
+.text-color{
+	color: rgb(255, 255, 255);
+}
+
+.background-border-color {
+	background-color: #808080;
+	border: 10px solid #c0c0c0;
+}
+
+.agreeBtn, .modalBtn {
+	background-color: #c0c0c0;
+	border: 10px solid #c0c0c0;
 } 
 
 .agreeBtn:hover, .modalBtn:hover {
-	background-color: rgb(53,34,44);
-	border-color: rgb(146,40,27);
+	background-color: rgb(102, 102, 102);
+	border-color: rgb(153, 153, 153);
 }
 
 .closeBtn{

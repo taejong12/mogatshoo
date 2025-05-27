@@ -2,34 +2,32 @@
 document.addEventListener('DOMContentLoaded', function() {
 	
 	let memberEmail = document.getElementById('memberEmail');
-	let emailCheckMessage = document.getElementById('emailCheckMessage');
-	let emailBtn = document.querySelector('.email-btn');
+	let emailWarnMsg = document.getElementById('emailWarnMsg');
+	let sendEmailBtn = document.getElementById('sendEmailBtn');
+	
+	sendEmailBtn.disabled = true;
 	
 	if(memberEmail){
-		// 이메일 입력 시
+		
+		emailWarnMsg.textContent = '';
+		
 		memberEmail.addEventListener('input', function() {
 			
 			let memberEmailVal = memberEmail.value.trim();
-			let emailWarn = document.querySelector('.warn-div.email');
 			
-			if (memberEmailVal === '') {
-				emailCheckMessage.textContent = '';
-				emailCheckMessage.style.display = 'none';
-				emailBtn.disabled = true;
+			if (memberEmailVal === '' || memberEmailVal.length == 0) {
+				emailWarnMsg.textContent = '';
+				emailCheck = false;
 				return;
-			}
-			
-			if(emailWarn){
-				emailWarn.closest('.input-wrap').remove();
 			}
 			
 			// 간단한 이메일 정규표현식
 		    let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 			
 			if (!emailRegex.test(memberEmailVal)) {
-				emailCheckMessage.textContent = '이메일 주소가 정확한지 확인해 주세요.';
-				emailCheckMessage.style.color = "red";
-				emailCheckMessage.style.display = 'inline';
+				emailWarnMsg.textContent = '이메일 주소가 정확한지 확인해 주세요.';
+				emailWarnMsg.style.color = "rgb(255, 107, 107)";
+				sendEmailBtn.disabled = true;
 				return;
 			}
 			
@@ -43,16 +41,15 @@ document.addEventListener('DOMContentLoaded', function() {
 			.then(response => response.json())
 			.then(data => {
 				if (data.memberEmailCheck) {
-					emailCheckMessage.textContent = "사용 가능한 이메일입니다.";
-					emailCheckMessage.style.color = "green";
-					emailCheckMessage.style.display = 'inline';
-					emailBtn.disabled = false;
-					emailCheckMessage.classList.add('valid');
+					emailWarnMsg.textContent = "사용 가능한 이메일입니다.";
+					emailWarnMsg.style.color = "rgb(129, 199, 132)";
+					sendEmailBtn.disabled = false;
+					emailCheck = true;
 				} else {
-					emailCheckMessage.textContent = "이미 사용 중인 이메일입니다.";
-					emailCheckMessage.style.color = "red";
-					emailCheckMessage.style.display = 'inline';
-					emailBtn.disabled = true;
+					emailWarnMsg.textContent = "이미 사용 중인 이메일입니다.";
+					emailWarnMsg.style.color = "rgb(255, 107, 107)";
+					sendEmailBtn.disabled = true;
+					emailCheck = false;
 				}
 			})
 			.catch(error => {

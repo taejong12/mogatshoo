@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						<h3 class="modal-title title w-100 text-center fw-bold">모갓슈 통합 서비스 이용약관 동의</h3>
 						<button type="button" class="btn-close closeBtn" data-bs-dismiss="modal"></button>
 					</div>
-					<div class="modal-body" style="max-height: 50vh; overflow-y: auto;">
+					<div class="modal-body text-color" style="max-height: 50vh; overflow-y: auto;">
 						<div id="inteContent">${inteContent}</div>
 					</div>
 					<div class="modal-footer">
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						<h3 class="modal-title title w-100 text-center fw-bold">개인정보 수집 및 이용 동의</h3>
 						<button type="button" class="btn-close closeBtn" data-bs-dismiss="modal"></button>
 					</div>
-					<div class="modal-body" style="max-height: 50vh; overflow-y: auto;">
+					<div class="modal-body text-color" style="max-height: 50vh; overflow-y: auto;">
 						<div id="infoContent">${infoContent}</div>
 					</div>
 					<div class="modal-footer">

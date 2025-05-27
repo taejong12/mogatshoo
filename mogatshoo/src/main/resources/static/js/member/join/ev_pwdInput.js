@@ -2,43 +2,42 @@
 document.addEventListener('DOMContentLoaded', function() {
 	let memberPwd = document.getElementById('memberPwd');
 	let memberPwdCheck = document.getElementById('memberPwdCheck');
-	let pwdCheckMessage = document.getElementById('pwdCheckMessage');
+	let pwdWarnMsg = document.getElementById('pwdWarnMsg');
+	let pwdCheckMsg = document.getElementById('pwdCheckMsg');
 	let eight = document.querySelector('.eight');
 	let special = document.querySelector('.special');
 	let continu = document.querySelector('.continu');
 	
 	if(memberPwd){
+		
+		pwdWarnMsg.textContent = '';
+		pwdCheckMsg.textContent = '';
+		
 		// 비밀번호 입력 시
 		memberPwd.addEventListener('input', function() {
 			let pwdVal = memberPwd.value.trim();
 			let pwdCheckVal = memberPwdCheck.value.trim();
-			let pwdWarn = document.querySelector('.warn-div.pwd');
 			
 			if (pwdVal === '' || pwdVal.length == 0) {
-				eight.style.color = 'gray';
-				special.style.color = 'gray';
-				continu.style.color = 'gray';
+				eight.style.color = 'rgb(255, 255, 255)';
+				special.style.color = 'rgb(255, 255, 255)';
+				continu.style.color = 'rgb(255, 255, 255)';
 				memberPwdCheck.value = '';
-				pwdCheckMessage.textContent = '';
+				pwdCheckMsg.textContent = '';
+				pwdCheckMsg.style.color = 'rgb(255, 107, 107)';
 				pwdInputCheck = false;
 				pwdCheckEqual = false;
 				return;
 			}
 			
-			if(pwdWarn){
-				pwdWarn.closest('.input-wrap').remove();
-			}
-			
 			if(pwdCheckVal != '' || !(pwdCheckVal.length == 0)){
 				if (pwdVal === pwdCheckVal) {
-					pwdCheckMessage.textContent = '비밀번호가 일치합니다.';
-					pwdCheckMessage.style.color = 'green';
-					pwdCheckMessage.style.display = 'inline';
+					pwdCheckMsg.textContent = '비밀번호가 일치합니다.';
+					pwdCheckMsg.style.color = 'rgb(129, 199, 132)';
 					pwdCheckEqual = true;
 				} else {
-					pwdCheckMessage.textContent = '비밀번호가 일치하지 않습니다.';
-					pwdCheckMessage.style.color = 'red';
-					pwdCheckMessage.style.display = 'inline';
+					pwdCheckMsg.textContent = '비밀번호가 일치하지 않습니다.';
+					pwdCheckMsg.style.color = 'rgb(255, 107, 107)';
 					pwdCheckEqual = false;
 				}
 			}
@@ -67,9 +66,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			let isContinuValid = !isSequential;
 			
 			// 스타일 업데이트
-			eight.style.color = isEight ? 'green' : 'red';
-			special.style.color = isSpecialValid ? 'green' : 'red';
-			continu.style.color = isContinuValid ? 'green' : 'red';
+			eight.style.color = isEight ? 'rgb(129, 199, 132)' : 'rgb(255, 107, 107)';
+			special.style.color = isSpecialValid ? 'rgb(129, 199, 132)' : 'rgb(255, 107, 107)';
+			continu.style.color = isContinuValid ? 'rgb(129, 199, 132)' : 'rgb(255, 107, 107)';
 	
 			// 모든 조건 만족하면 true
 			pwdInputCheck = isEight && isSpecialValid && isContinuValid;

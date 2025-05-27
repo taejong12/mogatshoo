@@ -1,29 +1,17 @@
 function fu_pwdCheckValidation(){
 	
 	let pwdCheckInput = document.getElementById('memberPwdCheck');
+	let pwdCheckMsg = document.getElementById('pwdCheckMsg');
 	
 	if(pwdCheckInput){
+		pwdCheckMsg.textContent = '';
+		
 		let pwdCheckVal = pwdCheckInput.value.trim();
 		
 		if(pwdCheckVal == '' || pwdCheckVal.length == 0){
 			pwdCheckInput.focus();
-			
-	        let spaceDiv = document.createElement('div');
-			spaceDiv.style.width = "110px";
-	        
-			let pwdCheckWarp = document.joinForm.memberPwdCheck.closest('.input-wrap');
-			
-			let inputWrap = document.createElement('div');
-			inputWrap.className = 'input-wrap d-flex align-items-center';
-			
-			let pwdCheckWarnDiv = document.createElement('div');
-			pwdCheckWarnDiv.className = 'warn-div pwdCheck';
-			pwdCheckWarnDiv.textContent = '비밀번호 확인을 입력해주세요.';
-			
-			inputWrap.appendChild(spaceDiv);
-			inputWrap.appendChild(pwdCheckWarnDiv);
-			
-			pwdCheckWarp.insertAdjacentElement('afterend', inputWrap);
+	        pwdCheckMsg.textContent = '비밀번호 확인을 입력해주세요.';
+			pwdCheckMsg.style.color = 'rgb(255, 107, 107)';
 			return false;
 		} else{
 			return true;
