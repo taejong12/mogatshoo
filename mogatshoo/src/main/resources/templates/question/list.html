@@ -1,79 +1,80 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='질문 목록 - 질문 관리 시스템'">
-    <link rel="stylesheet" th:href="@{/static/css/question/list.css}">
+<link rel="stylesheet" th:href="@{/css/question/list.css}">
 </head>
 <body>
 <div layout:fragment="content">
-    <div class="page-header">
-        <h2>질문 목록</h2>
-        <a th:href="@{/questions/new}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> 질문 생성
-        </a>
-    </div>
+<div class="page-header">
+<h2>질문 목록</h2>
+<a th:href="@{/questions/new}" class="btn btn-primary">
+<i class="fas fa-plus"></i> 질문 생성
+</a>
+</div>
 
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="질문 검색...">
-        <button id="searchBtn" class="btn btn-secondary">
-            <i class="fas fa-search"></i>
-        </button>
-    </div>
+<div class="search-container">
+<input type="text" id="searchInput" placeholder="질문 검색...">
+<button id="searchBtn" class="btn btn-secondary">
+<i class="fas fa-search"></i>
+</button>
+</div>
 
-    <!-- 알림 메시지 컨테이너 추가 -->
-    <div id="notificationContainer" class="notification-container">
-        <!-- 여기에 알림이 동적으로 추가됩니다 -->
-    </div>
+<!-- 알림 메시지 컨테이너 -->
+<div id="notificationContainer" class="notification-container">
+<!-- 여기에 알림이 동적으로 추가됩니다 -->
+</div>
 
-    <div th:if="${#lists.isEmpty(questions)}" class="empty-state">
-        <i class="fas fa-inbox fa-4x"></i>
-        <p>등록된 질문이 없습니다.</p>
-        <a th:href="@{/questions/new}" class="btn btn-primary">첫 질문 생성하기</a>
-    </div>
+<div th:if="${#lists.isEmpty(questions)}" class="empty-state">
+<i class="fas fa-inbox fa-4x"></i>
+<p>등록된 질문이 없습니다.</p>
+<a th:href="@{/questions/new}" class="btn btn-primary">첫 질문 생성하기</a>
+</div>
 
-    <!-- 테이블 형태로 변경 -->
-    <table th:if="${!#lists.isEmpty(questions)}" class="table" id="questionsTable">
-        <thead>
-            <tr>
-                <th>일련번호</th>
-                <th>공개 상태</th>
-                <th>질문 내용</th>
-                <th>생성 날짜</th>
-                <th>관리</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="question : ${questions}" th:id="'row-' + ${question.serialNumber}">
-                <td>
-                    <span class="serial-number" th:text="${question.serialNumber}">Q0001</span>
-                </td>
-                <td>
-                    <span th:if="${question.isPublic == 'yes'}" class="status public" th:id="'status-' + ${question.serialNumber}">
-                        <i class="fas fa-eye"></i> 공개
-                    </span>
-                    <span th:unless="${question.isPublic == 'yes'}" class="status private" th:id="'status-' + ${question.serialNumber}">
-                        <i class="fas fa-eye-slash"></i> 비공개
-                    </span>
-                </td>
-                <td>
-                    <span class="question-title" th:text="${question.question}">질문 내용</span>
-                </td>
-                <td>
-                    <span class="date" th:text="${#temporals.format(question.createdAt, 'yyyy-MM-dd')}">2025-05-14</span>
-                </td>
-                <td>
-                    <a th:href="@{/questions/{id}(id=${question.serialNumber})}" class="btn btn-text">
-                        수정하기 <i class="fas fa-edit"></i>
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<!-- 테이블 형태 -->
+<table th:if="${!#lists.isEmpty(questions)}" class="table" id="questionsTable">
+<thead>
+<tr>
+<th>일련번호</th>
+<th>공개 상태</th>
+<th>질문 내용</th>
+<th>생성 날짜</th>
+<th>관리</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="question : ${questions}" th:id="'row-' + ${question.serialNumber}">
+<td>
+<span class="serial-number" th:text="${question.serialNumber}">Q0001</span>
+</td>
+<td>
+<span th:if="${question.isPublic == 'yes'}" class="status public" th:id="'status-' + ${question.serialNumber}">
+<i class="fas fa-eye"></i> 공개
+</span>
+<span th:unless="${question.isPublic == 'yes'}" class="status private" th:id="'status-' + ${question.serialNumber}">
+<i class="fas fa-eye-slash"></i> 비공개
+</span>
+</td>
+<td>
+<span class="question-title" th:text="${question.question}">질문 내용</span>
+</td>
+<td>
+<span class="date" th:text="${#temporals.format(question.createdAt, 'yyyy-MM-dd')}">2025-05-14</span>
+</td>
+<td>
+<!-- 수정된 부분: edit 경로로 변경 -->
+<a th:href="@{/questions/{id}/edit(id=${question.serialNumber})}" class="btn btn-text">
+수정하기 <i class="fas fa-edit"></i>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 <th:block layout:fragment="scripts">
-    <script th:src="@{/static/js/question/list.js}"></script>
+<script th:src="@{/js/question/list.js}"></script>
 </th:block>
 </body>
 </html>

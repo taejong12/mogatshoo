@@ -54,7 +54,7 @@
                     </div>
                     <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 0}">
-                        <img th:src="@{'/uploads/' + ${randomPictures[0].hairPicture}}"
+                        <img th:src="${randomPictures[0].hairPicture}"
                              alt="참고 이미지 1" class="option-image"/>
                         <input type="hidden" name="imageReference1" th:value="${randomPictures[0].hairPicture}" />
                     </div>
@@ -78,7 +78,7 @@
                     </div>
                     <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 1}">
-                        <img th:src="@{'/uploads/' + ${randomPictures[1].hairPicture}}"
+                        <img th:src="${randomPictures[1].hairPicture}"
                              alt="참고 이미지 2" class="option-image"/>
                         <input type="hidden" name="imageReference2" th:value="${randomPictures[1].hairPicture}" />
                     </div>
@@ -102,7 +102,7 @@
                     </div>
                     <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 2}">
-                        <img th:src="@{'/uploads/' + ${randomPictures[2].hairPicture}}"
+                        <img th:src="${randomPictures[2].hairPicture}"
                              alt="참고 이미지 3" class="option-image"/>
                         <input type="hidden" name="imageReference3" th:value="${randomPictures[2].hairPicture}" />
                     </div>
@@ -126,7 +126,7 @@
                     </div>
                     <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 3}">
-                        <img th:src="@{'/uploads/' + ${randomPictures[3].hairPicture}}"
+                        <img th:src="${randomPictures[3].hairPicture}"
                              alt="참고 이미지 4" class="option-image"/>
                         <input type="hidden" name="imageReference4" th:value="${randomPictures[3].hairPicture}" />
                     </div>

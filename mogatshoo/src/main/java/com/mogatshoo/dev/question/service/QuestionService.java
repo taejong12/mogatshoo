@@ -25,4 +25,7 @@ public interface QuestionService {
 	void deleteQuestion(String serialNumber);
 
 	List<QuestionEntity> getQuestionsByPublicStatus(String string);
+	
+	// 이미지 경로 수정 메서드 추가
+	List<QuestionEntity> getAllQuestionsWithFixedImagePaths();
 }
