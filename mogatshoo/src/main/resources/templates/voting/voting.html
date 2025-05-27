@@ -5,10 +5,6 @@
 <head>
     <title>투표하기 - Mogatshoo</title>
     
-    <!-- CSRF 토큰 메타 태그 추가 -->
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    
     <!-- 페이지별 추가 스타일 -->
     <th:block layout:fragment="additionalStyles">
         <!-- 폰트어썸 -->
@@ -22,6 +18,22 @@
     <!-- 레이아웃 컨텐츠 영역 -->
     <div layout:fragment="content">
         <div class="container vote-container">
+            
+            <!-- 알림 메시지 표시 -->
+            <div th:if="${voteSuccess}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${message}">투표가 성공적으로 처리되었습니다.</span>
+            </div>
+            
+            <div th:if="${voteWarning}" class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${message}">경고 메시지입니다.</span>
+            </div>
+            
+            <div th:if="${voteError}" class="alert alert-error">
+                <i class="fas fa-times-circle"></i>
+                <span th:text="${errorMessage}">오류가 발생했습니다.</span>
+            </div>
             
             <!-- 투표 컨텐츠 영역 -->
             <div id="vote-content" th:if="${question != null and (noMoreQuestions == null or noMoreQuestions == false)}">
@@ -43,14 +55,9 @@
                 
                 <!-- 투표 옵션 (사진) -->
                 <div class="options-container">
-                    <!-- 폼을 전체 투표 영역을 감싸도록 이동 -->
                     <form id="vote-form" th:action="@{/voting/submit}" method="post">
-                        <!-- CSRF 토큰 추가 -->
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        
-                        <!-- 숨겨진 입력 필드들 - JavaScript에서 값을 설정 -->
-                        <input type="hidden" id="voted-id" name="votedId" value="">
-                        <input type="hidden" name="questionId" th:value="${question.id}">
+                        <!-- 숨겨진 입력 필드들 -->
+<input type="hidden" id="voted-id" name="votedId" value="">
                         <input type="hidden" name="serialNumber" th:value="${question.serialNumber}">
                         
                         <div class="options-grid">
@@ -60,58 +67,54 @@
                                      th:data-member-id="${picture.memberId}"
                                      th:data-serial-number="${question.serialNumber}">
                                     <div class="win95-pic-container">
-                                        <img th:src="${picture.hairPicture}" 
-                                             alt="투표 옵션 이미지"
-                                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+4pGc7J20IOyXhuydjDwvdGV4dD48L3N2Zz4='; console.warn('이미지 로드 실패:', this.getAttribute('data-original-src'));"
-                                             th:data-original-src="${picture.hairPicture}">
+                                        <img th:src="@{${picture.hairPicture}}" 
+                                             th:alt="'투표 옵션 ' + ${status.index + 1}"
+                                             class="option-image"
+                                             th:data-member-id="${picture.memberId}"
+                                             onload="this.style.opacity='1';"
+                                             onerror="handleImageError(this);"
+                                             style="opacity: 0; transition: opacity 0.3s ease;">
                                     </div>
-                                    <div class="option-text" th:text="${question.getOption1()}" th:if="${status.index == 0}">옵션 1</div>
-                                    <div class="option-text" th:text="${question.getOption2()}" th:if="${status.index == 1}">옵션 2</div>
-                                    <div class="option-text" th:text="${question.getOption3()}" th:if="${status.index == 2}">옵션 3</div>
-                                    <div class="option-text" th:text="${question.getOption4()}" th:if="${status.index == 3}">옵션 4</div>
+                                    <div class="option-text" th:text="${question.option1}" th:if="${status.index == 0}">옵션 1</div>
+                                    <div class="option-text" th:text="${question.option2}" th:if="${status.index == 1}">옵션 2</div>
+                                    <div class="option-text" th:text="${question.option3}" th:if="${status.index == 2}">옵션 3</div>
+                                    <div class="option-text" th:text="${question.option4}" th:if="${status.index == 3}">옵션 4</div>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                
-                <!-- 진행 상황 -->
-                <div class="progress-container win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">투표 진행 상황</div>
-                    </div>
-                    <div class="win95-content">
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" id="vote-progress" style="width: 0%"></div>
-                        </div>
-                        <div class="progress-text" id="progress-text">진행 중...</div>
-                    </div>
-                </div>
             </div>
             
-            <!-- 투표 없음 메시지 -->
-            <div th:if="${question == null or noMoreQuestions == true}" class="vote-complete-container">
+            <!-- 투표 없음 메시지 또는 오류 메시지 -->
+            <div th:if="${question == null or noMoreQuestions == true or errorMessage != null}" class="vote-complete-container">
                 <div class="win95-window">
                     <div class="win95-titlebar">
                         <div class="win95-title">안내</div>
                     </div>
                     <div class="win95-content">
                         <div class="win95-icon">
-                            <i class="fas fa-info-circle"></i>
+                            <i class="fas fa-info-circle" th:if="${errorMessage == null}"></i>
+                            <i class="fas fa-exclamation-circle" th:if="${errorMessage != null}"></i>
                         </div>
                         <div class="win95-message">
-                            <h3>투표 완료!</h3>
-                            <p>모든 질문에 투표해 주셔서 감사합니다.</p>
+                            <h3 th:if="${errorMessage == null}">투표 완료!</h3>
+                            <h3 th:if="${errorMessage != null}">오류 발생</h3>
+                            
+                            <p th:if="${message != null}" th:text="${message}">메시지</p>
+                            <p th:if="${errorMessage != null}" th:text="${errorMessage}">오류 메시지</p>
+                            <p th:if="${message == null and errorMessage == null}">모든 질문에 투표해 주셔서 감사합니다.</p>
                         </div>
                         <div class="win95-buttons">
                             <a href="/" class="win95-button">홈으로 가기</a>
+                            <a href="/voting" class="win95-button" th:if="${errorMessage != null}">다시 시도</a>
                         </div>
                     </div>
                 </div>
             </div>
             
             <!-- 팝업 윈도우 (투표 확인용) -->
-            <div id="win95-popup" class="win95-popup">
+            <div id="win95-popup" class="win95-popup" style="display: none;">
                 <div class="win95-window">
                     <div class="win95-titlebar">
                         <div class="win95-title">투표 확인</div>
@@ -148,40 +151,22 @@
                 </div>
             </div>
             
-            <!-- 투표 결과 표시 영역 -->
-            <div id="vote-result" class="vote-result" style="display: none;">
-                <div class="win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">투표 완료</div>
-                    </div>
-                    <div class="win95-content">
-                        <div class="win95-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="win95-message">
-                            <h3>투표가 완료되었습니다!</h3>
-                            <p id="vote-success-message">감사합니다.</p>
-                        </div>
-                        <div class="win95-buttons">
-                            <button id="next-vote-btn" class="win95-button">다음 투표</button>
-                            <button id="go-home-btn" class="win95-button">홈으로</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
             <!-- 디버깅 정보 (개발 환경에서만 표시) -->
-            <div th:if="${@environment.acceptsProfiles('dev')}" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; font-size: 12px; z-index: 9999;">
+            <div th:if="${@environment.acceptsProfiles('dev')}" class="debug-info">
                 <div>사용자: <span th:text="${member?.memberId}">Unknown</span></div>
                 <div>질문: <span th:text="${question?.serialNumber}">None</span></div>
-                <div>사진 수: <span th:text="${#lists.size(randomPictures)}">0</span></div>
+                <div>사진 수: <span th:text="${randomPictures != null ? #lists.size(randomPictures) : 0}">0</span></div>
+                <div th:if="${randomPictures != null}">
+                    <div th:each="pic, stat : ${randomPictures}">
+                        사진 <span th:text="${stat.index + 1}">1</span>: <span th:text="${pic.hairPicture}">경로</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- 페이지별 추가 스크립트 -->
     <th:block layout:fragment="additionalScripts">
-        <!-- 투표 페이지 전용 JavaScript -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/voting/voting.js}"></script>
     </th:block>
