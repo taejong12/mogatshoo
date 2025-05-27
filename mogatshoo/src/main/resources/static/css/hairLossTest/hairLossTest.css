@@ -1,274 +1,640 @@
-/* 픽셀 스타일 글꼴 */
+/* 윈도우 95 레트로 스타일 CSS */
 @font-face {
-    font-family: 'dalmoori';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'dalmoori';
+	src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
 }
-	
-	:root {
-	    --primary-color: #2B2BD8;
-	    --accent-color: #FFC107;
-	    --text-light: #FFFFFF;
-	    --text-dark: #000000;
-	    --pixel-grid: rgba(255, 255, 255, 0.1);
-	    --success-color: #4CAF50;
-	    --warning-color: #FF9800;
-	    --danger-color: #EE5A5A;
-	}
 
-	* {
-	    box-sizing: border-box;
-	}
 
-	html, body {
-	    margin: 0;
-	    padding: 0;
-	    width: 100%;
-	    height: 100%;
-	    overflow: hidden;
-	}
+:root {
+	/* 윈도우 95 컬러 팔레트 */
+	--win95-gray: #c0c0c0;
+	--win95-dark-gray: #808080;
+	--win95-light-gray: #dfdfdf;
+	--win95-blue: #000080;
+	--win95-light-blue: #0080ff;
+	--win95-white: #ffffff;
+	--win95-black: #000000;
+	--win95-yellow: #ffff00;
+	--win95-green: #008000;
+	--win95-red: #ff0000;
+	--win95-button-shadow: #404040;
+	--win95-button-highlight: #ffffff;
 
-	/* 레트로 픽셀 배경 */
+	/* 애니메이션 */
+	--hover-scale: 1.02;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	min-height: 100vh;
+	font-family: 'dalmoori', sans-serif;
+	font-size: 20px;
+	overflow-x: hidden;
+}
+
+/* 윈도우 95 데스크톱 배경 */
+.pixel-bg {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+
+	/* 이 아래 줄들이 빠졌거나 잘못된 경우 */
+	width: 100vw;
+	height: 100vh;
+}
+
+
+/* 메인 윈도우 컨테이너 */
+.main-container {
+    background-color: var(--win95-gray);
+    border: 2px outset var(--win95-gray);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    width: 100% !important;
+    max-width: 1300px;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+
+/* 컨테이너 내부 여백 조정 */
+.container {
+	padding-top: 30px !important;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+	padding-bottom: 10px !important;
+	height: 100%;
+}
+
+/* 윈도우 95 패널 스타일 */
+.retro-panel {
+	background-color: var(--win95-gray);
+	border: 2px inset var(--win95-gray);
+	padding: 15px;
+	margin-bottom: 10px;
+	width: 100%;
+	box-shadow: inset 1px 1px 0 var(--win95-button-highlight),
+		inset -1px -1px 0 var(--win95-button-shadow);
+}
+
+/* 윈도우 95 제목 스타일 */
+.retro-title {
+	font-family: 'dalmoori', sans-serif;
+	color: var(--win95-black);
+	text-align: center;
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 15px;
+	text-shadow: 1px 1px 0 var(--win95-white);
+	padding: 5px;
+	background-color: var(--win95-light-gray);
+	border: 1px inset var(--win95-gray);
+}
+
+/* 윈도우 95 입력 필드 */
+.retro-input {
+	width: 100%;
+	padding: 4px 6px;
+	font-family: 'dalmoori', sans-serif;
+	font-size: 18px;
+	background-color: var(--win95-white);
+	border: 2px inset var(--win95-gray);
+	color: var(--win95-black);
+	margin-bottom: 8px;
+	box-shadow: inset 1px 1px 0 var(--win95-button-shadow),
+		inset -1px -1px 0 var(--win95-button-highlight);
+}
+
+.retro-input:focus {
+	outline: 1px dotted var(--win95-black);
+	outline-offset: -3px;
+}
+
+.retro-input[readonly] {
+	background-color: var(--win95-light-gray);
+	color: var(--win95-dark-gray);
+}
+
+/* 윈도우 95 버튼 */
+.retro-button {
+	font-family: 'dalmoori', sans-serif;
+	font-size: 11px;
+	background-color: var(--win95-gray);
+	border: 2px outset var(--win95-gray);
+	color: var(--win95-black);
+	padding: 6px 16px;
+	cursor: pointer;
+	margin: 4px;
+	min-width: 75px;
+	transition: all 0.1s ease;
+	box-shadow: 1px 1px 0 var(--win95-button-shadow);
+}
+
+.retro-button:hover {
+	background-color: var(--win95-light-gray);
+	transform: scale(var(--hover-scale));
+}
+
+.retro-button:active {
+	border: 2px inset var(--win95-gray);
+	box-shadow: inset 1px 1px 0 var(--win95-button-shadow);
+	transform: translateX(1px) translateY(1px);
+}
+
+.retro-button:disabled {
+	color: var(--win95-dark-gray);
+	cursor: not-allowed;
+	transform: none;
+}
+
+/* 파일 선택 버튼 스타일링 */
+.retro-input[type="file"] {
+	padding: 2px;
+	background-color: var(--win95-white);
+	cursor: pointer;
+}
+
+.retro-input[type="file"]::-webkit-file-upload-button {
+	background-color: var(--win95-gray);
+	border: 2px outset var(--win95-gray);
+	color: var(--win95-black);
+	padding: 2px 8px;
+	margin-right: 8px;
+	font-family: 'dalmoori', sans-serif;
+	font-size: 15px;
+	cursor: pointer;
+}
+
+.retro-input[type="file"]::-webkit-file-upload-button:hover {
+	background-color: var(--win95-light-gray);
+}
+
+/* 이미지 미리보기 컨테이너 */
+#image-preview-container {
+	text-align: center;
+	margin: 10px 0;
+	min-height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--win95-white);
+	border: 2px inset var(--win95-gray);
+	box-shadow: inset 1px 1px 0 var(--win95-button-shadow),
+		inset -1px -1px 0 var(--win95-button-highlight);
+}
+
+#image-preview {
+	max-width: 100%;
+	max-height: 250px;
+	border: 1px solid var(--win95-dark-gray);
+	object-fit: contain;
+	background-color: var(--win95-white);
+}
+
+/* 결과 컨테이너 - 윈도우 95 다이얼로그 스타일 */
+.retro-result {
+	background-color: var(--win95-gray);
+	border: 2px outset var(--win95-gray);
+	padding: 15px;
+	margin-top: 10px;
+	color: var(--win95-black);
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+	position: relative;
+}
+
+/* 결과 다이얼로그 타이틀바 */
+.retro-result h4::before {
+	content: "분석 결과";
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	right: -2px;
+	height: 18px;
+	background: linear-gradient(90deg, var(--win95-blue) 0%, var(--win95-light-blue) 100%);
+	color: var(--win95-white);
+	font-weight: bold;
+	font-size: 15px;
+	display: flex;
+	align-items: center;
+	padding: 0 6px;
+	border-bottom: 1px solid var(--win95-dark-gray);
+}
+
+.retro-result h4 {
+	margin-top: 20px;
+	font-size: 12px;
+	color: var(--win95-black);
+}
+
+#label-container {
+	background-color: var(--win95-white);
+	padding: 10px;
+	border: 2px inset var(--win95-gray);
+	font-family: 'dalmoori', sans-serif;
+	font-size: 15px;
+	line-height: 1.4;
+	color: var(--win95-black);
+	box-shadow: inset 1px 1px 0 var(--win95-button-shadow);
+}
+
+#debug-info {
+	margin-top: 10px;
+	font-size: 10px;
+	color: var(--win95-dark-gray);
+	text-align: center;
+	font-family: 'dalmoori', sans-serif;
+	background-color: var(--win95-light-gray);
+	padding: 4px;
+	border: 1px inset var(--win95-gray);
+}
+
+/* 윈도우 95 모달 */
+.modal-content {
+	background-color: var(--win95-gray) !important;
+	border: 2px outset var(--win95-gray) !important;
+	border-radius: 0 !important;
+	box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5) !important;
+	font-family: 'dalmoori', sans-serif !important;
+}
+
+.modal-header {
+	background: linear-gradient(90deg, var(--win95-blue) 0%, var(--win95-light-blue) 100%) !important;
+	border-bottom: none !important;
+	padding: 4px 8px !important;
+	border-radius: 0 !important;
+}
+
+.modal-title {
+	color: var(--win95-white) !important;
+	font-family: 'dalmoori', sans-serif !important;
+	font-size: 11px !important;
+	font-weight: bold !important;
+}
+
+.modal-body {
+	color: var(--win95-black) !important;
+	font-family: 'dalmoori', sans-serif !important;
+	font-size: 11px !important;
+	line-height: 1.4 !important;
+	background-color: var(--win95-gray) !important;
+}
+
+.modal-footer {
+	border-top: 1px solid var(--win95-dark-gray) !important;
+	background-color: var(--win95-gray) !important;
+	padding: 8px !important;
+	border-radius: 0 !important;
+}
+
+.modal-backdrop {
+	pointer-events: none !important;
+
+}
+
+.modal-backdrop {
+	opacity: 0 !important;
+}
+
+
+/* 라벨 스타일 */
+.form-label {
+	color: var(--win95-black) !important;
+	font-size: 15px !important;
+	font-family: 'dalmoori', sans-serif !important;
+	font-weight: normal !important;
+	margin-bottom: 4px !important;
+}
+
+/* 체크박스와 라디오 버튼 스타일 */
+input[type="checkbox"],
+input[type="radio"] {
+	width: 13px;
+	height: 13px;
+	border: 2px inset var(--win95-gray);
+	background-color: var(--win95-white);
+	cursor: pointer;
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+	width: 16px;
+	height: 16px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: var(--win95-gray);
+	border: 1px inset var(--win95-gray);
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--win95-gray);
+	border: 2px outset var(--win95-gray);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--win95-light-gray);
+}
+
+::-webkit-scrollbar-corner {
+	background-color: var(--win95-gray);
+}
+
+/* 윈도우 95 진행률 표시줄 스타일 */
+.progress-bar {
+	width: 100%;
+	height: 20px;
+	background-color: var(--win95-white);
+	border: 2px inset var(--win95-gray);
+	position: relative;
+	overflow: hidden;
+}
+
+.progress-fill {
+	height: 100%;
+	background: repeating-linear-gradient(45deg,
+			var(--win95-blue),
+			var(--win95-blue) 4px,
+			var(--win95-light-blue) 4px,
+			var(--win95-light-blue) 8px);
+	transition: width 0.3s ease;
+}
+
+/* =================
+   반응형 디자인
+   ================= */
+
+/* 태블릿 (768px ~ 1024px) */
+@media screen and (max-width: 1024px) {
 	.pixel-bg {
-	    background-color: var(--primary-color);
-	    background-image: 
-	        linear-gradient(var(--pixel-grid) 1px, transparent 1px),
-	        linear-gradient(90deg, var(--pixel-grid) 1px, transparent 1px);
-	    background-size: 20px 20px;
-	    background-position: center;
-	    font-family:'dalmoori', sans-serif;
-	    color: var(--text-light);
-	    letter-spacing: -0.03em;
-	    width: 100vw;
-	    height: 100vh;
-	    display: flex;
-	    align-items: center;
-	    justify-content: center;
-	    position: relative;
+		padding: 15px;
 	}
 
-	/* 메인 컨테이너 - 완전 중앙 정렬 */
 	.main-container {
-	    width: 90%;
-	    max-width: 800px;
-	    height: 90%;
-	    max-height: 600px;
-	    display: flex;
-	    flex-direction: column;
-	    align-items: center;
-	    justify-content: center;
-	    position: relative;
+		max-width: 90%;
+		min-height: 500px;
 	}
 
-	/* 레트로 패널 */
-	.retro-panel {
-	    background-color: rgba(255, 255, 255, 0.95);
-	    border: 4px solid var(--accent-color);
-	    border-radius: 8px;
-	    padding: 2rem;
-	    width: 100%;
-	    max-height: 100%;
-	    overflow-y: auto;
-	    box-shadow: 
-	        0 0 0 4px var(--primary-color),
-	        0 0 20px rgba(0, 0, 0, 0.5);
-	    position: relative;
-	}
-
-	/* 레트로 제목 */
 	.retro-title {
-	    font-family: 'dalmoori', sans-serif;
-	    color: var(--primary-color);
-	    text-align: center;
-	    font-size: 1.5rem;
-	    text-shadow: 2px 2px 0 var(--accent-color);
-	    margin-bottom: 1.5rem;
-	    animation: glow 2s ease-in-out infinite alternate;
+		font-size: 13px;
 	}
 
-	@keyframes glow {
-	    from { 
-	        text-shadow: 2px 2px 0 var(--accent-color), 0 0 10px var(--primary-color); 
-	    }
-	    to { 
-	        text-shadow: 2px 2px 0 var(--accent-color), 0 0 20px var(--primary-color), 0 0 30px var(--primary-color); 
-	    }
-	}
-
-	/* 입력 필드 */
-	.retro-input {
-	    width: 100%;
-	    padding: 0.75rem;
-	    font-family: 'dalmoori', sans-serif;
-	    font-size: 0.7rem;
-	    background-color: rgba(255, 255, 255, 0.9);
-	    border: 3px solid var(--primary-color);
-	    border-radius: 4px;
-	    color: var(--text-dark);
-	    margin-bottom: 1rem;
-	    transition: all 0.3s ease;
-	}
-
-	.retro-input:focus {
-	    outline: none;
-	    border-color: var(--accent-color);
-	    box-shadow: 0 0 10px var(--accent-color);
-	}
-
-	/* 레트로 버튼 */
 	.retro-button {
-	    font-family: 'dalmoori', sans-serif;
-	    font-size: 0.7rem;
-	    background-color: var(--danger-color);
-	    border: 3px solid var(--text-dark);
-	    border-radius: 4px;
-	    color: var(--text-light);
-	    padding: 0.75rem 1.5rem;
-	    cursor: pointer;
-	    transition: all 0.3s ease;
-	    text-transform: uppercase;
-	    position: relative;
-	    overflow: hidden;
-	}
-
-	.retro-button:hover {
-	    transform: translateY(-2px);
-	    background-color: #FF7070;
-	    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-	}
-
-	.retro-button:active {
-	    transform: translateY(0);
-	}
-
-	.retro-button:disabled {
-	    background-color: #666;
-	    cursor: not-allowed;
-	    transform: none;
-	}
-
-	/* 이미지 미리보기 */
-	#image-preview-container {
-	    text-align: center;
-	    margin: 1rem 0;
-	    min-height: 200px;
-	    display: flex;
-	    align-items: center;
-	    justify-content: center;
-	    border: 3px dashed var(--primary-color);
-	    border-radius: 8px;
-	    background-color: rgba(43, 43, 216, 0.1);
+		padding: 5px 12px;
+		min-width: 60px;
 	}
 
 	#image-preview {
-	    max-width: 100%;
-	    max-height: 250px;
-	    border: 3px solid var(--accent-color);
-	    border-radius: 8px;
-	    object-fit: contain;
-	    background-color: white;
-	    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		max-height: 200px;
+	}
+}
+
+/* 모바일 (768px 이하) */
+@media screen and (max-width: 768px) {
+
+	html,
+	body {
+		font-size: 14px;
 	}
 
-	/* 결과 컨테이너 */
+	.pixel-bg {
+		padding: 10px;
+		align-items: flex-start;
+		padding-top: 20px;
+	}
+
+	.main-container {
+		max-width: 100%;
+		min-height: auto;
+		margin: 0;
+	}
+
+	.main-container::before {
+		font-size: 14px;
+		height: 18px;
+	}
+
+	.main-container::after {
+		width: 36px;
+		height: 12px;
+		font-size: 11px;
+		top: 3px;
+		right: 3px;
+	}
+
+	.container {
+		padding-top: 25px !important;
+		padding-left: 8px !important;
+		padding-right: 8px !important;
+	}
+
+	.retro-panel {
+		padding: 10px;
+		margin-bottom: 8px;
+	}
+
+	.retro-title {
+		font-size: 14px;
+		margin-bottom: 10px;
+		padding: 4px;
+	}
+
+	.retro-input {
+		padding: 3px 4px;
+		font-size: 14px;
+		margin-bottom: 6px;
+	}
+
+	.retro-button {
+		font-size: 14px;
+		padding: 4px 10px;
+		min-width: 50px;
+		margin: 2px;
+	}
+
+	.form-label {
+		font-size: 14px !important;
+		margin-bottom: 3px !important;
+	}
+
+	#image-preview-container {
+		min-height: 150px;
+		margin: 8px 0;
+	}
+
+	#image-preview {
+		max-height: 150px;
+	}
+
 	.retro-result {
-	    background-color: rgba(255, 255, 255, 0.95);
-	    border: 3px solid var(--success-color);
-	    border-radius: 8px;
-	    padding: 1.5rem;
-	    margin-top: 1rem;
-	    color: var(--text-dark);
-	    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+		padding: 10px;
+		margin-top: 8px;
+	}
+
+	.retro-result h4 {
+		margin-top: 15px;
+		font-size: 14px;
 	}
 
 	#label-container {
-	    background-color: rgba(255, 255, 255, 0.9);
-	    padding: 1rem;
-	    border-radius: 8px;
-	    border: 2px solid var(--primary-color);
-	    font-family: 'dalmoori', sans-serif;
-	    font-size: 0.6rem;
-	    line-height: 1.4;
+		padding: 8px;
+		font-size: 14px;
 	}
 
 	#debug-info {
-	    margin-top: 1rem;
-	    font-size: 0.5rem;
-	    color: var(--primary-color);
-	    text-align: center;
-	    font-family: 'dalmoori', sans-serif;
+		font-size: 14px;
+		margin-top: 8px;
+		padding: 3px;
 	}
 
-	/* 모달 스타일 */
-	.modal-content {
-	    background-color: rgba(43, 43, 216, 0.95) !important;
-	    border: 4px solid var(--accent-color) !important;
-	    border-radius: 8px !important;
-	}
-
-	.modal-header {
-	    border-bottom: 2px solid var(--accent-color) !important;
-	}
-
+	/* 모바일 모달 조정 */
 	.modal-title {
-	    color: var(--accent-color) !important;
-	    font-family: 'dalmoori', sans-serif !important;
-	    font-size: 0.8rem !important;
+		font-size: 14px !important;
 	}
 
 	.modal-body {
-	    color: white !important;
-	    font-family: 'dalmoori', sans-serif !important;
-	    font-size: 0.6rem !important;
-	    line-height: 1.6 !important;
+		font-size: 14px !important;
+		padding: 10px !important;
+	}
+
+	.modal-header {
+		padding: 3px 6px !important;
 	}
 
 	.modal-footer {
-	    border-top: 2px solid var(--accent-color) !important;
+		padding: 6px !important;
+	}
+}
+
+/* 작은 모바일 (480px 이하) */
+@media screen and (max-width: 480px) {
+	.pixel-bg {
+		padding: 5px;
 	}
 
-	/* 라벨 스타일 */
+	.main-container::before {
+		content: "탈모진단";
+		font-size: 14px;
+		height: 16px;
+	}
+
+	.main-container::after {
+		width: 30px;
+		height: 10px;
+		font-size: 14px;
+	}
+
+	.container {
+		padding-top: 22px !important;
+		padding-left: 5px !important;
+		padding-right: 5px !important;
+	}
+
+	.retro-panel {
+		padding: 8px;
+	}
+
+	.retro-title {
+		font-size: 14px;
+		margin-bottom: 8px;
+	}
+
+	.retro-input {
+		font-size: 14px;
+		padding: 2px 3px;
+	}
+
+	.retro-button {
+		font-size: 14px;
+		padding: 3px 8px;
+		min-width: 45px;
+	}
+
 	.form-label {
-	    color: var(--primary-color) !important;
-	    font-size: 0.7rem !important;
-	    font-family: 'dalmoori', sans-serif !important;
-	    margin-bottom: 0.5rem !important;
+		font-size: 14px !important;
 	}
 
-	/* 반응형 */
-	@media (max-width: 768px) {
-	    .retro-title {
-	        font-size: 1rem;
-	    }
-	    
-	    .retro-button {
-	        font-size: 0.6rem;
-	        padding: 0.5rem 1rem;
-	    }
-	    
-	    .main-container {
-	        width: 95%;
-	        height: 95%;
-	    }
-	    
-	    #image-preview {
-	        max-height: 180px;
-	    }
+	#image-preview-container {
+		min-height: 120px;
 	}
 
-	/* 로딩 애니메이션 */
-	.pixel-spinner {
-	    width: 40px;
-	    height: 40px;
-	    background-color: var(--accent-color);
-	    animation: pixel-spin 1s linear infinite;
+	#image-preview {
+		max-height: 120px;
 	}
 
-	@keyframes pixel-spin {
-	    0% { transform: rotate(0deg); }
-	    25% { transform: rotate(90deg); }
-	    50% { transform: rotate(180deg); }
-	    75% { transform: rotate(270deg); }
-	    100% { transform: rotate(360deg); }
+	#label-container {
+		font-size: 14px;
+		padding: 6px;
 	}
+
+	#debug-info {
+		font-size: 14px;
+	}
+}
+
+/* 가로 방향 모바일 (landscape) */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+	.pixel-bg {
+		align-items: flex-start;
+		padding-top: 10px;
+	}
+
+	.main-container {
+		min-height: auto;
+	}
+
+	#image-preview-container {
+		min-height: 100px;
+	}
+
+	#image-preview {
+		max-height: 100px;
+	}
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+	.retro-button {
+		transition: none;
+	}
+
+	.progress-fill {
+		transition: none;
+	}
+}
+
+/* 고해상도 디스플레이 최적화 */
+@media screen and (min-resolution: 192dpi) {
+
+	.main-container::before,
+	.main-container::after,
+	.retro-title,
+	.form-label {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+/* 다크 모드 감지 (윈도우 95 스타일 유지하면서 약간 조정) */
+@media (prefers-color-scheme: dark) {
+	.pixel-bg {
+		background-color: #004040;
+	}
+
+	.retro-result,
+	.retro-panel {
+		box-shadow: inset 1px 1px 0 var(--win95-button-highlight),
+			inset -1px -1px 0 var(--win95-button-shadow),
+			2px 2px 4px rgba(0, 0, 0, 0.6);
+	}
+}

@@ -210,7 +210,7 @@
 .content-with-sidebar {
 	margin-left: 120px;
 	transition: margin-left 0.3s ease;
-	background-color: #808080;
+	background-color: rgb(192, 192, 192);
 }
 
 /* 기본 윈도우95 창 스타일 */
@@ -231,7 +231,7 @@
 /* iframe 스타일 (기존 CSS 파일에 추가) */
 #windowContentFrame {
 	width: 1300px;
-		height: 580px;
+	height: 580px;
     border: none;
     overflow: auto;
     background-color: white;
@@ -249,7 +249,6 @@
 
 .win95-title-text {
 	font-weight: bold;
-	font-family: 'MS Sans Serif', Arial, sans-serif;
 	font-size: 11px;
 }
 

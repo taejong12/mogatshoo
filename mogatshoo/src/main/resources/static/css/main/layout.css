@@ -1,134 +1,143 @@
 /* 폰트 설정 (유지) */
 @font-face {
-    font-family: 'dalmoori';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'dalmoori';
+	src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
 }
 
 /* 기본 설정 (세로 스크롤 허용) */
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: 'dalmoori', sans-serif;
-    overflow-x: hidden; /* 가로 스크롤 방지 */
-    overflow-y: auto; /* 세로 스크롤 허용 */
+html,
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'dalmoori', sans-serif;
+	overflow-x: hidden;
+	/* 가로 스크롤 방지 */
+	overflow-y: auto;
+	/* 세로 스크롤 허용 */
 }
 
 
 /* 배경 이미지 설정 (유지) */
 body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-	background-color: rgb(192, 192, 192); /* 윈도우 95/98 테마 색상 */
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: -1;
+	content: "";
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgb(192, 192, 192);
+	/* 윈도우 95/98 테마 색상 */
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	z-index: -1;
 }
 
 /* 페이지 컨테이너 (유지) */
 .page-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* 정확히 화면 높이로 설정 */
-    width: 100%;
-    position: relative; /* 추가: 내부 요소의 위치 기준점 */
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	/* 정확히 화면 높이로 설정 */
+	width: 100%;
+	position: relative;
+	/* 추가: 내부 요소의 위치 기준점 */
 }
 
-/* 헤더 영역 (유지) */
-.header-area {
-    width: 100%;
-    position: relative;
-    z-index: 100;
-    flex-shrink: 0;
-}
 
-/* 헤더 영역 - position: absolute를 relative로 변경 (유지) */
-.main-header-component .header {
-    position: relative;
-    width: 100%;
-    padding-left: 180px;
-    padding-right: 180px;
-    padding-top: 43px;
-    padding-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-    box-sizing: border-box;
-}
 
 /* 컨텐츠 영역 (세로 스크롤 허용, 하단 패딩 조정) */
 .content-area {
-    flex: 1; /* 가능한 모든 공간 사용 */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    z-index: 1;
-    overflow-y: auto; /* 세로 스크롤 허용 */
-    overflow-x: hidden; /* 가로 스크롤 방지 */
-    padding-bottom: 0px; /* 푸터 높이만큼 하단 패딩 추가 */
+	flex: 1;
+	/* 가능한 모든 공간 사용 */
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	z-index: 1;
+	overflow-y: auto;
+	/* 세로 스크롤 허용 */
+	overflow-x: hidden;
+	/* 가로 스크롤 방지 */
+	padding-bottom: 0px;
+	/* 푸터 높이만큼 하단 패딩 추가 */
 	background-color: #008080;
 }
 
-/* 콘텐츠 래퍼 (유지) */
-.content-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
 
+.content-wrapper {
+	width: 100%;
+	flex-direction: row;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0 2rem;
+	box-sizing: border-box;
+
+	/* 데스크톱: flex 비활성화 (꽉 찬 레이아웃) */
+	display: block;
+}
 
 /* 푸터 영역 - 수정 (fixed로 변경) */
 .footer-area {
-    width: 100%;
-    position: fixed; /* 화면 하단에 고정 */
-    bottom: 0; /* 화면 하단에 배치 */
-    left: 0; /* 왼쪽 정렬 */
-    z-index: 100; /* 다른 콘텐츠 위에 표시 */
+	width: 100%;
+	position: fixed;
+	/* 화면 하단에 고정 */
+	bottom: 0;
+	/* 화면 하단에 배치 */
+	left: 0;
+	/* 왼쪽 정렬 */
+	z-index: 100;
+	/* 다른 콘텐츠 위에 표시 */
 }
 
 .footer {
-    color: rgb(255, 255, 0);
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    padding: 10px 0; /* 상하 패딩 추가 */
+	color: rgb(255, 255, 0);
+	font-size: 1.5rem;
+	font-weight: bold;
+	text-align: center;
+	padding: 10px 0;
+	/* 상하 패딩 추가 */
 }
 
 /* 폼 스타일 (유지) */
-#idWarnMsg, #pwdWarnMsg {
-    color: red;
-    font-size: 0.8em;
-    padding: .375rem .75rem;
+#idWarnMsg,
+#pwdWarnMsg {
+	color: red;
+	font-size: 0.8em;
+	padding: .375rem .75rem;
 }
+
 .container-fluid {
-    padding-right: 0 !important;
-    padding-left: 0 !important;
+	padding-right: 0 !important;
+	padding-left: 0 !important;
 }
+
 /* 반응형 조정 (유지) */
-@media (max-width: 768px) {
-    .content-area {
-        padding-bottom: 40px; /* 모바일에서 푸터 패딩 축소 */
-    }
+@media screen and (max-width: 768px) {
+	.content-wrapper {
+		display: flex !important;
+		flex-direction: column;
+		/* 모바일에서는 세로 배치 */
+		padding: 0 1rem;
+		/* 모바일에서는 패딩 줄이기 */
+		gap: 0.5rem;
+	}
 
-    .footer {
-        font-size: 1.2rem; /* 모바일에서 글꼴 크기 축소 */
-    }
-}
 
-/* 헤더 높이 명시적 정의 (유지) */
-.header {
-    min-height: 60px;
+	.content-wrapper>* {
+		width: 100%;
+		max-width: 500px;
+		/* 모바일에서는 내부 요소가 너무 넓지 않게 */
+	}
+
+	.footer {
+		font-size: 1.2rem;
+		/* 모바일에서 글꼴 크기 축소 */
+	}
 }

@@ -234,33 +234,71 @@ function navigateTo(url) {
         return;
     }
     
-    const sidebarLinks = document.querySelectorAll('.menu-item a');
-    for (let link of sidebarLinks) {
-        if (link.getAttribute('href') === url) {
-            link.click();
-            return;
-        }
-    }
-    window.location.href = url;
-}
+	// 🔥 반응형일 때는 직접 페이지 이동
+	    if (isMobileView()) {
+	        console.log('📱 시작메뉴에서 반응형 직접 이동:', url);
+	        window.location.href = url;
+	        return;
+	    }
+	    
+	    // 🔥 데스크톱일 때만 사이드바 링크 찾아서 클릭 시도
+	    const sidebarLinks = document.querySelectorAll('.menu-item a');
+	    for (let link of sidebarLinks) {
+	        if (link.getAttribute('href') === url) {
+	            console.log('🖥️ 데스크톱에서 사이드바 링크 클릭:', url);
+	            link.click();
+	            return;
+	        }
+	    }
+	    
+	    // 사이드바 링크를 찾지 못했을 때 직접 이동
+	    console.log('🔄 사이드바 링크 없음, 직접 이동:', url);
+	    window.location.href = url;
+	}
 
-function navigateToMypage() {
-    hideStartMenu();
-    const mypageLink = document.querySelector('a[href*="/member/mypage"]');
-    if (mypageLink) {
-        mypageLink.click();
-        return;
-    }
-    
-    const sidebarLinks = document.querySelectorAll('.menu-item a');
-    for (let link of sidebarLinks) {
-        if (link.getAttribute('href')?.includes('/member/mypage')) {
-            link.click();
-            return;
-        }
-    }
-    window.location.href = '/member/mypage';
-}
+
+	// 🔥 마이페이지 네비게이션 함수 수정 (반응형 대응)
+	function navigateToMypage() {
+	    hideStartMenu();
+	    
+	    // 🔥 반응형일 때는 직접 페이지 이동
+	    if (isMobileView()) {
+	        console.log('📱 시작메뉴에서 반응형 마이페이지 직접 이동');
+	        // 인증된 사용자의 마이페이지 URL 생성 시도
+	        const authName = document.querySelector('[th\\:text*="authentication.principal"]');
+	        if (authName) {
+	            const memberId = authName.getAttribute('th:text')?.match(/authentication\.name/);
+	            if (memberId) {
+	                window.location.href = `/member/mypage?memberId=${encodeURIComponent(memberId)}`;
+	                return;
+	            }
+	        }
+	        // 기본 마이페이지로 이동
+	        window.location.href = '/member/mypage';
+	        return;
+	    }
+	    
+	    // 🔥 데스크톱일 때만 기존 로직 수행
+	    const mypageLink = document.querySelector('a[href*="/member/mypage"]');
+	    if (mypageLink) {
+	        console.log('🖥️ 데스크톱에서 마이페이지 링크 클릭');
+	        mypageLink.click();
+	        return;
+	    }
+	    
+	    const sidebarLinks = document.querySelectorAll('.menu-item a');
+	    for (let link of sidebarLinks) {
+	        if (link.getAttribute('href')?.includes('/member/mypage')) {
+	            console.log('🖥️ 데스크톱에서 사이드바 마이페이지 링크 클릭');
+	            link.click();
+	            return;
+	        }
+	    }
+	    
+	    // 링크를 찾지 못했을 때 직접 이동
+	    console.log('🔄 마이페이지 링크 없음, 직접 이동');
+	    window.location.href = '/member/mypage';
+	}
 
 function confirmLogout() {
     hideStartMenu();
@@ -318,4 +356,88 @@ function executeLogout() {
     } else {
         window.location.href = '/logout';
     }
+}
+
+$(document).ready(function () {
+    // 🚨 푸터 링크 전용 이벤트 핸들러
+    $('.footer-link').click(function (e) {
+        e.preventDefault(); // 기본 링크 동작 방지
+        e.stopPropagation(); // 이벤트 버블링 중지
+
+        const file = $(this).attr('href');
+        const title = $(this).find('span').text() || '문서';
+
+        console.log('🟡 푸터 링크 클릭:', file, title);
+
+        // '/' 링크는 일반적인 페이지 이동을 수행합니다.
+        if (file === '/') {
+            window.location.href = file;
+            return;
+        }
+
+        // 로그인/회원가입은 메인 윈도우에서 처리
+        if (file.includes('/member/join') ||
+            file.includes('/member/login') ||
+            file.includes('/login') ||
+            file.includes('/oauth2/') ||
+            file.includes('/logout')) {
+
+            console.log('🔴 푸터에서 메인 윈도우 처리:', file);
+            window.location.href = file;
+        } else {
+            // 🔥 반응형 여부 체크 함수
+            function isMobileView() {
+                return window.innerWidth <= 768; // 768px 이하를 모바일로 간주
+            }
+            
+            // 🔥 반응형일 때는 직접 페이지 이동, 데스크톱일 때는 iframe
+            if (isMobileView()) {
+                console.log('📱 반응형에서 직접 페이지 이동:', file);
+                window.location.href = file;
+            } else {
+                // 포인트, 마이페이지는 iframe에서 처리 (데스크톱만)
+                console.log('🔵 푸터에서 iframe 처리:', file);
+                openFooterInIframe(file, title);
+            }
+        }
+    });
+});
+
+// 푸터에서 iframe 열기 (사이드바와 동일한 방식) - 데스크톱 전용
+function openFooterInIframe(file, title) {
+    // iframe 관련 요소들이 존재하는지 확인
+    const windowElement = $('#win95Window');
+    const titleElement = $('.win95-title-text');
+    const frameElement = $('#windowContentFrame');
+    
+    if (windowElement.length === 0 || titleElement.length === 0 || frameElement.length === 0) {
+        console.log('❌ iframe 요소들을 찾을 수 없음. 직접 페이지 이동합니다.');
+        window.location.href = file;
+        return;
+    }
+    
+    // 윈도우 제목 설정
+    titleElement.text(title);
+
+    // 윈도우 표시 및 위치 설정
+    windowElement.css({
+        'display': 'block',
+        'position': 'fixed',
+        'left': '150px',
+        'top': '50px',
+        'transform': 'none'
+    });
+
+    // iframe 소스 설정
+    frameElement.attr('src', file);
+}
+
+// 푸터 로그아웃 모달 함수
+function showFooterLogoutModal() {
+    showConfirmModal();
+}
+
+// 🔥 반응형 여부 체크 함수 (전역에서 사용)
+function isMobileView() {
+    return window.innerWidth <= 768; // 768px 이하를 모바일로 간주
 }
