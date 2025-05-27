@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/noLoginLayout}">
+<head th:with="layoutTitle='이용약관 동의'">
+	<link rel="stylesheet" th:href="@{/css/member/agree.css}">
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="col-12 col-lg-6">
+			<form name="agreeForm" class="background-border-color align-items-center p-4 rounded-3">
+				<h1 class="title text-center mb-5">다음 내용에 동의해주세요.</h1>
+				
+				<div class="form-check mb-3">
+			        <input type="checkbox" class="form-check-input" id="totalAgreeCheck">
+				    <label for="totalAgreeCheck" class="form-check-label">모두동의</label>
+				</div>
+				
+				<div class="form-check mb-3">
+			        <input type="checkbox" class="form-check-input" id="agreeIntegration" name="agreeIntegration">
+				    <label for="agreeIntegration" class="form-check-label">모갓슈 통합 서비스 이용약관 동의(필수)</label>
+					<button type="button" id="inteModalBtn" >약관보기</button>
+			        <div id="inteWarnMsg"></div>
+				</div>
+				
+				<div class="form-check mb-3">
+			        <input type="checkbox" class="form-check-input" id="agreeInfo" name="agreeInfo">
+				    <label for="agreeInfo" class="form-check-label">개인정보 수집 및 이용 동의(필수)</label>
+			        <button type="button" id="infoModalBtn">약관보기</button>
+			        <div id="infoWarnMsg"></div>
+				</div>
+				
+				<div class="row text-center">
+				    <div class="col-12">
+				        <button type="button" class="btn agreeBtn w-100" onclick="fu_memberAgree()">다음</button>
+				    </div>
+				</div>
+			</form>
+		</div>
+		
+		<!-- 다음버튼 클릭 -->
+		<script th:src="@{/js/member/agree/fu_memberAgree.js}"></script>
+		<!-- 전체동의 이벤트 -->
+		<script th:src="@{/js/member/agree/ev_totalAgreeCheck.js}"></script>
+		<!-- 체크박스 유효성검사 -->
+		<script th:src="@{/js/member/agree/fu_agreeVali.js}"></script>
+		<!-- 약관내용 모달창 -->
+		<script th:src="@{/js/member/agree/ev_modal.js}"></script>
+		<!-- 모갓슈 통합 서비스 이용약관 동의 약관 내용 -->
+		<script th:src="@{/js/member/agree/fu_inteHTML.js}"></script>
+		<!-- 개인정보 수집 및 이용 동의 약관 내용 -->
+		<script th:src="@{/js/member/agree/fu_infoHTML.js}"></script>
+	</div>
+</body>
+</html>

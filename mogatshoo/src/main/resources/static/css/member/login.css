@@ -15,6 +15,12 @@
 	border: 10px solid rgb(195,54,38);
 } 
 
+.loginFormBtn {
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+	color: white;
+} 
+
 .loginFormBtn:hover{
 	background-color: rgb(53,34,44);
 	border-color: rgb(146,40,27);

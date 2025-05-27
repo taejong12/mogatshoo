@@ -1,296 +1,44 @@
 @charset "UTF-8";
 
-/* 회원가입 폼 컨테이너 스타일 */
-.container {
-    background-color: rgb(54,45,62); /* 폼 배경색 설정 (어두운 보라색) */
-    border: 10px solid rgb(195,54,38); /* 테두리 굵기와 색상 설정 (붉은색) */
-    padding: 15px 20px; /* 내부 여백: 상하 15px, 좌우 20px */
-    border-radius: 5px; /* 모서리 둥글게 설정 */
-    max-width: 1100px !important; /* 컨테이너 최대 너비 설정 */
-    height: 480px; /* 컨테이너 높이 고정 */
-    margin: 0 auto; /* 가운데 정렬 */
-    overflow: hidden; /* 컨테이너 자체는 스크롤 없음 */
+.background-border-color {
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
 }
 
-/* 제목 스타일 - 회원가입 글자 */
-h1 {
-    color: rgb(255, 255, 0); /* 제목 색상 (노란색) */
-    font-size: 22px; /* 제목 폰트 크기 */
-    font-family: 'dalmoori', sans-serif; /* 제목 폰트 패밀리 */
-    text-align: center; /* 제목 중앙 정렬 */
-    margin: 0 0 12px 0 !important; /* 마진: 상 0, 우 0, 하 12px, 좌 0 */
+.title{
+	color: rgb(233,161,59);
 }
 
-/* 폼 자체를 스크롤 가능하게 설정 */
-form {
-    padding: 0.8rem !important; /* 내부 여백 */
-    max-height: 420px; /* 폼 최대 높이 설정 */
-    overflow-y: auto; /* 세로 스크롤 활성화 */
+.join-input {
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+	color: white;
 }
 
-/* 폼 내부 요소를 단일 컬럼으로 정렬 */
-form.border.border-dark {
-    background-color: rgb(54,45,62); /* 배경색 */
-    width: 100%; /* 전체 너비 사용 */
-    display: flex; /* 플렉스 박스 레이아웃 적용 */
-    flex-direction: column; /* 세로 방향 배치 */
+.join-input::placeholder {
+	color: white;
+	opacity: 1;
 }
 
-/* 기존 2단 레이아웃 제거 - 모든 요소를 100% 너비로 설정 */
-.row {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin: 15 !important;
+.join-input:focus {
+	box-shadow: rgb(54,45,62);
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+	color: white;
 }
 
-.col-md-6, .col-12 {
-    width: 100% !important;
-    padding: 0 5px !important;
-    margin-bottom: 5px !important;
+.background-border-color {
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+} 
+
+.join-btn:hover{
+	background-color: rgb(53,34,44);
+	border-color: rgb(146,40,27);
 }
 
-/* 모든 입력 필드 그룹의 여백 조정 */
-.mb-3 {
-    margin-bottom: 25px !important;
-}
-
-/* 입력 필드 스타일 */
-.input-wrap {
-    margin-bottom: 5px !important;
-    width: 100%;
-}
-
-/* 라벨 스타일 */
-label {
-    color: rgb(255, 255, 0);
-    font-size: 15px;
-    width: 110px; /* 라벨 너비 약간 증가 */
-    font-family: 'dalmoori', sans-serif;
-    display: inline-block;
-}
-
-/* 입력 필드 스타일 */
-input[type="text"],
-input[type="password"],
-input[type="tel"],
-input[type="email"],
-input[type="date"] {
-    background-color: rgb(54,45,62);
-    border: 2px solid rgb(195,54,38);
-    color: white;
-    padding: 3px 6px;
-    height: 28px !important;
-    font-size: 14px;
-    width: calc(100% - 120px); /* 라벨 너비에 맞게 조정 */
-}
-
-/* 버튼 공통 스타일 */
-button, 
-.btn,
-button[type="button"],
-button[onclick="fu_addrSearch()"],
-button[onclick="fu_memberJoin()"],
-.email-btn {
-    background-color: rgb(54,45,62) !important;
-    border: 2px solid rgb(195,54,38) !important;
-    color: rgb(255, 255, 0) !important;
-    font-size: 12px !important;
-    padding: 0 5px !important;
-    height: 30px !important;
-    cursor: pointer;
-    font-family: 'dalmoori', sans-serif;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-button:hover {
-    background-color: rgb(53,34,44) !important;
-    border-color: rgb(146,40,27) !important;
-}
-
-/* 주소검색 버튼 특별 스타일 */
-button[onclick="fu_addrSearch()"] {
-    width: 55px !important;
-    margin-left: 6px !important;
-    font-size: 11px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* 이메일 인증 버튼 특별 스타일 */
-.email-btn {
-    width: 85px !important;
-    margin-left: 6px !important;
-    font-size: 10px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* 회원가입 버튼 특별 스타일 */
-button[onclick="fu_memberJoin()"] {
-    width: 100px !important;
-    font-size: 20px !important;
-    padding: 0 5px !important;
-    margin: 12px auto 0 !important;
-}
-
-/* 부트스트랩 클래스 오버라이드 */
-.px-3 {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-.py-2 {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
-
-/* 메시지 및 안내 텍스트 스타일 */
-.eight, .special, .continu {
-    color: rgb(200, 200, 200);
-    font-size: 0.7em;
-    margin: 0;
-    line-height: 1.3;
-    margin-left: 110px; /* 라벨 너비에 맞게 조정 */
-    padding: 0 !important;
-}
-
-/* 경고 메시지 스타일 */
-.warn-div {
-    color: rgb(255, 100, 100);
-    font-size: 0.7em;
-    line-height: 1.3;
-}
-
-/* 체크 메시지 스타일 */
-#idCheckMessage, #pwdCheckMessage, #emailCheckMessage, #nickNameCheckMessage {
-    font-size: 0.7em;
-    margin: 0;
-    padding: 0;
-    line-height: 1.3;
-    margin-left: 110px; /* 라벨 너비에 맞게 조정 */
-}
-
-/* 개인정보 동의 섹션 */
-.input-wrap.d-flex.flex-column {
-    width: 100%;
-    margin-bottom: 8px !important;
-    margin-top: 5px !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* 개인정보 섹션 라벨 */
-.input-wrap.d-flex.flex-column > label {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 5px;
-    font-size: 14px;
-}
-
-/* 개인정보 박스 */
-#privacyBox {
-    border: 1px solid rgb(195,54,38);
-    padding: 5px;
-    width: 100%;
-    height: 60px !important;
-    overflow-y: scroll;
-    background-color: rgba(80, 70, 90, 0.5);
-    font-size: 12px;
-    line-height: 1.3;
-    color: white;
-    margin-bottom: 5px;
-}
-
-/* 체크박스 컨테이너 */
-.info-input-wrap {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-top: 5px !important;
-}
-
-/* 체크박스 라벨 */
-.info-input-wrap label {
-    font-size: 14px;
-    color: rgb(255, 255, 0);
-    margin-left: 6px;
-    width: auto;
-}
-
-/* 버튼 컨테이너 */
-.d-flex.align-items-center.justify-content-center {
-    margin-top: 8px !important;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-/* 라디오 버튼 영역 */
-.form-check-inline {
-    margin-right: 8px;
-}
-
-/* 라디오 버튼 라벨 */
-.form-check-label {
-    color: rgb(255, 255, 0);
-    font-size: 14px;
-    width: auto;
-}
-
-/* 인라인 스타일 요소 제거 */
-[style*="margin-left:20px; width: 130px"],
-[style*="margin-left: 20px; width: 130px"] {
-    display: none;
-}
-
-/* 스크롤바 스타일 커스터마이징 */
-form::-webkit-scrollbar {
-    width: 8px;
-}
-
-form::-webkit-scrollbar-track {
-    background: rgba(80, 70, 90, 0.5);
-}
-
-form::-webkit-scrollbar-thumb {
-    background-color: rgb(195,54,38);
-    border-radius: 4px;
-}
-
-/* 모바일 반응형 조정 */
-@media (max-width: 767px) {
-    .container {
-        max-width: 100% !important;
-        padding: 10px;
-        height: 450px; /* 모바일에서 높이 조정 */
-    }
-    
-    form {
-        max-height: 380px; /* 모바일에서 폼 높이 조정 */
-    }
-    
-    label {
-        width: 90px; /* 모바일에서 라벨 너비 축소 */
-        font-size: 14px;
-    }
-    
-    input[type="text"],
-    input[type="password"],
-    input[type="tel"],
-    input[type="email"],
-    input[type="date"] {
-        width: calc(100% - 100px); /* 모바일에서 입력 필드 너비 조정 */
-    }
-    
-    .eight, .special, .continu, #idCheckMessage, #pwdCheckMessage, #emailCheckMessage, #nickNameCheckMessage {
-        margin-left: 90px;
-    }
+.join-btn{
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+	color: white;
 }

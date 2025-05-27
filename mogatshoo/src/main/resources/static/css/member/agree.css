@@ -1,0 +1,23 @@
+@charset "UTF-8";
+
+.title{
+	color: rgb(233,161,59);
+}
+
+.background-border-color, .agreeBtn, .modalBtn {
+	background-color: rgb(54,45,62);
+	border: 10px solid rgb(195,54,38);
+	color: white;
+} 
+
+.agreeBtn:hover, .modalBtn:hover {
+	background-color: rgb(53,34,44);
+	border-color: rgb(146,40,27);
+	color: white;
+}
+
+.closeBtn{
+	filter: brightness(0) invert(1) contrast(150%);
+	font-size: 24px; 
+	cursor: pointer;
+}	

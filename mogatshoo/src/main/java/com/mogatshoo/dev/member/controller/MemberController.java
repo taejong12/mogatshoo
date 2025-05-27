@@ -40,6 +40,11 @@ public class MemberController {
 	}
 	
 
+	@GetMapping("/agree")
+	public String agreePage() {
+		return "member/agree";
+	}
+	
 	@GetMapping("/join")
 	public String joinPage() {
 		return "member/join";

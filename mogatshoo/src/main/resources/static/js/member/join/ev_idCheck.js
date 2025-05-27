@@ -1,22 +1,18 @@
 // 아이디 중복 체크 이벤트
 document.addEventListener('DOMContentLoaded', function() {
 	let memberId = document.getElementById('memberId');
-
+	
 	if(memberId){
 		memberId.addEventListener('input', function() {
 			
 			let memberIdVal = memberId.value.trim();
-			let idWarn = document.querySelector('.warn-div.id');
+			let idWarnMsg = document.getElementById('idWarnMsg');
 			
 			if (memberIdVal === '' || memberIdVal.length == 0) {
-				idCheckMessage.textContent = '';
-				idCheckMessage.style.display = 'none';
+				idWarnMsg.textContent = '';
+				idWarnMsg.style.display = 'none';
 				idCheck = false;
 				return;
-			}
-			
-			if(idWarn){
-				idWarn.closest('.input-wrap').remove();
 			}
 			
 			fetch("/member/idCheck", {
@@ -29,14 +25,14 @@ document.addEventListener('DOMContentLoaded', function() {
 			.then(response => response.json())
 			.then(data => {
 				if (data.memberIdCheck) {
-					idCheckMessage.textContent = "사용 가능한 아이디입니다.";
-					idCheckMessage.style.color = "green";
-					idCheckMessage.style.display = 'inline';
+					idWarnMsg.textContent = "사용 가능한 아이디입니다.";
+					idWarnMsg.style.color = "green";
+					idWarnMsg.style.display = 'inline';
 					idCheck = true;
 				} else {
-					idCheckMessage.textContent = "이미 사용 중인 아이디입니다.";
-					idCheckMessage.style.color = "red";
-					idCheckMessage.style.display = 'inline';
+					idWarnMsg.textContent = "이미 사용 중인 아이디입니다.";
+					idWarnMsg.style.color = "red";
+					idWarnMsg.style.display = 'inline';
 					idCheck = false;
 				}
 			})

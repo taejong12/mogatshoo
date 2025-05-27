@@ -5,35 +5,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // 개인정보 동의 섹션과 체크박스 참조
     const privacyBox = document.getElementById('privacyBox');
     const checkbox = document.getElementById('memberInfoCheck');
-    const privacyContainer = document.querySelector('.input-wrap.d-flex.flex-column');
-    
-    if (!privacyBox || !checkbox || !privacyContainer) {
+    const infoCheckContainer = document.querySelector('.infoCheckContainer');
+    let openModalBtn = document.getElementById('openModalBtn');
+	
+    if (!privacyBox || !checkbox || !infoCheckContainer) {
         console.error("필요한 요소를 찾을 수 없습니다");
-        return;
-    }
-    
-    // 이미 처리되었는지 확인 (무한 로딩 방지)
-    if (document.querySelector('.privacy-modal-btn')) {
-        console.log("이미 모달 버튼이 존재합니다");
         return;
     }
     
     // 개인정보 박스 내용 백업 후 숨기기
     const privacyContent = privacyBox.innerHTML;
     privacyBox.style.display = 'none';
-    
-    // 개인정보 동의 버튼 생성
-    const openModalBtn = document.createElement('button');
-    openModalBtn.type = 'button';
-    openModalBtn.className = 'privacy-modal-btn';
-    openModalBtn.textContent = '약관 보기';
-    openModalBtn.style.cssText = 'background-color: rgb(54,45,62); border: 2px solid rgb(195,54,38); color: rgb(255, 255, 0); font-size: 12px; padding: 3px 10px; cursor: pointer; margin: 10px auto; display: block;';
-    
-    // 버튼 삽입
-    privacyContainer.insertBefore(openModalBtn, privacyContainer.querySelector('.info-input-wrap'));
-    
-    // 체크박스 disabled 속성 제거
-    checkbox.disabled = false;
     
     // 모달 생성 및 추가
     if (!document.getElementById('privacyModal')) {
