@@ -5,6 +5,10 @@
 <head>
     <title>투표하기 - Mogatshoo</title>
     
+    <!-- CSRF 토큰 메타 태그 추가 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
     <!-- 페이지별 추가 스타일 -->
     <th:block layout:fragment="additionalStyles">
         <!-- 폰트어썸 -->
@@ -18,54 +22,9 @@
     <!-- 레이아웃 컨텐츠 영역 -->
     <div layout:fragment="content">
         <div class="container vote-container">
-            <!-- 시작 화면 (기본으로 표시) -->
-            <div id="start-screen" class="start-screen-container">
-                <div class="win95-window start-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">투표 시스템</div>
-                    </div>
-                    <div class="win95-content">
-                        <div class="win95-icon start-icon">
-                            <i class="fas fa-poll"></i>
-                        </div>
-                        <div class="win95-message">
-                            <h2>Mogatshoo 투표 시스템</h2>
-                            <p>질문에 대해 마음에 드는 사진을 클릭하여 투표해주세요.</p>
-                            <p>당신의 참여가 소중합니다!</p>
-                        </div>
-                        <div class="win95-buttons start-buttons">
-                            <button id="start-voting" class="win95-button start-button">
-                                <i class="fas fa-play"></i> 시작하기
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 투표 없음 메시지 (초기에는 숨김) -->
-            <div id="no-more-questions" class="vote-complete-container" style="display: none;">
-                <div class="win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">안내</div>
-                        <div class="win95-close-btn">✕</div>
-                    </div>
-                    <div class="win95-content">
-                        <div class="win95-icon">
-                            <i class="fas fa-info-circle"></i>
-                        </div>
-                        <div class="win95-message">
-                            <h3>투표 완료!</h3>
-                            <p>모든 질문에 투표해 주셔서 감사합니다.</p>
-                        </div>
-                        <div class="win95-buttons">
-                            <a href="/" class="win95-button">홈으로 가기</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 투표 컨텐츠 영역 (초기에는 숨김) -->
-            <div id="vote-content" th:if="${question != null}" style="display: none;">
+            
+            <!-- 투표 컨텐츠 영역 -->
+            <div id="vote-content" th:if="${question != null and (noMoreQuestions == null or noMoreQuestions == false)}">
                 <div class="vote-header">
                     <h1>투표하기</h1>
                     <p class="vote-instructions">마음에 드는 사진을 클릭해서 투표해주세요</p>
@@ -84,16 +43,27 @@
                 
                 <!-- 투표 옵션 (사진) -->
                 <div class="options-container">
+                    <!-- 폼을 전체 투표 영역을 감싸도록 이동 -->
                     <form id="vote-form" th:action="@{/voting/submit}" method="post">
-                        <input type="hidden" name="serialNumber" th:value="${question.serialNumber}">
+                        <!-- CSRF 토큰 추가 -->
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        
+                        <!-- 숨겨진 입력 필드들 - JavaScript에서 값을 설정 -->
                         <input type="hidden" id="voted-id" name="votedId" value="">
+                        <input type="hidden" name="questionId" th:value="${question.id}">
+                        <input type="hidden" name="serialNumber" th:value="${question.serialNumber}">
                         
                         <div class="options-grid">
                             <!-- 4개의 사진 옵션 -->
                             <div th:each="picture, status : ${randomPictures}" class="option-item">
-                                <div class="picture-option win95-interactive" th:data-member-id="${picture.memberId}">
+                                <div class="picture-option win95-interactive" 
+                                     th:data-member-id="${picture.memberId}"
+                                     th:data-serial-number="${question.serialNumber}">
                                     <div class="win95-pic-container">
-                                        <img th:src="@{'/uploads/' + ${picture.hairPicture}}" alt="투표 옵션 이미지">
+                                        <img th:src="${picture.hairPicture}" 
+                                             alt="투표 옵션 이미지"
+                                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+4pGc7J20IOyXhuydjDwvdGV4dD48L3N2Zz4='; console.warn('이미지 로드 실패:', this.getAttribute('data-original-src'));"
+                                             th:data-original-src="${picture.hairPicture}">
                                     </div>
                                     <div class="option-text" th:text="${question.getOption1()}" th:if="${status.index == 0}">옵션 1</div>
                                     <div class="option-text" th:text="${question.getOption2()}" th:if="${status.index == 1}">옵션 2</div>
@@ -119,8 +89,29 @@
                 </div>
             </div>
             
+            <!-- 투표 없음 메시지 -->
+            <div th:if="${question == null or noMoreQuestions == true}" class="vote-complete-container">
+                <div class="win95-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">안내</div>
+                    </div>
+                    <div class="win95-content">
+                        <div class="win95-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="win95-message">
+                            <h3>투표 완료!</h3>
+                            <p>모든 질문에 투표해 주셔서 감사합니다.</p>
+                        </div>
+                        <div class="win95-buttons">
+                            <a href="/" class="win95-button">홈으로 가기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- 팝업 윈도우 (투표 확인용) -->
-            <div id="win95-popup" class="win95-popup" style="display: none;">
+            <div id="win95-popup" class="win95-popup">
                 <div class="win95-window">
                     <div class="win95-titlebar">
                         <div class="win95-title">투표 확인</div>
@@ -155,6 +146,35 @@
                         <p>잠시만 기다려주세요...</p>
                     </div>
                 </div>
+            </div>
+            
+            <!-- 투표 결과 표시 영역 -->
+            <div id="vote-result" class="vote-result" style="display: none;">
+                <div class="win95-window">
+                    <div class="win95-titlebar">
+                        <div class="win95-title">투표 완료</div>
+                    </div>
+                    <div class="win95-content">
+                        <div class="win95-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="win95-message">
+                            <h3>투표가 완료되었습니다!</h3>
+                            <p id="vote-success-message">감사합니다.</p>
+                        </div>
+                        <div class="win95-buttons">
+                            <button id="next-vote-btn" class="win95-button">다음 투표</button>
+                            <button id="go-home-btn" class="win95-button">홈으로</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 디버깅 정보 (개발 환경에서만 표시) -->
+            <div th:if="${@environment.acceptsProfiles('dev')}" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; font-size: 12px; z-index: 9999;">
+                <div>사용자: <span th:text="${member?.memberId}">Unknown</span></div>
+                <div>질문: <span th:text="${question?.serialNumber}">None</span></div>
+                <div>사진 수: <span th:text="${#lists.size(randomPictures)}">0</span></div>
             </div>
         </div>
     </div>
