@@ -30,8 +30,6 @@ public class QuestionServiceImpl implements QuestionService {
 		return questionRepository.save(questionEntity);
 	}
 	
-	
-	
 	@Override
 	public String generateNextSerialNumber() {
 		String maxSerialNumber = questionRepository.findMaxSerialNumber();
@@ -58,8 +56,75 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 	
 	@Override
+	public List<QuestionEntity> getAllQuestionsWithFixedImagePaths() {
+		// 모든 질문을 가져온 후 이미지 경로가 포함된 경우 수정
+		List<QuestionEntity> questions = questionRepository.findAll();
+		
+		// 각 질문의 옵션에서 잘못된 이미지 경로 수정
+		for (QuestionEntity question : questions) {
+			question.setOption1(fixImagePath(question.getOption1()));
+			question.setOption2(fixImagePath(question.getOption2()));
+			question.setOption3(fixImagePath(question.getOption3()));
+			question.setOption4(fixImagePath(question.getOption4()));
+		}
+		
+		return questions;
+	}
+	
+	// 이미지 경로 수정 헬퍼 메서드
+	private String fixImagePath(String optionText) {
+		if (optionText != null && optionText.contains("/uploads/")) {
+			// 기존 경로: /uploads/qwer/79e6ba0d-9df3-47ad-9df1-b2ad89560aed.png
+			// 수정 경로: /uploads/qwer/79e6ba0d-9df3-47ad-9df1-b2ad89560aed.png (동일하게 유지)
+			// 만약 경로에 문제가 있다면 여기서 수정
+			
+			// HairLossTestService의 saveImageFile 메서드와 일치하도록 경로 검증
+			if (!optionText.startsWith("/uploads/")) {
+				// /uploads/로 시작하지 않는 경우 추가
+				if (optionText.startsWith("uploads/")) {
+					optionText = "/" + optionText;
+				}
+			}
+		}
+		return optionText;
+	}
+	
+	@Override
 	public QuestionEntity getQuestionBySerialNumber(String serialNumber) {
-		return questionRepository.findById(serialNumber).orElseThrow(() -> new RuntimeException("Question not found with serial number: " + serialNumber));
+		System.out.println("=== Service 호출 ===");
+		System.out.println("조회할 serialNumber: '" + serialNumber + "'");
+		System.out.println("serialNumber 길이: " + serialNumber.length());
+		System.out.println("serialNumber 바이트: " + java.util.Arrays.toString(serialNumber.getBytes()));
+		
+		// 데이터베이스에 있는 모든 질문의 일련번호 확인
+		List<QuestionEntity> allQuestions = questionRepository.findAll();
+		System.out.println("=== 데이터베이스에 있는 모든 질문 일련번호 ===");
+		for (QuestionEntity q : allQuestions) {
+			System.out.println("DB에 있는 serialNumber: '" + q.getSerialNumber() + "'");
+		}
+		
+		QuestionEntity question = questionRepository.findById(serialNumber)
+			.orElseThrow(() -> {
+				System.err.println("질문을 찾을 수 없습니다: '" + serialNumber + "'");
+				return new RuntimeException("Question not found with serial number: " + serialNumber);
+			});
+		
+		System.out.println("✅ DB에서 조회 성공!");
+		System.out.println("조회된 질문 정보:");
+		System.out.println("- 일련번호: " + question.getSerialNumber());
+		System.out.println("- 질문 내용: " + question.getQuestion());
+		System.out.println("- 공개상태: " + question.getIsPublic());
+		System.out.println("- 옵션1: " + question.getOption1());
+		System.out.println("- 옵션2: " + question.getOption2());
+		
+		// 이미지 경로 수정
+		question.setOption1(fixImagePath(question.getOption1()));
+		question.setOption2(fixImagePath(question.getOption2()));
+		question.setOption3(fixImagePath(question.getOption3()));
+		question.setOption4(fixImagePath(question.getOption4()));
+		
+		System.out.println("✅ 이미지 경로 수정 완료, Service 종료");
+		return question;
 	}
 	
 	@Override
@@ -106,6 +171,15 @@ public class QuestionServiceImpl implements QuestionService {
 	    try {
 	        // QuestionRepository의 findByIsPublic 메소드를 호출하여 공개 상태에 따른 질문 목록 반환
 	        List<QuestionEntity> questions = questionRepository.findByIsPublic(isPublic);
+	        
+	        // 이미지 경로 수정
+	        for (QuestionEntity question : questions) {
+	        	question.setOption1(fixImagePath(question.getOption1()));
+	        	question.setOption2(fixImagePath(question.getOption2()));
+	        	question.setOption3(fixImagePath(question.getOption3()));
+	        	question.setOption4(fixImagePath(question.getOption4()));
+	        }
+	        
 	        return questions != null ? questions : Collections.emptyList();
 	    } catch (Exception e) {
 	        System.err.println("공개 상태 질문 조회 실패: " + e.getMessage());
