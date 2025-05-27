@@ -1,21 +1,19 @@
 // 회원가입 버튼
 function fu_memberJoin(){
 
-	let form = document.joinForm;
+	let joingForm = document.joinForm;
 	
 	// 경고 문구 초기화
 	fu_warnCheck();
 	
 	// 유효성 검사
-	let infoCheckValidation = fu_infoCheckValidation();
 	let emailAuthValidation = fu_emailAuthValidation();
 
-	if(!emailAuthCheck && form.emailAuth){
-		form.emailAuth.focus();
+	if(!emailAuthCheck && joingForm.emailAuth){
+		joingForm.emailAuth.focus();
 	}
 	
 	let emailValidation = fu_emailValidation();
-	
 	
 	let addrValidation = fu_addrValidation();
 	let genderValidation = fu_genderValidation();
@@ -24,7 +22,7 @@ function fu_memberJoin(){
 	let telValidation = fu_telValidation();
 	
 	if(!nickNameCheck){
-		form.memberNickName.focus();
+		joingForm.memberNickName.focus();
 	}
 	
 	let nickNameValidation = fu_nickNameValidation();
@@ -32,29 +30,29 @@ function fu_memberJoin(){
 	let pwdCheckValidation = fu_pwdCheckValidation();
 	
 	if(!pwdCheckEqual){
-		form.memberPwdCheck.focus();
+		joingForm.memberPwdCheck.focus();
 	}
 	
 	if(!pwdInputCheck){
-		form.memberPwd.focus();
+		joingForm.memberPwd.focus();
 	}
 	
 	let pwdValidation = fu_pwdValidation();
 	
 	if(!idCheck){
-		form.memberId.focus();
+		joingForm.memberId.focus();
 	}
 	
 	let idValidation = fu_idValidation();
 	
 	if(idValidation && pwdValidation && pwdCheckValidation 
 		&& nameValidation && telValidation && birthValidation 
-		&& emailValidation && infoCheckValidation && pwdInputCheck 
+		&& emailValidation && pwdInputCheck 
 		&& pwdCheckEqual && emailAuthCheck && emailAuthValidation 
 		&& addrValidation && genderValidation && nickNameValidation
 		&& idCheck && nickNameCheck){
-		form.method= "post";
-		form.action = "/member/join";
-		form.submit();
+		joingForm.method= "post";
+		joingForm.action = "/member/join";
+		joingForm.submit();
 	}
 }

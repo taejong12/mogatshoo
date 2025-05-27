@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mogatshoo.dev.common.mail.controller.EmailController;
 import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
+import com.mogatshoo.dev.member.entity.AgreeEntity;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
 
@@ -39,7 +40,6 @@ public class MemberController {
 		return "member/login";
 	}
 	
-
 	@GetMapping("/agree")
 	public String agreePage() {
 		return "member/agree";
@@ -71,8 +71,16 @@ public class MemberController {
 	}
 
 	@PostMapping("/join")
-	public String memberSave(@ModelAttribute MemberEntity memberEntity, Model model, HttpSession session) {
-		memberService.memberSave(memberEntity);
+	public String memberSave(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
+		AgreeEntity agreeEntity = (AgreeEntity) session.getAttribute("agreeEntity");
+		System.out.println("agreeEntity: "+agreeEntity);
+		if(agreeEntity == null) {
+			return "redirect:/member/login";
+		}
+		
+		memberService.memberSave(memberEntity, agreeEntity);
+		
+		session.removeAttribute("agreeEntity");
 		session.setAttribute("postMapping", "join");
 		session.setAttribute("memberNickName", memberEntity.getMemberNickName());
 		return "redirect:/member/complete";
@@ -263,5 +271,11 @@ public class MemberController {
 		session.setAttribute("postMapping", "findByPwd");
 		session.removeAttribute("memberId");
 		return "redirect:/member/complete";
+	}
+	
+	@PostMapping("/agree")
+	public String agreeMemberJoin(@ModelAttribute AgreeEntity agreeEntity, HttpSession session) {
+		session.setAttribute("agreeEntity", agreeEntity);
+		return "redirect:/member/join";
 	}
 }

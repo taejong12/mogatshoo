@@ -20,131 +20,105 @@
 				<input type="hidden" name="memberBirth" th:if="${birth != null}" th:value="${birth}" />
 				<input type="hidden" name="memberTel" th:if="${mobile != null}" th:value="${mobile}" />
 
-				
 				<div class="row align-items-center"> 
 					<!-- 왼쪽 컬럼 -->
 					<div class="col-md-6">
-					
 						<div th:if="${memberId == null}" class="row align-items-center mb-3">
-							<label for="memberId" class="col-3 text-white text-nowrap">아이디</label>
-							<div class="col-8">
+							<label for="memberId" class="col-md-3">아이디</label>
+							<div class="col-md-8">
 						        <input type="text" class="form-control join-input" id="memberId" name="memberId" placeholder="아이디 입력" required>
-						    </div>
-							<div class="col-12">
 								<div id="idWarnMsg"></div>
-							</div>
+						    </div>
 						</div>
 						
 						<div th:if="${provider == null}" class="row align-items-center mb-3">
-							<label for="memberPwd" class="col-3 text-white text-nowrap">비밀번호</label>
-							<div class="col-8">
+							<label for="memberPwd" class="col-md-3">비밀번호</label>
+							<div class="col-md-8">
 						        <input type="password" class="form-control join-input" id="memberPwd" name="memberPwd" placeholder="비밀번호 입력" required>
-						    </div>
-							<div class="col-12">
 								<div id="pwdWarnMsg"></div>
-							</div>
-							<div class="col-12">
-								<div class="text-secondary eight" style="font-size: 0.8em;">* 8자리 이상</div>
-							</div>
-							<div class="col-12">
-								<div class="text-secondary special" style="font-size: 0.8em;">* 영문자+숫자, 대문자, 특수문자 1개 이상씩 포함</div>
-							</div>
-							<div class="col-12">
-								<div class="text-secondary continu" style="font-size: 0.8em;">* 연속된 숫자 사용 금지</div>
-							</div>
+								<div class="eight" style="font-size: 0.8em;">* 8자리 이상</div>
+								<div class="special" style="font-size: 0.8em;">* 영문자,숫자,대문자,특수문자 1개 이상씩 포함</div>
+								<div class="continu" style="font-size: 0.8em;">* 연속된 숫자 사용 금지</div>
+						    </div>
 						</div>
 
 						<div th:if="${provider == null}" class="row align-items-center mb-3">
-							<label for="memberPwdCheck" class="col-3 text-white text-nowrap">비밀번호 확인</label>
-							<div class="col-8">
+							<label for="memberPwdCheck" class="col-md-3">비밀번호확인</label>
+							<div class="col-md-8">
 						        <input type="password" class="form-control join-input" id="memberPwdCheck" name="memberPwdCheck" placeholder="비밀번호 다시입력" required>
-						    </div>
-							<div class="col-12">
 								<div id="pwdCheckMsg"></div>
-							</div>
+						    </div>
 						</div>
 						
 						<div th:if="${name == null}" class="row align-items-center mb-3">
-							<label for="memberName" class="col-3 text-white text-nowrap">이름</label>
-							<div class="col-8">
+							<label for="memberName" class="col-md-3">이름</label>
+							<div class="col-md-8">
 						        <input type="text" class="form-control join-input" id="memberName" name="memberName" placeholder="이름 입력" required>
-						    </div>
-							<div class="col-12">
 								<div id="nameWarnMsg"></div>
-							</div>
+						    </div>
 						</div>
 						
 						<div th:if="${nickName == null}" class="row align-items-center mb-3">
-							<label for="memberNickName" class="col-3 text-white text-nowrap">닉네임</label>
-							<div class="col-8">
+							<label for="memberNickName" class="col-md-3">닉네임</label>
+							<div class="col-md-8">
 						        <input type="text" class="form-control join-input" id="memberNickName" name="memberNickName" placeholder="닉네임 입력" required>
-						    </div>
-							<div class="col-12">
 								<div id="nickNameWarnMsg"></div>
 								<div id="nickNameCheckMsg"></div>
-							</div>
+						    </div>
 						</div>
 						
 						<div th:if="${mobile == null}" class="row align-items-center mb-3">
-							<label for="memberTel" class="col-3 text-white text-nowrap">전화번호</label>
-							<div class="col-8">
+							<label for="memberTel" class="col-md-3">전화번호</label>
+							<div class="col-md-8">
 						        <input type="tel" class="form-control join-input" id="memberTel" name="memberTel" placeholder="전화번호 입력" required>
-						    </div>
-						    <div class="col-12">
-							    <div class="text-secondary" style="font-size: 0.8em;">* (-) 하이픈을 빼고 입력해주세요.</div>
-						    </div>
-							<div class="col-12">
 								<div id="telWarnMsg"></div>
-							</div>
+							    <div style="font-size: 0.8em;">* (-) 하이픈을 빼고 입력해주세요.</div>
+						    </div>
 						</div>
 					</div>
 
 					<!-- 오른쪽 컬럼 -->
 					<div class="col-md-6">
-					
 						<div th:if="${birth == null}" class="row align-items-center mb-3">
-							<label for="memberBirth" class="col-3 text-white text-nowrap">생년월일</label>
-							<div class="col-8">
+							<label for="memberBirth" class="col-md-3">생년월일</label>
+							<div class="col-md-8">
 						        <input type="date" class="form-control join-input" id="memberBirth" name="memberBirth" required>
-						    </div>
-							<div class="col-12">
 								<div id="birthWarnMsg"></div>
-							</div>
+						    </div>
 						</div>
 
 						<div th:if="${gender == null}" class="row align-items-center mb-3">
-							<label for="memberGender" class="col-3 text-white text-nowrap">성별</label>
-							<div class="col-1 form-check form-check-inline">
-						        <input type="radio" class="form-check-input" id="genderMale" name="memberGender" value="남" required>
-						        <label for="genderMale" class="form-check-label text-white">남</label>
-						    </div>
-							<div class="col-1 form-check form-check-inline">
-						        <input type="radio" class="form-check-input" id="genderFemale" name="memberGender" value="여" required>
-						        <label for="genderFemale" class="form-check-label text-white">여</label>
-						    </div>
-							<div class="col-12">
-								<div id="genderWarnMsg"></div>
+							<label for="memberGender" class="col-md-3">성별</label>
+							<div class="col-md-8 form-check">
+						        <div class="form-check form-check-inline">
+									<input type="radio" class="form-check-input" id="genderMale" name="memberGender" value="남" required>
+									<label for="genderMale" class="form-check-label">남</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input type="radio" class="form-check-input" id="genderFemale" name="memberGender" value="여" required>
+									<label for="genderFemale" class="form-check-label">여</label>
+								</div>
+							    <div id="genderWarnMsg"></div>
 							</div>
 						</div>
 						
 						<div class="row align-items-center mb-3">
-							<label for="memberZipcode" class="col-3 text-white text-nowrap">우편번호</label>
-							<div class="col-5">
-						        <input type="text" class="form-control join-input" id="memberZipcode" name="memberZipcode" placeholder="우편번호 입력" required readonly>
-						    </div>
-							<div class="col-3">
-						        <button type="button" onclick="fu_addrSearch()"
-									class="btn join-btn text-nowrap px-3 py-2 d-flex align-items-center justify-content-center">주소검색</button>
+							<label for="memberZipcode" class="col-md-3">우편번호</label>
+							<div class="col-md-8">
+								<div class="input-group">
+							        <input type="text" class="form-control join-input" id="memberZipcode" name="memberZipcode" placeholder="우편번호 입력" required readonly>
+							        <button type="button" onclick="fu_addrSearch()"
+										class="btn input-btn">주소검색</button>
+								</div>
 						    </div>
 							<div class="col-12">
 								<div id="zipCodeWarnMsg"></div>
 							</div>
 						</div>
-						
 
 						<div class="row align-items-center mb-3">
-							<label for="memberAddress1" class="col-3 text-white text-nowrap">기본주소</label>
-							<div class="col-8">
+							<label for="memberAddress1" class="col-md-3 ">기본주소</label>
+							<div class="col-md-8">
 						        <input type="text" class="form-control join-input" id="memberAddress1" name="memberAddress1" placeholder="기본주소 입력" required readonly>
 						    </div>
 							<div class="col-12">
@@ -153,8 +127,8 @@
 						</div>
 						
 						<div class="row align-items-center mb-3">
-							<label for="memberAddress1" class="col-3 text-white text-nowrap">상세주소</label>
-							<div class="col-8">
+							<label for="memberAddress1" class="col-md-3">상세주소</label>
+							<div class="col-md-8">
 						        <input type="text" class="form-control join-input" id="memberAddress2" name="memberAddress2" placeholder="상세주소 입력" required>
 						    </div>
 							<div class="col-12">
@@ -163,25 +137,28 @@
 						</div>
 						
 						<div th:if="${email == null}" class="row align-items-center mb-3">
-							<label for="memberEmail" class="col-3 text-white text-nowrap">이메일</label>
-							<div class="col-5">
-						        <input type="email" class="form-control join-input" id="memberEmail" name="memberEmail" placeholder="이메일 입력" required>
+							<label for="memberEmail" class="col-md-3">이메일</label>
+							<div class="col-md-8">
+								<div class="input-group">
+						            <input type="email" class="form-control join-input" id="memberEmail" name="memberEmail" placeholder="이메일 입력" required>
+						            <button class="btn input-btn" type="button" onclick="fu_sendEmailBtn()" disabled>인증번호 전송</button>
+						        </div>
 						    </div>
-							<div class="col-3">
-						        <button
-									class="btn join-btn email-btn text-nowrap px-3 py-2 d-flex align-items-center justify-content-center"
-									type="button" onclick="fu_sendEmailBtn()" disabled>인증번호 전송</button>
+						</div>
+						
+						<div th:if="${email == null}" id="emailAuthCode" class="row align-items-center mb-3 fade">
+							<label for="memberEmail" class="col-md-3">인증번호</label>
+							<div class="col-md-8">
+								<div class="input-group">
+						            <input type="text" class="form-control join-input" id="authCode" placeholder="인증번호 입력" required>
+						            <button class="btn input-btn" type="button" onclick="fu_authBtn()" disabled>인증하기</button>
+						        </div>
 						    </div>
-							<div class="col-12">
-								<div id="emailWarnMsg"></div>
-							</div>
 						</div>
 					</div>
 
-					<div class="row align-items-center text-center mb-3">
-						<div class="col-12">
-							<button class="join-btn text-nowrap px-3 py-2" type="button" onclick="fu_memberJoin()">회원가입</button>
-						</div>
+					<div class="row align-items-center mb-3">
+						<button class="btn join-btn" type="button" onclick="fu_memberJoin()">회원가입</button>
 					</div>
 				</div>
 			</form>
@@ -198,8 +175,6 @@
 		<script th:src="@{/js/member/join/fu_memberJoin.js}"></script>
 		<!-- 유효성 경고 문구 -->
 		<script th:src="@{/js/member/join/fu_warnCheck.js}"></script>
-		<!-- 개인정보 스크롤 이벤트 -->
-		<script th:src="@{/js/member/join/ev_infoCheck.js}"></script>
 		<!-- 아이디 유효성 검사 -->
 		<script th:src="@{/js/member/join/fu_idValidation.js}"></script>
 		<!-- 비밀번호 유효성 검사 -->
@@ -214,8 +189,6 @@
 		<script th:src="@{/js/member/join/fu_birthValidation.js}"></script>
 		<!-- 이메일 유효성 검사 -->
 		<script th:src="@{/js/member/join/fu_emailValidation.js}"></script>
-		<!-- 개인정보 수집 동의 유효성 검사 -->
-		<script th:src="@{/js/member/join/fu_infoCheckValidation.js}"></script>
 		<!-- 비밀번호 입력창 이벤트 체크 -->
 		<script th:src="@{/js/member/join/ev_pwdInput.js}"></script>
 		<!-- 아이디 중복 체크 -->
@@ -240,8 +213,6 @@
 		<script th:src="@{/js/member/join/fu_nickNameValidation.js}"></script>
 		<!-- 닉네임 중복 체크 -->
 		<script th:src="@{/js/member/join/ev_nickNameCheck.js}"></script>
-		<!--약관동의 모달 체크-->
-		<script th:src="@{/js/member/join/ev_joinCheck.js}"></script>
 
 	</div>
 </body>

@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	let memberName = document.getElementById('memberName');
 	let memberTel = document.getElementById('memberTel');
 	let memberBirth = document.getElementById('memberBirth');
-	let memberInfoCheck = document.getElementById('memberInfoCheck');
 	
 	if(memberName){
 		memberName.addEventListener('input', function() {
@@ -27,15 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			let birthWarn = document.querySelector('.warn-div.birth');
 			if(birthWarn){
 				birthWarn.closest('.input-wrap').remove();
-			}
-		});
-	}
-	
-	if(memberInfoCheck){
-		memberInfoCheck.addEventListener('change', function() {
-			let infoCheckWarn = document.querySelector('.warn-div.infoCheck');
-			if(infoCheckWarn){
-				infoCheckWarn.closest('.input-wrap').remove();
 			}
 		});
 	}
