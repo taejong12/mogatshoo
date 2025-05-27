@@ -1,11 +1,5 @@
 @charset "UTF-8";
 
-.warn-msg {
-	color: rgb(255, 107, 107);
-	font-size: 0.8em;
-	padding: .375rem .75rem;
-}
-
 .text-color{
 	color: rgb(255, 255, 255);
 }
@@ -19,23 +13,13 @@
 	border: 10px solid #c0c0c0;
 } 
 
-.findPwdBtn, .find-pwd-input {
+.errorBtn {
 	background-color: #c0c0c0;
 	border: 10px solid #c0c0c0;
 } 
 
-.findPwdBtn:hover{
+.errorBtn:hover{
 	background-color: rgb(102, 102, 102);
 	border-color: rgb(153, 153, 153);
 }
 
-.find-pwd-input::placeholder {
-	color: black;
-	opacity: 1;
-}
-
-.find-pwd-input:focus {
-	box-shadow: rgb(54,45,62);
-	background-color: #808080;
-	border: 10px solid #c0c0c0;
-}
