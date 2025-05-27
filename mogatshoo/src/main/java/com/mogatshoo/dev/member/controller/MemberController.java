@@ -74,7 +74,7 @@ public class MemberController {
 	@PostMapping("/join")
 	public String memberSave(@ModelAttribute MemberEntity memberEntity, HttpSession session) {
 		AgreeEntity agreeEntity = (AgreeEntity) session.getAttribute("agreeEntity");
-		System.out.println("agreeEntity: "+agreeEntity);
+		
 		if(agreeEntity == null) {
 			return "redirect:/member/login";
 		}
@@ -277,12 +277,13 @@ public class MemberController {
 	@PostMapping("/agree")
 	public String agreeMemberJoin(@ModelAttribute AgreeEntity agreeEntity, HttpSession session) {
 		session.setAttribute("agreeEntity", agreeEntity);
-		OAuth2User oauth2User = (OAuth2User) session.getAttribute("oauth2User");
+		String oauth2UserAgree = (String) session.getAttribute("oauth2UserAgree");
 		
-		if(oauth2User == null) {
-			return "redirect: /member/join";
-		} else {
+		if(oauth2UserAgree == "oauth2UserAgree") {
+			session.removeAttribute("oauth2UserAgree");
 			return "redirect:/oauth2/join";
+		} else {
+			return "redirect:/member/join";
 		}
 	}
 }

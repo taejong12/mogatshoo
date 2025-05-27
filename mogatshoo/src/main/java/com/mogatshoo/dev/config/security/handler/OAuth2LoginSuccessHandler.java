@@ -79,6 +79,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
             // 신규 회원: 회원가입 폼 이동
             HttpSession session = request.getSession();
             session.setAttribute("oauth2User", oauth2User);
+            session.setAttribute("oauth2UserAgree", "oauth2UserAgree");
             
             response.sendRedirect("/member/agree");
         } 

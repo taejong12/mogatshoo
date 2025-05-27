@@ -1,6 +1,6 @@
 function fu_findById(){
-	let form = document.findByIdForm;
-	let emailInput = form.memberEmail;
+	let findIdform = document.findByIdForm;
+	let emailInput = findIdform.memberEmail;
 	let emailVal = emailInput.value.trim();
 	let emailWarnMsg = document.getElementById('emailWarnMsg');
 	
@@ -24,12 +24,10 @@ function fu_findById(){
 		
 		if (data.memberEmailCheck) {
 			emailWarnMsg.textContent = "없는 이메일입니다.";
-			emailWarnMsg.style.color = "red";
-			emailWarnMsg.style.display = 'inline';
 		} else {
-			form.method= "post";
-			form.action= "/member/findById";
-			form.submit();
+			findIdform.method= "post";
+			findIdform.action= "/member/findById";
+			findIdform.submit();
 		}
 	})
 	.catch(error => {

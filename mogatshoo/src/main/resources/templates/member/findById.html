@@ -7,26 +7,27 @@
 </head>
 <body>
 	<div layout:fragment="content">
-		<div class="d-flex align-items-center justify-content-center">
-			<a class="text-nowrap bg-white border border-black px-3 py-2" th:href="@{/member/login}">로그인</a>
-		</div>
-		<h1 class="text-center mb-5">아이디 찾기</h1>
-		
-		<div class="row justify-content-center">
-			<div class="col-md-6 col-lg-4">
-				<form name="findByIdForm" class="card p-4 shadow-sm rounded-3 bg-light">
-					<div class="mb-3">
-						<label for="memberEmail" class="form-label">이메일</label>
-						<input type="email" class="form-control" id="memberEmail" name="memberEmail" placeholder="이메일 입력">
-						<div id="emailWarnMsg"></div>
-					</div>
-					<div class="d-grid gap-2 mb-3">
-						<button type="button" class="btn btn-white btn-lg border border-dark" onclick="fu_findById()">아이디 찾기</button>
-					</div>
-				</form>
+		<form name="findByIdForm" class="background-border-color p-4 rounded-3">
+			<h1 class="title text-center mb-5">아이디찾기</h1>
+	
+			<div class="row align-items-center mb-3">
+			    <label for="memberEmail" class="col-4 text-nowrap fs-3 text-color">이메일</label>
+			    <div class="col-8">
+			        <input type="text" class="form-control find-id-input" id="memberEmail" name="memberEmail" placeholder="이메일 입력">
+			        <div id="emailWarnMsg" class="warn-msg"></div>
+			    </div>
 			</div>
-		</div>
-		
+			
+			<div class="row text-center mb-3 g-2">
+			    <div class="col-12">
+			    	<button type="button" class="btn w-100 findIdBtn" onclick="fu_findById()">아이디찾기</button>
+			    </div>
+			    <div class="col-12">
+			        <a class="btn w-100 findIdBtn" th:href="@{/member/login}">로그인</a>
+			    </div>
+			</div>
+		</form>
+	
 		<script th:src="@{/js/member/find/fu_findById.js}"></script>
 	</div>
 </body>
