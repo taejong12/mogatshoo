@@ -80,7 +80,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler{
             HttpSession session = request.getSession();
             session.setAttribute("oauth2User", oauth2User);
             
-            response.sendRedirect("/oauth2/join");
+            response.sendRedirect("/member/agree");
         } 
 	}
 }

@@ -39,6 +39,25 @@ function fu_memberJoin(){
 	
 	let idValidation = fu_idValidation();
 	
+	console.log(idValidation);
+	console.log(pwdValidation);
+	console.log(pwdCheckValidation);
+	console.log(nameValidation);
+	console.log(telValidation);
+	console.log(birthValidation);
+	console.log(emailValidation);
+	console.log(pwdInputCheck);
+	console.log(pwdCheckEqual);
+	console.log(emailAuthCheck);
+	console.log(emailAuthValidation);
+	console.log(addrValidation);
+	console.log(genderValidation);
+	console.log(nickNameValidation);
+	console.log(idCheck);
+	console.log(nickNameCheck);
+	console.log(emailCheck);
+	
+	
 	if(idValidation && pwdValidation && pwdCheckValidation 
 		&& nameValidation && telValidation && birthValidation 
 		&& emailValidation && pwdInputCheck 

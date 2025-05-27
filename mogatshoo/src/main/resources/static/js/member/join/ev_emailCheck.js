@@ -5,10 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	let emailWarnMsg = document.getElementById('emailWarnMsg');
 	let sendEmailBtn = document.getElementById('sendEmailBtn');
 	
-	sendEmailBtn.disabled = true;
-	
 	if(memberEmail){
 		
+		sendEmailBtn.disabled = true;
 		emailWarnMsg.textContent = '';
 		
 		memberEmail.addEventListener('input', function() {
@@ -57,5 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				window.location.href = "/error/globalError";
 			});
 		});
+	} else{
+		emailCheck = true;
 	}
 });

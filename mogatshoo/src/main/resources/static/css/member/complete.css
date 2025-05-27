@@ -1,37 +1,25 @@
 @charset "UTF-8";
 
-.complete-id{
-	display: flex;
-	justify-content: center;
-	align-items: center; 
-	
+.text-color{
+	color: rgb(255, 255, 255);
 }
 
-.complete-menu-btn {
-	display: flex; 
-	justify-content: center; 
-	align-items: center;
-	gap: 30px;
+.title{
+	color: yellow;
 }
 
+.background-border-color {
+	background-color: #808080;
+	border: 10px solid #c0c0c0;
+} 
 
-.complete-menu-btn a{
-	white-space: nowrap;
-	background: white;
-	border: 1px solid black;
-	padding: 7px 15px;
-	text-decoration: none;
-	color: black;
-}
+.completeBtn {
+	background-color: #c0c0c0;
+	border: 10px solid #c0c0c0;
+} 
 
-.complete-menu-btn a:hover{
-	cursor: pointer;
-	text-decoration: underline;
-}
-
-.complete-wrap{
-	display:flex;
-	flex-direction: column;
-	align-items: center;
+.completeBtn:hover{
+	background-color: rgb(102, 102, 102);
+	border-color: rgb(153, 153, 153);
 }
 

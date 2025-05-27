@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -276,6 +277,12 @@ public class MemberController {
 	@PostMapping("/agree")
 	public String agreeMemberJoin(@ModelAttribute AgreeEntity agreeEntity, HttpSession session) {
 		session.setAttribute("agreeEntity", agreeEntity);
-		return "redirect:/member/join";
+		OAuth2User oauth2User = (OAuth2User) session.getAttribute("oauth2User");
+		
+		if(oauth2User == null) {
+			return "redirect: /member/join";
+		} else {
+			return "redirect:/oauth2/join";
+		}
 	}
 }

@@ -3,14 +3,14 @@ function fu_telValidation(){
 	let telInput = document.getElementById('memberTel');
 	let telWarnMsg = document.getElementById('telWarnMsg');
 	
-	telWarnMsg.textContent = '';
 	
 	if(telInput){
+		telWarnMsg.textContent = '';
+		
 		let telVal = telInput.value.trim();
 		
 		if(telVal == '' || telVal.length == 0){
 			telInput.focus();
-			
 			telWarnMsg.textContent = '전화번호를 입력해주세요.';
 			return false;
 		} else{

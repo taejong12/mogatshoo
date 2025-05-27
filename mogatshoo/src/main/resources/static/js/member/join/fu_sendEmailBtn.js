@@ -6,7 +6,6 @@ function fu_sendEmailBtn(){
 	let emailWarnMsg = document.getElementById('emailWarnMsg');
 				
 	emailWarnMsg.textContent = '';
-	
 	sendEmailBtn.disabled = true;
 	
 	fetch("/member/sendEmail", {
