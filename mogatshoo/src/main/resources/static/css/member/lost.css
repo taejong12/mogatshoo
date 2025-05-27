@@ -1,0 +1,24 @@
+@charset "UTF-8";
+
+.title{
+	color: yellow;
+}
+
+.text-color{
+	color: rgb(255, 255, 255);
+}
+
+.background-border-color {
+	background-color: #808080;
+	border: 10px solid #c0c0c0;
+}
+
+.lostBtn{
+	background-color: #c0c0c0;
+	border: 10px solid #c0c0c0;
+}
+
+.lostBtn:hover{
+	background-color: rgb(102, 102, 102);
+	border-color: rgb(153, 153, 153);
+}
