@@ -38,7 +38,12 @@ function fu_findByPwd(){
 			},
 			body: JSON.stringify({ memberId: idVal, memberEmail: emailVal })
 		})
-		.then(response => response.json())
+		.then(response => {
+			if (!response.ok) {
+		        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+		    }
+			return response.json();
+		})
 		.then(data => {
 			
 			let findPwdError = document.getElementById('findPwdError');
@@ -71,7 +76,6 @@ function fu_findByPwd(){
 				emailAuth.value = '';
 				timer.textContent = '';
 				authWarnMsg.textContent = '';
-				clearInterval(timerInterval);
 				
 				// 3분 (180초)
 			    let timeLeft = 180;
@@ -103,7 +107,12 @@ function fu_findByPwd(){
 					},
 					body: JSON.stringify({ memberEmail: emailVal })
 				})
-				.then(response => response.json())
+				.then(response => {
+					if (!response.ok) {
+				        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+				    }
+					return response.json();
+				})
 				.then(data => {
 					
 					if (data.result === true) {
@@ -121,7 +130,12 @@ function fu_findByPwd(){
 								},
 								body: JSON.stringify({ emailAuthCode : emailAuthCode })
 					        })
-					        .then(response => response.json())
+							.then(response => {
+								if (!response.ok) {
+							        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+							    }
+								return response.json();
+							})
 					        .then(data => {
 								
 								if (data.result === true) {
@@ -134,20 +148,17 @@ function fu_findByPwd(){
 							})
 							.catch(error => {
 								console.error("비밀번호 찾기 인증번호 전송 오류:", error);
-								window.location.href = "/error/globalError";
 							});
 						})
 					}
 				})
 				.catch(error => {
 					console.error("비밀번호 찾기 인증번호 전송 오류:", error);
-					window.location.href = "/error/globalError";
 				});
 			}
 		})
 		.catch(error => {
 			console.error("비밀번호 찾기 회원 확인 오류:", error);
-			window.location.href = "/error/globalError";
 		});
 		
 	}

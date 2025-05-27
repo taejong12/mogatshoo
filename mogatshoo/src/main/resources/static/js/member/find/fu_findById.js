@@ -19,7 +19,12 @@ function fu_findById(){
 		},
 		body: JSON.stringify({ memberEmail: emailVal })
 	})
-	.then(response => response.json())
+	.then(response => {
+		if (!response.ok) {
+	        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+	    }
+		return response.json();
+	})
 	.then(data => {
 		
 		if (data.memberEmailCheck) {
@@ -32,6 +37,5 @@ function fu_findById(){
 	})
 	.catch(error => {
 		console.error("아이디 찾기 이메일 확인 오류:", error);
-		window.location.href = "/error/globalError";
 	});
 }

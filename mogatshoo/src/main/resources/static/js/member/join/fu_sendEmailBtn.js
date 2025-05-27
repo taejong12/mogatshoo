@@ -15,7 +15,12 @@ function fu_sendEmailBtn(){
 		},
 		body: JSON.stringify({ memberEmail: memberEmailVal })
 	})
-	.then(response => response.json())
+	.then(response => {
+		if (!response.ok) {
+	        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+	    }
+		return response.json();
+	})
 	.then(data => {
 		
 	    let emailAuthWrap = document.getElementById('emailAuthWrap');
@@ -75,7 +80,12 @@ function fu_sendEmailBtn(){
 				},
 				body: JSON.stringify({ emailAuthCode : emailAuthCode })
 	        })
-	        .then(response => response.json())
+			.then(response => {
+				if (!response.ok) {
+			        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+			    }
+				return response.json();
+			})
 	        .then(data => {
 	        	
 	            authWarnMsg.textContent = data.msg;
@@ -94,7 +104,6 @@ function fu_sendEmailBtn(){
 	        })
 	        .catch(error => {
 	            console.error("메일 인증 오류 발생:", error);
-				window.location.href = "/error/globalError";
 	        });
 	    });
 	    
@@ -102,6 +111,5 @@ function fu_sendEmailBtn(){
 	})
 	.catch(error => {
 		console.error("이메일 인증번호 전송 오류:", error);
-		window.location.href = "/error/globalError";
 	});
 }

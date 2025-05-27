@@ -52,6 +52,5 @@ function fu_fortuneStart(){
 	})
 	.catch(error => {
 		console.error("운세 확인 오류:", error);
-		window.location.href = "/error/globalError";
 	});
 }

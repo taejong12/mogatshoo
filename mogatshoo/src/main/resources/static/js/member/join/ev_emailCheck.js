@@ -37,7 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				},
 				body: JSON.stringify({ memberEmail: memberEmailVal })
 			})
-			.then(response => response.json())
+			.then(response => {
+				if (!response.ok) {
+			        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+			    }
+				return response.json();
+			})
 			.then(data => {
 				if (data.memberEmailCheck) {
 					emailWarnMsg.textContent = "사용 가능한 이메일입니다.";
@@ -53,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			})
 			.catch(error => {
 				console.error("이메일 중복 확인 오류:", error);
-				window.location.href = "/error/globalError";
 			});
 		});
 	} else{

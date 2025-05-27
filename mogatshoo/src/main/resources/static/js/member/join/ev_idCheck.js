@@ -26,7 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				},
 				body: JSON.stringify({ memberId: memberIdVal })
 			})
-			.then(response => response.json())
+			.then(response => {
+				if (!response.ok) {
+			        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+			    }
+				return response.json();
+			})
 			.then(data => {
 				if (data.memberIdCheck) {
 					idWarnMsg.textContent = "사용 가능한 아이디입니다.";
@@ -40,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			})
 			.catch(error => {
 				console.error("아이디 중복 확인 오류:", error);
-				window.location.href = "/error/globalError";
 			});
 		});
 	}
