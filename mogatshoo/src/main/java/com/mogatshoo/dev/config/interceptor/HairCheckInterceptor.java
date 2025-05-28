@@ -24,7 +24,7 @@ public class HairCheckInterceptor implements HandlerInterceptor {
             throws IOException {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
+        
         // 로그인 안된 상태거나 익명 사용자라면 통과
         if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
             return true;
@@ -35,7 +35,6 @@ public class HairCheckInterceptor implements HandlerInterceptor {
         // 탈모 진단 여부 확인
         boolean hairCheck = hairLossTestService.loginMemberHairCheck(memberId);
 
-        System.out.println("hairCheck: "+hairCheck);
         if (!hairCheck && !request.getRequestURI().startsWith("/hairLossTest")) {
             response.sendRedirect("/hairLossTest/testHair");
             return false;
