@@ -12,6 +12,7 @@ function fu_idValidation(){
 			idInput.focus();
 			idWarnMsg.textContent = '아이디를 입력해주세요.';
 			idWarnMsg.style.color = 'rgb(255, 107, 107)';
+			idWarnMsg.style.display = 'inline';
 			return false;
 		} else{
 			return true;

@@ -12,6 +12,7 @@ function fu_nameValidation(){
 			nameInput.focus();
 	        nameWarnMsg.textContent = '이름을 입력해주세요.';
 			nameWarnMsg.style.color = 'rgb(255, 107, 107)';
+			nameWarnMsg.style.display = 'inline';
 			return false;
 		} else{
 			return true;

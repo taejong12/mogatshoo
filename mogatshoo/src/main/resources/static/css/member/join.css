@@ -4,6 +4,7 @@
 	color: rgb(255, 107, 107);
 	font-size: 0.8em;
 	padding: .375rem .75rem;
+	display: none;
 }
 
 .title{

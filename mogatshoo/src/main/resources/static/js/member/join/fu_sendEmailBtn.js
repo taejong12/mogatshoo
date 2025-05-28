@@ -31,6 +31,7 @@ function fu_sendEmailBtn(){
 			
 		emailWarnMsg.textContent = '이메일을 발송하였습니다.';
 		emailWarnMsg.style.color = 'rgb(129, 199, 132)';
+		emailWarnMsg.style.display = 'inline';
 		
 	    let timer = document.getElementById('timer');
 	    let emailAuth = document.getElementById('emailAuth');
@@ -50,6 +51,7 @@ function fu_sendEmailBtn(){
 				let minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
 				let seconds = String(timeLeft % 60).padStart(2, '0');
 				timer.textContent = minutes+":"+seconds;
+				timer.style.display = 'inline';
 
 				if (timeLeft <= 0) {
 					clearInterval(timerInterval);
@@ -70,6 +72,7 @@ function fu_sendEmailBtn(){
 	        	emailAuth.focus();
 	    		authWarnMsg.textContent = '인증번호를 입력해주세요.';
 	    		authWarnMsg.style.color = "rgb(255, 107, 107)";
+				authWarnMsg.style.display = 'inline';
 	            return;
 	        }
 
@@ -89,7 +92,8 @@ function fu_sendEmailBtn(){
 	        .then(data => {
 	        	
 	            authWarnMsg.textContent = data.msg;
-
+				authWarnMsg.style.display = 'inline';
+				
 	            if (data.result === true) {
 	            	emailAuth.readOnly  = true;
 	            	emailAuthBtn.disabled = true;

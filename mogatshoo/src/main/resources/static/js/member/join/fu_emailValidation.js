@@ -13,6 +13,7 @@ function fu_emailValidation(){
 			emailInput.focus();
 			emailWarnMsg.textContent = '이메일을 입력해주세요.';
 			emailWarnMsg.style.color = 'rgb(255, 107, 107)';
+			emailWarnMsg.style.display = 'inline';
 			return false;
 		} else{
 			// 이메일 인증성공이면 통과
@@ -20,6 +21,7 @@ function fu_emailValidation(){
 				emailInput.focus();
 				emailWarnMsg.textContent = '이메일을 인증해주세요.';
 				emailWarnMsg.style.color = 'rgb(255, 107, 107)';
+				emailWarnMsg.style.display = 'inline';
 				return false;
 			}
 			return true;

@@ -14,6 +14,7 @@ function fu_emailAuthValidation(){
 			emailAuthInput.focus();
 			authWarnMsg.textContent = '인증번호를 입력해주세요.';
 			authWarnMsg.style.color = 'rgb(255, 107, 107)';
+			authWarnMsg.style.display = 'inline';
 			return false;
 		} else{
 			return true;

@@ -22,6 +22,7 @@ function fu_genderValidation(){
 		    firstInput.focus();
 			genderWarnMsg.textContent = '성별을 선택해주세요.';
 			genderWarnMsg.style.color = 'rgb(255, 107, 107)';
+			genderWarnMsg.style.display = 'block';
 		    return false;
 		}else{
 			return true;

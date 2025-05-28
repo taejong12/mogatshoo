@@ -19,6 +19,7 @@ function fu_addrValidation(){
 			addr2Input.focus();
 			addr2WarnMsg.textContent = '상세주소를 입력해주세요.';
 			addr2WarnMsg.style.color = 'rgb(255, 107, 107)';
+			addr2WarnMsg.style.display = 'inline';
 			addr2Check=false;
 		} else{
 			addr2Check=true;
@@ -36,6 +37,7 @@ function fu_addrValidation(){
 			addr1Input.focus();
 			addr1WarnMsg.textContent = '기본주소를 입력해주세요.';
 			addr1WarnMsg.style.color = 'rgb(255, 107, 107)';
+			addr1WarnMsg.style.display = 'inline';
 			addr1Check=false;
 		} else{
 			addr1Check=true;
@@ -53,6 +55,7 @@ function fu_addrValidation(){
 			zipCodeInput.focus();
 			zipCodeWarnMsg.textContent = '우편번호를 입력해주세요.';
 			zipCodeWarnMsg.style.color = 'rgb(255, 107, 107)';
+			zipCodeWarnMsg.style.display = 'inline';
 			zipCheck=false;
 		} else{
 			zipCheck=true;

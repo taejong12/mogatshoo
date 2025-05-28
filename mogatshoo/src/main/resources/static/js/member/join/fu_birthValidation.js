@@ -12,6 +12,7 @@ function fu_birthValidation(){
 			birthInput.focus();
 			birthWarnMsg.textContent = '생년월일을 입력해주세요.';
 			birthWarnMsg.style.color = 'rgb(255, 107, 107)';
+			birthWarnMsg.style.display = 'inline';
 			return false;
 		} else{
 			return true;

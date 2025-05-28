@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (memberIdVal === '' || memberIdVal.length == 0) {
 				idWarnMsg.textContent = '';
 				idWarnMsg.style.color = "rgb(255, 107, 107)";
+				idWarnMsg.style.display = 'none';
 				idCheck = false;
 				return;
 			}
@@ -36,10 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				if (data.memberIdCheck) {
 					idWarnMsg.textContent = "사용 가능한 아이디입니다.";
 					idWarnMsg.style.color = "rgb(129, 199, 132)";
+					idWarnMsg.style.display = 'inline';
 					idCheck = true;
 				} else {
 					idWarnMsg.textContent = "이미 사용 중인 아이디입니다.";
 					idWarnMsg.style.color = "rgb(255, 107, 107)";
+					idWarnMsg.style.display = 'inline';
 					idCheck = false;
 				}
 			})

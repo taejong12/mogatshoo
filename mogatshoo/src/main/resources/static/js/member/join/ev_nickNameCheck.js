@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (nickNameVal === '' || nickNameVal.length == 0) {
 				nickNameWarnMsg.textContent = '';
 				nickNameWarnMsg.style.color = "rgb(255, 107, 107)";
+				nickNameWarnMsg.style.display = 'none';
 				nickNameCheck = false;
 				return;
 			}
@@ -35,10 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				if (data.memberNickNameCheck) {
 					nickNameWarnMsg.textContent = "사용 가능한 닉네임입니다.";
 					nickNameWarnMsg.style.color = "rgb(129, 199, 132)";
+					nickNameWarnMsg.style.display = 'inline';
 					nickNameCheck = true;
 				} else {
 					nickNameWarnMsg.textContent = "이미 사용 중인 닉네임입니다.";
 					nickNameWarnMsg.style.color = "rgb(255, 107, 107)";
+					nickNameWarnMsg.style.display = 'inline';
 					nickNameCheck = false;
 				}
 			})

@@ -9,6 +9,7 @@ function fu_findById(){
 	if(emailVal == "" || emailVal.length == 0){
 		emailInput.focus();
 		emailWarnMsg.textContent = '이메일을 입력해주세요.';
+		emailWarnMsg.style.display = 'inline';
 		return;
 	}
 	
@@ -29,6 +30,7 @@ function fu_findById(){
 		
 		if (data.memberEmailCheck) {
 			emailWarnMsg.textContent = "없는 이메일입니다.";
+			emailWarnMsg.style.display = 'inline';
 		} else {
 			findIdform.method= "post";
 			findIdform.action= "/member/findById";

@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			
 			if (memberEmailVal === '' || memberEmailVal.length == 0) {
 				emailWarnMsg.textContent = '';
+				emailWarnMsg.style.display = 'none';
+				emailWarnMsg.style.color = "rgb(255, 107, 107)";
 				emailCheck = false;
 				return;
 			}
@@ -26,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (!emailRegex.test(memberEmailVal)) {
 				emailWarnMsg.textContent = '이메일 주소가 정확한지 확인해 주세요.';
 				emailWarnMsg.style.color = "rgb(255, 107, 107)";
+				emailWarnMsg.style.display = 'inline';
 				sendEmailBtn.disabled = true;
 				return;
 			}
@@ -47,11 +50,13 @@ document.addEventListener('DOMContentLoaded', function() {
 				if (data.memberEmailCheck) {
 					emailWarnMsg.textContent = "사용 가능한 이메일입니다.";
 					emailWarnMsg.style.color = "rgb(129, 199, 132)";
+					emailWarnMsg.style.display = 'inline';
 					sendEmailBtn.disabled = false;
 					emailCheck = true;
 				} else {
 					emailWarnMsg.textContent = "이미 사용 중인 이메일입니다.";
 					emailWarnMsg.style.color = "rgb(255, 107, 107)";
+					emailWarnMsg.style.display = 'inline';
 					sendEmailBtn.disabled = true;
 					emailCheck = false;
 				}

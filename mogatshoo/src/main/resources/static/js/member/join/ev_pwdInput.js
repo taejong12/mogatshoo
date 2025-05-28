@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	let memberPwd = document.getElementById('memberPwd');
 	let memberPwdCheck = document.getElementById('memberPwdCheck');
 	let pwdWarnMsg = document.getElementById('pwdWarnMsg');
-	let pwdCheckMsg = document.getElementById('pwdCheckMsg');
+	let pwdCheckWarnMsg = document.getElementById('pwdCheckWarnMsg');
 	let eight = document.querySelector('.eight');
 	let special = document.querySelector('.special');
 	let continu = document.querySelector('.continu');
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	if(memberPwd){
 		
 		pwdWarnMsg.textContent = '';
-		pwdCheckMsg.textContent = '';
+		pwdCheckWarnMsg.textContent = '';
 		
 		// 비밀번호 입력 시
 		memberPwd.addEventListener('input', function() {
@@ -23,8 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
 				special.style.color = 'rgb(255, 255, 255)';
 				continu.style.color = 'rgb(255, 255, 255)';
 				memberPwdCheck.value = '';
-				pwdCheckMsg.textContent = '';
-				pwdCheckMsg.style.color = 'rgb(255, 107, 107)';
+				pwdCheckWarnMsg.textContent = '';
+				pwdCheckWarnMsg.style.color = 'rgb(255, 107, 107)';
+				pwdCheckWarnMsg.style.display = 'none';
 				pwdInputCheck = false;
 				pwdCheckEqual = false;
 				return;
@@ -32,12 +33,14 @@ document.addEventListener('DOMContentLoaded', function() {
 			
 			if(pwdCheckVal != '' || !(pwdCheckVal.length == 0)){
 				if (pwdVal === pwdCheckVal) {
-					pwdCheckMsg.textContent = '비밀번호가 일치합니다.';
-					pwdCheckMsg.style.color = 'rgb(129, 199, 132)';
+					pwdCheckWarnMsg.textContent = '비밀번호가 일치합니다.';
+					pwdCheckWarnMsg.style.color = 'rgb(129, 199, 132)';
+					pwdCheckWarnMsg.style.display = 'inline';
 					pwdCheckEqual = true;
 				} else {
-					pwdCheckMsg.textContent = '비밀번호가 일치하지 않습니다.';
-					pwdCheckMsg.style.color = 'rgb(255, 107, 107)';
+					pwdCheckWarnMsg.textContent = '비밀번호가 일치하지 않습니다.';
+					pwdCheckWarnMsg.style.color = 'rgb(255, 107, 107)';
+					pwdCheckWarnMsg.style.display = 'inline';
 					pwdCheckEqual = false;
 				}
 			}
