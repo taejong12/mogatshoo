@@ -13,7 +13,440 @@ var locationOverlay = null; // 내 위치 오버레이
 document.addEventListener('DOMContentLoaded', function() {
 	console.log("DOM 로드 완료");
 
-	// 로딩 요소가 있는지 확인
+	// 로딩 표시
+function showLoading(show) {
+	try {
+		var loadingElement = document.getElementById('loading');
+		if (loadingElement) {
+			loadingElement.style.display = show ? 'flex' : 'none';
+		} else {
+			console.warn("로딩 영역(#loading)을 찾을 수 없습니다");
+		}
+	} catch (e) {
+		console.error("로딩 표시 오류:", e);
+	}
+}
+
+// 키워드로 검색
+function searchByKeyword() {
+	var keyword = document.getElementById('keyword').value;
+	if (!keyword.trim()) {
+		showMessage("검색어를 입력해주세요.", "error");
+		return;
+	}
+
+	showLoading(true);
+	try {
+		clearMessages();
+	} catch (e) {
+		console.error("메시지 초기화 오류:", e);
+	}
+	removeAllMarkers();
+
+	// 현재 위치 마커 다시 추가 (있는 경우)
+	if (currentPosition) {
+		var markerImage = new kakao.maps.MarkerImage(
+			'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png',
+			new kakao.maps.Size(50, 45),
+			{ offset: new kakao.maps.Point(15, 43) }
+		);
+
+		var marker = new kakao.maps.Marker({
+			map: map,
+			position: currentPosition,
+			image: markerImage,
+			zIndex: 10
+		});
+
+		markers.push(marker);
+
+		// 오버레이 다시 표시
+		if (locationOverlay) {
+			locationOverlay.setMap(map);
+		}
+
+		// 검색 반경 다시 표시
+		if (radiusCircle) {
+			radiusCircle.setMap(map);
+		}
+	}
+
+	// 검색 타임아웃 설정 (10초)
+	if (searchTimeout) {
+		clearTimeout(searchTimeout);
+	}
+	searchTimeout = setTimeout(function() {
+		console.log("검색 타임아웃 발생");
+		showMessage("검색 시간이 초과되었습니다. 다시 시도해 주세요.", "error");
+		showLoading(false);
+	}, 10000);
+
+	var places = new kakao.maps.services.Places();
+	places.keywordSearch(keyword, function(result, status) {
+		clearTimeout(searchTimeout);
+
+		if (status === kakao.maps.services.Status.OK && result.length > 0) {
+			displaySearchResults(result);
+			showMessage(result.length + "개의 검색 결과를 찾았습니다.", "info");
+		} else {
+			showMessage("검색 결과가 없습니다. 다른 키워드로 검색해보세요.", "error");
+			if (document.getElementById('hospital-list')) {
+				document.getElementById('hospital-list').innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
+			}
+		}
+		showLoading(false);
+	});
+}
+
+// 카테고리로 검색 (수정된 버전)
+function searchByCategory(category) {
+	showLoading(true);
+	try {
+		clearMessages();
+	} catch (e) {
+		console.error("메시지 초기화 오류:", e);
+	}
+
+	var position = currentPosition || map.getCenter();
+	var radius = parseInt(document.getElementById('radius').value, 10);
+	console.log("카테고리 검색:", category, "반경:", radius, "미터");
+
+	removeAllMarkers();
+
+	// 현재 위치 마커 다시 추가 (있는 경우)
+	if (currentPosition) {
+		var markerImage = new kakao.maps.MarkerImage(
+			'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png',
+			new kakao.maps.Size(50, 45),
+			{ offset: new kakao.maps.Point(15, 43) }
+		);
+
+		var marker = new kakao.maps.Marker({
+			map: map,
+			position: currentPosition,
+			image: markerImage,
+			zIndex: 10
+		});
+
+		markers.push(marker);
+
+		// 오버레이 다시 표시
+		if (locationOverlay) {
+			locationOverlay.setMap(map);
+		}
+
+		// 검색 반경 다시 표시
+		if (radiusCircle) {
+			radiusCircle.setMap(map);
+		}
+	}
+
+	// 검색 타임아웃 설정 (10초)
+	if (searchTimeout) {
+		clearTimeout(searchTimeout);
+	}
+	searchTimeout = setTimeout(function() {
+		console.log("카테고리 검색 타임아웃 발생");
+		showMessage("검색 시간이 초과되었습니다. 다시 시도해 주세요.", "error");
+		showLoading(false);
+	}, 10000);
+
+	var places = new kakao.maps.services.Places();
+	places.keywordSearch(category, function(result, status) {
+		clearTimeout(searchTimeout);
+
+		if (status === kakao.maps.services.Status.OK && result.length > 0) {
+			// ✅ 중복 필터링 제거 - 카카오맵 API가 이미 반경으로 필터링했으므로 바로 사용
+			console.log("API 필터링된 결과 수:", result.length);
+			
+			displaySearchResults(result);
+			showMessage(result.length + "개의 " + category + " 검색 결과를 찾았습니다.", "info");
+		} else {
+			showMessage("검색 결과가 없습니다. 다른 키워드로 검색해보세요.", "error");
+			if (document.getElementById('hospital-list')) {
+				document.getElementById('hospital-list').innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
+			}
+		}
+		showLoading(false);
+	}, {
+		location: position,
+		radius: radius,
+		sort: kakao.maps.services.SortBy.DISTANCE
+	});
+}
+
+// 현재 위치 가져오기
+function getCurrentLocation() {
+	showLoading(true);
+	try {
+		clearMessages();
+	} catch (e) {
+		console.error("메시지 초기화 오류:", e);
+	}
+
+	showMessage("정확한 위치 정보를 가져오는 중입니다...", "info");
+
+	// 위치 가져오기 타임아웃 설정 (15초)
+	var locationTimeout = setTimeout(function() {
+		console.log("위치 정보 가져오기 타임아웃");
+		showMessage("위치 정보를 가져오는데 시간이 오래 걸립니다. 다시 시도하거나 직접 검색해 주세요.", "error");
+		showLoading(false);
+	}, 15000);
+
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			function(position) {
+				clearTimeout(locationTimeout); // 타임아웃 제거
+
+				// 위도와 경도 저장
+				userLat = position.coords.latitude;
+				userLng = position.coords.longitude;
+
+				console.log("현재 위치 가져오기 성공:", userLat, userLng);
+				console.log("위치 정확도:", position.coords.accuracy, "미터");
+
+				// 모든 마커 제거
+				removeAllMarkers();
+
+				// 카카오맵 API를 사용하여 위치 표시
+				kakao.maps.load(function() {
+					// 현재 위치 객체 생성
+					currentPosition = new kakao.maps.LatLng(userLat, userLng);
+
+					// 지도 중심 이동
+					map.setCenter(currentPosition);
+					map.setLevel(4); // 적절한 줌 레벨로 설정
+
+					// 현재 위치 마커 표시 (빨간색으로 변경)
+					var markerImage = new kakao.maps.MarkerImage(
+						// 빨간색 마커 이미지 URL
+						'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png',
+						new kakao.maps.Size(50, 45),
+						{ offset: new kakao.maps.Point(15, 43) }
+					);
+
+					var marker = new kakao.maps.Marker({
+						map: map,
+						position: currentPosition,
+						image: markerImage,
+						zIndex: 10
+					});
+
+					markers.push(marker);
+
+					// 이전 오버레이 제거
+					if (locationOverlay) {
+						locationOverlay.setMap(null);
+					}
+
+					// 검색 반경 시각화
+					updateSearchRadius();
+
+					// 주변 병원 검색
+					searchMultipleKeywords(['탈모 병원', '두피 클리닉', '피부과', '모발이식']);
+
+					showMessage("현재 위치를 찾았습니다. 반경 " + (document.getElementById('radius').value / 1000) + "km 이내 탈모 관련 병원을 검색합니다.", "info");
+				});
+			},
+			function(error) {
+				clearTimeout(locationTimeout); // 타임아웃 제거
+				console.error("위치 가져오기 오류:", error);
+
+				var errorMsg = "위치 정보를 가져오는데 실패했습니다.";
+				switch (error.code) {
+					case error.PERMISSION_DENIED:
+						errorMsg = "위치 정보 접근 권한이 거부되었습니다. 브라우저 설정에서 위치 정보 접근을 허용해 주세요.";
+						break;
+					case error.POSITION_UNAVAILABLE:
+						errorMsg = "위치 정보를 사용할 수 없습니다. 네트워크 연결을 확인해 주세요.";
+						break;
+					case error.TIMEOUT:
+						errorMsg = "위치 정보 요청 시간이 초과되었습니다. 다시 시도해 주세요.";
+						break;
+					case error.UNKNOWN_ERROR:
+						errorMsg = "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.";
+						break;
+				}
+
+				showMessage(errorMsg, "error");
+				showLoading(false);
+			},
+			{
+				enableHighAccuracy: true, // 높은 정확도 요청
+				timeout: 10000,
+				maximumAge: 0 // 캐시된 위치 사용 안 함
+			}
+		);
+	} else {
+		clearTimeout(locationTimeout);
+		showMessage("이 브라우저에서는 위치 정보를 지원하지 않습니다. 검색창에서 직접 검색해 주세요.", "error");
+		showLoading(false);
+	}
+}
+
+// 위치 정보 테스트 함수 (개발자 도구 콘솔에서 호출 가능)
+function testLocation() {
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			function(position) {
+				console.log("브라우저 위치 API 테스트:");
+				console.log("위도:", position.coords.latitude);
+				console.log("경도:", position.coords.longitude);
+				console.log("정확도:", position.coords.accuracy, "미터");
+				console.log("고도:", position.coords.altitude);
+				console.log("고도 정확도:", position.coords.altitudeAccuracy);
+				console.log("방향:", position.coords.heading);
+				console.log("속도:", position.coords.speed);
+				console.log("타임스탬프:", new Date(position.timestamp));
+			},
+			function(error) {
+				console.error("위치 정보 가져오기 오류:", error.code, error.message);
+			},
+			{
+				enableHighAccuracy: true,
+				timeout: 15000,
+				maximumAge: 0
+			}
+		);
+	} else {
+		console.error("이 브라우저는 위치 정보를 지원하지 않습니다.");
+	}
+}
+
+// 반경별 검색 결과 비교 함수 (디버깅용)
+function compareRadiusResults() {
+	if (!currentPosition) {
+		console.log("❌ 현재 위치가 설정되지 않았습니다.");
+		return;
+	}
+
+	const radiuses = [1000, 2000, 5000, 10000]; // 1km, 2km, 5km, 10km
+	const keyword = '탈모 병원';
+	const results = {};
+	
+	console.log("🔍 반경별 검색 결과 비교 시작...");
+	console.log("📍 현재 위치:", currentPosition.getLat(), currentPosition.getLng());
+	console.log("🔎 검색 키워드:", keyword);
+	console.log("=".repeat(50));
+	
+	let completedSearches = 0;
+	
+	radiuses.forEach(radius => {
+		const places = new kakao.maps.services.Places();
+		
+		places.keywordSearch(keyword, function(result, status) {
+			completedSearches++;
+			
+			if (status === kakao.maps.services.Status.OK) {
+				results[radius] = result.map(place => ({
+					name: place.place_name,
+					address: place.address_name,
+					distance: Math.round(getDistance(currentPosition, new kakao.maps.LatLng(place.y, place.x))),
+					id: place.id
+				}));
+				
+				console.log(`📏 ${radius/1000}km 반경 결과 (${result.length}개):`);
+				results[radius].forEach((place, index) => {
+					console.log(`  ${index+1}. ${place.name} - ${place.distance}m`);
+				});
+				console.log("");
+				
+			} else {
+				results[radius] = [];
+				console.log(`📏 ${radius/1000}km 반경: 검색 결과 없음`);
+			}
+			
+			// 모든 검색이 완료되면 비교 분석
+			if (completedSearches === radiuses.length) {
+				analyzeRadiusResults(results);
+			}
+		}, {
+			location: currentPosition,
+			radius: radius,
+			sort: kakao.maps.services.SortBy.DISTANCE
+		});
+	});
+}
+
+function analyzeRadiusResults(results) {
+	console.log("📊 결과 분석:");
+	console.log("=".repeat(50));
+	
+	// 각 반경별 병원 ID 수집
+	const hospitalSets = {};
+	Object.keys(results).forEach(radius => {
+		hospitalSets[radius] = new Set(results[radius].map(place => place.id));
+	});
+	
+	// 1km에 있는 병원이 더 큰 반경에서도 나타나는지 확인
+	const radius1km = hospitalSets['1000'];
+	const radius2km = hospitalSets['2000'];
+	const radius5km = hospitalSets['5000'];
+	const radius10km = hospitalSets['10000'];
+	
+	console.log("🔍 포함 관계 분석:");
+	
+	if (radius1km.size > 0) {
+		const in2km = [...radius1km].filter(id => radius2km.has(id)).length;
+		const in5km = [...radius1km].filter(id => radius5km.has(id)).length;
+		const in10km = [...radius1km].filter(id => radius10km.has(id)).length;
+		
+		console.log(`1km 결과 중 2km에도 포함: ${in2km}/${radius1km.size} (${Math.round(in2km/radius1km.size*100)}%)`);
+		console.log(`1km 결과 중 5km에도 포함: ${in5km}/${radius1km.size} (${Math.round(in5km/radius1km.size*100)}%)`);
+		console.log(`1km 결과 중 10km에도 포함: ${in10km}/${radius1km.size} (${Math.round(in10km/radius1km.size*100)}%)`);
+	}
+	
+	if (radius2km.size > 0) {
+		const in5km = [...radius2km].filter(id => radius5km.has(id)).length;
+		const in10km = [...radius2km].filter(id => radius10km.has(id)).length;
+		
+		console.log(`2km 결과 중 5km에도 포함: ${in5km}/${radius2km.size} (${Math.round(in5km/radius2km.size*100)}%)`);
+		console.log(`2km 결과 중 10km에도 포함: ${in10km}/${radius2km.size} (${Math.round(in10km/radius2km.size*100)}%)`);
+	}
+	
+	console.log("");
+	console.log("🆕 각 반경에서만 나타나는 새로운 병원:");
+	
+	// 각 반경에서 새로 추가되는 병원들
+	const only2km = [...radius2km].filter(id => !radius1km.has(id));
+	const only5km = [...radius5km].filter(id => !radius2km.has(id));
+	const only10km = [...radius10km].filter(id => !radius5km.has(id));
+	
+	console.log(`2km에서 새로 추가: ${only2km.length}개`);
+	console.log(`5km에서 새로 추가: ${only5km.length}개`);
+	console.log(`10km에서 새로 추가: ${only10km.length}개`);
+	
+	// 실제 누락된 병원이 있는지 확인
+	console.log("");
+	console.log("⚠️ 예상과 다른 결과:");
+	
+	const missing1kmIn5km = [...radius1km].filter(id => !radius5km.has(id));
+	const missing2kmIn5km = [...radius2km].filter(id => !radius5km.has(id));
+	
+	if (missing1kmIn5km.length > 0) {
+		console.log(`❌ 1km 결과가 5km에서 누락된 병원: ${missing1kmIn5km.length}개`);
+		missing1kmIn5km.forEach(id => {
+			const hospital = results['1000'].find(p => p.id === id);
+			if (hospital) {
+				console.log(`   - ${hospital.name} (${hospital.distance}m)`);
+			}
+		});
+	}
+	
+	if (missing2kmIn5km.length > 0) {
+		console.log(`❌ 2km 결과가 5km에서 누락된 병원: ${missing2kmIn5km.length}개`);
+		missing2kmIn5km.forEach(id => {
+			const hospital = results['2000'].find(p => p.id === id);
+			if (hospital) {
+				console.log(`   - ${hospital.name} (${hospital.distance}m)`);
+			}
+		});
+	}
+}
+
+// 콘솔에서 테스트 가능하도록 전역 함수로 노출
+window.testLocation = testLocation;
+window.compareRadiusResults = compareRadiusResults;
 	if (document.getElementById('loading')) {
 		showLoading(true);
 	} else {
@@ -152,7 +585,6 @@ function loadKakaoMapWithPosition() {
 
 		markers.push(marker);
 
-
 		// 반경 변경 이벤트 설정
 		setupRadiusChangeEvent();
 
@@ -251,7 +683,7 @@ function updateSearchRadius() {
 	console.log("검색 반경 업데이트:", radius, "미터");
 }
 
-// 반경 변경 시 이벤트 처리
+// 반경 변경 시 이벤트 처리 (수정된 버전)
 function setupRadiusChangeEvent() {
 	var radiusSelect = document.getElementById('radius');
 	if (radiusSelect) {
@@ -265,7 +697,7 @@ function setupRadiusChangeEvent() {
 			if (currentPosition) {
 				showLoading(true);
 				removeAllMarkers();
-				// 마커를 다시 추가 (원래 마커는 removeAllMarkers에서 제거됨)
+				// 마커를 다시 추가
 				var markerImage = new kakao.maps.MarkerImage(
 					'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png',
 					new kakao.maps.Size(50, 45),
@@ -286,86 +718,105 @@ function setupRadiusChangeEvent() {
 					locationOverlay.setMap(map);
 				}
 
-				// 새 반경으로 검색
+				// 수정된 함수 호출 - 키워드 배열 전달
 				searchMultipleKeywords(['탈모 병원', '두피 클리닉', '피부과', '모발이식']);
 				showMessage("반경 " + (radiusSelect.value / 1000) + "km 이내로 재검색합니다.", "info");
 			}
 		});
-		console.log("반경 변경 이벤트 설정 완료");
-	} else {
-		console.warn("radius 선택 요소를 찾을 수 없습니다");
+		console.log("개선된 반경 변경 이벤트 설정 완료");
 	}
 }
 
-// 여러 키워드로 순차적으로 검색 시도 (수정된 버전)
-function searchMultipleKeywords(keywords, index = 0) {
-	// 이전 타임아웃 제거
+// 수정된 검색 함수 - 모든 키워드를 동시에 검색하여 결과 합치기
+function searchMultipleKeywords(inputKeywords) {
+	// 매개변수가 전달되면 사용하고, 없으면 기본 키워드 사용
+	const keywords = inputKeywords || ['탈모 병원', '두피 클리닉', '피부과', '모발이식'];
+	const position = currentPosition || map.getCenter();
+	const radius = parseInt(document.getElementById('radius').value, 10);
+	
+	console.log("🔍 모든 키워드 동시 검색 시작");
+	console.log("📏 검색 반경:", radius, "미터");
+	console.log("🎯 검색 키워드:", keywords);
+	console.log("📥 입력받은 키워드:", inputKeywords); // 디버깅용
+	
+	let completedSearches = 0;
+	let allResults = [];
+	const seenPlaces = new Set(); // 중복 제거용
+	
+	// 검색 타임아웃 설정
 	if (searchTimeout) {
 		clearTimeout(searchTimeout);
 	}
-
-	// 새 타임아웃 설정 (10초)
 	searchTimeout = setTimeout(function() {
-		console.log("검색 타임아웃 발생");
+		console.log("통합 검색 타임아웃 발생");
 		showMessage("검색 시간이 초과되었습니다. 다시 시도해 주세요.", "error");
 		showLoading(false);
-	}, 10000);
-
-	if (index >= keywords.length) {
-		// 모든 키워드로 검색했지만 결과가 없음
-		clearTimeout(searchTimeout);
-		if (markers.length <= 1) { // 1 이하는 현재 위치 마커만 있는 경우
-			showMessage("주변에 탈모 관련 병원을 찾을 수 없습니다. 검색 반경을 넓히거나 다른 키워드로 검색해보세요.", "error");
-			if (document.getElementById('hospital-list')) {
-				document.getElementById('hospital-list').innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
+	}, 15000); // 여러 검색이므로 시간을 좀 더 길게
+	
+	keywords.forEach((keyword, index) => {
+		const places = new kakao.maps.services.Places();
+		
+		places.keywordSearch(keyword, function(result, status) {
+			completedSearches++;
+			console.log(`📋 ${keyword} 검색 완료: ${result ? result.length : 0}개 결과`);
+			
+			if (status === kakao.maps.services.Status.OK && result && result.length > 0) {
+				// 중복 제거하면서 결과 합치기
+				result.forEach(place => {
+					if (!seenPlaces.has(place.id)) {
+						seenPlaces.add(place.id);
+						allResults.push({
+							...place,
+							searchKeyword: keyword // 어떤 키워드로 찾았는지 기록
+						});
+					}
+				});
 			}
-		}
-		showLoading(false);
-		return;
-	}
-
-	var position = currentPosition || map.getCenter();
-	var radius = parseInt(document.getElementById('radius').value, 10);
-
-	console.log("검색 키워드:", keywords[index], "반경:", radius, "미터");
-
-	var places = new kakao.maps.services.Places();
-	places.keywordSearch(keywords[index], function(result, status) {
-		console.log("검색 결과 상태:", status, "결과 수:", result ? result.length : 0);
-
-		if (status === kakao.maps.services.Status.OK && result && result.length > 0) {
-			// ✅ 중복 필터링 제거 - 카카오맵 API가 이미 반경으로 필터링했으므로 바로 사용
-			console.log("API 필터링된 결과 수:", result.length);
-
-			if (result.length > 0) {
-				// 타임아웃 제거
+			
+			// 모든 키워드 검색이 완료되면 결과 표시
+			if (completedSearches === keywords.length) {
 				clearTimeout(searchTimeout);
-				// 결과가 있으면 표시 (추가 필터링 없이 바로 사용)
-				displaySearchResults(result);
-				if (isFirstSearch) {
-					showMessage(result.length + "개의 " + keywords[index] + " 검색 결과를 찾았습니다.", "info");
-					isFirstSearch = false;
+				
+				if (allResults.length > 0) {
+					// 거리순으로 정렬
+					allResults.sort((a, b) => {
+						const distanceA = getDistance(position, new kakao.maps.LatLng(a.y, a.x));
+						const distanceB = getDistance(position, new kakao.maps.LatLng(b.y, b.x));
+						return distanceA - distanceB;
+					});
+					
+					console.log(`✅ 통합 검색 완료: 총 ${allResults.length}개 결과`);
+					
+					// 각 키워드별 결과 수 로그
+					const keywordCounts = {};
+					allResults.forEach(place => {
+						keywordCounts[place.searchKeyword] = (keywordCounts[place.searchKeyword] || 0) + 1;
+					});
+					console.log("📊 키워드별 결과:", keywordCounts);
+					
+					displaySearchResults(allResults);
+					if (isFirstSearch) {
+						showMessage(`${allResults.length}개의 탈모 관련 병원을 찾았습니다.`, "info");
+						isFirstSearch = false;
+					}
+				} else {
+					console.log("❌ 모든 키워드 검색 결과 없음");
+					showMessage("주변에 탈모 관련 병원을 찾을 수 없습니다. 검색 반경을 넓히거나 다른 키워드로 검색해보세요.", "error");
+					if (document.getElementById('hospital-list')) {
+						document.getElementById('hospital-list').innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
+					}
 				}
 				showLoading(false);
-			} else {
-				// 결과가 없으면 다음 키워드로 검색
-				searchMultipleKeywords(keywords, index + 1);
 			}
-		} else {
-			// 검색 실패하면 다음 키워드로 검색
-			console.log("키워드 검색 실패 또는 결과 없음, 다음 키워드로 넘어감");
-			searchMultipleKeywords(keywords, index + 1);
-		}
-	}, {
-		location: position,
-		radius: radius,
-		sort: kakao.maps.services.SortBy.DISTANCE
+		}, {
+			location: position,
+			radius: radius,
+			sort: kakao.maps.services.SortBy.DISTANCE
+		});
 	});
 }
 
-
-// 검색 결과 표시 함수 수정
-// 검색 결과 표시 함수 수정 (마커 클릭 이벤트 개선)
+// 검색 결과 표시 함수
 function displaySearchResults(places) {
 	try {
 		var bounds = new kakao.maps.LatLngBounds();
@@ -417,9 +868,16 @@ function displaySearchResults(places) {
 					}
 				}
 
+				// 검색 키워드 표시 (새로 추가)
+				var keywordText = '';
+				if (place.searchKeyword) {
+					keywordText = '<div style="font-size:11px;color:#007bff;margin-bottom:5px;">🔍 ' + place.searchKeyword + '</div>';
+				}
+
 				// 인포윈도우 내용 생성
 				var infoContent = '<div style="padding:15px;min-width:250px;max-width:300px;">' +
 					'<h5 style="margin-top:0;margin-bottom:8px;color:#333;font-weight:bold;">' + place.place_name + '</h5>' +
+					keywordText +
 					distanceText +
 					'<div style="font-size:14px;color:#666;margin-bottom:5px;line-height:1.4;">' + place.address_name + '</div>';
 
@@ -476,9 +934,16 @@ function displaySearchResults(places) {
 						}
 					}
 
+					// 검색 키워드 표시
+					var keywordBadge = '';
+					if (place.searchKeyword) {
+						keywordBadge = '<span style="font-size:10px;background:#e3f2fd;color:#1976d2;padding:2px 6px;border-radius:10px;margin-left:5px;">' + place.searchKeyword + '</span>';
+					}
+
 					item.innerHTML =
 						'<div class="hospital-name">' + place.place_name +
 						'<span class="hospital-distance">' + distanceTextPlain + '</span>' +
+						keywordBadge +
 						'</div>' +
 						'<div class="hospital-address">' + place.address_name + '</div>' +
 						'<div class="hospital-phone">' + (place.phone || '전화번호 없음') + '</div>';
@@ -517,7 +982,6 @@ function displaySearchResults(places) {
 		showMessage("검색 결과를 표시하는 중 오류가 발생했습니다.", "error");
 	}
 }
-
 
 // 모든 마커 제거
 function removeAllMarkers() {
@@ -595,303 +1059,3 @@ function clearMessages() {
 	}
 }
 
-// 로딩 표시
-function showLoading(show) {
-	try {
-		var loadingElement = document.getElementById('loading');
-		if (loadingElement) {
-			loadingElement.style.display = show ? 'flex' : 'none';
-		} else {
-			console.warn("로딩 영역(#loading)을 찾을 수 없습니다");
-		}
-	} catch (e) {
-		console.error("로딩 표시 오류:", e);
-	}
-}
-
-// 키워드로 검색
-function searchByKeyword() {
-	var keyword = document.getElementById('keyword').value;
-	if (!keyword.trim()) {
-		showMessage("검색어를 입력해주세요.", "error");
-		return;
-	}
-
-	showLoading(true);
-	try {
-		clearMessages();
-	} catch (e) {
-		console.error("메시지 초기화 오류:", e);
-	}
-	removeAllMarkers();
-
-	// 현재 위치 마커 다시 추가 (있는 경우)
-	if (currentPosition) {
-		var markerImage = new kakao.maps.MarkerImage(
-			'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png',
-			new kakao.maps.Size(50, 45),
-			{ offset: new kakao.maps.Point(15, 43) }
-		);
-
-		var marker = new kakao.maps.Marker({
-			map: map,
-			position: currentPosition,
-			image: markerImage,
-			zIndex: 10
-		});
-
-		markers.push(marker);
-
-		// 오버레이 다시 표시
-		if (locationOverlay) {
-			locationOverlay.setMap(map);
-		}
-
-		// 검색 반경 다시 표시
-		if (radiusCircle) {
-			radiusCircle.setMap(map);
-		}
-	}
-
-	// 검색 타임아웃 설정 (10초)
-	if (searchTimeout) {
-		clearTimeout(searchTimeout);
-	}
-	searchTimeout = setTimeout(function() {
-		console.log("검색 타임아웃 발생");
-		showMessage("검색 시간이 초과되었습니다. 다시 시도해 주세요.", "error");
-		showLoading(false);
-	}, 10000);
-
-	var places = new kakao.maps.services.Places();
-	places.keywordSearch(keyword, function(result, status) {
-		clearTimeout(searchTimeout);
-
-		if (status === kakao.maps.services.Status.OK && result.length > 0) {
-			displaySearchResults(result);
-			showMessage(result.length + "개의 검색 결과를 찾았습니다.", "info");
-		} else {
-			showMessage("검색 결과가 없습니다. 다른 키워드로 검색해보세요.", "error");
-			document.getElementById('hospital-list').innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
-		}
-		showLoading(false);
-	});
-}
-
-// 카테고리로 검색 (수정된 버전)
-function searchByCategory(category) {
-	showLoading(true);
-	try {
-		clearMessages();
-	} catch (e) {
-		console.error("메시지 초기화 오류:", e);
-	}
-
-	var position = currentPosition || map.getCenter();
-	var radius = parseInt(document.getElementById('radius').value, 10);
-	console.log("카테고리 검색:", category, "반경:", radius, "미터");
-
-	removeAllMarkers();
-
-	// 현재 위치 마커 다시 추가 (있는 경우)
-	if (currentPosition) {
-		var markerImage = new kakao.maps.MarkerImage(
-			'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png',
-			new kakao.maps.Size(50, 45),
-			{ offset: new kakao.maps.Point(15, 43) }
-		);
-
-		var marker = new kakao.maps.Marker({
-			map: map,
-			position: currentPosition,
-			image: markerImage,
-			zIndex: 10
-		});
-
-		markers.push(marker);
-
-		// 오버레이 다시 표시
-		if (locationOverlay) {
-			locationOverlay.setMap(map);
-		}
-
-		// 검색 반경 다시 표시
-		if (radiusCircle) {
-			radiusCircle.setMap(map);
-		}
-	}
-
-	// 검색 타임아웃 설정 (10초)
-	if (searchTimeout) {
-		clearTimeout(searchTimeout);
-	}
-	searchTimeout = setTimeout(function() {
-		console.log("카테고리 검색 타임아웃 발생");
-		showMessage("검색 시간이 초과되었습니다. 다시 시도해 주세요.", "error");
-		showLoading(false);
-	}, 10000);
-
-	var places = new kakao.maps.services.Places();
-	places.keywordSearch(category, function(result, status) {
-		clearTimeout(searchTimeout);
-
-		if (status === kakao.maps.services.Status.OK && result.length > 0) {
-			// ✅ 중복 필터링 제거 - 카카오맵 API가 이미 반경으로 필터링했으므로 바로 사용
-			console.log("API 필터링된 결과 수:", result.length);
-			
-			displaySearchResults(result);
-			showMessage(result.length + "개의 " + category + " 검색 결과를 찾았습니다.", "info");
-		} else {
-			showMessage("검색 결과가 없습니다. 다른 키워드로 검색해보세요.", "error");
-			document.getElementById('hospital-list').innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
-		}
-		showLoading(false);
-	}, {
-		location: position,
-		radius: radius,
-		sort: kakao.maps.services.SortBy.DISTANCE
-	});
-}
-
-// 현재 위치 가져오기
-function getCurrentLocation() {
-	showLoading(true);
-	try {
-		clearMessages();
-	} catch (e) {
-		console.error("메시지 초기화 오류:", e);
-	}
-
-	showMessage("정확한 위치 정보를 가져오는 중입니다...", "info");
-
-	// 위치 가져오기 타임아웃 설정 (15초)
-	var locationTimeout = setTimeout(function() {
-		console.log("위치 정보 가져오기 타임아웃");
-		showMessage("위치 정보를 가져오는데 시간이 오래 걸립니다. 다시 시도하거나 직접 검색해 주세요.", "error");
-		showLoading(false);
-	}, 15000);
-
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(
-			function(position) {
-				clearTimeout(locationTimeout); // 타임아웃 제거
-
-				// 위도와 경도 저장
-				userLat = position.coords.latitude;
-				userLng = position.coords.longitude;
-
-				console.log("현재 위치 가져오기 성공:", userLat, userLng);
-				console.log("위치 정확도:", position.coords.accuracy, "미터");
-
-				// 모든 마커 제거
-				removeAllMarkers();
-
-				// 카카오맵 API를 사용하여 위치 표시
-				kakao.maps.load(function() {
-					// 현재 위치 객체 생성
-					currentPosition = new kakao.maps.LatLng(userLat, userLng);
-
-					// 지도 중심 이동
-					map.setCenter(currentPosition);
-					map.setLevel(4); // 적절한 줌 레벨로 설정
-
-					// 현재 위치 마커 표시 (빨간색으로 변경)
-					var markerImage = new kakao.maps.MarkerImage(
-						// 빨간색 마커 이미지 URL
-						'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png',
-						new kakao.maps.Size(50, 45),
-						{ offset: new kakao.maps.Point(15, 43) }
-					);
-
-					var marker = new kakao.maps.Marker({
-						map: map,
-						position: currentPosition,
-						image: markerImage,
-						zIndex: 10
-					});
-
-					markers.push(marker);
-
-					// 이전 오버레이 제거
-					if (locationOverlay) {
-						locationOverlay.setMap(null);
-					}
-
-
-
-					// 검색 반경 시각화
-					updateSearchRadius();
-
-					// 주변 병원 검색
-					searchMultipleKeywords(['탈모 병원', '두피 클리닉', '피부과', '모발이식']);
-
-					showMessage("현재 위치를 찾았습니다. 반경 " + (document.getElementById('radius').value / 1000) + "km 이내 탈모 관련 병원을 검색합니다.", "info");
-				});
-			},
-			function(error) {
-				clearTimeout(locationTimeout); // 타임아웃 제거
-				console.error("위치 가져오기 오류:", error);
-
-				var errorMsg = "위치 정보를 가져오는데 실패했습니다.";
-				switch (error.code) {
-					case error.PERMISSION_DENIED:
-						errorMsg = "위치 정보 접근 권한이 거부되었습니다. 브라우저 설정에서 위치 정보 접근을 허용해 주세요.";
-						break;
-					case error.POSITION_UNAVAILABLE:
-						errorMsg = "위치 정보를 사용할 수 없습니다. 네트워크 연결을 확인해 주세요.";
-						break;
-					case error.TIMEOUT:
-						errorMsg = "위치 정보 요청 시간이 초과되었습니다. 다시 시도해 주세요.";
-						break;
-					case error.UNKNOWN_ERROR:
-						errorMsg = "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.";
-						break;
-				}
-
-				showMessage(errorMsg, "error");
-				showLoading(false);
-			},
-			{
-				enableHighAccuracy: true, // 높은 정확도 요청
-				timeout: 10000,
-				maximumAge: 0 // 캐시된 위치 사용 안 함
-			}
-		);
-	} else {
-		clearTimeout(locationTimeout);
-		showMessage("이 브라우저에서는 위치 정보를 지원하지 않습니다. 검색창에서 직접 검색해 주세요.", "error");
-		showLoading(false);
-	}
-}
-
-// 위치 정보 테스트 함수 (개발자 도구 콘솔에서 호출 가능)
-function testLocation() {
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(
-			function(position) {
-				console.log("브라우저 위치 API 테스트:");
-				console.log("위도:", position.coords.latitude);
-				console.log("경도:", position.coords.longitude);
-				console.log("정확도:", position.coords.accuracy, "미터");
-				console.log("고도:", position.coords.altitude);
-				console.log("고도 정확도:", position.coords.altitudeAccuracy);
-				console.log("방향:", position.coords.heading);
-				console.log("속도:", position.coords.speed);
-				console.log("타임스탬프:", new Date(position.timestamp));
-			},
-			function(error) {
-				console.error("위치 정보 가져오기 오류:", error.code, error.message);
-			},
-			{
-				enableHighAccuracy: true,
-				timeout: 15000,
-				maximumAge: 0
-			}
-		);
-	} else {
-		console.error("이 브라우저는 위치 정보를 지원하지 않습니다.");
-	}
-}
-
-// 콘솔에서 테스트 가능하도록 전역 함수로 노출
-window.testLocation = testLocation;
