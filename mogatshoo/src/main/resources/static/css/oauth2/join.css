@@ -1,23 +1,2 @@
 @charset "UTF-8";
 
-.warn-div {
-	color: red;
-	font-size: 0.8em;
-}
-
-#privacyBox {
-	border: 1px solid #ccc;
-	padding: 10px; 
-	width: 100%; 
-	max-width: 500px; 
-	height: 120px; 
-	overflow-y: scroll; 
-	background-color: #f9f9f9; 
-	font-size: 14px; 
-	line-height: 1.5;
-}
-
-#idCheckMessage, #emailCheckMessage {
-	font-size: 0.8em;
-	display: none;
-}

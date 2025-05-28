@@ -1,51 +1,44 @@
 @charset "UTF-8";
 
-#idWarnMsg, #pwdWarnMsg {
-	color: red;
+.warn-msg {
+	color: rgb(255, 107, 107);
 	font-size: 0.8em;
 	padding: .375rem .75rem;
+	display: none;
+}
+
+.text-color{
+	color: rgb(255, 255, 255);
 }
 
 .title{
-	color: rgb(233,161,59);
+	color: yellow;
 }
 
-.loginForm {
-	width: 570px;
-	height: 500px;
-	background-color: rgb(54,45,62);
-	border: 10px solid rgb(195,54,38);
+.background-border-color {
+	background-color: #808080;
+	border: 10px solid #c0c0c0;
 } 
 
-
-.loginFormBtn{
-	background-color: rgb(54,45,62);
-	border: 10px solid rgb(195,54,38);
-}
+.loginFormBtn, .login-input {
+	background-color: #c0c0c0;
+	border: 10px solid #c0c0c0;
+} 
 
 .loginFormBtn:hover{
-	background-color: rgb(53,34,44);
-	border-color: rgb(146,40,27);
+	background-color: rgb(102, 102, 102);
+	border-color: rgb(153, 153, 153);
 }
 
 
-input{
-	background-color: rgb(54,45,62);
-	border: 10px solid rgb(195,54,38);
-	color: white;
-}
-
-input::placeholder {
-	color: white;
+.login-input::placeholder {
+	color: black;
 	opacity: 1;
 }
 
-label{
-	font-size: 24px;
-	width: 100px;
+.login-input:focus {
+	box-shadow: rgb(54,45,62);
+	background-color: #808080;
+	border: 10px solid #c0c0c0;
 }
 
-img {
-	width: 100px;
-	height: 100px;
-}

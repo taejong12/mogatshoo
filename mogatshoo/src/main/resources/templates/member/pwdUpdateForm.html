@@ -1,55 +1,46 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+      layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='비밀번호 수정'">
-	<style>
-		#pwdWarnMsg, #pwdCheckWarnMsg{
-			color: red;
-			font-size: 0.8em;
-			padding: .375rem .75rem;
-		}
-		
-		.eight, .special, .continu{
-			color: gray;
-			font-size: 0.8em;
-			padding: 0.1rem .75rem
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/css/member/pwdUpdateForm.css}">
 </head>
 <body>
 	<div layout:fragment="content">
+		<form name="pwdUpdateForm" class="background-border-color p-4 rounded-3">
+			<h1 class="title text-center mb-5">비밀번호수정</h1>
 	
-		<h1 class="text-center mb-5">비밀번호 수정</h1>
-		
-		<div class="row justify-content-center">
-			<div class="col-md-6 col-lg-4">
-				<form name="pwdUpdateForm" class="card p-4 shadow-sm rounded-3 bg-light">
-					<div class="mb-3">
-						<label for="memberPwd" class="form-label">비밀번호</label>
-						<input type="password" class="form-control" id="memberPwd" name="memberPwd" placeholder="비밀번호 입력">
-						<div id="pwdWarnMsg"></div>
-						<div class="eight">* 8자리 이상</div>
-						<div class="special">* 영문자+숫자, 대문자, 특수문자 1개 이상씩 포함</div>
-						<div class="continu">* 연속된 숫자 사용 금지</div>
-					</div>
-					<div class="mb-3">
-						<label for="memberPwdCheck" class="form-label">비밀번호 확인</label>
-						<input type="password" class="form-control" id="memberPwdCheck" name="memberPwdCheck" placeholder="비밀번호 확인입력">
-						<div id="pwdCheckWarnMsg"></div>
-					</div>
-					<div id="pwdUpdateError" class="text-center mb-3" style="color: red;">
-					</div>
-					<div class="d-grid gap-2 mb-3">
-						<button type="button" class="btn btn-white btn-lg border border-dark" onclick="fu_pwdUpdate()">비밀번호 수정</button>
-					</div>
-				</form>
+			<div class="row align-items-center mb-3">
+			    <label for="memberPwd" class="col-md-4 text-nowrap fs-3 text-color">비밀번호</label>
+			    <div class="col-md-8">
+			        <input type="password" class="form-control pwd-update-input" id="memberPwd" name="memberPwd" placeholder="비밀번호 입력">
+			        <div id="pwdWarnMsg" class="warn-msg"></div>
+			        <div class="eight">* 8자리 이상</div>
+					<div class="special">* 영문자,숫자,대문자,특수문자 1개 이상씩 포함</div>
+					<div class="continu">* 연속된 숫자 사용 금지</div>
+			    </div>
 			</div>
-		</div>
+			
+			<div class="row align-items-center mb-3">
+			    <label for="memberPwdCheck" class="col-md-4 text-nowrap fs-3 text-color">비밀번호확인</label>
+			    <div class="col-md-8">
+			        <input type="password" class="form-control pwd-update-input" id="memberPwdCheck" name="memberPwdCheck" placeholder="비밀번호 다시입력">
+			        <div id="pwdCheckWarnMsg" class="warn-msg"></div>
+			    </div>
+			</div>
+			
+			<div id="pwdUpdateError" class="mb-3 text-center warn-msg" style="display: none;"></div>
+			
+			<div class="row text-center g-2">
+			    <div class="col-12">
+			    	<button type="button" class="btn w-100 pwdUpdateBtn" id="sendEmailBtn" onclick="fu_pwdUpdate()">비밀번호수정</button>
+			    </div>
+			</div>
+		</form>
 		
 		<script type="text/javascript">
 			let pwdInputCheck = false;
-			let pwdEqual = false;
+			let pwdCheckEqual = false;
 		</script>
 		
 		<!-- 비밀번호 수정 버튼 -->

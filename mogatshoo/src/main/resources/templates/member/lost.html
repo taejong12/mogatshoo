@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+      layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='아이디/비밀번호 찾기'">
+	<link rel="stylesheet" th:href="@{/css/member/lost.css}">
 </head>
 <body>
 	<div layout:fragment="content">
+		<div class="background-border-color p-4 rounded-3">
+
+			<h1 class="title text-center mb-5">아이디/비밀번호 찾기</h1>
 	
-		<h1 class="text-center mb-5">아이디/비밀번호 찾기</h1>
-		
-		<div class="row justify-content-center">
-			<div class="col-md-6 col-lg-4">
-				<div class="d-grid gap-2 mb-3">
-					<a class="btn btn-white btn-lg border border-dark" th:href="@{/member/findById}">아이디 찾기</a>
-					<a class="btn btn-white btn-lg border border-dark" th:href="@{/member/findByPwd}">비밀번호 찾기</a>
-				</div>
+			<div class="row text-center mb-3 g-2">
+			    <div class="col-12">
+			        <a class="btn w-100 lostBtn" th:href="@{/member/findById}">아이디찾기</a>
+			    </div>
+			    <div class="col-12">
+			        <a class="btn w-100 lostBtn" th:href="@{/member/findByPwd}">비밀번호찾기</a>
+			    </div>
+			    <div class="col-12">
+			        <a class="btn w-100 lostBtn" th:href="@{/member/login}">로그인</a>
+			    </div>
 			</div>
 		</div>
-		
 	</div>
 </body>
 </html>

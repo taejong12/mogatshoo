@@ -1,13 +1,17 @@
 function fu_genderValidation(){
 	
 	let genderInputList = document.getElementsByName('memberGender');
+	let genderWarnMsg = document.getElementById('genderWarnMsg');
 	
 	if(genderInputList.length > 1){
+		genderWarnMsg.textContent = '';
+		
 		let genderSelected = false;
 		let firstInput = null;
 		
 		for (let i = 0; i < genderInputList.length; i++) {
-		    if (i === 0) firstInput = genderInputList[i]; // 첫 번째 요소 기억
+			// 첫 번째 요소 기억
+		    if (i === 0) firstInput = genderInputList[i];
 		    if (genderInputList[i].checked) {
 		        genderSelected = true;
 		        break;
@@ -16,23 +20,9 @@ function fu_genderValidation(){
 	
 		if (!genderSelected) {
 		    firstInput.focus();
-			
-			let spaceDiv = document.createElement('div');
-			spaceDiv.style.width = "110px";
-	        
-			let genderWarp = firstInput.closest('.input-wrap');
-			
-			let inputWrap = document.createElement('div');
-			inputWrap.className = 'input-wrap d-flex align-items-center';
-			
-			let genderWarnDiv = document.createElement('div');
-			genderWarnDiv.className = 'warn-div gender';
-			genderWarnDiv.textContent = '성별을 선택해주세요.';
-			
-			inputWrap.appendChild(spaceDiv);
-			inputWrap.appendChild(genderWarnDiv);
-			
-			genderWarp.insertAdjacentElement('afterend', inputWrap);
+			genderWarnMsg.textContent = '성별을 선택해주세요.';
+			genderWarnMsg.style.color = 'rgb(255, 107, 107)';
+			genderWarnMsg.style.display = 'block';
 		    return false;
 		}else{
 			return true;

@@ -50,9 +50,6 @@ public class MemberEntity {
 	@Column(nullable = false)
 	private String memberAddress2;
 	
-	@Column(nullable = false)
-	private String memberInfoCheck;
-	
 	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
 	private LocalDate memberCreate;
 	

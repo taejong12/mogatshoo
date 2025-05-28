@@ -15,28 +15,23 @@
 	color: rgb(255, 255, 255);
 }
 
-.background-border-color, .input-btn {
+.background-border-color {
 	background-color: #808080;
 	border: 10px solid #c0c0c0;
 }
 
-.join-input, .join-btn{
+.agreeBtn, .modalBtn {
 	background-color: #c0c0c0;
 	border: 10px solid #c0c0c0;
-}
+} 
 
-.join-input::placeholder {
-	color: black;
-	opacity: 1;
-}
-
-.join-input:focus {
-	box-shadow: rgb(54,45,62);
-	background-color: #808080;
-	border: 10px solid #c0c0c0;
-}
-
-.join-btn:hover, .input-btn:hover{
+.agreeBtn:hover, .modalBtn:hover {
 	background-color: rgb(102, 102, 102);
 	border-color: rgb(153, 153, 153);
 }
+
+.closeBtn{
+	filter: brightness(0) invert(1) contrast(150%);
+	font-size: 24px; 
+	cursor: pointer;
+}	

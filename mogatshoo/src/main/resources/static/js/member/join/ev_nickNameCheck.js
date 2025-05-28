@@ -1,23 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
 	
 	let nickNameInput = document.getElementById('memberNickName');
-	let nickNameCheckMessage = document.getElementById('nickNameCheckMessage');
+	let nickNameWarnMsg = document.getElementById('nickNameWarnMsg');
 
 	if(nickNameInput){
+		
+		nickNameWarnMsg.textContent = '';
+		
 		nickNameInput.addEventListener('input', function() {
 			
 			let nickNameVal = nickNameInput.value.trim();
-			let nickNameWarn = document.querySelector('.warn-div.nickName');
 			
 			if (nickNameVal === '' || nickNameVal.length == 0) {
-				nickNameCheckMessage.textContent = '';
-				nickNameCheckMessage.style.display = 'none';
+				nickNameWarnMsg.textContent = '';
+				nickNameWarnMsg.style.color = "rgb(255, 107, 107)";
+				nickNameWarnMsg.style.display = 'none';
 				nickNameCheck = false;
 				return;
-			}
-			
-			if(nickNameWarn){
-				nickNameWarn.closest('.input-wrap').remove();
 			}
 			
 			fetch("/member/nickNameCheck", {
@@ -27,23 +26,27 @@ document.addEventListener('DOMContentLoaded', function() {
 				},
 				body: JSON.stringify({ memberNickName: nickNameVal })
 			})
-			.then(response => response.json())
+			.then(response => {
+				if (!response.ok) {
+			        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+			    }
+				return response.json();
+			})
 			.then(data => {
 				if (data.memberNickNameCheck) {
-					nickNameCheckMessage.textContent = "사용 가능한 닉네임입니다.";
-					nickNameCheckMessage.style.color = "green";
-					nickNameCheckMessage.style.display = 'inline';
+					nickNameWarnMsg.textContent = "사용 가능한 닉네임입니다.";
+					nickNameWarnMsg.style.color = "rgb(129, 199, 132)";
+					nickNameWarnMsg.style.display = 'inline';
 					nickNameCheck = true;
 				} else {
-					nickNameCheckMessage.textContent = "이미 사용 중인 닉네임입니다.";
-					nickNameCheckMessage.style.color = "red";
-					nickNameCheckMessage.style.display = 'inline';
+					nickNameWarnMsg.textContent = "이미 사용 중인 닉네임입니다.";
+					nickNameWarnMsg.style.color = "rgb(255, 107, 107)";
+					nickNameWarnMsg.style.display = 'inline';
 					nickNameCheck = false;
 				}
 			})
 			.catch(error => {
 				console.error("닉네임 중복 확인 오류:", error);
-				window.location.href = "/error/globalError";
 			});
 		});
 	}

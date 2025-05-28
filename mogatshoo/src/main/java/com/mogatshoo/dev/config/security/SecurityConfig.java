@@ -43,8 +43,8 @@ public class SecurityConfig {
             )
 			// 모두 접근 가능한 경로
 			.authorizeHttpRequests(request -> request
-				.requestMatchers(new AntPathRequestMatcher("/")
-							,new AntPathRequestMatcher("/member/idCheck")
+				.requestMatchers(
+							new AntPathRequestMatcher("/member/idCheck")
 							,new AntPathRequestMatcher("/member/emailCheck")
 							,new AntPathRequestMatcher("/member/nickNameCheck")
 							,new AntPathRequestMatcher("/member/sendEmail")
@@ -58,6 +58,7 @@ public class SecurityConfig {
 							,new AntPathRequestMatcher("/js/**")
 							,new AntPathRequestMatcher("/favicon.ico")
 							,new AntPathRequestMatcher("/fragments/**")
+							,new AntPathRequestMatcher("/error/**")
 							).permitAll()
 				
 				// 로그인하지 않은 사용자만 접근 가능한 경로
@@ -68,6 +69,7 @@ public class SecurityConfig {
 						,new AntPathRequestMatcher("/member/findById")
 						,new AntPathRequestMatcher("/member/findByPwd")
 						,new AntPathRequestMatcher("/member/pwdUpdateForm")
+						,new AntPathRequestMatcher("/member/agree")
 						,new AntPathRequestMatcher("/oauth2/join")
 						).anonymous()
 				
