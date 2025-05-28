@@ -7,20 +7,22 @@
 	display: none;
 }
 
-.title{
+.title {
 	color: yellow;
 }
 
-.text-color{
+.text-color {
 	color: rgb(255, 255, 255);
 }
 
-.background-border-color, .input-btn {
+.background-border-color,
+.input-btn {
 	background-color: #808080;
 	border: 10px solid #c0c0c0;
 }
 
-.join-input, .join-btn{
+.join-input,
+.join-btn {
 	background-color: #c0c0c0;
 	border: 10px solid #c0c0c0;
 }
@@ -31,12 +33,14 @@
 }
 
 .join-input:focus {
-	box-shadow: rgb(54,45,62);
-	background-color: #808080;
-	border: 10px solid #c0c0c0;
+	box-shadow: none;
+	background-color: #ffffff;
+	border: 10px solid #007bff;
+	outline: none;
 }
 
-.join-btn:hover, .input-btn:hover{
+.join-btn:hover,
+.input-btn:hover {
 	background-color: rgb(102, 102, 102);
 	border-color: rgb(153, 153, 153);
 }
