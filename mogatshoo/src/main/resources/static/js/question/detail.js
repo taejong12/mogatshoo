@@ -10,25 +10,21 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOMContentLoaded - 페이지 초기화 시작');
     
     // 필요한 DOM 요소들 가져오기
-    const radioButtons = document.querySelectorAll('input[name="isPublicRadio"]');
-    const hiddenInput = document.getElementById('isPublicInput');
+    const radioButtons = document.querySelectorAll('input[name="isPublic"]'); // 수정: isPublicRadio -> isPublic
     const currentStatus = document.getElementById('currentStatus');
     const statusMessage = document.getElementById('statusMessage');
     const messageContent = document.getElementById('messageContent');
     
     // 요소 존재 여부 확인
     console.log('라디오 버튼 개수:', radioButtons.length);
-    console.log('숨겨진 입력 필드:', hiddenInput ? '존재' : '없음');
     console.log('현재 상태 표시:', currentStatus ? '존재' : '없음');
+    console.log('상태 메시지 요소:', statusMessage ? '존재' : '없음');
     
     // 라디오 버튼 이벤트 리스너 등록
-    if (radioButtons.length > 0 && hiddenInput && currentStatus) {
+    if (radioButtons.length > 0 && currentStatus) {
         radioButtons.forEach(radio => {
             radio.addEventListener('change', function() {
                 console.log('라디오 버튼 변경됨:', this.value);
-                
-                // 숨겨진 입력 필드 값 업데이트
-                hiddenInput.value = this.value;
                 
                 // 현재 상태 텍스트 업데이트
                 currentStatus.textContent = this.value === 'yes' ? '공개' : '비공개';
@@ -93,6 +89,10 @@ document.addEventListener('DOMContentLoaded', function() {
         questionForm.addEventListener('submit', function(e) {
             console.log('폼 제출 시도');
             
+            // 현재 선택된 공개상태 값 확인 (디버깅용)
+            const selectedPublicStatus = document.querySelector('input[name="isPublic"]:checked');
+            console.log('폼 제출 시 선택된 공개상태:', selectedPublicStatus ? selectedPublicStatus.value : '선택 안됨');
+            
             // 필수 필드 검사
             const questionText = document.getElementById('question');
             const option1 = document.getElementById('option1');
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // 삭제 버튼 확인 대화상자 개선
-    const deleteBtn = document.getElementById('deleteBtn');
+    const deleteBtn = document.querySelector('a[href*="/delete"]'); // ID 대신 더 안전한 선택자 사용
     if (deleteBtn) {
         deleteBtn.addEventListener('click', function(e) {
             const serialNumber = this.href.match(/\/questions\/([^\/]+)\/delete/);
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // 취소 버튼 확인 (변경사항이 있는 경우)
-    const cancelBtn = document.querySelector('a[href="/questions"]');
+    const cancelBtn = document.querySelector('a[href*="/questions"]:not([href*="/delete"])'); // 삭제 버튼 제외
     if (cancelBtn) {
         cancelBtn.addEventListener('click', function(e) {
             // 폼이 변경되었는지 확인하는 간단한 로직
@@ -163,12 +163,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 폼 변경 감지 함수 (간단한 버전)
+    // 폼 변경 감지 함수 (수정됨)
     function checkFormChanged() {
-        // 실제로는 더 정교한 변경 감지 로직을 구현할 수 있습니다.
-        // 여기서는 간단히 라디오 버튼 상태만 확인
-        const currentRadioValue = document.querySelector('input[name="isPublicRadio"]:checked')?.value;
-        const originalValue = hiddenInput?.value;
+        // 현재 선택된 라디오 버튼 값
+        const currentRadioValue = document.querySelector('input[name="isPublic"]:checked')?.value;
+        
+        // 페이지 로드 시 원래 선택되어 있던 값을 찾기
+        const originalRadio = document.querySelector('input[name="isPublic"][checked]');
+        const originalValue = originalRadio ? originalRadio.value : null;
+        
+        console.log('변경 감지 - 현재값:', currentRadioValue, '원래값:', originalValue);
         
         return currentRadioValue !== originalValue;
     }
@@ -219,21 +223,26 @@ window.questionDetailPage = {
         }
     },
     
-    // 현재 상태 업데이트 (외부에서 호출 가능)
+    // 현재 상태 업데이트 (외부에서 호출 가능) - 수정됨
     updateStatus: function(isPublic) {
         const currentStatus = document.getElementById('currentStatus');
-        const hiddenInput = document.getElementById('isPublicInput');
         
-        if (currentStatus && hiddenInput) {
-            hiddenInput.value = isPublic;
+        if (currentStatus) {
             currentStatus.textContent = isPublic === 'yes' ? '공개' : '비공개';
             
             // 해당 라디오 버튼도 체크
-            const radioButton = document.querySelector(`input[name="isPublicRadio"][value="${isPublic}"]`);
+            const radioButton = document.querySelector(`input[name="isPublic"][value="${isPublic}"]`);
             if (radioButton) {
                 radioButton.checked = true;
+                console.log('상태 업데이트 완료:', isPublic);
             }
         }
+    },
+    
+    // 현재 선택된 공개상태 값 가져오기 (디버깅용)
+    getCurrentStatus: function() {
+        const selectedRadio = document.querySelector('input[name="isPublic"]:checked');
+        return selectedRadio ? selectedRadio.value : null;
     }
 };
 

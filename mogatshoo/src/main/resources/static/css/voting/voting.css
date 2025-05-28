@@ -1,6 +1,6 @@
 /* Windows 95 스타일 투표 페이지 CSS */
 
-/* 기본 컨테이너 스타일 */
+/* 기본 컨테이너 */
 .vote-container {
     max-width: 1000px;
     margin: 20px auto;
@@ -8,52 +8,7 @@
     font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
 }
 
-/* 알림 메시지 스타일 */
-.alert {
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.alert i {
-    margin-right: 10px;
-    font-size: 16px;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-}
-
-.alert-warning {
-    background-color: #fff3cd;
-    border: 1px solid #ffeaa7;
-    color: #856404;
-}
-
-.alert-error {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
-}
-
-/* 투표 헤더 스타일 */
+/* 투표 헤더 */
 .vote-header {
     text-align: center;
     margin-bottom: 30px;
@@ -63,7 +18,6 @@
     font-size: 32px;
     color: #333;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
 .vote-instructions {
@@ -72,7 +26,7 @@
     margin-bottom: 20px;
 }
 
-/* Windows 95 스타일 요소 */
+/* Windows 95 스타일 윈도우 */
 .win95-window {
     background-color: #c0c0c0;
     border: 2px solid;
@@ -108,11 +62,7 @@
     padding: 20px;
 }
 
-/* 질문 컨테이너 스타일 */
-.question-container {
-    margin-bottom: 30px;
-}
-
+/* 질문 컨테이너 */
 .question-text {
     font-size: 22px;
     margin-top: 0;
@@ -128,7 +78,7 @@
     font-style: italic;
 }
 
-/* 옵션 그리드 스타일 */
+/* 옵션 그리드 */
 .options-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -136,24 +86,17 @@
     margin-bottom: 30px;
 }
 
-/* 옵션 아이템 스타일 */
-.option-item {
-    position: relative;
-}
-
 .picture-option {
-    position: relative;
     border: 2px solid;
     border-color: #ffffff #808080 #808080 #ffffff;
     background-color: #c0c0c0;
     cursor: pointer;
     padding: 15px;
-    height: 100%;
     transition: all 0.2s ease;
 }
 
 .picture-option:hover {
-    border-color: #0078d7 #0078d7 #0078d7 #0078d7;
+    border-color: #0078d7;
     box-shadow: 0 0 15px rgba(0, 120, 215, 0.4);
     transform: translateY(-2px);
 }
@@ -161,53 +104,24 @@
 .picture-option:active {
     border-color: #808080 #ffffff #ffffff #808080;
     transform: translateY(1px);
-    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
 }
 
 .win95-pic-container {
     height: 280px;
-    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #f0f0f0;
     border: 1px solid;
     border-color: #808080 #ffffff #ffffff #808080;
-    position: relative;
     margin-bottom: 10px;
+    overflow: hidden;
 }
 
 .option-image {
     max-width: 100%;
     max-height: 100%;
     object-fit: cover;
-    border-radius: 2px;
-}
-
-/* 이미지 오류 처리 */
-.image-error {
-    background-color: #f5f5f5;
-    color: #666;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    text-align: center;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-}
-
-.image-error::before {
-    content: "📷";
-    font-size: 40px;
-    margin-bottom: 10px;
-    opacity: 0.5;
-}
-
-.image-error::after {
-    content: "이미지를 불러올 수 없습니다";
-    font-size: 12px;
 }
 
 .option-text {
@@ -232,49 +146,31 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    z-index: 9999;
 }
 
 .win95-popup .win95-window {
     width: 450px;
     margin: 0;
-    animation: popIn 0.3s ease-out;
 }
 
-@keyframes popIn {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+.popup-body {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .win95-icon {
-    float: left;
-    margin-right: 20px;
+    margin-right: 15px;
     font-size: 42px;
     color: #000080;
+    width: 50px;
+    text-align: center;
+    flex-shrink: 0;
 }
 
 .win95-message {
-    overflow: hidden;
-    margin-bottom: 20px;
-    min-height: 60px;
-}
-
-.win95-message h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #333;
+    flex: 1;
 }
 
 .win95-message p {
@@ -286,7 +182,6 @@
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    clear: both;
 }
 
 .win95-button {
@@ -302,7 +197,6 @@
     color: #000;
     font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
     display: inline-block;
-    transition: all 0.1s ease;
 }
 
 .win95-button:active {
@@ -312,11 +206,6 @@
 
 .win95-button:hover {
     background-color: #d0d0d0;
-}
-
-.win95-button:focus {
-    outline: 1px dotted #333;
-    outline-offset: -3px;
 }
 
 /* 로딩 오버레이 */
@@ -365,31 +254,64 @@
     width: 500px;
 }
 
-/* 디버깅 정보 */
-.debug-info {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 10px;
-    font-size: 12px;
-    z-index: 9999;
+/* 알림 메시지 */
+.alert {
+    padding: 12px 16px;
+    margin-bottom: 20px;
     border-radius: 4px;
-    font-family: monospace;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
 }
 
-.debug-info div {
-    margin-bottom: 5px;
+.alert i {
+    margin-right: 10px;
+    font-size: 16px;
 }
 
-/* Windows 95 마우스 커서 효과 */
-.picture-option {
-    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAV0lEQVRYhe2WQQ6AMAhE6f2PbOtJ2mJK6iZlGzOJm5aH4Sef4OWQOKSqMhGEqq5ExClh1pUCjhUuRLJxWjhsN8Y5C8x8nHXNjxEkJUbDlWEiVhAJWvxNBwLsF0K4+BdJjWJhAEIBAAAAAElFTkSuQmCC'), pointer;
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
 }
 
-.win95-button {
-    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAV0lEQVRYhe2WQQ6AMAhE6f2PbOtJ2mJK6iZlGzOJm5aH4Sef4OWQOKSqMhGEqq5ExClh1pUCjhUuRLJxWjhsN8Y5C8x8nHXNjxEkJUbDlWEiVhAJWvxNBwLsF0K4+BdJjWJhAEIBAAAAAElFTkSuQmCC'), pointer;
+.alert-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/* 투표 성공 애니메이션 */
+.vote-success {
+    animation: voteSuccess 2s ease-in-out;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 120, 215, 0.6) !important;
+}
+
+@keyframes voteSuccess {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(0, 120, 215, 0);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(0, 120, 215, 0.8);
+    }
+    100% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 120, 215, 0.6);
+    }
+}
+
+/* 취소 시 흔들기 */
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
 /* 반응형 디자인 */
@@ -412,77 +334,5 @@
         width: 90%;
         max-width: 400px;
         margin: 20px;
-    }
-    
-    .vote-header h1 {
-        font-size: 24px;
-    }
-    
-    .question-text {
-        font-size: 18px;
-    }
-    
-    .debug-info {
-        position: relative;
-        margin-top: 20px;
-        background: rgba(0,0,0,0.1);
-        color: #333;
-    }
-}
-
-@media (max-width: 480px) {
-    .win95-content {
-        padding: 15px;
-    }
-    
-    .picture-option {
-        padding: 10px;
-    }
-    
-    .win95-pic-container {
-        height: 180px;
-    }
-    
-    .win95-buttons {
-        flex-direction: column;
-    }
-    
-    .win95-button {
-        width: 100%;
-        margin-bottom: 5px;
-    }
-}
-
-/* 접근성 개선 */
-@media (prefers-reduced-motion: reduce) {
-    .picture-option {
-        transition: none;
-    }
-    
-    .alert {
-        animation: none;
-    }
-    
-    .win95-popup {
-        animation: none;
-    }
-    
-    .win95-popup .win95-window {
-        animation: none;
-    }
-}
-
-/* 고대비 모드 지원 */
-@media (prefers-contrast: high) {
-    .win95-window {
-        border-width: 3px;
-    }
-    
-    .picture-option:hover {
-        border-width: 3px;
-    }
-    
-    .option-text {
-        font-weight: bolder;
     }
 }

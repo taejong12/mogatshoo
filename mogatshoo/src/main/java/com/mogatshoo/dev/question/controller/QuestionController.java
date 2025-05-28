@@ -124,39 +124,62 @@ public class QuestionController {
     }
 
     // 질문 저장
+ // 질문 저장 - 수정된 버전
     @PostMapping
-    public String createQuestion(@ModelAttribute QuestionEntity question,
-                                @RequestParam(required = false) String imageReference1,
-                                @RequestParam(required = false) String imageReference2,
-                                @RequestParam(required = false) String imageReference3,
-                                @RequestParam(required = false) String imageReference4) {
-        // isPublic 값이 없거나 유효하지 않은 경우, 기본값으로 'no' 설정
-        if (question.getIsPublic() == null || (!question.getIsPublic().equals("yes") && !question.getIsPublic().equals("no"))) {
-            question.setIsPublic("no");
-        }
-
-        // 이미지 경로가 있는 경우 옵션에 이미지 경로를 저장 (닉네임 대신)
-        if (imageReference1 != null && !imageReference1.isEmpty()) {
-            question.setOption1(imageReference1);
-        }
-        if (imageReference2 != null && !imageReference2.isEmpty()) {
-            question.setOption2(imageReference2);
-        }
-        if (imageReference3 != null && !imageReference3.isEmpty()) {
-            question.setOption3(imageReference3);
-        }
-        if (imageReference4 != null && !imageReference4.isEmpty()) {
-            question.setOption4(imageReference4);
-        }
-
-        System.out.println("저장될 질문: " + question);
-        questionService.createQuestion(question);
-        
+    public String createQuestion(@ModelAttribute QuestionEntity question) {
         try {
+            System.out.println("=== 질문 생성 요청 ===");
+            System.out.println("받은 question: " + question);
+            System.out.println("일련번호: " + question.getSerialNumber());
+            System.out.println("질문 내용: " + question.getQuestion());
+            System.out.println("공개상태: " + question.getIsPublic());
+            System.out.println("옵션1: " + question.getOption1());
+            System.out.println("옵션2: " + question.getOption2());
+            System.out.println("옵션3: " + question.getOption3());
+            System.out.println("옵션4: " + question.getOption4());
+            
+            // isPublic 값이 없거나 유효하지 않은 경우, 기본값으로 'no' 설정
+            if (question.getIsPublic() == null || (!question.getIsPublic().equals("yes") && !question.getIsPublic().equals("no"))) {
+                question.setIsPublic("no");
+                System.out.println("공개상태를 기본값으로 설정: no");
+            }
+
+            // 필수 필드 검증
+            if (question.getQuestion() == null || question.getQuestion().trim().isEmpty()) {
+                System.err.println("질문 내용이 비어있습니다.");
+                String errorMessage = URLEncoder.encode("질문 내용을 입력해주세요.", StandardCharsets.UTF_8.toString());
+                return "redirect:/questions/new?status=error&message=" + errorMessage;
+            }
+
+            if (question.getOption1() == null || question.getOption1().trim().isEmpty()) {
+                System.err.println("보기 1이 비어있습니다.");
+                String errorMessage = URLEncoder.encode("보기 1을 입력해주세요.", StandardCharsets.UTF_8.toString());
+                return "redirect:/questions/new?status=error&message=" + errorMessage;
+            }
+
+            if (question.getOption2() == null || question.getOption2().trim().isEmpty()) {
+                System.err.println("보기 2가 비어있습니다.");
+                String errorMessage = URLEncoder.encode("보기 2를 입력해주세요.", StandardCharsets.UTF_8.toString());
+                return "redirect:/questions/new?status=error&message=" + errorMessage;
+            }
+
+            System.out.println("유효성 검사 통과, 질문 저장 시작");
+            QuestionEntity savedQuestion = questionService.createQuestion(question);
+            System.out.println("저장된 질문: " + savedQuestion);
+            
             String successMessage = URLEncoder.encode("새 질문이 성공적으로 생성되었습니다. (기본 상태: 비공개)", StandardCharsets.UTF_8.toString());
             return "redirect:/questions?status=success&message=" + successMessage;
+            
         } catch (Exception e) {
-            return "redirect:/questions";
+            System.err.println("질문 생성 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            
+            try {
+                String errorMessage = URLEncoder.encode("질문 생성 중 오류가 발생했습니다.", StandardCharsets.UTF_8.toString());
+                return "redirect:/questions?status=error&message=" + errorMessage;
+            } catch (Exception ex) {
+                return "redirect:/questions";
+            }
         }
     }
 
