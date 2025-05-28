@@ -8,63 +8,62 @@
     font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
 }
 
-/* 시작 화면 스타일 */
-.start-screen-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 60vh;
-}
-
-.start-window {
-    width: 500px;
-    animation: windowOpen 0.3s ease-out;
-}
-
-@keyframes windowOpen {
-    0% {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.start-icon {
-    font-size: 50px;
-    color: #000080;
-    text-align: center;
+/* 알림 메시지 스타일 */
+.alert {
+    padding: 12px 16px;
     margin-bottom: 20px;
-}
-
-.start-buttons {
+    border-radius: 4px;
     display: flex;
-    justify-content: center;
-    margin-top: 25px;
+    align-items: center;
+    font-size: 14px;
+    animation: slideDown 0.3s ease-out;
 }
 
-.start-button {
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert i {
+    margin-right: 10px;
     font-size: 16px;
-    padding: 8px 20px;
-    min-width: 150px;
 }
 
-.start-button i {
-    margin-right: 8px;
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
 }
 
 /* 투표 헤더 스타일 */
 .vote-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .vote-header h1 {
-    font-size: 28px;
+    font-size: 32px;
     color: #333;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
 .vote-instructions {
@@ -83,9 +82,9 @@
 }
 
 .win95-titlebar {
-    background-color: #000080;
+    background: linear-gradient(90deg, #000080 0%, #0000ff 100%);
     color: white;
-    padding: 2px 5px;
+    padding: 4px 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -95,12 +94,18 @@
 
 .win95-close-btn {
     cursor: pointer;
-    font-size: 12px;
-    padding: 0 5px;
+    font-size: 14px;
+    padding: 2px 6px;
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 2px;
+}
+
+.win95-close-btn:hover {
+    background-color: rgba(255,255,255,0.3);
 }
 
 .win95-content {
-    padding: 15px;
+    padding: 20px;
 }
 
 /* 질문 컨테이너 스타일 */
@@ -109,15 +114,18 @@
 }
 
 .question-text {
-    font-size: 20px;
+    font-size: 22px;
     margin-top: 0;
     margin-bottom: 15px;
+    color: #333;
+    font-weight: bold;
 }
 
 .question-serial {
     font-size: 14px;
     color: #666;
     margin: 0;
+    font-style: italic;
 }
 
 /* 옵션 그리드 스타일 */
@@ -139,22 +147,25 @@
     border-color: #ffffff #808080 #808080 #ffffff;
     background-color: #c0c0c0;
     cursor: pointer;
-    padding: 10px;
+    padding: 15px;
     height: 100%;
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: all 0.2s ease;
 }
 
 .picture-option:hover {
     border-color: #0078d7 #0078d7 #0078d7 #0078d7;
+    box-shadow: 0 0 15px rgba(0, 120, 215, 0.4);
+    transform: translateY(-2px);
 }
 
 .picture-option:active {
     border-color: #808080 #ffffff #ffffff #808080;
     transform: translateY(1px);
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
 }
 
 .win95-pic-container {
-    height: 250px;
+    height: 280px;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -162,47 +173,51 @@
     background-color: #f0f0f0;
     border: 1px solid;
     border-color: #808080 #ffffff #ffffff #808080;
+    position: relative;
+    margin-bottom: 10px;
 }
 
-.win95-pic-container img {
+.option-image {
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+/* 이미지 오류 처리 */
+.image-error {
+    background-color: #f5f5f5;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    text-align: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.image-error::before {
+    content: "📷";
+    font-size: 40px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+.image-error::after {
+    content: "이미지를 불러올 수 없습니다";
+    font-size: 12px;
 }
 
 .option-text {
     text-align: center;
-    margin-top: 10px;
-    padding: 5px;
+    padding: 8px;
     background-color: #ececec;
     border: 1px solid;
     border-color: #808080 #ffffff #ffffff #808080;
     font-size: 14px;
-}
-
-/* 진행 상황 바 */
-.progress-container {
-    margin-top: 20px;
-}
-
-.progress-bar-container {
-    height: 20px;
-    background-color: #f0f0f0;
-    border: 1px solid;
-    border-color: #808080 #ffffff #ffffff #808080;
-    margin-bottom: 10px;
-}
-
-.progress-bar {
-    height: 100%;
-    background-color: #000080;
-    width: 0%;
-    transition: width 0.5s ease-in-out;
-}
-
-.progress-text {
-    text-align: center;
-    font-size: 14px;
+    font-weight: bold;
     color: #333;
 }
 
@@ -213,61 +228,95 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .win95-popup .win95-window {
-    width: 400px;
+    width: 450px;
     margin: 0;
+    animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .win95-icon {
     float: left;
     margin-right: 20px;
-    font-size: 40px;
+    font-size: 42px;
     color: #000080;
 }
 
 .win95-message {
     overflow: hidden;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    min-height: 60px;
 }
 
 .win95-message h3 {
     margin-top: 0;
     margin-bottom: 10px;
+    color: #333;
+}
+
+.win95-message p {
+    margin: 5px 0;
+    line-height: 1.4;
 }
 
 .win95-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
+    clear: both;
 }
 
 .win95-button {
     background-color: #c0c0c0;
     border: 2px solid;
     border-color: #ffffff #808080 #808080 #ffffff;
-    padding: 6px 12px;
+    padding: 8px 16px;
     cursor: pointer;
     font-size: 14px;
-    min-width: 80px;
+    min-width: 90px;
     text-align: center;
     text-decoration: none;
     color: #000;
     font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+    display: inline-block;
+    transition: all 0.1s ease;
 }
 
 .win95-button:active {
     border-color: #808080 #ffffff #ffffff #808080;
+    transform: translateY(1px);
 }
 
 .win95-button:hover {
     background-color: #d0d0d0;
+}
+
+.win95-button:focus {
+    outline: 1px dotted #333;
+    outline-offset: -3px;
 }
 
 /* 로딩 오버레이 */
@@ -285,14 +334,23 @@
 }
 
 .loading-window {
-    width: 250px;
+    width: 300px;
 }
 
 .loading-spinner {
     text-align: center;
-    font-size: 30px;
+    font-size: 32px;
     margin-bottom: 15px;
     color: #000080;
+}
+
+.loading-spinner i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* 투표 완료 컨테이너 */
@@ -304,26 +362,127 @@
 }
 
 .vote-complete-container .win95-window {
-    width: 450px;
+    width: 500px;
 }
 
-/* Windows 95 마우스 커서 */
-html, body {
-    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAElBMVEUAAAAAAAD///8AAAD///8AAABknGCQAAAABXRSTlP9/NtjCH+oUcUAAABSSURBVCjPY2CAAkYhIQEGKFDU13c3gDJFBQUFHaCMoaAgg6EBlBEUFHQ1NAJLCQo6GQkJwqQMDZ0EhKBSLEpAUoJgg0IFYQYJCQpCDRISQhkHAE/JCv9JNpiIAAAAAElFTkSuQmCC'), auto;
+/* 디버깅 정보 */
+.debug-info {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 10px;
+    font-size: 12px;
+    z-index: 9999;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.debug-info div {
+    margin-bottom: 5px;
+}
+
+/* Windows 95 마우스 커서 효과 */
+.picture-option {
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAV0lEQVRYhe2WQQ6AMAhE6f2PbOtJ2mJK6iZlGzOJm5aH4Sef4OWQOKSqMhGEqq5ExClh1pUCjhUuRLJxWjhsN8Y5C8x8nHXNjxEkJUbDlWEiVhAJWvxNBwLsF0K4+BdJjWJhAEIBAAAAAElFTkSuQmCC'), pointer;
 }
 
 .win95-button {
-    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAElBMVEUAAAAAAAD///8AAAD///8AAABknGCQAAAABXRSTlP9/NtjCH+oUcUAAABSSURBVCjPY2CAAkYhIQEGKFDU13c3gDJFBQUFHaCMoaAgg6EBlBEUFHQ1NAJLCQo6GQkJwqQMDZ0EIVJCQrCAoaGhkSBUSkhIEGhQAWetEcIzEQAujAr/Wlg5gwAAAABJRU5ErkJggg=='), auto;
+    cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAV0lEQVRYhe2WQQ6AMAhE6f2PbOtJ2mJK6iZlGzOJm5aH4Sef4OWQOKSqMhGEqq5ExClh1pUCjhUuRLJxWjhsN8Y5C8x8nHXNjxEkJUbDlWEiVhAJWvxNBwLsF0K4+BdJjWJhAEIBAAAAAElFTkSuQmCC'), pointer;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
+    .vote-container {
+        padding: 10px;
+        margin: 10px auto;
+    }
+    
     .options-grid {
         grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .win95-pic-container {
+        height: 220px;
     }
     
     .win95-popup .win95-window {
         width: 90%;
         max-width: 400px;
+        margin: 20px;
+    }
+    
+    .vote-header h1 {
+        font-size: 24px;
+    }
+    
+    .question-text {
+        font-size: 18px;
+    }
+    
+    .debug-info {
+        position: relative;
+        margin-top: 20px;
+        background: rgba(0,0,0,0.1);
+        color: #333;
+    }
+}
+
+@media (max-width: 480px) {
+    .win95-content {
+        padding: 15px;
+    }
+    
+    .picture-option {
+        padding: 10px;
+    }
+    
+    .win95-pic-container {
+        height: 180px;
+    }
+    
+    .win95-buttons {
+        flex-direction: column;
+    }
+    
+    .win95-button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+    .picture-option {
+        transition: none;
+    }
+    
+    .alert {
+        animation: none;
+    }
+    
+    .win95-popup {
+        animation: none;
+    }
+    
+    .win95-popup .win95-window {
+        animation: none;
+    }
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+    .win95-window {
+        border-width: 3px;
+    }
+    
+    .picture-option:hover {
+        border-width: 3px;
+    }
+    
+    .option-text {
+        font-weight: bolder;
     }
 }

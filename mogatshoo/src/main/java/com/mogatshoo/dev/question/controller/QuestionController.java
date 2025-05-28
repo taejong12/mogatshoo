@@ -34,10 +34,10 @@ public class QuestionController {
     @Autowired
     private MemberService memberService;
     
-    // 질문 목록 페이지
-    @GetMapping
+    // 질문 목록 페이지 - 경로 수정
+    @GetMapping({"", "/", "/list"})
     public String getAllQuestions(Model model) {
-        List<QuestionEntity> questions = questionService.getAllQuestions();
+        List<QuestionEntity> questions = questionService.getAllQuestionsWithFixedImagePaths();
         model.addAttribute("questions", questions);
         return "question/list";
     }
@@ -45,14 +45,14 @@ public class QuestionController {
     @GetMapping("/new")
     public String newQuestionForm(Model model, @ModelAttribute("MemberEntity") MemberEntity member) {
         try {
-            // 빈 질문 객체 생성 - null이 아닌지 확인
+            // 빈 질문 객체 생성
             QuestionEntity question = new QuestionEntity();
-            System.out.println("Question 객체 생성됨: " + question); // 디버깅용
+            System.out.println("Question 객체 생성됨: " + question);
 
             // 다음 일련번호 생성
             String nextSerialNumber = questionService.generateNextSerialNumber();
             question.setSerialNumber(nextSerialNumber);
-            System.out.println("일련번호 설정됨: " + nextSerialNumber); // 디버깅용
+            System.out.println("일련번호 설정됨: " + nextSerialNumber);
             
             // 기본값은 항상 비공개로 설정
             question.setIsPublic("no");
@@ -109,9 +109,8 @@ public class QuestionController {
 
             model.addAttribute("question", question);
             model.addAttribute("randomPictures", randomPictures);
-            model.addAttribute("memberNicknames", memberNicknames);  // 닉네임 정보 추가
+            model.addAttribute("memberNicknames", memberNicknames);
 
-            // 추가 디버깅 정보
             System.out.println("모델에 추가된 사진 목록 크기: " + randomPictures.size());
             System.out.println("모델에 추가된 닉네임 정보 크기: " + memberNicknames.size());
 
@@ -120,22 +119,40 @@ public class QuestionController {
             System.err.println("오류 발생: " + e.getMessage());
             e.printStackTrace();
             model.addAttribute("errorMessage", "질문 생성 중 오류가 발생했습니다: " + e.getMessage());
-            return "error"; // 에러 페이지로 리다이렉트
+            return "error";
         }
     }
 
     // 질문 저장
     @PostMapping
-    public String createQuestion(@ModelAttribute QuestionEntity question) {
+    public String createQuestion(@ModelAttribute QuestionEntity question,
+                                @RequestParam(required = false) String imageReference1,
+                                @RequestParam(required = false) String imageReference2,
+                                @RequestParam(required = false) String imageReference3,
+                                @RequestParam(required = false) String imageReference4) {
         // isPublic 값이 없거나 유효하지 않은 경우, 기본값으로 'no' 설정
         if (question.getIsPublic() == null || (!question.getIsPublic().equals("yes") && !question.getIsPublic().equals("no"))) {
             question.setIsPublic("no");
         }
 
+        // 이미지 경로가 있는 경우 옵션에 이미지 경로를 저장 (닉네임 대신)
+        if (imageReference1 != null && !imageReference1.isEmpty()) {
+            question.setOption1(imageReference1);
+        }
+        if (imageReference2 != null && !imageReference2.isEmpty()) {
+            question.setOption2(imageReference2);
+        }
+        if (imageReference3 != null && !imageReference3.isEmpty()) {
+            question.setOption3(imageReference3);
+        }
+        if (imageReference4 != null && !imageReference4.isEmpty()) {
+            question.setOption4(imageReference4);
+        }
+
+        System.out.println("저장될 질문: " + question);
         questionService.createQuestion(question);
         
         try {
-            // 질문 생성 성공 메시지
             String successMessage = URLEncoder.encode("새 질문이 성공적으로 생성되었습니다. (기본 상태: 비공개)", StandardCharsets.UTF_8.toString());
             return "redirect:/questions?status=success&message=" + successMessage;
         } catch (Exception e) {
@@ -143,7 +160,35 @@ public class QuestionController {
         }
     }
 
-    // 질문 상세/수정 페이지
+    // 질문 수정 폼 페이지 - 기존 detail.html 사용
+    @GetMapping("/{serialNumber}/edit")
+    public String editQuestionForm(@PathVariable("serialNumber") String serialNumber, Model model) {
+        try {
+            System.out.println("수정 요청 받은 일련번호: " + serialNumber);
+            
+            QuestionEntity question = questionService.getQuestionBySerialNumber(serialNumber);
+            System.out.println("조회된 질문: " + question);
+
+            // 상태가 null이거나 유효하지 않은 경우 기본값으로 설정
+            if (question.getIsPublic() == null || (!question.getIsPublic().equals("yes") && !question.getIsPublic().equals("no"))) {
+                question.setIsPublic("no");
+            }
+
+            model.addAttribute("question", question);
+            return "question/detail"; // 기존 detail.html 사용
+        } catch (Exception e) {
+            System.err.println("질문 조회 실패: " + e.getMessage());
+            e.printStackTrace();
+            try {
+                String errorMessage = URLEncoder.encode("질문을 찾을 수 없습니다.", StandardCharsets.UTF_8.toString());
+                return "redirect:/questions?status=error&message=" + errorMessage;
+            } catch (Exception ex) {
+                return "redirect:/questions";
+            }
+        }
+    }
+
+    // 질문 상세 페이지 (필요한 경우)
     @GetMapping("/{serialNumber}")
     public String getQuestion(@PathVariable("serialNumber") String serialNumber, Model model) {
         QuestionEntity question = questionService.getQuestionBySerialNumber(serialNumber);
@@ -157,7 +202,7 @@ public class QuestionController {
         return "question/detail";
     }
 
-    // 공개 상태만 변경하는 API 엔드포인트 (AJAX 요청용)
+    // 공개 상태만 변경하는 API 엔드포인트
     @PostMapping("/{serialNumber}/visibility")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> updateVisibility(
@@ -168,7 +213,7 @@ public class QuestionController {
             // 유효성 검사
             if (!isPublic.equals("yes") && !isPublic.equals("no")) {
                 response.put("success", false);
-                response.put("message", "잘못된 공개 상태 값입니다. 'yes' 또는 'no'만 허용됩니다.");
+                response.put("message", "잘못된 공개 상태 값입니다.");
                 return ResponseEntity.badRequest().body(response);
             }
             
@@ -198,7 +243,6 @@ public class QuestionController {
             response.put("currentStatus", isPublic);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // 오류 응답
             response.put("success", false);
             response.put("message", "상태 변경 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
@@ -215,7 +259,6 @@ public class QuestionController {
             
             // 공개 상태 변경 여부 확인
             boolean isPublicChanged = !existingQuestion.getIsPublic().equals(questionForm.getIsPublic());
-            String originalStatus = existingQuestion.getIsPublic();
 
             // 폼에서 입력받은 값을 기존 질문에 복사
             existingQuestion.setQuestion(questionForm.getQuestion());
@@ -224,17 +267,17 @@ public class QuestionController {
             existingQuestion.setOption3(questionForm.getOption3());
             existingQuestion.setOption4(questionForm.getOption4());
 
-            // 공개 상태 업데이트 (항상 'yes' 또는 'no' 중 하나)
+            // 공개 상태 업데이트
             String isPublic = questionForm.getIsPublic();
             if (isPublic == null || (!isPublic.equals("yes") && !isPublic.equals("no"))) {
-                isPublic = "no";  // 기본값 설정
+                isPublic = "no";
             }
             existingQuestion.setIsPublic(isPublic);
 
             // 수정된 기존 질문 저장
             questionService.updateQuestion(existingQuestion);
 
-            // 성공 메시지 구성 (공개 상태 변경 여부에 따라 다르게)
+            // 성공 메시지 구성
             String successMessage;
             if (isPublicChanged) {
                 if (isPublic.equals("yes")) {
@@ -258,7 +301,7 @@ public class QuestionController {
         }
     }
 
-    // 질문 삭제 처리 (GET 요청)
+    // 질문 삭제 처리
     @GetMapping("/{serialNumber}/delete")
     public String deleteQuestion(@PathVariable("serialNumber") String serialNumber) {
         try {
@@ -266,16 +309,12 @@ public class QuestionController {
             questionService.deleteQuestion(serialNumber);
             System.out.println("삭제 완료: " + serialNumber);
 
-            // 한글 메시지를 URL 인코딩
-            // 삭제 성공 시 질문 목록 페이지(/questions)로 리다이렉트
             String successMessage = URLEncoder.encode("질문이 성공적으로 삭제되었습니다.", StandardCharsets.UTF_8.toString());
             return "redirect:/questions?status=success&message=" + successMessage;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("삭제 실패: " + e.getMessage());
 
-            // 한글 메시지를 URL 인코딩
-            // 삭제 실패 시에도 질문 목록 페이지로 리다이렉트하되, 에러 메시지 표시
             try {
                 String errorMessage = URLEncoder.encode("질문 삭제 중 오류가 발생했습니다.", StandardCharsets.UTF_8.toString());
                 return "redirect:/questions?status=error&message=" + errorMessage;

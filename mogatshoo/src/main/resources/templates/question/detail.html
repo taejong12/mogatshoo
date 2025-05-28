@@ -4,127 +4,134 @@
       layout:decorate="~{fragments/layout}">
 <head>
     <title>질문 수정</title>
-    <link rel="stylesheet" th:href="@{/css/question/win95-edit.css}">
+    <link rel="stylesheet" th:href="@{/css/question/detail.css}">
 </head>
 <body>
     <div layout:fragment="content">
-        <div class="win95-container">
-            <div class="win95-window">
-                <div class="win95-title-bar">
-                    <div class="win95-title-text">질문 수정</div>
-                </div>
-                
-                <div class="win95-window-content">
-                    <form th:action="@{/questions/{serialNumber}(serialNumber=${question.serialNumber})}" 
-                          th:object="${question}" method="post" id="questionForm">
-                        
-                        <!-- 일련번호 표시 -->
-                        <div class="win95-info-panel">
-                            <div class="win95-label">질문 번호</div>
-                            <div class="win95-value" th:text="*{serialNumber}"></div>
-                            <input type="hidden" th:field="*{serialNumber}" />
-                        </div>
-                        
-                        <!-- 공개 상태 토글 버튼 -->
-                        <div class="win95-group">
-                            <div class="win95-group-title">공개 상태</div>
-                            <div class="win95-radio-group">
-                                <div class="win95-radio-item">
-                                    <input type="radio" id="publicRadio" name="isPublicRadio" value="yes" 
-                                           th:checked="${question.isPublic == 'yes'}">
-                                    <label for="publicRadio" class="win95-radio-label">공개</label>
-                                </div>
-                                <div class="win95-radio-item">
-                                    <input type="radio" id="privateRadio" name="isPublicRadio" value="no" 
-                                           th:checked="${question.isPublic == 'no'}">
-                                    <label for="privateRadio" class="win95-radio-label">비공개</label>
-                                </div>
-                                <input type="hidden" th:field="*{isPublic}" id="isPublicInput" />
-                            </div>
-                            <div class="win95-status-display">
-                                현재 상태: <span id="currentStatus" th:text="${question.isPublic == 'yes'} ? '공개' : '비공개'"></span>
-                            </div>
-                        </div>
-                        
-                        <!-- 질문 내용 -->
-                        <div class="win95-form-group">
-                            <label for="question" class="win95-form-label">질문</label>
-                            <textarea class="win95-textarea" th:field="*{question}" rows="3" required></textarea>
-                        </div>
-                        
-                        <!-- 보기 4개 -->
-                        <div class="win95-form-group">
-                            <label for="option1" class="win95-form-label">보기 1</label>
-                            <input type="text" class="win95-input" th:field="*{option1}" required>
-                        </div>
-                        
-                        <div class="win95-form-group">
-                            <label for="option2" class="win95-form-label">보기 2</label>
-                            <input type="text" class="win95-input" th:field="*{option2}" required>
-                        </div>
-                        
-                        <div class="win95-form-group">
-                            <label for="option3" class="win95-form-label">보기 3</label>
-                            <input type="text" class="win95-input" th:field="*{option3}">
-                        </div>
-                        
-                        <div class="win95-form-group">
-                            <label for="option4" class="win95-form-label">보기 4</label>
-                            <input type="text" class="win95-input" th:field="*{option4}">
-                        </div>
-                        
-                        <!-- 생성일 (읽기 전용) -->
-                        <div class="win95-form-group">
-                            <label class="win95-form-label">생성일</label>
-                            <div class="win95-readonly-field" th:text="${#temporals.format(question.createdAt, 'yyyy-MM-dd HH:mm')}">
-                                2023-01-01 12:00
-                            </div>
-                        </div>
-                        
-                        <!-- 버튼 그룹 -->
-                        <div class="win95-button-row">
-                            <a th:href="@{/questions/{serialNumber}/delete(serialNumber=${question.serialNumber})}" 
-                               class="win95-button win95-button-danger" id="deleteBtn" 
-                               onclick="return confirm('정말 이 질문을 삭제하시겠습니까?');">삭제하기</a>
-                            
-                            <div class="win95-button-group">
-                                <a th:href="@{/questions}" class="win95-button win95-button-secondary">취소</a>
-                                <button type="submit" class="win95-button win95-button-primary" id="saveBtn">저장하기</button>
-                            </div>
-                        </div>
-                    </form>
+        <div class="container">
+            <div class="title-bar">질문 수정</div>
+            
+            <!-- 디버깅 정보 표시 -->
+            <div class="info-box">
+                <h3>디버깅 정보</h3>
+                <p><strong>일련번호:</strong> <span th:text="${question?.serialNumber ?: '없음'}">N/A</span></p>
+                <p><strong>질문 객체:</strong> <span th:text="${question != null ? '존재함' : '없음'}">N/A</span></p>
+                <p><strong>공개상태:</strong> <span th:text="${question?.isPublic ?: '없음'}">N/A</span></p>
+            </div>
+            
+            <!-- 질문이 존재하는 경우에만 폼 표시 -->
+            <div th:if="${question != null}">
+                <form th:action="@{/questions/{serialNumber}(serialNumber=${question.serialNumber})}" 
+                      th:object="${question}" method="post">
                     
-                    <!-- 상태 알림을 위한 토스트 메시지 -->
-                    <div class="win95-toast" id="statusToast" style="display: none;">
-                        <div class="win95-toast-header">
-                            <span class="win95-toast-title">알림</span>
-                            <button type="button" class="win95-toast-close" onclick="closeToast()">×</button>
+                    <input type="hidden" th:field="*{serialNumber}" />
+                    
+                    <div class="form-group">
+                        <div class="info-box">
+                            <strong>질문 번호:</strong> <span th:text="*{serialNumber}" style="color: #000080; font-weight: bold;">Q0001</span>
                         </div>
-                        <div class="win95-toast-body" id="toastMessage"></div>
                     </div>
+                    
+                    <div class="group-box">
+                        <div class="group-title">공개 상태</div>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="publicRadio" name="isPublicRadio" value="yes" 
+                                       th:checked="${question.isPublic == 'yes'}">
+                                <label for="publicRadio">공개</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="privateRadio" name="isPublicRadio" value="no" 
+                                       th:checked="${question.isPublic == 'no'}">
+                                <label for="privateRadio">비공개</label>
+                            </div>
+                            <input type="hidden" th:field="*{isPublic}" id="isPublicInput" />
+                        </div>
+                        <div class="status-display">
+                            현재 상태: <span id="currentStatus" th:text="${question.isPublic == 'yes'} ? '공개' : '비공개'">비공개</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="question">질문 내용</label>
+                        <textarea id="question" th:field="*{question}" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="option1">보기 1</label>
+                        <input type="text" id="option1" th:field="*{option1}" required>
+                        <!-- 이미지 미리보기 -->
+                        <div th:if="${question.option1 != null and #strings.contains(question.option1, '/uploads/')}" class="image-preview">
+                            <img th:src="${question.option1}" alt="옵션1 이미지" style="max-width: 100px; max-height: 100px;" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div style="display: none; color: #800000; font-size: 10px;">이미지를 불러올 수 없습니다.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="option2">보기 2</label>
+                        <input type="text" id="option2" th:field="*{option2}" required>
+                        <div th:if="${question.option2 != null and #strings.contains(question.option2, '/uploads/')}" class="image-preview">
+                            <img th:src="${question.option2}" alt="옵션2 이미지" style="max-width: 100px; max-height: 100px;" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div style="display: none; color: #800000; font-size: 10px;">이미지를 불러올 수 없습니다.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="option3">보기 3</label>
+                        <input type="text" id="option3" th:field="*{option3}">
+                        <div th:if="${question.option3 != null and #strings.contains(question.option3, '/uploads/')}" class="image-preview">
+                            <img th:src="${question.option3}" alt="옵션3 이미지" style="max-width: 100px; max-height: 100px;" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div style="display: none; color: #800000; font-size: 10px;">이미지를 불러올 수 없습니다.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="option4">보기 4</label>
+                        <input type="text" id="option4" th:field="*{option4}">
+                        <div th:if="${question.option4 != null and #strings.contains(question.option4, '/uploads/')}" class="image-preview">
+                            <img th:src="${question.option4}" alt="옵션4 이미지" style="max-width: 100px; max-height: 100px;" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div style="display: none; color: #800000; font-size: 10px;">이미지를 불러올 수 없습니다.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>생성일</label>
+                        <div class="readonly-field" th:text="${#temporals.format(question.createdAt, 'yyyy-MM-dd HH:mm')}">2023-01-01 12:00</div>
+                    </div>
+                    
+                    <div class="button-row">
+                        <a th:href="@{/questions/{serialNumber}/delete(serialNumber=${question.serialNumber})}" 
+                           class="btn btn-danger" 
+                           onclick="return confirm('정말 이 질문을 삭제하시겠습니까?');">삭제하기</a>
+                        
+                        <div class="button-group">
+                            <a th:href="@{/questions}" class="btn btn-secondary">취소</a>
+                            <button type="submit" class="btn btn-primary">저장하기</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- 상태 알림 메시지 -->
+                <div class="message" id="statusMessage">
+                    <div id="messageContent"></div>
                 </div>
             </div>
-        </div>
-
-        <script>
-            // Windows 95 스타일 라디오 버튼 처리
-            document.addEventListener('DOMContentLoaded', function() {
-                const radioButtons = document.querySelectorAll('input[name="isPublicRadio"]');
-                const hiddenInput = document.getElementById('isPublicInput');
-                const currentStatus = document.getElementById('currentStatus');
-                
-                radioButtons.forEach(radio => {
-                    radio.addEventListener('change', function() {
-                        hiddenInput.value = this.value;
-                        currentStatus.textContent = this.value === 'yes' ? '공개' : '비공개';
-                    });
-                });
-            });
             
-            function closeToast() {
-                document.getElementById('statusToast').style.display = 'none';
-            }
-        </script>
+            <!-- 질문이 없는 경우 -->
+            <div th:if="${question == null}" class="error-message">
+                <h2>❌ 질문을 찾을 수 없습니다!</h2>
+                <p>요청하신 질문이 존재하지 않습니다.</p>
+                <a th:href="@{/questions}" class="btn btn-primary">질문 목록으로 돌아가기</a>
+            </div>
+        </div>
     </div>
+    
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/question/detail.js}"></script>
+    </th:block>
 </body>
 </html>
