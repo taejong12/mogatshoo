@@ -4,9 +4,17 @@ function fu_sendEmailBtn(){
 	let memberEmailVal = memberEmail.value.trim();
 	let sendEmailBtn = document.getElementById('sendEmailBtn');
 	let emailWarnMsg = document.getElementById('emailWarnMsg');
-				
+	let emailAuth = document.getElementById('emailAuth');
+	let emailAuthBtn = document.getElementById('emailAuthBtn');
+	let emailAuthWrap = document.getElementById('emailAuthWrap');
+	let authWarnMsg = document.getElementById('authWarnMsg');
+	
 	emailWarnMsg.textContent = '';
+	emailAuth.value = '';
+	authWarnMsg.textContent = '';
 	sendEmailBtn.disabled = true;
+	emailAuth.disabled = false;
+	emailAuthBtn.disabled = false;
 	
 	fetch("/member/sendEmail", {
 		method: "POST",
@@ -23,27 +31,15 @@ function fu_sendEmailBtn(){
 	})
 	.then(data => {
 		
-	    let emailAuthWrap = document.getElementById('emailAuthWrap');
-		
 		emailAuthWrap.style.display = "flex";
-		
-		let emailWarnMsg = document.getElementById('emailWarnMsg');
-			
 		emailWarnMsg.textContent = '이메일을 발송하였습니다.';
 		emailWarnMsg.style.color = 'rgb(129, 199, 132)';
 		emailWarnMsg.style.display = 'inline';
 		
+		// 타이머 3분 (180초)
 	    let timer = document.getElementById('timer');
-	    let emailAuth = document.getElementById('emailAuth');
-	    let emailAuthBtn = document.getElementById('emailAuthBtn');
-		let authWarnMsg = document.getElementById('authWarnMsg');
-	    
-		emailAuth.value = '';
 		timer.textContent = '';
-		authWarnMsg.textContent = '';
 		clearInterval(timerInterval);
-		
-		// 3분 (180초)
 	    let timeLeft = 180;
 		
 		let startTimer = () => {
@@ -65,6 +61,10 @@ function fu_sendEmailBtn(){
 			}, 1000);
 		};
 		
+		// 중복 리스너 제거
+	    emailAuthBtn.replaceWith(emailAuthBtn.cloneNode(true));
+	    emailAuthBtn = document.getElementById('emailAuthBtn');
+		
 		emailAuthBtn.addEventListener("click", function () {
 			let emailAuthCode = emailAuth.value.trim();
 			
@@ -72,7 +72,7 @@ function fu_sendEmailBtn(){
 	        	emailAuth.focus();
 	    		authWarnMsg.textContent = '인증번호를 입력해주세요.';
 	    		authWarnMsg.style.color = "rgb(255, 107, 107)";
-				authWarnMsg.style.display = 'inline';
+				authWarnMsg.style.display = 'block';
 	            return;
 	        }
 
@@ -91,8 +91,8 @@ function fu_sendEmailBtn(){
 			})
 	        .then(data => {
 	        	
-	            authWarnMsg.textContent = data.msg;
-				authWarnMsg.style.display = 'inline';
+	            authWarnMsg.innerHTML = data.msg;
+				authWarnMsg.style.display = 'block';
 				
 	            if (data.result === true) {
 	            	emailAuth.readOnly  = true;
@@ -104,6 +104,14 @@ function fu_sendEmailBtn(){
 	            } else {
 	            	emailAuth.focus();
 					authWarnMsg.style.color = "rgb(255, 107, 107)";
+					
+					if(data.authTryCount >= 5){
+						timer.textContent = '';
+						timer.style.display = 'none';
+						clearInterval(timerInterval);
+						emailAuth.disabled = true;
+						emailAuthBtn.disabled = true;
+					}
 	            } 
 	        })
 	        .catch(error => {
