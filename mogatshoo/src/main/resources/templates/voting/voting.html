@@ -3,17 +3,508 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf?.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
     <title>투표하기 - Mogatshoo</title>
     
     <th:block layout:fragment="additionalStyles">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link rel="stylesheet" th:href="@{/css/voting/voting.css}">
+        <style>
+            /* 기본 스타일 */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                color: #333;
+            }
+
+            .vote-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            /* 시작 화면 스타일 */
+            .start-section {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 70vh;
+                text-align: center;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                margin: 20px;
+                padding: 40px;
+            }
+
+            .start-section h1 {
+                color: white;
+                font-size: 3em;
+                margin-bottom: 20px;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            }
+
+            .start-section p {
+                color: #e0e0e0;
+                font-size: 1.2em;
+                margin-bottom: 30px;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            }
+
+            .start-btn {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 15px 40px;
+                font-size: 1.2em;
+                border-radius: 50px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+                font-weight: bold;
+            }
+
+            .start-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+            }
+
+            /* 투표 헤더 */
+            .vote-header {
+                text-align: center;
+                margin-bottom: 30px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 30px;
+                margin: 20px 0;
+            }
+
+            .vote-header h1 {
+                color: white;
+                font-size: 2.5em;
+                margin-bottom: 10px;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            }
+
+            .vote-instructions {
+                color: #e0e0e0;
+                font-size: 1.1em;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            }
+
+            /* 질문 컨테이너 */
+            .question-container {
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                margin: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                border-left: 5px solid #667eea;
+            }
+
+            .question-text {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+                color: #333;
+                font-weight: 600;
+                line-height: 1.4;
+            }
+
+            .question-serial {
+                font-size: 1em;
+                color: #666;
+                font-weight: 500;
+                margin-bottom: 0;
+            }
+
+            /* 투표 옵션 그리드 */
+            .options-container {
+                margin: 30px 0;
+            }
+
+            .options-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 25px;
+                margin-top: 20px;
+            }
+
+            .option-item {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .picture-option {
+                background: white;
+                border-radius: 15px;
+                overflow: hidden;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+
+            .picture-option:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            }
+
+            .picture-option.selected {
+                transform: translateY(-5px) scale(1.02);
+                box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+                border: 3px solid #667eea;
+            }
+
+            .pic-container {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 15px;
+                min-height: 200px;
+                background: #f8f9fa;
+            }
+
+            .option-image {
+                max-width: 100%;
+                max-height: 180px;
+                object-fit: cover;
+                border-radius: 8px;
+                transition: opacity 0.3s ease;
+            }
+
+            .option-text {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 15px;
+                text-align: center;
+                font-weight: 600;
+                font-size: 1em;
+            }
+
+            /* 투표 완료 메시지 */
+            .vote-complete-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 60vh;
+            }
+
+            .complete-message {
+                background: white;
+                border-radius: 20px;
+                padding: 40px;
+                text-align: center;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                max-width: 500px;
+            }
+
+            .complete-message .icon {
+                font-size: 3em;
+                margin-bottom: 20px;
+                color: #667eea;
+            }
+
+            .complete-message h3 {
+                color: #333;
+                margin-bottom: 15px;
+                font-size: 1.5em;
+            }
+
+            .complete-message p {
+                color: #666;
+                font-size: 1.1em;
+                line-height: 1.5;
+                margin-bottom: 25px;
+            }
+
+            /* 버튼 스타일 */
+            .btn-group {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-top: 20px;
+            }
+
+            .btn {
+                padding: 12px 25px;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                font-size: 1em;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            }
+
+            .btn-secondary {
+                background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+                color: white;
+            }
+
+            .btn-secondary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+            }
+
+            /* 투표 확인 모달 */
+            .vote-modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(5px);
+            }
+
+            .modal-content {
+                background-color: white;
+                margin: 10% auto;
+                padding: 30px;
+                border-radius: 20px;
+                width: 90%;
+                max-width: 500px;
+                text-align: center;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                animation: modalSlideIn 0.3s ease;
+            }
+
+            @keyframes modalSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .modal-content h3 {
+                color: #333;
+                margin-bottom: 20px;
+                font-size: 1.5em;
+            }
+
+            .modal-picture {
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 10px;
+                margin: 15px auto;
+                display: block;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .modal-buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                margin-top: 30px;
+            }
+
+            .btn-confirm {
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                color: white;
+            }
+
+            .btn-confirm:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            }
+
+            .btn-cancel {
+                background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+                color: white;
+            }
+
+            .btn-cancel:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+            }
+
+            /* 로딩 스타일 */
+            .loading-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 2000;
+                backdrop-filter: blur(5px);
+            }
+
+            .loading-content {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                text-align: center;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            }
+
+            .loading-spinner {
+                font-size: 2em;
+                color: #667eea;
+                margin-bottom: 15px;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            /* 알림 메시지 */
+            .alert {
+                padding: 15px 20px;
+                margin: 15px 0;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                font-weight: 500;
+                animation: slideInDown 0.3s ease;
+            }
+
+            @keyframes slideInDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .alert i {
+                margin-right: 10px;
+                font-size: 1.2em;
+            }
+
+            .alert-success {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+
+            .alert-error {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+
+            /* 투표 성공 애니메이션 */
+            .vote-success {
+                animation: voteSuccess 0.8s ease;
+            }
+
+            @keyframes voteSuccess {
+                0% { transform: scale(1); }
+                25% { transform: scale(1.05); }
+                50% { transform: scale(1.02); background-color: #90EE90; }
+                100% { transform: scale(1); }
+            }
+
+            /* 반응형 디자인 */
+            @media (max-width: 768px) {
+                .vote-container {
+                    padding: 10px;
+                }
+
+                .options-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 15px;
+                }
+
+                .vote-header h1 {
+                    font-size: 2em;
+                }
+
+                .question-text {
+                    font-size: 1.3em;
+                }
+
+                .pic-container {
+                    min-height: 150px;
+                }
+
+                .option-image {
+                    max-height: 130px;
+                }
+
+                .modal-content {
+                    margin: 20% auto;
+                    padding: 20px;
+                }
+
+                .start-section h1 {
+                    font-size: 2.5em;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .options-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .modal-buttons {
+                    flex-direction: column;
+                }
+
+                .btn-group {
+                    flex-direction: column;
+                    align-items: center;
+                }
+            }
+        </style>
     </th:block>
 </head>
 <body>
     <div layout:fragment="content">
-        <div class="container vote-container">
-            
+        <!-- 시작 섹션 (질문이 없는 경우) -->
+        <div class="start-section" id="startSection" th:if="${question == null and (noMoreQuestions == null or noMoreQuestions == false)}">
+            <h1>🗳️ 투표 시스템</h1>
+            <p>다양한 질문에 대한 투표에 참여해보세요!</p>
+            <button class="start-btn" onclick="startVoting()">
+                투표 시작하기
+            </button>
+        </div>
+
+        <div class="vote-container">
             <!-- 투표 컨텐츠 영역 -->
             <div id="vote-content" th:if="${question != null and (noMoreQuestions == null or noMoreQuestions == false)}">
                 <div class="vote-header">
@@ -22,25 +513,21 @@
                 </div>
                 
                 <!-- 질문 내용 -->
-                <div class="question-container win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">질문</div>
-                    </div>
-                    <div class="win95-content">
-                        <h2 th:text="${question.question}" class="question-text">질문 텍스트</h2>
-                        <p class="question-serial" th:text="'질문 번호: ' + ${question.serialNumber}">질문 번호: Q00001</p>
-                    </div>
+                <div class="question-container">
+                    <h2 th:text="${question.question}" class="question-text">질문 텍스트</h2>
+                    <p class="question-serial" th:text="'질문 번호: ' + ${question.serialNumber}">질문 번호: Q00001</p>
                 </div>
                 
                 <!-- 투표 옵션 (사진) -->
                 <div class="options-container">
                     <div class="options-grid">
                         <div th:each="picture, status : ${randomPictures}" class="option-item">
-                            <div class="picture-option win95-interactive" 
+                            <div class="picture-option" 
                                  th:data-member-id="${picture.memberId}"
                                  th:data-serial-number="${question.serialNumber}"
-                                 onclick="selectOption(this)">
-                                <div class="win95-pic-container">
+                                 th:data-option-index="${status.index}"
+                                 onclick="selectPicture(this)">
+                                <div class="pic-container">
                                     <img th:src="@{${picture.hairPicture}}" 
                                          th:alt="'투표 옵션 ' + ${status.index + 1}"
                                          class="option-image"
@@ -56,74 +543,421 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 네비게이션 버튼 -->
+                <div class="btn-group">
+                    <a href="/" class="btn btn-secondary">홈으로 가기</a>
+                </div>
             </div>
             
             <!-- 투표 완료 메시지 -->
             <div th:if="${question == null or noMoreQuestions == true}" class="vote-complete-container">
-                <div class="win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">안내</div>
+                <div class="complete-message">
+                    <div class="icon">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    <div class="win95-content">
-                        <div class="win95-icon">
-                            <i class="fas fa-info-circle"></i>
-                        </div>
-                        <div class="win95-message">
-                            <h3>투표 완료!</h3>
-                            <p th:if="${message != null}" th:text="${message}">모든 질문에 투표해 주셔서 감사합니다.</p>
-                        </div>
-                        <div class="win95-buttons">
-                            <a href="/" class="win95-button">홈으로 가기</a>
-                        </div>
+                    <h3>투표 완료!</h3>
+                    <p th:if="${message != null}" th:text="${message}">모든 질문에 투표해 주셔서 감사합니다.</p>
+                    <p th:if="${message == null}">현재 투표할 질문이 없습니다.<br>새로운 질문이 등록될 때까지 기다려주세요.</p>
+                    <div class="btn-group">
+                        <a href="/" class="btn btn-primary">홈으로 가기</a>
+                        <button class="btn btn-secondary" onclick="window.location.reload()">새로고침</button>
                     </div>
                 </div>
             </div>
             
-            <!-- 투표 확인 팝업 -->
-            <div id="win95-popup" class="win95-popup" style="display: none;">
-                <div class="win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">투표 확인</div>
-                        <div class="win95-close-btn" id="popup-close">✕</div>
-                    </div>
-                    <div class="win95-content">
-                        <div class="popup-body">
-                            <div class="win95-icon">
-                                <i class="fas fa-question-circle"></i>
-                            </div>
-                            <div class="win95-message">
-                                <p>이 선택지에 투표하시겠습니까?</p>
-                                <p id="selected-option-text"></p>
-                            </div>
-                        </div>
-                        <div class="win95-buttons">
-                            <button id="confirm-vote" class="win95-button" type="button">예 (Y)</button>
-                            <button id="cancel-vote" class="win95-button" type="button">아니오 (N)</button>
-                        </div>
+            <!-- 투표 확인 모달 -->
+            <div id="vote-modal" class="vote-modal">
+                <div class="modal-content">
+                    <h3>투표 확인</h3>
+                    <img id="modal-picture" class="modal-picture" src="" alt="선택된 사진">
+                    <p id="vote-confirm-message">이 선택지에 투표하시겠습니까?</p>
+                    <div class="modal-buttons">
+                        <button class="btn btn-confirm" onclick="confirmVote()">확인</button>
+                        <button class="btn btn-cancel" onclick="cancelVote()">취소</button>
                     </div>
                 </div>
             </div>
             
             <!-- 로딩 오버레이 -->
-            <div id="loading-overlay" class="loading-overlay" style="display: none;">
-                <div class="win95-window loading-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">처리 중...</div>
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="loading-content">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
                     </div>
-                    <div class="win95-content">
-                        <div class="loading-spinner">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </div>
-                        <p>잠시만 기다려주세요...</p>
-                    </div>
+                    <p>투표를 처리하는 중...</p>
                 </div>
             </div>
+
+            <!-- 메시지 컨테이너 -->
+            <div id="message-container"></div>
         </div>
     </div>
 
     <th:block layout:fragment="additionalScripts">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script th:src="@{/js/voting/voting.js}"></script>
+        <script>
+            /**
+             * 투표 시스템 JavaScript - MySQL 완전 연동 버전
+             */
+
+            // 전역 변수
+            let selectedOption = null;
+            let currentQuestion = null;
+            let isVoting = false;
+
+            $(document).ready(function() {
+                console.log('=== 투표 시스템 초기화 ===');
+                
+                // 현재 질문 정보 추출
+                const questionElement = document.querySelector('[data-serial-number]');
+                if (questionElement) {
+                    currentQuestion = {
+                        serialNumber: questionElement.dataset.serialNumber,
+                        questionText: document.querySelector('.question-text').textContent
+                    };
+                    console.log('현재 질문:', currentQuestion);
+                }
+                
+                console.log('투표 시스템 준비 완료');
+            });
+
+            /**
+             * 투표 시작 (질문이 없을 때)
+             */
+            function startVoting() {
+                console.log('=== 투표 시작 ===');
+                
+                // 로딩 효과와 함께 페이지 이동
+                $('#startSection').fadeOut(300, function() {
+                    window.location.href = '/voting';
+                });
+            }
+
+            /**
+             * 사진 선택 - 투표 확인 모달 표시
+             */
+            function selectPicture(element) {
+                console.log('=== 사진 선택 ===');
+                
+                if (isVoting) {
+                    console.log('투표 처리 중 - 클릭 무시');
+                    return;
+                }
+
+                try {
+                    // 기존 선택 해제
+                    $('.picture-option').removeClass('selected');
+                    
+                    // 현재 선택 표시
+                    $(element).addClass('selected');
+                    
+                    // 선택한 옵션 저장
+                    selectedOption = {
+                        element: $(element),
+                        memberId: $(element).data('member-id'),
+                        serialNumber: $(element).data('serial-number'),
+                        optionIndex: $(element).data('option-index'),
+                        optionText: $(element).find('.option-text').text().trim(),
+                        pictureUrl: $(element).find('.option-image').attr('src')
+                    };
+                    
+                    console.log('선택된 옵션:', selectedOption);
+                    
+                    // 필수 데이터 검증
+                    if (!selectedOption.memberId || !selectedOption.serialNumber || !currentQuestion) {
+                        alert('투표 데이터가 올바르지 않습니다. 페이지를 새로고침 해주세요.');
+                        return;
+                    }
+
+                    // 모달에 정보 설정
+                    $('#modal-picture').attr('src', selectedOption.pictureUrl);
+                    $('#vote-confirm-message').html(
+                        `<strong style="color: #667eea;">${selectedOption.optionText}</strong><br>에 투표하시겠습니까?`
+                    );
+                    
+                    // 모달 표시
+                    $('#vote-modal').fadeIn(300);
+                    
+                } catch (error) {
+                    console.error('사진 선택 중 오류:', error);
+                    alert('사진 선택 중 오류가 발생했습니다.');
+                }
+            }
+
+            /**
+             * 투표 확인
+             */
+            function confirmVote() {
+                console.log('=== 투표 확인 ===');
+                
+                if (!selectedOption || !currentQuestion || isVoting) {
+                    console.error('투표 데이터 부족 또는 중복 요청');
+                    return;
+                }
+                
+                isVoting = true;
+                $('#vote-modal').fadeOut(200);
+                
+                // 로딩 표시
+                showLoading();
+                
+                // 선택한 옵션 강조 효과
+                selectedOption.element.css({
+                    'background-color': '#667eea',
+                    'color': 'white'
+                });
+                
+                // 투표 제출
+                submitVote();
+            }
+
+            /**
+             * 투표 취소
+             */
+            function cancelVote() {
+                console.log('=== 투표 취소 ===');
+                
+                $('#vote-modal').fadeOut(200);
+                
+                // 선택 해제
+                $('.picture-option').removeClass('selected');
+                selectedOption = null;
+            }
+
+            /**
+             * 투표 제출 - MySQL에 저장
+             */
+            function submitVote() {
+                console.log('=== 투표 제출 시작 ===');
+                console.log('투표 데이터:', {
+                    질문번호: selectedOption.serialNumber,
+                    선택된회원ID: selectedOption.memberId,
+                    선택된옵션: selectedOption.optionText
+                });
+                
+                // CSRF 토큰 가져오기
+                const token = $("meta[name='_csrf']").attr("content");
+                const header = $("meta[name='_csrf_header']").attr("content");
+                
+                const ajaxSettings = {
+                    url: '/voting/submit',
+                    type: 'POST',
+                    data: {
+                        serialNumber: selectedOption.serialNumber,
+                        votedId: selectedOption.memberId
+                    },
+                    timeout: 15000
+                };
+                
+                // CSRF 토큰 추가
+                if (header && token) {
+                    ajaxSettings.beforeSend = function(xhr) {
+                        xhr.setRequestHeader(header, token);
+                    };
+                }
+
+                // 서버에 투표 데이터 전송
+                $.ajax(ajaxSettings)
+                    .done(function(response) {
+                        console.log('=== 투표 성공 ===');
+                        console.log('서버 응답:', response);
+                        handleVoteSuccess(response);
+                    })
+                    .fail(function(xhr, status, error) {
+                        console.error('=== 투표 실패 ===');
+                        console.error('오류 정보:', {
+                            상태코드: xhr.status,
+                            응답내용: xhr.responseText,
+                            에러: error
+                        });
+                        handleVoteError(xhr, status, error);
+                    });
+            }
+
+            /**
+             * 투표 성공 처리
+             */
+            function handleVoteSuccess(response) {
+                hideLoading();
+                
+                try {
+                    // 응답 데이터 처리
+                    if (typeof response === 'string') {
+                        response = JSON.parse(response);
+                    }
+                    
+                    if (response.success) {
+                        console.log('✅ MySQL 저장 완료! 투표 ID:', response.voteId);
+                        
+                        // 성공 메시지 표시
+                        showMessage(`🎉 투표 완료! "${selectedOption.optionText}"에 투표하셨습니다.`, 'success');
+                        
+                        // 선택된 옵션에 성공 애니메이션
+                        selectedOption.element.addClass('vote-success');
+                        
+                        // 3초 후 다음 동작
+                        setTimeout(function() {
+                            if (response.noMoreQuestions) {
+                                console.log('🏁 모든 투표 완료');
+                                showMessage('모든 투표를 완료하셨습니다! 감사합니다.', 'success');
+                                setTimeout(function() {
+                                    window.location.href = '/voting';
+                                }, 2000);
+                            } else {
+                                console.log('➡️ 다음 질문으로 이동');
+                                window.location.href = '/voting';
+                            }
+                        }, 3000);
+                        
+                    } else {
+                        throw new Error(response.error || '알 수 없는 서버 오류');
+                    }
+                    
+                } catch (e) {
+                    console.error('응답 처리 중 오류:', e);
+                    handleVoteError({status: 500, responseText: e.message}, 'parsererror', e.message);
+                }
+            }
+
+            /**
+             * 투표 오류 처리
+             */
+            function handleVoteError(xhr, status, error) {
+                hideLoading();
+                resetOptionStyle();
+                
+                let errorMessage = '투표 처리 중 오류가 발생했습니다.';
+                
+                // 오류 메시지 결정
+                try {
+                    if (xhr.responseText) {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse.error) {
+                            errorMessage = errorResponse.error;
+                        }
+                    }
+                } catch (e) {
+                    console.log('오류 응답 JSON 파싱 실패');
+                }
+                
+                // HTTP 상태별 처리
+                if (xhr.status === 401) {
+                    errorMessage = '🔐 로그인이 필요합니다. 로그인 페이지로 이동합니다.';
+                    setTimeout(function() {
+                        window.location.href = '/member/login';
+                    }, 2000);
+                } else if (xhr.status === 500) {
+                    errorMessage = '🔧 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                } else if (status === 'timeout') {
+                    errorMessage = '⏱️ 요청 시간이 초과되었습니다. 네트워크를 확인해주세요.';
+                }
+                
+                showMessage(errorMessage, 'error');
+                
+                // 투표 상태 초기화
+                isVoting = false;
+                selectedOption = null;
+            }
+
+            /**
+             * 선택 옵션 스타일 원복
+             */
+            function resetOptionStyle() {
+                if (selectedOption && selectedOption.element) {
+                    selectedOption.element.css({
+                        'background-color': '',
+                        'color': ''
+                    }).removeClass('selected');
+                }
+            }
+
+            /**
+             * 로딩 표시/숨김
+             */
+            function showLoading() {
+                $('#loading-overlay').fadeIn(200);
+            }
+
+            function hideLoading() {
+                $('#loading-overlay').fadeOut(200);
+            }
+
+            /**
+             * 메시지 표시
+             */
+            function showMessage(text, type = 'success') {
+                const alertHtml = `
+                    <div class="alert alert-${type}" style="display: none;">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'times-circle'}"></i>
+                        <span>${text}</span>
+                    </div>
+                `;
+                
+                $('#message-container').append(alertHtml);
+                $('#message-container .alert').last().slideDown(300);
+                
+                // 자동 제거
+                const timeout = type === 'error' ? 8000 : 5000;
+                setTimeout(function() {
+                    $('#message-container .alert').first().slideUp(300, function() {
+                        $(this).remove();
+                    });
+                }, timeout);
+            }
+
+            /**
+             * 이미지 로딩 실패 처리
+             */
+            function handleImageError(img) {
+                console.warn('이미지 로드 실패:', img.src);
+                
+                // 기본 이미지로 대체
+                const defaultImageSvg = 'data:image/svg+xml;base64,' + btoa(`
+                    <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="200" height="200" fill="#f5f5f5"/>
+                        <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" 
+                              font-family="arial" font-size="24px" fill="#999">📷</text>
+                        <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" 
+                              font-family="arial" font-size="14px" fill="#999">이미지 없음</text>
+                    </svg>
+                `);
+                
+                $(img).attr('src', defaultImageSvg);
+                $(img).css('opacity', '1');
+            }
+
+            /**
+             * 모달 외부 클릭 시 닫기
+             */
+            $(document).on('click', '.vote-modal', function(e) {
+                if (e.target === this) {
+                    cancelVote();
+                }
+            });
+
+            /**
+             * 키보드 이벤트 처리
+             */
+            $(document).on('keydown', function(e) {
+                if ($('#vote-modal').is(':visible')) {
+                    if (e.key === 'Enter') {
+                        confirmVote();
+                    } else if (e.key === 'Escape') {
+                        cancelVote();
+                    }
+                }
+            });
+
+            // 전역 함수 등록 (HTML onclick에서 접근 가능하도록)
+            window.startVoting = startVoting;
+            window.selectPicture = selectPicture;
+            window.confirmVote = confirmVote;
+            window.cancelVote = cancelVote;
+            window.handleImageError = handleImageError;
+
+            console.log('🚀 투표 시스템 JavaScript 로드 완료');
+        </script>
     </th:block>
 </body>
 </html>
