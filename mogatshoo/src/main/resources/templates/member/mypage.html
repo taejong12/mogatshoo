@@ -9,6 +9,7 @@
 	<div layout:fragment="content">
 		<div class="container">
 			<div class="d-flex gap-5">
+			<div class="main-box">
 				<div class="member-info-container">
 					<h1 class="main-title">회원정보</h1>
 					<div class="info-scroll-container">
@@ -81,7 +82,7 @@
 					<h1 class="main-title">탈모분석결과</h1>
 					<div class="info-scroll-container">
 						<div>
-							내 이미지 <img th:src="@{${picture.hairPicture}}" class="w-100">
+							내 이미지 <img th:src="@{${picture.hairPicture}}" class="w-100" style="height: 300px;">
 						</div>
 						<div>
 							<div id="hairMsg"></div>
@@ -89,6 +90,7 @@
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 		<script type="text/javascript">
 			let hairStage = "[[${stage.hairStage}]]".trim();

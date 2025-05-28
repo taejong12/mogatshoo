@@ -5,15 +5,19 @@ layout:decorate="~{fragments/layout}"
 th:with="layoutTitle='mogatshoo'">
 
 <head>
-<!-- 페이지별 CSS 추가 -->
-<th:block layout:fragment="additionalStyles">
 <style>
 /* 기본 스타일 */
+@font-face {
+	font-family: 'dalmoori';
+	src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Press Start 2P', cursive;
+  font-family: 'dalmoori', sans-serif;
   background-color: #008080;
   overflow-x: hidden;
 }
@@ -55,7 +59,6 @@ body, html {
   overflow: auto;
 }
 </style>
-</th:block>
 </head>
 
 <body>

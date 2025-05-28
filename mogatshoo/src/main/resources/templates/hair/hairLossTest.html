@@ -19,71 +19,89 @@
 	<div class="main-container" layout:fragment="content">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-9">
+				<div class="col-12">
+					<!-- 메인 패널 -->
 					<div class="retro-panel">
-						<h1 class="retro-title">탈모 테스트</h1>
+						<h1 class="retro-title">🖥️ 탈모 진단 시스템 v1.0</h1>
 
 						<form method="post" enctype="multipart/form-data" id="boardForm" class="row">
-							<div class="form-group col-md-6 mb-3">
-								<label for="idInput" class="form-label"
-									style="color: var(--accent-color); font-size: 1.2rem;">닉네임</label>
-								<input type="text" id="idInput"
-									th:value="${member.memberNickName}" class="retro-input" readonly>
+							<!-- 사용자 정보 섹션 -->
+							<div class="col-md-6 mb-3">
+								<label for="idInput" class="form-label">👤 사용자명:</label>
+								<input type="text" id="idInput" th:value="${member.memberNickName}" 
+									   class="retro-input" readonly>
 								<input type="hidden" name="id" th:value="${member.memberId}">
 							</div>
 
-							<div class="form-group col-md-12 mb-3">
-								<label for="imageInput" class="form-label"
-									style="color: var(--accent-color); font-size: 1.2rem;">이미지 업로드</label>
-								<input type="file" id="imageInput" name="files" accept="image/*"
-									onchange="previewImage()" class="retro-input">
-								<div id="image-preview-container">
-									<img id="image-preview" style="display:none;">
+							<!-- 상태 표시 -->
+							<div class="col-md-6 mb-3">
+								<label class="form-label">💾 시스템 상태:</label>
+								<div id="system-status" class="retro-input" style="background-color: #c0c0c0; color: #000;">
+									준비 완료
 								</div>
 							</div>
 
-							<div class="form-group col-md-12 text-center mb-3">
-								<button type="button" id="analyzeButton" style="display:none;" onclick="analyzeImage()"
-									class="retro-button">탈모 단계 분석하기</button>
+							<!-- 파일 선택 섹션 -->
+							<div class="col-12 mb-3">
+								<label for="imageInput" class="form-label">📁 분석할 이미지 선택:</label>
+								<input type="file" id="imageInput" name="files" accept="image/*"
+									   onchange="previewImage()" class="retro-input">
+								<small style="color: #808080; font-size: 10px;">
+									※ 지원 형식: JPG, PNG, GIF (최대 5MB)
+								</small>
 							</div>
 
-							<!-- 숨겨진 필드: 예측 결과 JSON 데이터를 서버로 전송 -->
+							<!-- 이미지 미리보기 -->
+							<div class="col-12 mb-3">
+								<div id="image-preview-container">
+									<img id="image-preview" style="display:none;" alt="미리보기">
+									<div id="preview-placeholder" style="color: #808080; font-size: 11px;">
+										📷 이미지를 선택하면 여기에 미리보기가 표시됩니다
+									</div>
+								</div>
+							</div>
+
+							<!-- 분석 버튼 -->
+							<div class="col-12 text-center mb-3">
+								<button type="button" id="analyzeButton" style="display:none;" 
+										onclick="analyzeImage()" class="retro-button">
+									🔍 분석 시작
+								</button>
+							</div>
+
+							<!-- 숨겨진 필드 -->
 							<input type="hidden" id="predictionJson" name="predictionData" value="">
 
-							<!-- 분석 완료 후 표시될 제출 버튼 -->
-							<div class="form-group col-md-12 text-center mb-3">
-								<button type="button" id="submitButton" style="display:none;" class="retro-button"
-									onclick="saveResult()">결과 저장하기</button>
+							<!-- 결과 저장 버튼 -->
+							<div class="col-12 text-center mb-3">
+								<button type="button" id="submitButton" style="display:none;" 
+										class="retro-button" onclick="saveResult()">
+									💾 결과 저장
+								</button>
 							</div>
 						</form>
 					</div>
 
+					<!-- 분석 결과 패널 -->
 					<div id="prediction-container" class="retro-result" style="display:none;">
-						<h4 class="retro-title" style="color: var(--primary-color); font-size: 1.4rem;">탈모 분석 결과</h4>
-						<div id="label-container"></div>
-						<div id="debug-info">
-							<p>모델 상태: <span id="model-status">로드 중...</span></p>
+						<h4 class="retro-title">📊 분석 결과</h4>
+						<div id="label-container">
+							<div style="text-align: center; padding: 10px;">
+								<div style="font-weight: bold; margin-bottom: 5px;">
+									🧬 AI 분석 결과
+								</div>
+								<div id="prediction-results">
+									<!-- 결과가 여기에 표시됩니다 -->
+								</div>
+							</div>
 						</div>
-					</div>
-
-					<!-- 결과 저장 후 표시되는, 성공/실패 알림 모달 -->
-					<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel"
-						aria-hidden="true">
-						<div class="modal-dialog modal-dialog-centered">
-							<div class="modal-content"
-								style="background-color: rgba(43, 43, 216, 0.9); border: 3px solid var(--accent-color);">
-								<div class="modal-header" style="border-bottom: 2px solid var(--accent-color);">
-									<h5 class="modal-title" id="resultModalLabel" style="color: var(--accent-color);">저장
-										결과</h5>
-									<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-										aria-label="Close"></button>
-								</div>
-								<div class="modal-body" style="color: white; font-family: 'DOSGothic', sans-serif;">
-									<p id="modalMessage"></p>
-								</div>
-								<div class="modal-footer" style="border-top: 2px solid var(--accent-color);">
-									<button type="button" class="retro-button" data-bs-dismiss="modal">확인</button>
-								</div>
+						<div id="debug-info">
+							<div style="display: flex; justify-content: space-between; align-items: center;">
+								<span>📡 모델 상태: <span id="model-status">대기중...</span></span>
+								<span>⏱️ <span id="analysis-time">00:00</span></span>
+							</div>
+							<div class="progress-bar" id="progress-bar" style="display: none; margin-top: 5px;">
+								<div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
 							</div>
 						</div>
 					</div>
@@ -91,17 +109,55 @@
 			</div>
 		</div>
 
-		<script type="text/javascript">
-			// 모델 파일의 경로 - Spring Boot의 정적 리소스 경로에 맞게 수정
-			const MODEL_PATH = "/my_model/";
-			let model, maxPredictions;
-			let modelLoaded = false;
-		</script>
+		<!-- 윈도우 95 스타일 모달 -->
+		<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="resultModalLabel">💾 시스템 메시지</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+								style="background: #c0c0c0; border: 2px outset #c0c0c0; width: 16px; height: 16px; 
+								       font-size: 10px; color: #000; font-weight: bold;">×</button>
+					</div>
+					<div class="modal-body">
+						<div style="display: flex; align-items: center; margin-bottom: 10px;">
+							<div style="width: 32px; height: 32px; background: #c0c0c0; border: 2px inset #c0c0c0; 
+										display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+								<span style="font-size: 20px;">ℹ️</span>
+							</div>
+							<div>
+								<p id="modalMessage" style="margin: 0; line-height: 1.4;"></p>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="retro-button" data-bs-dismiss="modal">확인</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 로딩 다이얼로그 -->
+		<div id="loadingDialog" style="display: none; position: fixed; top: 50%; left: 50%; 
+											transform: translate(-50%, -50%); z-index: 9999;
+											background: #c0c0c0; border: 2px outset #c0c0c0; 
+											padding: 20px; box-shadow: 4px 4px 8px rgba(0,0,0,0.5);">
+			<div style="text-align: center;">
+				<div style="margin-bottom: 10px; font-weight: bold;">
+					⏳ 분석 중...
+				</div>
+				<div class="progress-bar" style="width: 200px; margin: 10px auto;">
+					<div class="progress-fill" id="loading-progress" style="width: 0%;"></div>
+				</div>
+				<div style="font-size: 10px; color: #808080; margin-top: 5px;">
+					AI 모델이 이미지를 분석하고 있습니다...
+				</div>
+			</div>
+		</div>
+
+	
+		
 		<script th:src="@{/js/hairLossTest/ev_hairLossTestModel.js}"></script>
-		<script th:src="@{/js/hairLossTest/fu_hairLossTestAnalyzeImage.js}"></script>
-		<script th:src="@{/js/hairLossTest/fu_hairLossTestImage.js}"></script>
-		<script th:src="@{/js/hairLossTest/fu_hairLossTestSaveImage.js}"></script>
-		<script th:src="@{/js/hairLossTest/fu_hairLossTestValidateForm.js}"></script>
 	</div>
 </body>
 

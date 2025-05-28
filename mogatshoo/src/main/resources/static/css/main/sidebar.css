@@ -144,22 +144,7 @@
 	width: 100%;
 }
 
-/* 로그아웃 버튼 */
-.logout-form {
-	width: 60px;
-	display: flex;
-	justify-content: center;
-}
 
-.logout-btn {
-	background: none;
-	border: none;
-	color: white;
-	font-family: 'dalmoori', sans-serif;
-	font-size: 11px;
-	cursor: pointer;
-	padding: 0;
-}
 
 /* 토글 버튼 (기본적으로 숨김) */
 .sidebar-toggle {
@@ -210,6 +195,7 @@
 .content-with-sidebar {
 	margin-left: 120px;
 	transition: margin-left 0.3s ease;
+	background-color: rgb(192, 192, 192);
 }
 
 /* 기본 윈도우95 창 스타일 */
@@ -230,7 +216,7 @@
 /* iframe 스타일 (기존 CSS 파일에 추가) */
 #windowContentFrame {
 	width: 1300px;
-		height: 580px;
+	height: 580px;
     border: none;
     overflow: auto;
     background-color: white;
@@ -248,7 +234,6 @@
 
 .win95-title-text {
 	font-weight: bold;
-	font-family: 'MS Sans Serif', Arial, sans-serif;
 	font-size: 11px;
 }
 
