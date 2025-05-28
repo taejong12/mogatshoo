@@ -144,22 +144,7 @@
 	width: 100%;
 }
 
-/* 로그아웃 버튼 */
-.logout-form {
-	width: 60px;
-	display: flex;
-	justify-content: center;
-}
 
-.logout-btn {
-	background: none;
-	border: none;
-	color: white;
-	font-family: 'dalmoori', sans-serif;
-	font-size: 11px;
-	cursor: pointer;
-	padding: 0;
-}
 
 /* 토글 버튼 (기본적으로 숨김) */
 .sidebar-toggle {

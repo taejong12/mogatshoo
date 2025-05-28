@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 현재 위치를 가져온 다음 지도 초기화
 function getLocationAndInitMap() {
 	if (navigator.geolocation) {
-		// 위치 가져오기 타임아웃 설정 (15초)
+		// 위치 가져오기 타임아웃 설정 (15초) 시간 줄이지 마셈 좀 오래걸려요
 		var locationTimeout = setTimeout(function() {
 			console.log("위치 정보 가져오기 타임아웃");
 			showMessage("위치 정보를 가져오는데 시간이 오래 걸립니다. 기본 위치 없이 시작합니다.", "error");
@@ -297,7 +297,7 @@ function setupRadiusChangeEvent() {
 	}
 }
 
-// 여러 키워드로 순차적으로 검색 시도
+// 여러 키워드로 순차적으로 검색 시도 (수정된 버전)
 function searchMultipleKeywords(keywords, index = 0) {
 	// 이전 타임아웃 제거
 	if (searchTimeout) {
@@ -325,12 +325,7 @@ function searchMultipleKeywords(keywords, index = 0) {
 	}
 
 	var position = currentPosition || map.getCenter();
-	var radius = 5000; // 기본 반경 5km
-
-	// radius 요소가 있으면 해당 값 사용
-	if (document.getElementById('radius')) {
-		radius = parseInt(document.getElementById('radius').value, 10);
-	}
+	var radius = parseInt(document.getElementById('radius').value, 10);
 
 	console.log("검색 키워드:", keywords[index], "반경:", radius, "미터");
 
@@ -339,22 +334,16 @@ function searchMultipleKeywords(keywords, index = 0) {
 		console.log("검색 결과 상태:", status, "결과 수:", result ? result.length : 0);
 
 		if (status === kakao.maps.services.Status.OK && result && result.length > 0) {
-			// 거리에 따라 결과 필터링
-			var filteredResults = result.filter(function(place) {
-				var placePosition = new kakao.maps.LatLng(place.y, place.x);
-				var distance = getDistance(position, placePosition);
-				return distance <= radius;
-			});
+			// ✅ 중복 필터링 제거 - 카카오맵 API가 이미 반경으로 필터링했으므로 바로 사용
+			console.log("API 필터링된 결과 수:", result.length);
 
-			console.log("필터링된 결과 수:", filteredResults.length);
-
-			if (filteredResults.length > 0) {
+			if (result.length > 0) {
 				// 타임아웃 제거
 				clearTimeout(searchTimeout);
-				// 결과가 있으면 표시
-				displaySearchResults(filteredResults);
+				// 결과가 있으면 표시 (추가 필터링 없이 바로 사용)
+				displaySearchResults(result);
 				if (isFirstSearch) {
-					showMessage(filteredResults.length + "개의 " + keywords[index] + " 검색 결과를 찾았습니다.", "info");
+					showMessage(result.length + "개의 " + keywords[index] + " 검색 결과를 찾았습니다.", "info");
 					isFirstSearch = false;
 				}
 				showLoading(false);
@@ -374,158 +363,159 @@ function searchMultipleKeywords(keywords, index = 0) {
 	});
 }
 
+
 // 검색 결과 표시 함수 수정
 // 검색 결과 표시 함수 수정 (마커 클릭 이벤트 개선)
 function displaySearchResults(places) {
-  try {
-    var bounds = new kakao.maps.LatLngBounds();
-    var hospitalList = document.getElementById('hospital-list');
-    
-    if (hospitalList) {
-      hospitalList.innerHTML = '';
-    } else {
-      console.warn("hospital-list 요소를 찾을 수 없습니다");
-    }
+	try {
+		var bounds = new kakao.maps.LatLngBounds();
+		var hospitalList = document.getElementById('hospital-list');
 
-    console.log("표시할 장소 수:", places.length);
+		if (hospitalList) {
+			hospitalList.innerHTML = '';
+		} else {
+			console.warn("hospital-list 요소를 찾을 수 없습니다");
+		}
 
-    // 현재 위치가 있으면 경계에 추가 (지도 범위 조정에 포함)
-    if (currentPosition) {
-      bounds.extend(currentPosition);
-    }
+		console.log("표시할 장소 수:", places.length);
 
-    // 검색 결과용 별도 배열 생성 (현재 위치 마커와 분리)
-    var searchResultMarkers = [];
-    var searchResultInfowindows = [];
+		// 현재 위치가 있으면 경계에 추가 (지도 범위 조정에 포함)
+		if (currentPosition) {
+			bounds.extend(currentPosition);
+		}
 
-    for (var i = 0; i < places.length; i++) {
-      var place = places[i];
-      try {
-        // 마커 생성
-        var marker = new kakao.maps.Marker({
-          map: map,
-          position: new kakao.maps.LatLng(place.y, place.x)
-        });
+		// 검색 결과용 별도 배열 생성 (현재 위치 마커와 분리)
+		var searchResultMarkers = [];
+		var searchResultInfowindows = [];
 
-        // 전체 마커 배열에 추가 (기존 코드 호환성 유지)
-        markers.push(marker);
-        
-        // 검색 결과 전용 배열에도 추가
-        searchResultMarkers.push(marker);
+		for (var i = 0; i < places.length; i++) {
+			var place = places[i];
+			try {
+				// 마커 생성
+				var marker = new kakao.maps.Marker({
+					map: map,
+					position: new kakao.maps.LatLng(place.y, place.x)
+				});
 
-        var placePosition = new kakao.maps.LatLng(place.y, place.x);
-        bounds.extend(placePosition);
+				// 전체 마커 배열에 추가 (기존 코드 호환성 유지)
+				markers.push(marker);
 
-        // 현재 위치와의 거리 계산
-        var distanceText = '';
-        if (currentPosition) {
-          var distance = getDistance(currentPosition, placePosition);
-          if (distance >= 1000) {
-            distanceText = '<div style="font-size:12px;color:#FF3333;margin-bottom:5px;">내 위치에서 ' + (distance/1000).toFixed(1) + 'km</div>';
-          } else {
-            distanceText = '<div style="font-size:12px;color:#FF3333;margin-bottom:5px;">내 위치에서 ' + Math.round(distance) + 'm</div>';
-          }
-        }
+				// 검색 결과 전용 배열에도 추가
+				searchResultMarkers.push(marker);
 
-        // 인포윈도우 내용 생성
-        var infoContent = '<div style="padding:15px;min-width:250px;max-width:300px;">' +
-          '<h5 style="margin-top:0;margin-bottom:8px;color:#333;font-weight:bold;">' + place.place_name + '</h5>' +
-          distanceText +
-          '<div style="font-size:14px;color:#666;margin-bottom:5px;line-height:1.4;">' + place.address_name + '</div>';
+				var placePosition = new kakao.maps.LatLng(place.y, place.x);
+				bounds.extend(placePosition);
 
-        if (place.phone) {
-          infoContent += '<div style="font-size:14px;color:#666;margin-bottom:8px;">📞 ' + place.phone + '</div>';
-        }
+				// 현재 위치와의 거리 계산
+				var distanceText = '';
+				if (currentPosition) {
+					var distance = getDistance(currentPosition, placePosition);
+					if (distance >= 1000) {
+						distanceText = '<div style="font-size:12px;color:#FF3333;margin-bottom:5px;">내 위치에서 ' + (distance / 1000).toFixed(1) + 'km</div>';
+					} else {
+						distanceText = '<div style="font-size:12px;color:#FF3333;margin-bottom:5px;">내 위치에서 ' + Math.round(distance) + 'm</div>';
+					}
+				}
 
-        // 카테고리 정보가 있으면 표시
-        if (place.category_name) {
-          infoContent += '<div style="font-size:12px;color:#999;margin-bottom:8px;">🏷️ ' + place.category_name + '</div>';
-        }
+				// 인포윈도우 내용 생성
+				var infoContent = '<div style="padding:15px;min-width:250px;max-width:300px;">' +
+					'<h5 style="margin-top:0;margin-bottom:8px;color:#333;font-weight:bold;">' + place.place_name + '</h5>' +
+					distanceText +
+					'<div style="font-size:14px;color:#666;margin-bottom:5px;line-height:1.4;">' + place.address_name + '</div>';
 
-        if (place.place_url) {
-          infoContent += '<div style="margin-top:10px;"><a href="' + place.place_url + '" target="_blank" style="color:#007bff;font-size:13px;text-decoration:none;padding:5px 10px;border:1px solid #007bff;border-radius:4px;display:inline-block;">📍 상세 정보 보기</a></div>';
-        }
+				if (place.phone) {
+					infoContent += '<div style="font-size:14px;color:#666;margin-bottom:8px;">📞 ' + place.phone + '</div>';
+				}
 
-        infoContent += '</div>';
+				// 카테고리 정보가 있으면 표시
+				if (place.category_name) {
+					infoContent += '<div style="font-size:12px;color:#999;margin-bottom:8px;">🏷️ ' + place.category_name + '</div>';
+				}
 
-        var infowindow = new kakao.maps.InfoWindow({
-          content: infoContent,
-          removable: true // X 버튼으로 닫을 수 있게 함
-        });
+				if (place.place_url) {
+					infoContent += '<div style="margin-top:10px;"><a href="' + place.place_url + '" target="_blank" style="color:#007bff;font-size:13px;text-decoration:none;padding:5px 10px;border:1px solid #007bff;border-radius:4px;display:inline-block;">📍 상세 정보 보기</a></div>';
+				}
 
-        // 전체 인포윈도우 배열에 추가 (기존 코드 호환성 유지)
-        infowindows.push(infowindow);
-        
-        // 검색 결과 전용 배열에도 추가
-        searchResultInfowindows.push(infowindow);
+				infoContent += '</div>';
 
-        // 마커 클릭 이벤트 - 클로저를 사용하여 각 마커마다 올바른 인포윈도우 연결
-        (function(currentMarker, currentInfowindow, placeName) {
-          kakao.maps.event.addListener(currentMarker, 'click', function() {
-            console.log("마커 클릭됨:", placeName);
-            closeAllInfowindows();
-            currentInfowindow.open(map, currentMarker);
-            console.log("인포윈도우 열림:", placeName);
-          });
-        })(marker, infowindow, place.place_name);
+				var infowindow = new kakao.maps.InfoWindow({
+					content: infoContent,
+					removable: true // X 버튼으로 닫을 수 있게 함
+				});
 
-        // 병원 목록이 있을 경우만 항목 추가
-        if (hospitalList) {
-          // 병원 목록 아이템 생성
-          var item = document.createElement('div');
-          item.className = 'hospital-item';
-          
-          // 거리 텍스트 (HTML 태그 제거)
-          var distanceTextPlain = '';
-          if (currentPosition) {
-            var distance = getDistance(currentPosition, placePosition);
-            if (distance >= 1000) {
-              distanceTextPlain = ' (약 ' + (distance/1000).toFixed(1) + 'km)';
-            } else {
-              distanceTextPlain = ' (약 ' + Math.round(distance) + 'm)';
-            }
-          }
-          
-          item.innerHTML = 
-            '<div class="hospital-name">' + place.place_name + 
-              '<span class="hospital-distance">' + distanceTextPlain + '</span>' +
-            '</div>' +
-            '<div class="hospital-address">' + place.address_name + '</div>' +
-            '<div class="hospital-phone">' + (place.phone || '전화번호 없음') + '</div>';
+				// 전체 인포윈도우 배열에 추가 (기존 코드 호환성 유지)
+				infowindows.push(infowindow);
 
-          // 목록 항목 클릭 시 해당 마커로 이동 (검색 결과 배열 인덱스 사용)
-          (function(position, resultIndex) {
-            item.onclick = function() {
-              console.log("리스트 항목 클릭 - 인덱스:", resultIndex, "장소:", place.place_name);
-              map.setCenter(position);
-              map.setLevel(3);
+				// 검색 결과 전용 배열에도 추가
+				searchResultInfowindows.push(infowindow);
 
-              // 인포윈도우 열기 (검색 결과 배열 사용)
-              closeAllInfowindows();
-              if (searchResultInfowindows[resultIndex] && searchResultMarkers[resultIndex]) {
-                searchResultInfowindows[resultIndex].open(map, searchResultMarkers[resultIndex]);
-                console.log("인포윈도우 열림 - 인덱스:", resultIndex);
-              } else {
-                console.error("인포윈도우 또는 마커를 찾을 수 없음 - 인덱스:", resultIndex);
-              }
-            };
-          })(placePosition, i); // i는 검색 결과에서의 정확한 인덱스
+				// 마커 클릭 이벤트 - 클로저를 사용하여 각 마커마다 올바른 인포윈도우 연결
+				(function(currentMarker, currentInfowindow, placeName) {
+					kakao.maps.event.addListener(currentMarker, 'click', function() {
+						console.log("마커 클릭됨:", placeName);
+						closeAllInfowindows();
+						currentInfowindow.open(map, currentMarker);
+						console.log("인포윈도우 열림:", placeName);
+					});
+				})(marker, infowindow, place.place_name);
 
-          hospitalList.appendChild(item);
-        }
-      } catch (e) {
-        console.error("장소 표시 오류:", e, "장소:", place);
-      }
-    }
+				// 병원 목록이 있을 경우만 항목 추가
+				if (hospitalList) {
+					// 병원 목록 아이템 생성
+					var item = document.createElement('div');
+					item.className = 'hospital-item';
 
-    // 검색된 장소 위치를 기준으로 지도 범위 재설정
-    if (places.length > 0) {
-      map.setBounds(bounds);
-    }
-  } catch (e) {
-    console.error("검색 결과 표시 오류:", e);
-    showMessage("검색 결과를 표시하는 중 오류가 발생했습니다.", "error");
-  }
+					// 거리 텍스트 (HTML 태그 제거)
+					var distanceTextPlain = '';
+					if (currentPosition) {
+						var distance = getDistance(currentPosition, placePosition);
+						if (distance >= 1000) {
+							distanceTextPlain = ' (약 ' + (distance / 1000).toFixed(1) + 'km)';
+						} else {
+							distanceTextPlain = ' (약 ' + Math.round(distance) + 'm)';
+						}
+					}
+
+					item.innerHTML =
+						'<div class="hospital-name">' + place.place_name +
+						'<span class="hospital-distance">' + distanceTextPlain + '</span>' +
+						'</div>' +
+						'<div class="hospital-address">' + place.address_name + '</div>' +
+						'<div class="hospital-phone">' + (place.phone || '전화번호 없음') + '</div>';
+
+					// 목록 항목 클릭 시 해당 마커로 이동 (검색 결과 배열 인덱스 사용)
+					(function(position, resultIndex) {
+						item.onclick = function() {
+							console.log("리스트 항목 클릭 - 인덱스:", resultIndex, "장소:", place.place_name);
+							map.setCenter(position);
+							map.setLevel(3);
+
+							// 인포윈도우 열기 (검색 결과 배열 사용)
+							closeAllInfowindows();
+							if (searchResultInfowindows[resultIndex] && searchResultMarkers[resultIndex]) {
+								searchResultInfowindows[resultIndex].open(map, searchResultMarkers[resultIndex]);
+								console.log("인포윈도우 열림 - 인덱스:", resultIndex);
+							} else {
+								console.error("인포윈도우 또는 마커를 찾을 수 없음 - 인덱스:", resultIndex);
+							}
+						};
+					})(placePosition, i); // i는 검색 결과에서의 정확한 인덱스
+
+					hospitalList.appendChild(item);
+				}
+			} catch (e) {
+				console.error("장소 표시 오류:", e, "장소:", place);
+			}
+		}
+
+		// 검색된 장소 위치를 기준으로 지도 범위 재설정
+		if (places.length > 0) {
+			map.setBounds(bounds);
+		}
+	} catch (e) {
+		console.error("검색 결과 표시 오류:", e);
+		showMessage("검색 결과를 표시하는 중 오류가 발생했습니다.", "error");
+	}
 }
 
 
@@ -688,7 +678,7 @@ function searchByKeyword() {
 	});
 }
 
-// 카테고리로 검색
+// 카테고리로 검색 (수정된 버전)
 function searchByCategory(category) {
 	showLoading(true);
 	try {
@@ -746,20 +736,11 @@ function searchByCategory(category) {
 		clearTimeout(searchTimeout);
 
 		if (status === kakao.maps.services.Status.OK && result.length > 0) {
-			// 위치 기반 필터링
-			var filteredResults = result.filter(function(place) {
-				var placePosition = new kakao.maps.LatLng(place.y, place.x);
-				var distance = getDistance(position, placePosition);
-				return distance <= radius;
-			});
-
-			if (filteredResults.length > 0) {
-				displaySearchResults(filteredResults);
-				showMessage(filteredResults.length + "개의 " + category + " 검색 결과를 찾았습니다.", "info");
-			} else {
-				showMessage("주변에 " + category + "을(를) 찾을 수 없습니다. 검색 반경을 넓혀보세요.", "error");
-				document.getElementById('hospital-list').innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
-			}
+			// ✅ 중복 필터링 제거 - 카카오맵 API가 이미 반경으로 필터링했으므로 바로 사용
+			console.log("API 필터링된 결과 수:", result.length);
+			
+			displaySearchResults(result);
+			showMessage(result.length + "개의 " + category + " 검색 결과를 찾았습니다.", "info");
 		} else {
 			showMessage("검색 결과가 없습니다. 다른 키워드로 검색해보세요.", "error");
 			document.getElementById('hospital-list').innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
