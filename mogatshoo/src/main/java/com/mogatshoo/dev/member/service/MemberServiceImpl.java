@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 
 import com.mogatshoo.dev.config.security.handler.MemberUserDetails;
 import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
+import com.mogatshoo.dev.member.entity.AgreeEntity;
 import com.mogatshoo.dev.member.entity.MemberEntity;
+import com.mogatshoo.dev.member.repository.AgreeRepository;
 import com.mogatshoo.dev.member.repository.MemberRepository;
 import com.mogatshoo.dev.point.service.PointService;
 
@@ -36,6 +38,9 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 	private MemberRepository memberRepository;
 	
 	@Autowired
+	private AgreeRepository agreeRepository;
+	
+	@Autowired
     private PasswordEncoder passwordEncoder;
 	
 	@Autowired
@@ -45,7 +50,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 	private HairLossTestService hairLossTestService;
 	
 	@Override
-	public void memberSave(MemberEntity memberEntity) {
+	public void memberSave(MemberEntity memberEntity, AgreeEntity agreeEntity) {
 		if(memberEntity.getProviderId() == null) {			
 			memberEntity.setMemberPwd(passwordEncoder.encode(memberEntity.getMemberPwd()));
 		} else {
@@ -53,8 +58,13 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 		}
 		memberRepository.save(memberEntity);
 		
-		// 포인트 컬럼 생성
 		String memberId = memberEntity.getMemberId();
+		
+		// 이용약관 동의 저장
+		agreeEntity.setMemberId(memberId);
+		agreeRepository.save(agreeEntity);
+		
+		// 포인트 생성 (회원가입)
 		pointService.memberJoinPointSave(memberId);
 	}
 
@@ -68,6 +78,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 		return memberRepository.findByMemberEmail(memberEmail).isEmpty();
 	}
 
+	// 스프링 시큐리티 사용자 정보 (일반 로그인)
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
@@ -77,6 +88,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
         return new MemberUserDetails(memberEntity);
 	}
 
+	// SNS 사용자 정보 (SNS 로그인)
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		

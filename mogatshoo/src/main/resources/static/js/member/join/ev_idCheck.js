@@ -1,22 +1,23 @@
 // 아이디 중복 체크 이벤트
 document.addEventListener('DOMContentLoaded', function() {
+	
 	let memberId = document.getElementById('memberId');
-
+	let idWarnMsg = document.getElementById('idWarnMsg');
+	
 	if(memberId){
+		
+		idWarnMsg.textContent = '';
+		
 		memberId.addEventListener('input', function() {
 			
 			let memberIdVal = memberId.value.trim();
-			let idWarn = document.querySelector('.warn-div.id');
 			
 			if (memberIdVal === '' || memberIdVal.length == 0) {
-				idCheckMessage.textContent = '';
-				idCheckMessage.style.display = 'none';
+				idWarnMsg.textContent = '';
+				idWarnMsg.style.color = "rgb(255, 107, 107)";
+				idWarnMsg.style.display = 'none';
 				idCheck = false;
 				return;
-			}
-			
-			if(idWarn){
-				idWarn.closest('.input-wrap').remove();
 			}
 			
 			fetch("/member/idCheck", {
@@ -26,23 +27,27 @@ document.addEventListener('DOMContentLoaded', function() {
 				},
 				body: JSON.stringify({ memberId: memberIdVal })
 			})
-			.then(response => response.json())
+			.then(response => {
+				if (!response.ok) {
+			        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+			    }
+				return response.json();
+			})
 			.then(data => {
 				if (data.memberIdCheck) {
-					idCheckMessage.textContent = "사용 가능한 아이디입니다.";
-					idCheckMessage.style.color = "green";
-					idCheckMessage.style.display = 'inline';
+					idWarnMsg.textContent = "사용 가능한 아이디입니다.";
+					idWarnMsg.style.color = "rgb(129, 199, 132)";
+					idWarnMsg.style.display = 'inline';
 					idCheck = true;
 				} else {
-					idCheckMessage.textContent = "이미 사용 중인 아이디입니다.";
-					idCheckMessage.style.color = "red";
-					idCheckMessage.style.display = 'inline';
+					idWarnMsg.textContent = "이미 사용 중인 아이디입니다.";
+					idWarnMsg.style.color = "rgb(255, 107, 107)";
+					idWarnMsg.style.display = 'inline';
 					idCheck = false;
 				}
 			})
 			.catch(error => {
 				console.error("아이디 중복 확인 오류:", error);
-				window.location.href = "/error/globalError";
 			});
 		});
 	}

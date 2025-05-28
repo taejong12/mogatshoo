@@ -13,10 +13,8 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: 'dalmoori', sans-serif;
-	overflow-x: hidden;
-	/* 가로 스크롤 방지 */
-	overflow-y: auto;
-	/* 세로 스크롤 허용 */
+	overflow-x: hidden;/* 가로 스크롤 방지 */
+	overflow-y: auto;/* 세로 스크롤 허용 */
 }
 
 
@@ -30,8 +28,7 @@ body::before {
 	bottom: 0;
 	width: 100%;
 	height: 100%;
-	background-color: rgb(192, 192, 192);
-	/* 윈도우 95/98 테마 색상 */
+	background-color: #008080;
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;

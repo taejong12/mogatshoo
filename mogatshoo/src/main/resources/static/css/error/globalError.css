@@ -13,12 +13,12 @@
 	border: 10px solid #c0c0c0;
 } 
 
-.completeBtn {
+.errorBtn {
 	background-color: #c0c0c0;
 	border: 10px solid #c0c0c0;
 } 
 
-.completeBtn:hover{
+.errorBtn:hover{
 	background-color: rgb(102, 102, 102);
 	border-color: rgb(153, 153, 153);
 }

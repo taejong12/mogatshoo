@@ -1,43 +1,29 @@
 function fu_telValidation(){
 	
 	let telInput = document.getElementById('memberTel');
+	let telWarnMsg = document.getElementById('telWarnMsg');
+	
 	
 	if(telInput){
+		telWarnMsg.textContent = '';
+		
 		let telVal = telInput.value.trim();
-		
-		let spaceDiv = document.createElement('div');
-		spaceDiv.style.width = "110px";
-	    
-		let telWarp = telInput.closest('.input-wrap');
-		
-		let inputWrap = document.createElement('div');
-		inputWrap.className = 'input-wrap d-flex align-items-center';
-		
-		let telWarnDiv = document.createElement('div');
-		telWarnDiv.className = 'warn-div tel';
 		
 		if(telVal == '' || telVal.length == 0){
 			telInput.focus();
-			
-			telWarnDiv.textContent = '전화번호를 입력해주세요.';
-			
-			inputWrap.appendChild(spaceDiv);
-			inputWrap.appendChild(telWarnDiv);
-			
-			telWarp.insertAdjacentElement('afterend', inputWrap);
+			telWarnMsg.textContent = '전화번호를 입력해주세요.';
+			telWarnMsg.style.color = "rgb(255, 107, 107)";
+			telWarnMsg.style.display = 'inline';
 			return false;
 		} else{
 			
-			let telInput = document.getElementById('memberTel');
 			let telPattern = /^01[016789]\d{7,8}$/;
 	
-		    if (!telPattern.test(telInput.value.trim())) {
+		    if (!telPattern.test(telVal)) {
 		        telInput.focus();
-				telWarnDiv.textContent = '전화번호를 올바르게 입력하세요.';
-				inputWrap.appendChild(spaceDiv);
-				inputWrap.appendChild(telWarnDiv);
-				
-				telWarp.insertAdjacentElement('afterend', inputWrap);
+				telWarnMsg.textContent = '전화번호를 올바르게 입력하세요.';
+				telWarnMsg.style.color = "rgb(255, 107, 107)";
+				telWarnMsg.style.display = 'inline';
 		        return false;
 		    }
 			return true;

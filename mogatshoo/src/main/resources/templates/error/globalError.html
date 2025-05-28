@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-layout:decorate="~{fragments/layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='error'">
+	<link rel="stylesheet" th:href="@{/css/error/globalError.css}">
 </head>
 <body>
-	<div layout:fragment="content" class="d-flex justify-content-center align-items-center flex-column">
-	    <h1>⚠ 서버 오류가 발생했습니다</h1>
-	    <p>죄송합니다. 문제가 발생했습니다. 잠시 후 다시 시도해주세요.</p>
+	<div layout:fragment="content">
+		<div class="background-border-color p-4 rounded-3">
+			<h1 class="title text-center mb-5">⚠ 서버오류가 발생했습니다</h1>
+			<p class="text-color text-center fs-6 mb-5">
+				죄송합니다. 문제가 발생했습니다. <br> 잠시 후 다시 시도해주세요.
+			</p>
+			<div class="d-flex align-items-center justify-content-center">
+				<a class="btn w-100 errorBtn" th:href="@{/}">메인</a>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

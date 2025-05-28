@@ -1,10 +1,11 @@
 package com.mogatshoo.dev.member.service;
 
+import com.mogatshoo.dev.member.entity.AgreeEntity;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 
 public interface MemberService {
 
-	void memberSave(MemberEntity memberEntity);
+	void memberSave(MemberEntity memberEntity, AgreeEntity agreeEntity);
 
 	Boolean memberIdCheck(String memberId);
 

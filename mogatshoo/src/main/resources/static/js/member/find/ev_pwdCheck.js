@@ -13,19 +13,23 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		if (pwdCheckVal === '' || pwdCheckVal.length == 0) {
 			pwdCheckWarnMsg.textContent = '';
-			pwdEqual = false;
+			pwdCheckWarnMsg.style.color = 'rgb(255, 107, 107)';
+			pwdCheckWarnMsg.style.display = 'none';
+			pwdCheckEqual = false;
 			return;
 		}
 		
 		if(pwdVal != '' || !(pwdVal.length == 0)){
 			if (pwdVal === pwdCheckVal) {
 				pwdCheckWarnMsg.textContent = '비밀번호가 일치합니다.';
-				pwdCheckWarnMsg.style.color = 'green';
-				pwdEqual = true;
+				pwdCheckWarnMsg.style.color = 'rgb(129, 199, 132)';
+				pwdCheckWarnMsg.style.display = 'inline';
+				pwdCheckEqual = true;
 			} else {
 				pwdCheckWarnMsg.textContent = '비밀번호가 일치하지 않습니다.';
-				pwdCheckWarnMsg.style.color = 'red';
-				pwdEqual = false;
+				pwdCheckWarnMsg.style.color = 'rgb(255, 107, 107)';
+				pwdCheckWarnMsg.style.display = 'inline';
+				pwdCheckEqual = false;
 			}
 		}
 	});

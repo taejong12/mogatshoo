@@ -3,39 +3,41 @@ document.addEventListener('DOMContentLoaded', function() {
 	let memberPwd = document.getElementById('memberPwd');
 	let memberPwdCheck = document.getElementById('memberPwdCheck');
 	let pwdWarnMsg = document.getElementById('pwdWarnMsg');
+	let pwdCheckWarnMsg = document.getElementById('pwdCheckWarnMsg');
 	let eight = document.querySelector('.eight');
 	let special = document.querySelector('.special');
 	let continu = document.querySelector('.continu');
-	let pwdCheckWarnMsg = document.getElementById('pwdCheckWarnMsg');
 
-	if(pwdWarnMsg.textContent != '' || !(pwdWarnMsg.textContent.length == 0)){
-		pwdWarnMsg.textContent = '';
-	}
+	pwdWarnMsg.textContent = '';
+	pwdCheckWarnMsg.textContent = '';
 	
 	memberPwd.addEventListener('input', function() {
 		let pwdVal = memberPwd.value.trim();
 		let pwdCheckVal = memberPwdCheck.value.trim();
 		
 		if (pwdVal === '' || pwdVal.length == 0) {
-			eight.style.color = 'gray';
-			special.style.color = 'gray';
-			continu.style.color = 'gray';
-			memberPwdCheck.value = '';
-			pwdWarnMsg.textContent = '';
+			eight.style.color = 'rgb(255, 255, 255)';
+			special.style.color = 'rgb(255, 255, 255)';
+			continu.style.color = 'rgb(255, 255, 255)';
+			pwdCheckWarnMsg.textContent = '';
+			pwdCheckWarnMsg.style.color = 'rgb(255, 107, 107)';
+			pwdCheckWarnMsg.style.display = 'none';
 			pwdInputCheck = false;
-			pwdEqual = false;
+			pwdCheckEqual = false;
 			return;
 		}
 		
 		if(pwdCheckVal != '' || !(pwdCheckVal.length == 0)){
-			if(pwdVal != pwdCheckVal){
-				pwdCheckWarnMsg.textContent = '비밀번호가 일치하지 않습니다.';
-				pwdCheckWarnMsg.style.color = 'red';
-				pwdEqual = false;
-			} else {
+			if (pwdVal === pwdCheckVal) {
 				pwdCheckWarnMsg.textContent = '비밀번호가 일치합니다.';
-				pwdCheckWarnMsg.style.color = 'green';
-				pwdEqual = true;
+				pwdCheckWarnMsg.style.color = 'rgb(129, 199, 132)';
+				pwdCheckWarnMsg.style.display = 'inline';
+				pwdCheckEqual = true;
+			} else {
+				pwdCheckWarnMsg.textContent = '비밀번호가 일치하지 않습니다.';
+				pwdCheckWarnMsg.style.color = 'rgb(255, 107, 107)';
+				pwdCheckWarnMsg.style.display = 'inline';
+				pwdCheckEqual = false;
 			}
 		}
 		
@@ -63,10 +65,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		let isContinuValid = !isSequential;
 		
 		// 스타일 업데이트
-		eight.style.color = isEight ? 'green' : 'red';
-		special.style.color = isSpecialValid ? 'green' : 'red';
-		continu.style.color = isContinuValid ? 'green' : 'red';
-		
+		eight.style.color = isEight ? 'rgb(129, 199, 132)' : 'rgb(255, 107, 107)';
+		special.style.color = isSpecialValid ? 'rgb(129, 199, 132)' : 'rgb(255, 107, 107)';
+		continu.style.color = isContinuValid ? 'rgb(129, 199, 132)' : 'rgb(255, 107, 107)';
+
 		// 모든 조건 만족하면 true
 		pwdInputCheck = isEight && isSpecialValid && isContinuValid;
 		

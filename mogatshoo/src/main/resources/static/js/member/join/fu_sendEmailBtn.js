@@ -1,35 +1,12 @@
 function fu_sendEmailBtn(){
 	
-	let memberEmailVal = document.getElementById('memberEmail').value.trim();
-	let emailAuth = document.getElementById('emailAuth');
-	let timerWarn = document.querySelector('.warn-div.timer');
-	let authWarn = document.querySelector('.warn-div.auth');
-	let emailAuthWarn = document.querySelector('.warn-div.emailAuth');
-	let sendEmailBtn = document.querySelector('.email-btn');
-	let emailWarn = document.querySelector('.warn-div.email');
-	
+	let memberEmail = document.getElementById('memberEmail');
+	let memberEmailVal = memberEmail.value.trim();
+	let sendEmailBtn = document.getElementById('sendEmailBtn');
+	let emailWarnMsg = document.getElementById('emailWarnMsg');
+				
+	emailWarnMsg.textContent = '';
 	sendEmailBtn.disabled = true;
-	sendEmailBtn.style.backgroundColor = '#f0f0f0';
-	
-	if(emailAuth){
-		emailAuth.closest('.input-wrap').remove();
-	}
-	
-	if(timerWarn){
-		timerWarn.closest('.input-wrap').remove();
-	}
-	
-	if(authWarn){
-		authWarn.closest('.input-wrap').remove();
-	}
-	
-	if(emailAuthWarn){
-		emailAuthWarn.closest('.input-wrap').remove();
-	}
-	
-	if(emailWarn){
-		emailWarn.closest('.input-wrap').remove();
-	}
 	
 	fetch("/member/sendEmail", {
 		method: "POST",
@@ -38,102 +15,64 @@ function fu_sendEmailBtn(){
 		},
 		body: JSON.stringify({ memberEmail: memberEmailVal })
 	})
-	.then(response => response.json())
+	.then(response => {
+		if (!response.ok) {
+	        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+	    }
+		return response.json();
+	})
 	.then(data => {
 		
-		let newDiv = document.createElement('div');
+	    let emailAuthWrap = document.getElementById('emailAuthWrap');
 		
-		let authWrap = document.createElement('div');
-		authWrap.className = 'input-wrap d-flex align-items-center';
-
-	    let authLabel = document.createElement('label');
-		authLabel.style.width = "110px";
-	    authLabel.setAttribute('for', 'emailAuth');
-	    authLabel.textContent = '인증번호';
-
-	    let authInput = document.createElement('input');
-	    authInput.type = 'text';
-	    authInput.id = 'emailAuth';
-	    authInput.name = 'emailAuth';
-	    authInput.placeholder = '인증번호 입력';
-	    authInput.className = 'flex-fill';
-
-	    let authBtn = document.createElement('button');
-	    authBtn.className = 'email-auth-btn text-nowrap bg-white border border-black px-3 py-2 d-flex align-items-center justify-content-center';
-	    authBtn.style.width = "130px";
-	    authBtn.style.marginLeft  = '20px';
-	    authBtn.type = 'button';
-	    authBtn.textContent = '확인';
+		emailAuthWrap.style.display = "flex";
+		
+		let emailWarnMsg = document.getElementById('emailWarnMsg');
+			
+		emailWarnMsg.textContent = '이메일을 발송하였습니다.';
+		emailWarnMsg.style.color = 'rgb(129, 199, 132)';
+		emailWarnMsg.style.display = 'inline';
+		
+	    let timer = document.getElementById('timer');
+	    let emailAuth = document.getElementById('emailAuth');
+	    let emailAuthBtn = document.getElementById('emailAuthBtn');
+		let authWarnMsg = document.getElementById('authWarnMsg');
 	    
-	    let timerWrap = document.createElement('div');
-	    timerWrap.className = 'input-wrap d-flex align-items-center';
-
-	    let spaceDiv = document.createElement('div');
-		spaceDiv.style.width = "110px";
-	    
-	    let timerDiv = document.createElement('div');
-	    timerDiv.className = 'warn-div timer';
-	    
+		emailAuth.value = '';
+		timer.textContent = '';
+		authWarnMsg.textContent = '';
+		clearInterval(timerInterval);
+		
 		// 3분 (180초)
 	    let timeLeft = 180;
-	    
+		
 		let startTimer = () => {
-			let timerInterval = setInterval(() => {
+			timerInterval = setInterval(() => {
 				let minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
 				let seconds = String(timeLeft % 60).padStart(2, '0');
-				timerDiv.textContent = minutes+":"+seconds;
+				timer.textContent = minutes+":"+seconds;
+				timer.style.display = 'inline';
 
 				if (timeLeft <= 0) {
 					clearInterval(timerInterval);
-					timerDiv.textContent = "인증시간초과";
-					authInput.value = '';
-					authInput.disabled = true;
-					authBtn.disabled = true;
+					timer.textContent = "인증시간초과";
+					emailAuth.value = '';
+					emailAuth.disabled = true;
+					emailAuthBtn.disabled = true;
 				}
 
 				timeLeft--;
 			}, 1000);
 		};
 		
-		// 인증번호 입력 시
-		authInput.addEventListener('input', function() {
-			
-			let emailAuthWarn = document.querySelector('.warn-div.emailAuth');
-			
-			if(emailAuthWarn){
-				emailAuthWarn.closest('.input-wrap').remove();
-			}
-		});
-		
-		authBtn.addEventListener("click", function () {
-			let emailAuthInput = document.getElementById("emailAuth");
-			let memberEmail = document.getElementById("memberEmail");
-			let emailAuthCode = emailAuthInput.value.trim();
-			let authWarn = document.querySelector('.warn-div.auth');
-			
-			if(authWarn){
-				authWarn.closest('.input-wrap').remove();
-			}
+		emailAuthBtn.addEventListener("click", function () {
+			let emailAuthCode = emailAuth.value.trim();
 			
 	        if (!emailAuthCode) {
-	        	emailAuthInput.focus();
-	        	
-	        	let spaceDiv = document.createElement('div');
-	    		spaceDiv.style.width = "110px";
-	    		
-	    		let authInputWarp = emailAuthInput.closest('.input-wrap');
-	    		
-	    		let emailAuthWrap = document.createElement('div');
-	    		emailAuthWrap.className = 'input-wrap d-flex align-items-center';
-	    		
-	    		let authWarnDiv = document.createElement('div');
-	    		authWarnDiv.className = 'warn-div auth';
-	    		authWarnDiv.textContent = '인증번호를 입력해주세요.';
-	    		
-	    		emailAuthWrap.appendChild(spaceDiv);
-	    		emailAuthWrap.appendChild(authWarnDiv);
-	    		
-	    		authInputWarp.insertAdjacentElement('afterend', emailAuthWrap);
+	        	emailAuth.focus();
+	    		authWarnMsg.textContent = '인증번호를 입력해주세요.';
+	    		authWarnMsg.style.color = "rgb(255, 107, 107)";
+				authWarnMsg.style.display = 'inline';
 	            return;
 	        }
 
@@ -144,79 +83,37 @@ function fu_sendEmailBtn(){
 				},
 				body: JSON.stringify({ emailAuthCode : emailAuthCode })
 	        })
-	        .then(response => response.json())
+			.then(response => {
+				if (!response.ok) {
+			        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+			    }
+				return response.json();
+			})
 	        .then(data => {
 	        	
-	        	let existingWarnDiv = document.querySelector('.warn-div.auth');
-                if (existingWarnDiv) {
-                	existingWarnDiv.closest('.input-wrap').remove();
-                }
-	        	
-	        	let spaceDiv = document.createElement('div');
-	            spaceDiv.style.width = "110px";
-	            
-	            let authInputWarp = emailAuthInput.closest('.input-wrap');
-	            
-	            let emailAuthWrap = document.createElement('div');
-	            emailAuthWrap.className = 'input-wrap d-flex align-items-center';
-	            
-	            let authWarnDiv = document.createElement('div');
-	            authWarnDiv.className = 'warn-div auth';
-	            authWarnDiv.textContent = data.msg;
-
+	            authWarnMsg.textContent = data.msg;
+				authWarnMsg.style.display = 'inline';
+				
 	            if (data.result === true) {
-	            	emailAuthInput.readOnly  = true;
-	            	emailAuthInput.style.backgroundColor = '#f0f0f0';
-	            	authBtn.disabled = true;
-	            	authBtn.style.backgroundColor = '#f0f0f0';
+	            	emailAuth.readOnly  = true;
+	            	emailAuthBtn.disabled = true;
 	            	memberEmail.readOnly  = true;
-	            	memberEmail.style.backgroundColor = '#f0f0f0';
-	            	
 	            	emailAuthCheck = true;
-	            	
-	                timerDiv.remove();
-	                
-	                authWarnDiv.style.color = "green";
-	                
-		    		emailAuthWrap.appendChild(spaceDiv);
-		    		emailAuthWrap.appendChild(authWarnDiv);
-		    		
-		    		authInputWarp.insertAdjacentElement('afterend', emailAuthWrap);
-	                
+	                timer.remove();
+	                authWarnMsg.style.color = "rgb(129, 199, 132)";
 	            } else {
-	            	emailAuthInput.focus();
-	            	
-		    		emailAuthWrap.appendChild(spaceDiv);
-		    		emailAuthWrap.appendChild(authWarnDiv);
-		    		
-		    		authInputWarp.insertAdjacentElement('afterend', emailAuthWrap);
+	            	emailAuth.focus();
+					authWarnMsg.style.color = "rgb(255, 107, 107)";
 	            } 
 	        })
 	        .catch(error => {
 	            console.error("메일 인증 오류 발생:", error);
-				window.location.href = "/error/globalError";
 	        });
 	    });
 	    
-	    authWrap.appendChild(authLabel);
-	    authWrap.appendChild(authInput);
-	    authWrap.appendChild(authBtn);
-	    
-		timerWrap.appendChild(spaceDiv);
-		timerWrap.appendChild(timerDiv);
-
-	    let emailInputWrap = document.querySelector('.email-input-wrap'); 
-	    
-	    if (emailInputWrap) {
-			newDiv.appendChild(authWrap);
-			newDiv.appendChild(timerWrap);
-			
-			emailInputWrap.insertAdjacentElement('afterend', newDiv);
-	    	startTimer();
-	    }
+    	startTimer();
 	})
 	.catch(error => {
 		console.error("이메일 인증번호 전송 오류:", error);
-		window.location.href = "/error/globalError";
 	});
 }
