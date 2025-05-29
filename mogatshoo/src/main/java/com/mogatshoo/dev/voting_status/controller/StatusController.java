@@ -25,6 +25,7 @@ public class StatusController {
             // 모든 질문별 투표 통계 조회
             List<StatusEntity> votingStatistics = statusService.getAllVotingStatistics();
             
+            //테스트
             // 데이터가 없는 경우 처리
             if (votingStatistics.isEmpty()) {
                 model.addAttribute("noData", true);
