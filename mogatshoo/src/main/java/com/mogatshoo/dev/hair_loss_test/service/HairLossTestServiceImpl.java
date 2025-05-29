@@ -50,19 +50,29 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 	@Transactional
 	public String saveHairLossTestResult(String memberId, MultipartFile imageFile, String hairStage)
 	        throws IOException {
+		
+		// 사진 새로 등록될때 기존 사진이 있는지 확인하고 삭제
+		PictureEntity existingPicture = pictureRepository.findById(memberId).orElse(null);
+		if (existingPicture != null) {
+			System.out.println("[사진 재등록] 기존 사진 삭제 시작: " + memberId);
+			// 기존 로컬 파일과 구글 드라이브 파일 삭제
+			deleteImageFile(existingPicture.getHairPicture(), existingPicture.getGoogleDriveFileId());
+			System.out.println("[사진 재등록] 기존 사진 삭제 완료");
+		}
 	    
-	    // 1. 로컬 + 구글 드라이브 동시 저장 (saveImageFile에서 처리)
+	    //로컬 + 구글 드라이브 동시 저장 (saveImageFile에서 처리)
 	    Map<String, String> uploadResult = saveImageFile(imageFile, memberId);
 	    String fileName = uploadResult.get("localPath");
 	    String googleDriveUrl = uploadResult.get("googleDriveUrl");
 	    String googleDriveFileId = uploadResult.get("googleDriveFileId");
 
-	    // 2. PictureEntity 저장 로직
+	    //PictureEntity 저장 로직
 	    PictureEntity pictureEntity = pictureRepository.findById(memberId).orElse(new PictureEntity());
 	    pictureEntity.setMemberId(memberId);
 	    pictureEntity.setHairPicture(fileName);
 	    pictureEntity.setGoogleDriveUrl(googleDriveUrl);
 	    pictureEntity.setGoogleDriveFileId(googleDriveFileId);
+	    
 
 	    if (pictureEntity.getCreatedAt() == null) {
 	        pictureEntity.setCreatedAt(LocalDateTime.now());
@@ -202,26 +212,73 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 
 	@Override
 	public void memberDelete(String memberId) {
-		
-		PictureEntity pictureEntity = pictureRepository.findById(memberId).orElse(null);
-		
-		if(pictureEntity != null) {
-			deleteImageFile(pictureEntity.getHairPicture());
-		}
-		
-		stageRepository.deleteById(memberId);
-		pictureRepository.deleteById(memberId);
+	    
+	    PictureEntity pictureEntity = pictureRepository.findById(memberId).orElse(null);
+	    
+	    if(pictureEntity != null) {
+	        // 로컬 파일과 구글 드라이브 파일 모두 삭제
+	        deleteImageFile(pictureEntity.getHairPicture(), pictureEntity.getGoogleDriveFileId());
+	    }
+	    
+	    // 구글 드라이브 사용자 폴더 전체 삭제
+	    try {
+	        if (googleDriveService.isEnabled()) {
+	            googleDriveService.deleteUserFolder(memberId);
+	            System.out.println("[회원 탈퇴] 구글 드라이브 사용자 폴더 삭제 완료: " + memberId);
+	        }
+	    } catch (Exception e) {
+	        System.err.println("[회원 탈퇴] 구글 드라이브 사용자 폴더 삭제 실패: " + e.getMessage());
+	    }
+	    
+	    // 로컬 사용자 폴더 삭제
+	    deleteLocalUserFolder(memberId);
+	    
+	    // 데이터베이스에서 삭제
+	    stageRepository.deleteById(memberId);
+	    pictureRepository.deleteById(memberId);
+	}
+
+	// 회원탈퇴시 이미지 삭제
+	public void deleteImageFile(String imagePath, String googleDriveFileId) {
+	    try {
+	        if (imagePath != null && !imagePath.isEmpty()) {
+	            String fullPath = uploadDir + imagePath.replace("/uploads", "");
+	            Path filePath = Paths.get(fullPath);
+	            Files.delete(filePath);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    // 구글 드라이브 파일 삭제용
+	    try {
+	        if (googleDriveFileId != null && !googleDriveFileId.isEmpty() && googleDriveService.isEnabled()) {
+	            googleDriveService.deleteFile(googleDriveFileId);
+	        }
+	    } catch (Exception e) {
+	        System.err.println("구글 드라이브 파일 삭제 실패: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 	
-	// 회원탈퇴시 이미지 삭제
-	public void deleteImageFile(String imagePath) {
-		try {
-			String fullPath = uploadDir + imagePath.replace("/uploads", "");
-			Path filePath = Paths.get(fullPath);
-			Files.delete(filePath);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void deleteLocalUserFolder(String memberId) {
+	    try {
+	        Path userFolderPath = Paths.get(uploadDir, memberId);
+	        if (Files.exists(userFolderPath)) {
+	            // 폴더 안의 모든 파일과 폴더 삭제
+	            Files.walk(userFolderPath)
+	                 .sorted((a, b) -> b.compareTo(a)) // 파일 먼저, 폴더 나중에 삭제
+	                 .forEach(path -> {
+	                     try {
+	                         Files.delete(path);
+	                     } catch (Exception e) {
+	                         System.err.println("파일 삭제 실패: " + path + " - " + e.getMessage());
+	                     }
+	                 });
+	            System.out.println("[회원 탈퇴] 로컬 사용자 폴더 삭제 완료: " + userFolderPath);
+	        }
+	    } catch (Exception e) {
+	        System.err.println("[회원 탈퇴] 로컬 사용자 폴더 삭제 실패: " + e.getMessage());
+	    }
 	}
 }

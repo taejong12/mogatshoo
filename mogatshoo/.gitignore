@@ -5,10 +5,6 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# 구글 드라이브 인증 파일
-src/main/resources/static/googleDrive/
-*.json
-
 ### STS ###
 .metadata
 .apt_generated

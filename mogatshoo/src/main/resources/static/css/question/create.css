@@ -12,7 +12,93 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--gray-200);
 }
+/* 기존 CSS 아래에 추가 */
 
+/* 옵션 행 스타일 */
+.option-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: var(--border-radius, 8px);
+    border: 1px solid var(--gray-200, #e5e7eb);
+}
+
+.option-row .form-group {
+    flex: 1;
+}
+
+/* 이미지 미리보기 컨테이너 */
+.image-preview {
+    width: 150px;
+    height: 120px;
+    border: 2px solid var(--gray-300, #d1d5db);
+    border-radius: var(--border-radius, 8px);
+    overflow: hidden;
+    background-color: var(--gray-50, #f9fafb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 이미지 스타일 */
+.option-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 이미지 없음 플레이스홀더 */
+.no-image-placeholder {
+    width: 150px;
+    height: 120px;
+    border: 2px dashed var(--gray-300, #d1d5db);
+    border-radius: var(--border-radius, 8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gray-50, #f9fafb);
+}
+
+.no-image-placeholder span {
+    color: var(--gray-500, #6b7280);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+/* 회원 정보 표시 */
+.member-info {
+    font-size: 0.75rem;
+    color: var(--gray-600, #4b5563);
+    margin-top: 0.25rem;
+}
+
+.member-nickname {
+    font-weight: 600;
+    color: var(--primary-color, #3b82f6);
+}
+
+.member-id {
+    color: var(--gray-500, #6b7280);
+    margin-left: 0.5rem;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .option-row {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .image-preview,
+    .no-image-placeholder {
+        width: 100%;
+        height: 200px;
+    }
+}
 .serial-number-display {
     display: flex;
     align-items: center;
