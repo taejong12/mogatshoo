@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -31,13 +32,20 @@ public class HairCheckInterceptor implements HandlerInterceptor {
         }
 
         String memberId = auth.getName();
+        
+        // 권한에 따라 리다이렉트
+        for (GrantedAuthority authority : auth.getAuthorities()) {
+            String role = authority.getAuthority();
 
-        // 탈모 진단 여부 확인
-        boolean hairCheck = hairLossTestService.loginMemberHairCheck(memberId);
+             if (role.equals("ROLE_USER")) {
+            	// 탈모 진단 여부 확인
+                boolean hairCheck = hairLossTestService.loginMemberHairCheck(memberId);
 
-        if (!hairCheck && !request.getRequestURI().startsWith("/hairLossTest")) {
-            response.sendRedirect("/hairLossTest/testHair");
-            return false;
+                if (!hairCheck && !request.getRequestURI().startsWith("/hairLossTest")) {
+                    response.sendRedirect("/hairLossTest/testHair");
+                    return false;
+                }
+            }
         }
 
         return true;

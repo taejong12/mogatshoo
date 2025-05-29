@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+	<div th:fragment="header">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+			<div class="container-fluid">
+				<a class="navbar-brand" th:href="@{/admin/main}">
+					<img src="/img/logo/mogatshooLogo.PNG" alt="Logo" class="img-fluid" style="max-height: 40px;">
+				</a>
+			    
+			    <!-- 데스크탑용 메뉴 -->
+			    <div class="d-none d-lg-flex ms-3">
+			    	<a class="nav-link" th:href="@{/admin/point/item/list}">상품목록</a>
+        		</div>
+        		
+        		<!-- 우측 유저 정보 (PC) -->
+        		<div class="d-none d-lg-flex ms-auto align-items-center gap-3">
+        			<span th:text="${#authentication.principal.nickName} + ' 님'"></span>
+        			<form th:action="@{/logout}" method="post">
+        				<button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+        			</form>
+        		</div>
+			    
+			    <!-- 모바일 토글 버튼 -->
+			    <button class="navbar-toggler d-lg-none ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+					<span class="navbar-toggler-icon"></span>
+			    </button>
+			</div>
+		</nav>
+		
+		<!-- 모바일 오프캔버스 메뉴 -->
+		<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+			<div class="offcanvas-header">
+				<h5 class="offcanvas-title" id="mobileMenuLabel">메뉴</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+			</div>
+
+			<hr>
+
+			<div class="offcanvas-body d-flex flex-column">
+				<!-- 메뉴 목록 -->
+				<a class="nav-link mb-3" th:href="@{/admin/point/item/list}">상품목록</a>
+			
+				<hr>
+				
+				<!-- 사용자 정보와 로그아웃 -->
+				<div class="mt-auto d-flex justify-content-end align-items-center gap-3">
+					<span th:text="${#authentication.principal.nickName} + ' 님'" class="d-flex align-items-center"></span>
+					<form th:action="@{/logout}" method="post">
+						<button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
