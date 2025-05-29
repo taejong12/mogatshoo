@@ -3,38 +3,29 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf?.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
     <title>투표하기 - Mogatshoo</title>
     
-    <!-- 페이지별 추가 스타일 -->
     <th:block layout:fragment="additionalStyles">
-        <!-- 폰트어썸 -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        
-        <!-- 투표 페이지 전용 CSS -->
         <link rel="stylesheet" th:href="@{/css/voting/voting.css}">
     </th:block>
 </head>
 <body>
-    <!-- 레이아웃 컨텐츠 영역 -->
     <div layout:fragment="content">
-        <div class="container vote-container">
-            
-            <!-- 알림 메시지 표시 -->
-            <div th:if="${voteSuccess}" class="alert alert-success">
-                <i class="fas fa-check-circle"></i>
-                <span th:text="${message}">투표가 성공적으로 처리되었습니다.</span>
-            </div>
-            
-            <div th:if="${voteWarning}" class="alert alert-warning">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span th:text="${message}">경고 메시지입니다.</span>
-            </div>
-            
-            <div th:if="${voteError}" class="alert alert-error">
-                <i class="fas fa-times-circle"></i>
-                <span th:text="${errorMessage}">오류가 발생했습니다.</span>
-            </div>
-            
+        <!-- 시작 섹션 (질문이 없는 경우) -->
+        <div class="start-section" id="startSection" th:if="${question == null and (noMoreQuestions == null or noMoreQuestions == false)}">
+            <h1>🗳️ 투표 시스템</h1>
+            <p>다양한 질문에 대한 투표에 참여해보세요!</p>
+            <button class="start-btn" onclick="startVoting()">
+                투표 시작하기
+            </button>
+        </div>
+
+        <div class="vote-container">
             <!-- 투표 컨텐츠 영역 -->
             <div id="vote-content" th:if="${question != null and (noMoreQuestions == null or noMoreQuestions == false)}">
                 <div class="vote-header">
@@ -43,129 +34,87 @@
                 </div>
                 
                 <!-- 질문 내용 -->
-                <div class="question-container win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">질문</div>
-                    </div>
-                    <div class="win95-content">
-                        <h2 th:text="${question.question}" class="question-text">질문 텍스트</h2>
-                        <p class="question-serial" th:text="'질문 번호: ' + ${question.serialNumber}">질문 번호: Q00001</p>
-                    </div>
+                <div class="question-container">
+                    <h2 th:text="${question.question}" class="question-text">질문 텍스트</h2>
+                    <p class="question-serial" th:text="'질문 번호: ' + ${question.serialNumber}">질문 번호: Q00001</p>
                 </div>
                 
                 <!-- 투표 옵션 (사진) -->
                 <div class="options-container">
-                    <form id="vote-form" th:action="@{/voting/submit}" method="post">
-                        <!-- 숨겨진 입력 필드들 -->
-<input type="hidden" id="voted-id" name="votedId" value="">
-                        <input type="hidden" name="serialNumber" th:value="${question.serialNumber}">
-                        
-                        <div class="options-grid">
-                            <!-- 4개의 사진 옵션 -->
-                            <div th:each="picture, status : ${randomPictures}" class="option-item">
-                                <div class="picture-option win95-interactive" 
-                                     th:data-member-id="${picture.memberId}"
-                                     th:data-serial-number="${question.serialNumber}">
-                                    <div class="win95-pic-container">
-                                        <img th:src="@{${picture.hairPicture}}" 
-                                             th:alt="'투표 옵션 ' + ${status.index + 1}"
-                                             class="option-image"
-                                             th:data-member-id="${picture.memberId}"
-                                             onload="this.style.opacity='1';"
-                                             onerror="handleImageError(this);"
-                                             style="opacity: 0; transition: opacity 0.3s ease;">
-                                    </div>
-                                    <div class="option-text" th:text="${question.option1}" th:if="${status.index == 0}">옵션 1</div>
-                                    <div class="option-text" th:text="${question.option2}" th:if="${status.index == 1}">옵션 2</div>
-                                    <div class="option-text" th:text="${question.option3}" th:if="${status.index == 2}">옵션 3</div>
-                                    <div class="option-text" th:text="${question.option4}" th:if="${status.index == 3}">옵션 4</div>
+                    <div class="options-grid">
+                        <div th:each="picture, status : ${randomPictures}" class="option-item">
+                            <div class="picture-option" 
+                                 th:data-member-id="${picture.memberId}"
+                                 th:data-serial-number="${question.serialNumber}"
+                                 th:data-option-index="${status.index}"
+                                 onclick="selectPicture(this)">
+                                <div class="pic-container">
+                                    <img th:src="@{${picture.hairPicture}}" 
+                                         th:alt="'투표 옵션 ' + ${status.index + 1}"
+                                         class="option-image"
+                                         onload="this.style.opacity='1';"
+                                         onerror="handleImageError(this);"
+                                         style="opacity: 0; transition: opacity 0.3s ease;">
                                 </div>
+                                <div class="option-text" th:text="${question.option1}" th:if="${status.index == 0}">옵션 1</div>
+                                <div class="option-text" th:text="${question.option2}" th:if="${status.index == 1}">옵션 2</div>
+                                <div class="option-text" th:text="${question.option3}" th:if="${status.index == 2}">옵션 3</div>
+                                <div class="option-text" th:text="${question.option4}" th:if="${status.index == 3}">옵션 4</div>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                </div>
+
+                <!-- 네비게이션 버튼 -->
+                <div class="btn-group">
+                    <a href="/" class="btn btn-secondary">홈으로 가기</a>
                 </div>
             </div>
             
-            <!-- 투표 없음 메시지 또는 오류 메시지 -->
-            <div th:if="${question == null or noMoreQuestions == true or errorMessage != null}" class="vote-complete-container">
-                <div class="win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">안내</div>
+            <!-- 투표 완료 메시지 -->
+            <div th:if="${question == null or noMoreQuestions == true}" class="vote-complete-container">
+                <div class="complete-message">
+                    <div class="icon">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    <div class="win95-content">
-                        <div class="win95-icon">
-                            <i class="fas fa-info-circle" th:if="${errorMessage == null}"></i>
-                            <i class="fas fa-exclamation-circle" th:if="${errorMessage != null}"></i>
-                        </div>
-                        <div class="win95-message">
-                            <h3 th:if="${errorMessage == null}">투표 완료!</h3>
-                            <h3 th:if="${errorMessage != null}">오류 발생</h3>
-                            
-                            <p th:if="${message != null}" th:text="${message}">메시지</p>
-                            <p th:if="${errorMessage != null}" th:text="${errorMessage}">오류 메시지</p>
-                            <p th:if="${message == null and errorMessage == null}">모든 질문에 투표해 주셔서 감사합니다.</p>
-                        </div>
-                        <div class="win95-buttons">
-                            <a href="/" class="win95-button">홈으로 가기</a>
-                            <a href="/voting" class="win95-button" th:if="${errorMessage != null}">다시 시도</a>
-                        </div>
+                    <h3>투표 완료!</h3>
+                    <p th:if="${message != null}" th:text="${message}">모든 질문에 투표해 주셔서 감사합니다.</p>
+                    <p th:if="${message == null}">현재 투표할 질문이 없습니다.<br>새로운 질문이 등록될 때까지 기다려주세요.</p>
+                    <div class="btn-group">
+                        <a href="/" class="btn btn-primary">홈으로 가기</a>
+                        <button class="btn btn-secondary" onclick="window.location.reload()">새로고침</button>
                     </div>
                 </div>
             </div>
             
-            <!-- 팝업 윈도우 (투표 확인용) -->
-            <div id="win95-popup" class="win95-popup" style="display: none;">
-                <div class="win95-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">투표 확인</div>
-                        <div class="win95-close-btn" id="popup-close">✕</div>
-                    </div>
-                    <div class="win95-content">
-                        <div class="win95-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </div>
-                        <div class="win95-message">
-                            <p>이 선택지에 투표하시겠습니까?</p>
-                            <p id="selected-option-text"></p>
-                        </div>
-                        <div class="win95-buttons">
-                            <button id="confirm-vote" class="win95-button">예 (Y)</button>
-                            <button id="cancel-vote" class="win95-button">아니오 (N)</button>
-                        </div>
+            <!-- 투표 확인 모달 -->
+            <div id="vote-modal" class="vote-modal">
+                <div class="modal-content">
+                    <h3>투표 확인</h3>
+                    <img id="modal-picture" class="modal-picture" src="" alt="선택된 사진">
+                    <p id="vote-confirm-message">이 선택지에 투표하시겠습니까?</p>
+                    <div class="modal-buttons">
+                        <button class="btn btn-confirm" onclick="confirmVote()">확인</button>
+                        <button class="btn btn-cancel" onclick="cancelVote()">취소</button>
                     </div>
                 </div>
             </div>
             
             <!-- 로딩 오버레이 -->
-            <div id="loading-overlay" class="loading-overlay" style="display: none;">
-                <div class="win95-window loading-window">
-                    <div class="win95-titlebar">
-                        <div class="win95-title">처리 중...</div>
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="loading-content">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
                     </div>
-                    <div class="win95-content">
-                        <div class="loading-spinner">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </div>
-                        <p>잠시만 기다려주세요...</p>
-                    </div>
+                    <p>투표를 처리하는 중...</p>
                 </div>
             </div>
-            
-            <!-- 디버깅 정보 (개발 환경에서만 표시) -->
-            <div th:if="${@environment.acceptsProfiles('dev')}" class="debug-info">
-                <div>사용자: <span th:text="${member?.memberId}">Unknown</span></div>
-                <div>질문: <span th:text="${question?.serialNumber}">None</span></div>
-                <div>사진 수: <span th:text="${randomPictures != null ? #lists.size(randomPictures) : 0}">0</span></div>
-                <div th:if="${randomPictures != null}">
-                    <div th:each="pic, stat : ${randomPictures}">
-                        사진 <span th:text="${stat.index + 1}">1</span>: <span th:text="${pic.hairPicture}">경로</span>
-                    </div>
-                </div>
-            </div>
+
+            <!-- 메시지 컨테이너 -->
+            <div id="message-container"></div>
         </div>
     </div>
 
-    <!-- 페이지별 추가 스크립트 -->
     <th:block layout:fragment="additionalScripts">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:src="@{/js/voting/voting.js}"></script>

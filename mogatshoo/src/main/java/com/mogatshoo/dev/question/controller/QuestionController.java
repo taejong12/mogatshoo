@@ -128,40 +128,47 @@ public class QuestionController {
 	// 질문 저장
 	@PostMapping
 	public String createQuestion(@ModelAttribute QuestionEntity question,
-			@RequestParam(required = false) String imageReference1,
-			@RequestParam(required = false) String imageReference2,
-			@RequestParam(required = false) String imageReference3,
-			@RequestParam(required = false) String imageReference4) {
-		// isPublic 값이 없거나 유효하지 않은 경우, 기본값으로 'no' 설정
-		if (question.getIsPublic() == null
-				|| (!question.getIsPublic().equals("yes") && !question.getIsPublic().equals("no"))) {
-			question.setIsPublic("no");
-		}
+	                           @RequestParam(required = false) String imageReference1,
+	                           @RequestParam(required = false) String imageReference2,
+	                           @RequestParam(required = false) String imageReference3,
+	                           @RequestParam(required = false) String imageReference4) {
+	    
+	    // isPublic 기본값 설정
+	    if (question.getIsPublic() == null
+	        || (!question.getIsPublic().equals("yes") && !question.getIsPublic().equals("no"))) {
+	        question.setIsPublic("no");
+	    }
+	    
+	    System.out.println("=== 컨트롤러 디버깅 ===");
+	    System.out.println("imageReference1: " + imageReference1);
+	    System.out.println("imageReference2: " + imageReference2);
+	    System.out.println("imageReference3: " + imageReference3);
+	    System.out.println("imageReference4: " + imageReference4);
+	    
+	    // 이미지 파일 ID를 프록시 URL로 변환해서 저장
+	    if (imageReference1 != null && !imageReference1.isEmpty()) {
+	        question.setOption1("/proxy/image/" + imageReference1);
+	    }
+	    if (imageReference2 != null && !imageReference2.isEmpty()) {
+	        question.setOption2("/proxy/image/" + imageReference2);
+	    }
+	    if (imageReference3 != null && !imageReference3.isEmpty()) {
+	        question.setOption3("/proxy/image/" + imageReference3);
+	    }
+	    if (imageReference4 != null && !imageReference4.isEmpty()) {
+	        question.setOption4("/proxy/image/" + imageReference4);
+	    }
 
-		// 이미지 경로가 있는 경우 옵션에 이미지 경로를 저장 (닉네임 대신)
-		if (imageReference1 != null && !imageReference1.isEmpty()) {
-			question.setOption1(imageReference1);
-		}
-		if (imageReference2 != null && !imageReference2.isEmpty()) {
-			question.setOption2(imageReference2);
-		}
-		if (imageReference3 != null && !imageReference3.isEmpty()) {
-			question.setOption3(imageReference3);
-		}
-		if (imageReference4 != null && !imageReference4.isEmpty()) {
-			question.setOption4(imageReference4);
-		}
+	    System.out.println("저장될 질문: " + question);
+	    questionService.createQuestion(question);
 
-		System.out.println("저장될 질문: " + question);
-		questionService.createQuestion(question);
-
-		try {
-			String successMessage = URLEncoder.encode("새 질문이 성공적으로 생성되었습니다. (기본 상태: 비공개)",
-					StandardCharsets.UTF_8.toString());
-			return "redirect:/questions?status=success&message=" + successMessage;
-		} catch (Exception e) {
-			return "redirect:/questions";
-		}
+	    try {
+	        String successMessage = URLEncoder.encode("새 질문이 성공적으로 생성되었습니다. (기본 상태: 비공개)",
+	                StandardCharsets.UTF_8.toString());
+	        return "redirect:/questions?status=success&message=" + successMessage;
+	    } catch (Exception e) {
+	        return "redirect:/questions";
+	    }
 	}
 
 	// 질문 수정 폼 페이지 - 기존 detail.html 사용

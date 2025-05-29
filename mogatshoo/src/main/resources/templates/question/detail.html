@@ -36,16 +36,15 @@
                         <div class="group-title">공개 상태</div>
                         <div class="radio-group">
                             <div class="radio-item">
-                                <input type="radio" id="publicRadio" name="isPublicRadio" value="yes" 
+                                <input type="radio" id="publicRadio" name="isPublic" value="yes" 
                                        th:checked="${question.isPublic == 'yes'}">
                                 <label for="publicRadio">공개</label>
                             </div>
                             <div class="radio-item">
-                                <input type="radio" id="privateRadio" name="isPublicRadio" value="no" 
+                                <input type="radio" id="privateRadio" name="isPublic" value="no" 
                                        th:checked="${question.isPublic == 'no'}">
                                 <label for="privateRadio">비공개</label>
                             </div>
-                            <input type="hidden" th:field="*{isPublic}" id="isPublicInput" />
                         </div>
                         <div class="status-display">
                             현재 상태: <span id="currentStatus" th:text="${question.isPublic == 'yes'} ? '공개' : '비공개'">비공개</span>
