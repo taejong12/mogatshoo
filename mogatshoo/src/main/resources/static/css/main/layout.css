@@ -46,8 +46,6 @@ body::before {
 	/* 추가: 내부 요소의 위치 기준점 */
 }
 
-
-
 /* 컨텐츠 영역 (세로 스크롤 허용, 하단 패딩 조정) */
 .content-area {
 	flex: 1;
@@ -65,7 +63,6 @@ body::before {
 	/* 푸터 높이만큼 하단 패딩 추가 */
 	background-color: #008080;
 }
-
 
 .content-wrapper {
 	width: 100%;
@@ -102,14 +99,6 @@ body::before {
 	/* 상하 패딩 추가 */
 }
 
-/* 폼 스타일 (유지) */
-#idWarnMsg,
-#pwdWarnMsg {
-	color: red;
-	font-size: 0.8em;
-	padding: .375rem .75rem;
-}
-
 .container-fluid {
 	padding-right: 0 !important;
 	padding-left: 0 !important;
@@ -124,13 +113,6 @@ body::before {
 		padding: 0 1rem;
 		/* 모바일에서는 패딩 줄이기 */
 		gap: 0.5rem;
-	}
-
-
-	.content-wrapper>* {
-		width: 100%;
-		max-width: 500px;
-		/* 모바일에서는 내부 요소가 너무 넓지 않게 */
 	}
 
 	.footer {

@@ -13,7 +13,7 @@ public interface HairLossTestService {
 
 	String saveHairLossTestResult(String memberId, MultipartFile imageFile, String hairStage) throws IOException;
 
-	String saveImageFile(MultipartFile imageFile, String memberId) throws IOException;
+	public Map<String, String> saveImageFile(MultipartFile imageFile, String memberId) throws IOException;
 
 	public StageEntity getHairStageByMemberId(String memberId);
 

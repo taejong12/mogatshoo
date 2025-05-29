@@ -1,10 +1,13 @@
-/* Windows 95 스타일 병원 지도 CSS */
-
-/* 전체 컨테이너 스타일 - 윈도우 95 배경색 */
+@font-face {
+	font-family: 'dalmoori';
+	src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
 body {
     background-color: #c0c0c0;
-    font-family: 'MS Sans Serif', sans-serif;
-    font-size: 11px;
+	font-family: 'dalmoori', sans-serif;
+    font-size: 14px;
 }
 
 .container {
@@ -22,10 +25,13 @@ h1 {
 }
 
 h5 {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: bold;
     color: #000000;
     margin: 4px 0;
+}
+.mb-0 {
+	color: rgb(255, 255, 255);
 }
 
 /* 윈도우 95 스타일 카드 (윈도우 프레임) */
@@ -43,7 +49,7 @@ h5 {
 }
 
 .card-header {
-    background-color: #000080;
+    background-color: rgb(192, 192, 192);
     color: #ffffff;
     border: none;
     padding: 2px 8px;
@@ -68,7 +74,7 @@ h5 {
     border-radius: 0;
     color: #000000;
     font-size: 11px;
-    font-family: 'MS Sans Serif', sans-serif;
+    font-family: 'dalmoori', sans-serif;
     padding: 4px 12px;
     margin: 2px;
     cursor: pointer;
@@ -109,7 +115,7 @@ h5 {
     border: 2px inset #c0c0c0;
     border-radius: 0;
     color: #000000;
-    font-size: 11px;
+    font-size: 14px;
     font-family: 'MS Sans Serif', sans-serif;
     padding: 4px 6px;
     box-shadow: none;
@@ -127,8 +133,8 @@ h5 {
     border: 2px inset #c0c0c0;
     border-radius: 0;
     color: #000000;
-    font-size: 11px;
-    font-family: 'MS Sans Serif', sans-serif;
+    font-size: 14px;
+    font-family: 'dalmoori', sans-serif;
     padding: 4px 6px;
     box-shadow: none;
 }
@@ -154,7 +160,7 @@ h5 {
     cursor: pointer;
     background-color: #ffffff;
     color: #000000;
-    font-size: 11px;
+    font-size: 14px;
     margin: 0;
 }
 
@@ -170,13 +176,13 @@ h5 {
 .hospital-name {
     font-weight: bold;
     margin-bottom: 3px;
-    font-size: 11px;
+    font-size: 14px;
 }
 
 .hospital-address,
 .hospital-phone {
     color: inherit;
-    font-size: 10px;
+    font-size: 12px;
     margin-bottom: 2px;
 }
 
@@ -264,7 +270,7 @@ h5 {
 .category-buttons .btn {
     margin-right: 4px;
     margin-bottom: 4px;
-    font-size: 10px;
+    font-size: 12px;
     padding: 3px 8px;
 }
 
@@ -276,7 +282,7 @@ h5 {
     border: 2px inset #c0c0c0;
     border-radius: 0;
     color: #000000;
-    font-size: 11px;
+    font-size: 14px;
 }
 
 .error-message {
@@ -286,7 +292,7 @@ h5 {
     border: 2px inset #c0c0c0;
     border-radius: 0;
     color: #800000;
-    font-size: 11px;
+    font-size: 14px;
 }
 
 /* 텍스트 스타일 */

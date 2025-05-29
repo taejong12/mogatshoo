@@ -127,7 +127,12 @@ function fu_findByPwd(){
 							
 							let emailAuthCode = emailAuth.value.trim();
 							
-							authWarnMsg.textContent = '';
+							if (!emailAuthCode) {
+					        	emailAuth.focus();
+					    		authWarnMsg.textContent = '인증번호를 입력해주세요.';
+								authWarnMsg.style.display = 'block';
+					            return;
+					        }
 							
 							fetch("/member/emailAuthCodeConfirm", {
 					            method: "POST",
@@ -149,8 +154,16 @@ function fu_findByPwd(){
 									findPwdform.action= "/member/pwdUpdateForm";
 									findPwdform.submit();
 								} else {
-									authWarnMsg.textContent = '인증번호가 일치하지 않습니다.';
-									authWarnMsg.style.display = 'inline';
+									emailAuth.focus();
+									authWarnMsg.innerHTML = data.msg;
+									authWarnMsg.style.display = 'block';
+									
+									if(data.authTryCount >= 5){
+										timer.remove();
+										emailAuth.disabled = true;
+										emailAuthBtn.disabled = true;
+									}
+									
 								}
 							})
 							.catch(error => {

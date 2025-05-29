@@ -44,67 +44,54 @@ public class HairLossTestController {
 	}
 	
 	    
-	 /**
-	     * AJAX 요청을 처리하는 API 엔드포인트
-	     * 
-	     * @param id 회원 ID (닉네임)
-	     * @param file 업로드된 이미지 파일
-	     * @param predictionData 예측 결과 JSON 데이터
-	     * @return 저장 결과 및 필요한 데이터
-	     */
-	    @PostMapping("/api")
-	    public ResponseEntity<?> saveHairLossTestResult(
-	            @RequestParam("id") String id,
-	            @RequestParam("files") MultipartFile file,
-	            @RequestParam("predictionData") String predictionData) {
-	        
-	        Map<String, Object> response = new HashMap<>();
-	        
-	        try {
-	           
-	            
-	            // 파일 유효성 검사
-	            if (file == null || file.isEmpty()) {
-	                throw new IllegalArgumentException("이미지 파일은 필수입니다");
-	            }
-	            
-	            // predictionData 유효성 검사
-	            if (predictionData == null || predictionData.trim().isEmpty()) {
-	                throw new IllegalArgumentException("예측 데이터가 없습니다");
-	            }
-	            
-	            // 예측 데이터에서 최고 확률의 클래스 이름 추출
-	            String hairStage = extractHairStageFromPrediction(predictionData);
-	            
-	            // 서비스 호출하여 결과 저장
-	            String savedFileName = service.saveHairLossTestResult(id, file, hairStage);
-	            
-	            // 성공 응답 생성
-	            response.put("success", true);
-	            response.put("memberId", id);
-	            response.put("hairStage", hairStage);
-	            response.put("imagePath", savedFileName);
-	            response.put("message", "탈모 테스트 결과가 성공적으로 저장되었습니다.");
-	            
-	            return ResponseEntity.ok(response);
-	            
-	        } catch (IOException e) {
-	            response.put("success", false);
-	            response.put("error", "파일 저장 중 오류가 발생했습니다: " + e.getMessage());
-	            return ResponseEntity.badRequest().body(response);
-	            
-	        } catch (Exception e) {
-	            response.put("success", false);
-	            response.put("error", "처리 중 오류가 발생했습니다: " + e.getMessage());
-	            return ResponseEntity.badRequest().body(response);
+	 
+	@PostMapping("/api")
+	public ResponseEntity<?> saveHairLossTestResult(
+	        @RequestParam("id") String id,
+	        @RequestParam("files") MultipartFile file,
+	        @RequestParam("predictionData") String predictionData) {
+	    
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    try {
+	        // 파일 유효성 검사
+	        if (file == null || file.isEmpty()) {
+	            throw new IllegalArgumentException("이미지 파일은 필수입니다");
 	        }
+	        
+	        // predictionData 유효성 검사
+	        if (predictionData == null || predictionData.trim().isEmpty()) {
+	            throw new IllegalArgumentException("예측 데이터가 없습니다");
+	        }
+	        
+	        // 젤 높은 단계의 이름 추출하기
+	        String hairStage = extractHairStageFromPrediction(predictionData);
+	        
+	        // 서비스 호출하여 결과 저장
+	        String savedFileName = service.saveHairLossTestResult(id, file, hairStage);
+	        
+	        // 나머지 멘트는 스크립트에서 처리했어요
+	        response.put("success", true);
+	        response.put("memberId", id);
+	        response.put("hairStage", hairStage);
+	        response.put("imagePath", savedFileName);
+	        
+	        return ResponseEntity.ok(response);
+	        
+	    } catch (IOException e) {
+	        response.put("success", false);
+	        response.put("error", "파일 저장 중 오류가 발생했습니다: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	        
+	    } catch (Exception e) {
+	        response.put("success", false);
+	        response.put("error", "처리 중 오류가 발생했습니다: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
 	    }
+	}
 	    
 	    /**
 	     * 예측 데이터 JSON에서 탈모 단계를 추출합니다.
-	     * 
-	     * @param predictionData 예측 데이터 JSON 문자열
-	     * @return 탈모 단계
 	     */
 	    private String extractHairStageFromPrediction(String predictionData) {
 	        try {
@@ -116,11 +103,10 @@ public class HairLossTestController {
 	                return rootNode.get(0).get("className").asText();
 	            }
 	            
-	            return ".";  // 기본값
+	            return ".";  
 	            
 	        } catch (Exception e) {
-	            // 파싱 실패 시 기본값 반환
-	            System.err.println("예측 데이터 파싱 오류: " + e.getMessage());
+	            System.err.println("이거 안되면 집감: " + e.getMessage());
 	            return ".";
 	        }
 	    }

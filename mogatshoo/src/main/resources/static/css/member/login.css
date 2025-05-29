@@ -1,44 +1,51 @@
 @charset "UTF-8";
 
 .warn-msg {
-	color: rgb(255, 107, 107);
-	font-size: 0.8em;
-	padding: .375rem .75rem;
-	display: none;
+    color: rgb(255, 107, 107);
+    font-size: 0.8em;
+    padding: .375rem .75rem;
+    display: none;
 }
 
 .text-color{
-	color: rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
 }
 
 .title{
-	color: yellow;
+    color: yellow;
 }
 
 .background-border-color {
-	background-color: #808080;
-	border: 10px solid #c0c0c0;
-} 
-
-.loginFormBtn, .login-input {
-	background-color: #c0c0c0;
-	border: 10px solid #c0c0c0;
-} 
-
-.loginFormBtn:hover{
-	background-color: rgb(102, 102, 102);
-	border-color: rgb(153, 153, 153);
+    background-color: #808080;
+    border: 10px solid #c0c0c0;
 }
 
+.loginFormBtn, .login-input {
+    background-color: #c0c0c0;
+    border: 10px solid #c0c0c0;
+}
+
+.loginFormBtn:hover{
+    background-color: rgb(102, 102, 102);
+    border-color: rgb(153, 153, 153);
+}
 
 .login-input::placeholder {
-	color: black;
-	opacity: 1;
+    color: black;
+    opacity: 1;
 }
 
 .login-input:focus {
-	box-shadow: rgb(54,45,62);
-	background-color: #808080;
-	border: 10px solid #c0c0c0;
+    box-shadow: none; 
+    background-color: #ffffff; 
+    border: 10px solid #007bff; 
+    outline: none; 
 }
 
+.login-input {
+    transition: all 0.2s ease-in-out; 
+}
+
+.login-input:hover {
+    background-color: #d0d0d0;  
+}

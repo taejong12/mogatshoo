@@ -22,6 +22,9 @@ public class EmailControllerImpl implements EmailController{
 	
 	@Override
 	public Map<String, Object> sendAuthEmail(String memberEmail, HttpSession session) {
+		
+		session.removeAttribute("authTryCount");
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		String title = "[mogatshoo] 인증번호 전송";
 		String authCode = UUID.randomUUID().toString().substring(0, 6);
@@ -51,11 +54,16 @@ public class EmailControllerImpl implements EmailController{
 	@Override
 	public Map<String, Object> authCodeConfirm(String memberAuthCode, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+		Integer authTryCount = (Integer) session.getAttribute("authTryCount");
 		String authCode = (String) session.getAttribute("authCode");
 		String msg = null;
 		
+		System.out.println("authTryCount: "+authTryCount);
+		
+		if (authTryCount == null) authTryCount = 0;
+		
 		if(authCode != null && authCode.equals(memberAuthCode)) {
+			session.removeAttribute("authTryCount");
 			session.removeAttribute("authCode");
 			session.setAttribute("authSuccess", "authEmail");
 			msg = "인증 성공";
@@ -63,7 +71,17 @@ public class EmailControllerImpl implements EmailController{
 			map.put("msg", msg);
 			return map;
 		} else {
-			msg = "인증 실패";
+			
+			authTryCount++;
+			
+			if (authTryCount >= 5) {
+		        msg = "인증 시도 횟수를 초과했습니다. <br> 이메일을 다시 인증해주세요.";
+		    } else {
+		    	msg = "인증 실패 (" + authTryCount + " / 5)";
+		    	session.setAttribute("authTryCount", authTryCount);
+		    }
+			
+			map.put("authTryCount", authTryCount);
 			map.put("result", false);
 			map.put("msg", msg);
 			return map;
