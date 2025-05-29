@@ -26,4 +26,6 @@ public interface HairLossTestService {
 	boolean loginMemberHairCheck(String memberId);
 
 	void memberDelete(String memberId);
+	
+	public void deleteLocalUserFolder(String memberId);
 }

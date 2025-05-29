@@ -18,5 +18,25 @@
     "name": "google.drive.folder.id",
     "type": "java.lang.String",
     "description": "A description for 'google.drive.folder.id'"
+  },
+  {
+    "name": "google.drive.project.id",
+    "type": "java.lang.String",
+    "description": "A description for 'google.drive.project.id'"
+  },
+  {
+    "name": "google.drive.private.key.id",
+    "type": "java.lang.String",
+    "description": "A description for 'google.drive.private.key.id'"
+  },
+  {
+    "name": "google.drive.client.email",
+    "type": "java.lang.String",
+    "description": "A description for 'google.drive.client.email'"
+  },
+  {
+    "name": "google.drive.client.id",
+    "type": "java.lang.String",
+    "description": "A description for 'google.drive.client.id'"
   }
 ]}

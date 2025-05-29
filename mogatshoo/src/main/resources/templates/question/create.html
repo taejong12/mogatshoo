@@ -40,7 +40,7 @@
             <div class="options-container">
                 <h3>보기 항목</h3>
 
-                <!-- 보기 1 + 사진 1 -->
+                <!-- 보기 1 + 사진 1 (프록시 적용) -->
                 <div class="option-row">
                     <div class="form-group">
                         <label for="option1">보기 1 <span class="required">*</span></label>
@@ -52,11 +52,11 @@
                             <span class="member-id" th:text="'(ID: ' + ${randomPictures[0].memberId} + ')'">회원 ID</span>
                         </div>
                     </div>
-                    <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 0}">
-                        <img th:src="${randomPictures[0].hairPicture}"
-                             alt="참고 이미지 1" class="option-image"/>
-                        <input type="hidden" name="imageReference1" th:value="${randomPictures[0].hairPicture}" />
+                        <img th:src="@{'/proxy/image/' + ${randomPictures[0].googleDriveFileId}}"
+                             alt="참고 이미지 1" 
+                             class="option-image" />
+                        <input type="hidden" name="imageReference1" th:value="@{'/proxy/image/' + ${randomPictures[0].googleDriveFileId}}" />
                     </div>
                     <!-- 이미지가 없을 경우 대체 표시 -->
                     <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 0}">
@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 
-                <!-- 보기 2 + 사진 2 -->
+                <!-- 보기 2 + 사진 2 (프록시 적용) -->
                 <div class="option-row">
                     <div class="form-group">
                         <label for="option2">보기 2 <span class="required">*</span></label>
@@ -76,19 +76,18 @@
                             <span class="member-id" th:text="'(ID: ' + ${randomPictures[1].memberId} + ')'">회원 ID</span>
                         </div>
                     </div>
-                    <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 1}">
-                        <img th:src="${randomPictures[1].hairPicture}"
-                             alt="참고 이미지 2" class="option-image"/>
-                        <input type="hidden" name="imageReference2" th:value="${randomPictures[1].hairPicture}" />
+                        <img th:src="@{'/proxy/image/' + ${randomPictures[1].googleDriveFileId}}"
+                             alt="참고 이미지 2" 
+                             class="option-image" />
+                        <input type="hidden" name="imageReference2" th:value="@{'/proxy/image/' + ${randomPictures[1].googleDriveFileId}}" />
                     </div>
-                    <!-- 이미지가 없을 경우 대체 표시 -->
                     <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 1}">
                         <span>이미지 없음</span>
                     </div>
                 </div>
-                
-                <!-- 보기 3 + 사진 3 -->
+
+                <!-- 보기 3 + 사진 3 (프록시 적용) -->
                 <div class="option-row">
                     <div class="form-group">
                         <label for="option3">보기 3 <span class="required">*</span></label>
@@ -100,19 +99,18 @@
                             <span class="member-id" th:text="'(ID: ' + ${randomPictures[2].memberId} + ')'">회원 ID</span>
                         </div>
                     </div>
-                    <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 2}">
-                        <img th:src="${randomPictures[2].hairPicture}"
-                             alt="참고 이미지 3" class="option-image"/>
-                        <input type="hidden" name="imageReference3" th:value="${randomPictures[2].hairPicture}" />
+                        <img th:src="@{'/proxy/image/' + ${randomPictures[2].googleDriveFileId}}"
+                             alt="참고 이미지 3" 
+                             class="option-image" />
+                        <input type="hidden" name="imageReference3" th:value="@{'/proxy/image/' + ${randomPictures[2].googleDriveFileId}}" />
                     </div>
-                    <!-- 이미지가 없을 경우 대체 표시 -->
                     <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 2}">
                         <span>이미지 없음</span>
                     </div>
                 </div>
                 
-                <!-- 보기 4 + 사진 4 -->
+                <!-- 보기 4 + 사진 4 (프록시 적용) -->
                 <div class="option-row">
                     <div class="form-group">
                         <label for="option4">보기 4 <span class="required">*</span></label>
@@ -124,13 +122,12 @@
                             <span class="member-id" th:text="'(ID: ' + ${randomPictures[3].memberId} + ')'">회원 ID</span>
                         </div>
                     </div>
-                    <!-- 간단한 이미지 표시 -->
                     <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 3}">
-                        <img th:src="${randomPictures[3].hairPicture}"
-                             alt="참고 이미지 4" class="option-image"/>
-                        <input type="hidden" name="imageReference4" th:value="${randomPictures[3].hairPicture}" />
+                        <img th:src="@{'/proxy/image/' + ${randomPictures[3].googleDriveFileId}}"
+                             alt="참고 이미지 4" 
+                             class="option-image" />
+                        <input type="hidden" name="imageReference4" th:value="@{'/proxy/image/' + ${randomPictures[3].googleDriveFileId}}" />
                     </div>
-                    <!-- 이미지가 없을 경우 대체 표시 -->
                     <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 3}">
                         <span>이미지 없음</span>
                     </div>
@@ -149,10 +146,10 @@
             </div>
         </form>
     </div>
-</div>
 
 <th:block layout:fragment="scripts">
     <script th:src="@{/js/question/create.js}"></script>
 </th:block>
+</div>
 </body>
 </html>
