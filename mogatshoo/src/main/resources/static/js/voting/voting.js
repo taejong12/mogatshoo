@@ -1,178 +1,185 @@
 /**
- * 투표 페이지 JavaScript - 깔끔한 버전
+ * 투표 시스템 JavaScript - MySQL 완전 연동 버전
  */
 
+// 전역 변수
+let selectedOption = null;
+let currentQuestion = null;
+let isVoting = false;
+
 $(document).ready(function() {
-    console.log('투표 페이지 로드 완료');
+    console.log('=== 투표 시스템 초기화 ===');
     
-    // 전역 변수 초기화
-    window.selectedOption = null;
-    window.isVoting = false;
+    // 현재 질문 정보 추출
+    const questionElement = document.querySelector('[data-serial-number]');
+    if (questionElement) {
+        currentQuestion = {
+            serialNumber: questionElement.dataset.serialNumber,
+            questionText: document.querySelector('.question-text').textContent
+        };
+        console.log('현재 질문:', currentQuestion);
+    }
     
-    // 확인 버튼 클릭 이벤트
-    $(document).on('click', '#confirm-vote', function() {
-        console.log('확인 버튼 클릭');
-        if (!window.selectedOption) return;
-        
-        hidePopup();
-        processVote();
-    });
-    
-    // 취소 버튼 클릭 이벤트
-    $(document).on('click', '#cancel-vote, #popup-close', function() {
-        console.log('취소 버튼 클릭');
-        cancelVote();
-    });
-    
-    // 키보드 이벤트 (Y/N 키)
-    $(document).on('keydown', function(e) {
-        if ($('#win95-popup').is(':visible')) {
-            if (e.key.toLowerCase() === 'y' || e.key === 'Enter') {
-                $('#confirm-vote').click();
-            } else if (e.key.toLowerCase() === 'n' || e.key === 'Escape') {
-                $('#cancel-vote').click();
-            }
-        }
-    });
+    console.log('투표 시스템 준비 완료');
 });
 
 /**
- * 사진 클릭 - 투표 확인 팝업 표시
+ * 투표 시작 (질문이 없을 때)
  */
-function selectOption(element) {
-    console.log('사진 클릭됨');
+function startVoting() {
+    console.log('=== 투표 시작 ===');
     
-    if (window.isVoting) {
+    // 로딩 효과와 함께 페이지 이동
+    $('#startSection').fadeOut(300, function() {
+        window.location.href = '/voting';
+    });
+}
+
+/**
+ * 사진 선택 - 투표 확인 모달 표시
+ */
+function selectPicture(element) {
+    console.log('=== 사진 선택 ===');
+    
+    if (isVoting) {
         console.log('투표 처리 중 - 클릭 무시');
         return;
     }
-    
-    // 선택한 옵션 저장
-    window.selectedOption = $(element);
-    const optionText = $(element).find('.option-text').text();
-    
-    console.log('선택된 옵션:', optionText);
-    
-    // 팝업에 선택한 옵션 표시
-    $('#selected-option-text').html(`<strong style="color: #000080;">${optionText}</strong>`);
-    
-    // 팝업 표시
-    showPopup();
+
+    try {
+        // 기존 선택 해제
+        $('.picture-option').removeClass('selected');
+        
+        // 현재 선택 표시
+        $(element).addClass('selected');
+        
+        // 선택한 옵션 저장
+        selectedOption = {
+            element: $(element),
+            memberId: $(element).data('member-id'),
+            serialNumber: $(element).data('serial-number'),
+            optionIndex: $(element).data('option-index'),
+            optionText: $(element).find('.option-text').text().trim(),
+            pictureUrl: $(element).find('.option-image').attr('src')
+        };
+        
+        console.log('선택된 옵션:', selectedOption);
+        
+        // 필수 데이터 검증
+        if (!selectedOption.memberId || !selectedOption.serialNumber || !currentQuestion) {
+            alert('투표 데이터가 올바르지 않습니다. 페이지를 새로고침 해주세요.');
+            return;
+        }
+
+        // 모달에 정보 설정
+        $('#modal-picture').attr('src', selectedOption.pictureUrl);
+        $('#vote-confirm-message').html(
+            `<strong style="color: #667eea;">${selectedOption.optionText}</strong><br>에 투표하시겠습니까?`
+        );
+        
+        // 모달 표시
+        $('#vote-modal').fadeIn(300);
+        
+    } catch (error) {
+        console.error('사진 선택 중 오류:', error);
+        alert('사진 선택 중 오류가 발생했습니다.');
+    }
 }
 
 /**
- * 팝업 표시
+ * 투표 확인
  */
-function showPopup() {
-    console.log('투표 확인 팝업 표시');
-    $('#win95-popup').css('display', 'flex').hide().fadeIn(300);
-    $('#confirm-vote').focus();
-}
-
-/**
- * 팝업 숨김
- */
-function hidePopup() {
-    console.log('팝업 숨김');
-    $('#win95-popup').fadeOut(200);
-}
-
-/**
- * 투표 취소 - 사진 선택 화면으로 돌아가기
- */
-function cancelVote() {
-    console.log('투표 취소');
+function confirmVote() {
+    console.log('=== 투표 확인 ===');
     
-    // 선택 초기화
-    window.selectedOption = null;
-    
-    // 팝업 닫기
-    hidePopup();
-    
-    // 화면 흔들기 효과
-    $('.vote-container').addClass('shake');
-    setTimeout(function() {
-        $('.vote-container').removeClass('shake');
-    }, 500);
-}
-
-/**
- * 투표 처리 - MySQL에 저장
- */
-function processVote() {
-    console.log('=== 투표 처리 시작 ===');
-    
-    if (!window.selectedOption) {
-        showErrorMessage('선택된 옵션이 없습니다.');
+    if (!selectedOption || !currentQuestion || isVoting) {
+        console.error('투표 데이터 부족 또는 중복 요청');
         return;
     }
     
-    // 중복 클릭 방지
-    window.isVoting = true;
-    
-    // 선택한 옵션 정보 가져오기
-    const memberId = window.selectedOption.data('member-id');
-    const serialNumber = window.selectedOption.data('serial-number');
-    const optionText = window.selectedOption.find('.option-text').text();
-    
-    console.log('투표 데이터:', {
-        질문번호: serialNumber,
-        선택된회원ID: memberId,
-        선택된옵션: optionText
-    });
-    
-    // 필수 데이터 검증
-    if (!memberId || !serialNumber) {
-        console.error('필수 데이터 누락');
-        showErrorMessage('투표 데이터가 올바르지 않습니다.');
-        window.isVoting = false;
-        return;
-    }
+    isVoting = true;
+    $('#vote-modal').fadeOut(200);
     
     // 로딩 표시
     showLoading();
     
     // 선택한 옵션 강조 효과
-    window.selectedOption.css({
-        'background-color': '#000080',
-        'color': 'white',
-        'border-color': '#ffffff #000080 #000080 #ffffff'
-    });
-    window.selectedOption.find('.option-text').css({
-        'background-color': '#000080',
+    selectedOption.element.css({
+        'background-color': '#667eea',
         'color': 'white'
     });
     
-    // 서버에 투표 데이터 전송
-    $.ajax({
+    // 투표 제출
+    submitVote();
+}
+
+/**
+ * 투표 취소
+ */
+function cancelVote() {
+    console.log('=== 투표 취소 ===');
+    
+    $('#vote-modal').fadeOut(200);
+    
+    // 선택 해제
+    $('.picture-option').removeClass('selected');
+    selectedOption = null;
+}
+
+/**
+ * 투표 제출 - MySQL에 저장
+ */
+function submitVote() {
+    console.log('=== 투표 제출 시작 ===');
+    console.log('투표 데이터:', {
+        질문번호: selectedOption.serialNumber,
+        선택된회원ID: selectedOption.memberId,
+        선택된옵션: selectedOption.optionText
+    });
+    
+    // CSRF 토큰 가져오기
+    const token = $("meta[name='_csrf']").attr("content");
+    const header = $("meta[name='_csrf_header']").attr("content");
+    
+    const ajaxSettings = {
         url: '/voting/submit',
         type: 'POST',
         data: {
-            serialNumber: serialNumber,
-            votedId: memberId
+            serialNumber: selectedOption.serialNumber,
+            votedId: selectedOption.memberId
         },
-        timeout: 15000,
-        success: function(response) {
-            console.log('서버 응답 성공:', response);
-            handleVoteSuccess(response, optionText);
-        },
-        error: function(xhr, status, error) {
-            console.error('서버 요청 실패:', {
+        timeout: 15000
+    };
+    
+    // CSRF 토큰 추가
+    if (header && token) {
+        ajaxSettings.beforeSend = function(xhr) {
+            xhr.setRequestHeader(header, token);
+        };
+    }
+
+    // 서버에 투표 데이터 전송
+    $.ajax(ajaxSettings)
+        .done(function(response) {
+            console.log('=== 투표 성공 ===');
+            console.log('서버 응답:', response);
+            handleVoteSuccess(response);
+        })
+        .fail(function(xhr, status, error) {
+            console.error('=== 투표 실패 ===');
+            console.error('오류 정보:', {
                 상태코드: xhr.status,
                 응답내용: xhr.responseText,
                 에러: error
             });
             handleVoteError(xhr, status, error);
-        }
-    });
+        });
 }
 
 /**
  * 투표 성공 처리
  */
-function handleVoteSuccess(response, optionText) {
-    console.log('=== 투표 성공 처리 ===');
-    
+function handleVoteSuccess(response) {
     hideLoading();
     
     try {
@@ -182,17 +189,26 @@ function handleVoteSuccess(response, optionText) {
         }
         
         if (response.success) {
-            console.log('MySQL 저장 완료! 투표 ID:', response.voteId);
+            console.log('✅ MySQL 저장 완료! 투표 ID:', response.voteId);
             
             // 성공 메시지 표시
-            showSuccessMessage(`투표 완료! "${optionText}"에 투표하셨습니다.`);
+            showMessage(`🎉 투표 완료! "${selectedOption.optionText}"에 투표하셨습니다.`, 'success');
             
             // 선택된 옵션에 성공 애니메이션
-            window.selectedOption.addClass('vote-success');
+            selectedOption.element.addClass('vote-success');
             
-            // 3초 후 다음 투표로 이동
+            // 3초 후 다음 동작
             setTimeout(function() {
-                moveToNextVote(response);
+                if (response.noMoreQuestions) {
+                    console.log('🏁 모든 투표 완료');
+                    showMessage('모든 투표를 완료하셨습니다! 감사합니다.', 'success');
+                    setTimeout(function() {
+                        window.location.href = '/voting';
+                    }, 2000);
+                } else {
+                    console.log('➡️ 다음 질문으로 이동');
+                    window.location.href = '/voting';
+                }
             }, 3000);
             
         } else {
@@ -206,41 +222,15 @@ function handleVoteSuccess(response, optionText) {
 }
 
 /**
- * 다음 투표로 이동
- */
-function moveToNextVote(response) {
-    console.log('=== 다음 투표로 이동 ===');
-    
-    if (response.noMoreQuestions) {
-        console.log('모든 투표 완료!');
-        showSuccessMessage('모든 투표를 완료하셨습니다! 감사합니다.');
-        
-        setTimeout(function() {
-            window.location.href = '/';
-        }, 2000);
-        
-    } else {
-        console.log('다음 질문으로 이동');
-        
-        // 페이드아웃 효과와 함께 이동
-        $('.vote-container').fadeOut(500, function() {
-            window.location.href = '/voting';
-        });
-    }
-}
-
-/**
  * 투표 오류 처리
  */
 function handleVoteError(xhr, status, error) {
-    console.log('=== 투표 오류 처리 ===');
-    
     hideLoading();
     resetOptionStyle();
     
-    // 오류 메시지 결정
     let errorMessage = '투표 처리 중 오류가 발생했습니다.';
     
+    // 오류 메시지 결정
     try {
         if (xhr.responseText) {
             const errorResponse = JSON.parse(xhr.responseText);
@@ -254,36 +244,32 @@ function handleVoteError(xhr, status, error) {
     
     // HTTP 상태별 처리
     if (xhr.status === 401) {
-        errorMessage = '로그인이 만료되었습니다. 다시 로그인해주세요.';
+        errorMessage = '🔐 로그인이 필요합니다. 로그인 페이지로 이동합니다.';
         setTimeout(function() {
             window.location.href = '/member/login';
         }, 2000);
     } else if (xhr.status === 500) {
-        errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+        errorMessage = '🔧 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
     } else if (status === 'timeout') {
-        errorMessage = '요청 시간이 초과되었습니다. 네트워크를 확인해주세요.';
+        errorMessage = '⏱️ 요청 시간이 초과되었습니다. 네트워크를 확인해주세요.';
     }
     
-    showErrorMessage(errorMessage);
+    showMessage(errorMessage, 'error');
     
     // 투표 상태 초기화
-    window.isVoting = false;
+    isVoting = false;
+    selectedOption = null;
 }
 
 /**
  * 선택 옵션 스타일 원복
  */
 function resetOptionStyle() {
-    if (window.selectedOption) {
-        window.selectedOption.css({
-            'background-color': '#c0c0c0',
-            'color': 'black',
-            'border-color': '#ffffff #808080 #808080 #ffffff'
-        });
-        window.selectedOption.find('.option-text').css({
-            'background-color': '#ececec',
-            'color': '#333'
-        });
+    if (selectedOption && selectedOption.element) {
+        selectedOption.element.css({
+            'background-color': '',
+            'color': ''
+        }).removeClass('selected');
     }
 }
 
@@ -299,45 +285,26 @@ function hideLoading() {
 }
 
 /**
- * 성공 메시지 표시
+ * 메시지 표시
  */
-function showSuccessMessage(message) {
+function showMessage(text, type = 'success') {
     const alertHtml = `
-        <div class="alert alert-success" style="display: none;">
-            <i class="fas fa-check-circle"></i>
-            <span>${message}</span>
+        <div class="alert alert-${type}" style="display: none;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'times-circle'}"></i>
+            <span>${text}</span>
         </div>
     `;
     
-    $('.vote-container').prepend(alertHtml);
-    $('.alert').first().slideDown(300);
+    $('#message-container').append(alertHtml);
+    $('#message-container .alert').last().slideDown(300);
     
+    // 자동 제거
+    const timeout = type === 'error' ? 8000 : 5000;
     setTimeout(function() {
-        $('.alert').first().slideUp(300, function() {
+        $('#message-container .alert').first().slideUp(300, function() {
             $(this).remove();
         });
-    }, 5000);
-}
-
-/**
- * 오류 메시지 표시
- */
-function showErrorMessage(message) {
-    const alertHtml = `
-        <div class="alert alert-error" style="display: none;">
-            <i class="fas fa-times-circle"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    $('.vote-container').prepend(alertHtml);
-    $('.alert').first().slideDown(300);
-    
-    setTimeout(function() {
-        $('.alert').first().slideUp(300, function() {
-            $(this).remove();
-        });
-    }, 10000);
+    }, timeout);
 }
 
 /**
@@ -346,9 +313,48 @@ function showErrorMessage(message) {
 function handleImageError(img) {
     console.warn('이미지 로드 실패:', img.src);
     
-    const container = $(img).closest('.win95-pic-container');
-    const errorDiv = $('<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; font-size: 14px; flex-direction: column;"><div style="font-size: 30px; margin-bottom: 10px;">📷</div><div>이미지 없음</div></div>');
+    // 기본 이미지로 대체
+    const defaultImageSvg = 'data:image/svg+xml;base64,' + btoa(`
+        <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="200" height="200" fill="#f5f5f5"/>
+            <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" 
+                  font-family="arial" font-size="24px" fill="#999">📷</text>
+            <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" 
+                  font-family="arial" font-size="14px" fill="#999">이미지 없음</text>
+        </svg>
+    `);
     
-    $(img).hide();
-    container.append(errorDiv);
+    $(img).attr('src', defaultImageSvg);
+    $(img).css('opacity', '1');
 }
+
+/**
+ * 모달 외부 클릭 시 닫기
+ */
+$(document).on('click', '.vote-modal', function(e) {
+    if (e.target === this) {
+        cancelVote();
+    }
+});
+
+/**
+ * 키보드 이벤트 처리
+ */
+$(document).on('keydown', function(e) {
+    if ($('#vote-modal').is(':visible')) {
+        if (e.key === 'Enter') {
+            confirmVote();
+        } else if (e.key === 'Escape') {
+            cancelVote();
+        }
+    }
+});
+
+// 전역 함수 등록 (HTML onclick에서 접근 가능하도록)
+window.startVoting = startVoting;
+window.selectPicture = selectPicture;
+window.confirmVote = confirmVote;
+window.cancelVote = cancelVote;
+window.handleImageError = handleImageError;
+
+console.log('🚀 투표 시스템 JavaScript 로드 완료');
