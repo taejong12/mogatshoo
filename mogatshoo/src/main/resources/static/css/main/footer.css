@@ -43,6 +43,7 @@
 }
 
 .footer-folder {
+	color: #000000;
   display: flex;
   align-items: center;
   margin-right: 8px;
@@ -224,7 +225,9 @@
 }
 
 .footer-logout {
-  padding: 0 !important; /* 로그아웃 버튼 패딩 제거 */
+  padding: 1 !important; /* 로그아웃 버튼 패딩 제거 */
+  color: red;
+  
 }
 
 .logout-form {
@@ -239,13 +242,11 @@
   align-items: center;
   background: none;
   border: none;
-  font-family: Tahoma, sans-serif; /* 다른 푸터 요소와 통일 */
   font-size: 12px;
   cursor: pointer;
   padding: 2px 6px;
   width: 100%;
   height: 100%;
-  color: red;
 }
 
 /* 기본 윈도우95 창 스타일 */

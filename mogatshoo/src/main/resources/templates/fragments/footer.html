@@ -19,11 +19,11 @@
 			<div class="footer-folders">
 				<div class="footer-folder" onclick="openModal('terms')">
 					<img th:src="@{/img/footer/mogetshooLogo.PNG}" alt="Terms" />
-					<span>이용약관</span>
+					<span>문의 사항</span>
 				</div>
 				<div class="footer-folder" onclick="openModal2('company')">
 					<img th:src="@{/img/footer/mogetshooLogo.PNG}" alt="Company" />
-					<span>회사 소개</span>
+					<span>이용 약관</span>
 				</div>
 			</div>
 
@@ -48,23 +48,29 @@
 
 			<!-- 로그인 상태일 때 표시되는 내용 -->
 			<div sec:authorize="isAuthenticated()" class="footer-auth">
-				<div class="footer-folder">
+				<div class="footer-folder" id="auth-data" th:data-member-id="${#authentication.name}">
 					<a th:href="@{/point/list(memberId=${#authentication.name})}" class="footer-link">
 						<img th:src="@{/img/footer/point.png}" alt="포인트" />
 						<span>포인트</span>
 					</a>
 				</div>
 				<div class="footer-folder">
+					<a th:href="@{#}" class="footer-link">
+						<img th:src="@{/img/footer/point.png}" alt="결제 내역" />
+						<span>결제 내역</span>
+					</a>
+				</div>
+				<div class="footer-folder">
 					<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="footer-link">
 						<img th:src="@{/img/footer/myInfo.png}" alt="마이페이지" />
-						<span th:text="${#authentication.principal.nickName}"></span>
+						<span th:text="${#authentication.principal.nickName}">님</span>
 					</a>
 				</div>
 				<div class="footer-folder footer-logout">
 					<button type="button" class="logout-btn" onclick="showFooterLogoutModal()">
 						<img th:src="@{/img/footer/logout.jpg}" alt="로그아웃" />
-						<span>로그아웃</span>
 					</button>
+						<span>로그아웃</span>
 				</div>
 			</div>
 		</div>

@@ -57,6 +57,7 @@
                              alt="참고 이미지 1" 
                              class="option-image" />
                         <input type="hidden" name="imageReference1" th:value="${randomPictures[0].googleDriveFileId}" />
+						<input type="text" th:value="${randomPictures[0].googleDriveFileId}">
                     </div>
                     <!-- 이미지가 없을 경우 대체 표시 -->
                     <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 0}">
