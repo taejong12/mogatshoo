@@ -126,13 +126,13 @@ public class QuestionController {
 	}
 
 	// 질문 저장
-	@PostMapping
+	@PostMapping("/creat")
 	public String createQuestion(@ModelAttribute QuestionEntity question,
-	                           @RequestParam(required = false) String imageReference1,
-	                           @RequestParam(required = false) String imageReference2,
-	                           @RequestParam(required = false) String imageReference3,
-	                           @RequestParam(required = false) String imageReference4) {
-	    
+			@RequestParam(value = "imageReference1", required = false) String imageReference1,
+            @RequestParam(value = "imageReference2", required = false) String imageReference2,
+            @RequestParam(value = "imageReference3", required = false) String imageReference3,
+            @RequestParam(value = "imageReference4", required = false) String imageReference4) {
+
 	    // isPublic 기본값 설정
 	    if (question.getIsPublic() == null
 	        || (!question.getIsPublic().equals("yes") && !question.getIsPublic().equals("no"))) {
