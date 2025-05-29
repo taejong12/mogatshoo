@@ -28,4 +28,12 @@ public class PictureEntity {
     
     @Column(columnDefinition = "timestamp default current_timestamp on update current_timestamp")
     private LocalDateTime updatedAt;  // 마지막 업데이트 시간
+    
+    @Column(name = "google_drive_url")
+    private String googleDriveUrl;
+
+    @Column(name = "google_drive_file_id") 
+    private String googleDriveFileId;
+    
+    
 }
