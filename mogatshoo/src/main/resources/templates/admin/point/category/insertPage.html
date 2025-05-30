@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/fragments/layout}">
+<head th:with="layoutTitle='카테고리등록'">
+</head>
+<body>
+	<div layout:fragment="content">
+		<h1 class="mb-5">카테고리 등록</h1>
+
+		<div class="card">
+			<div class="card-body">
+				<form name="categoryForm">
+					<div class="mb-3">
+						<label for="pointCategoryName" class="form-label">이름</label>
+						<input type="text" class="form-control" id="pointCategoryName" name="pointCategoryName" placeholder="이름 입력">
+						<div id="nameWarnMsg"></div>
+					</div>
+
+					<div class="mb-3">
+						<label for="pointCategorySortOrder" class="form-label">정렬순서</label>
+						<input type="number" class="form-control" id="pointCategorySortOrder" name="pointCategorySortOrder" placeholder="정렬 순서 입력">
+						<div id="sortWarnMsg"></div>
+					</div>
+
+					<div class="d-flex gap-2">
+						<button type="button" class="btn btn-outline-primary" onclick="fu_insertCategory()">등록하기</button>
+						<a class="btn btn-outline-secondary" th:href="@{/admin/point/category/list}">취소하기</a>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- 등록하기버튼 클릭 -->
+		<script th:src="@{/js/admin/point/category/fu_insertCategory.js}"></script>
+	</div>
+</body>
+</html>

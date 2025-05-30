@@ -79,7 +79,6 @@ public class AdminPointItemController {
 
 	@GetMapping("/insert")
 	public String pointItemInsertPage() {
-
-		return "admin/point/item/insertItem";
+		return "admin/point/item/insertPage";
 	}
 }

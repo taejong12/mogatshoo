@@ -2,12 +2,15 @@ package com.mogatshoo.dev.admin.point.item.entity;
 
 import java.time.LocalDateTime;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -59,4 +62,8 @@ public class AdminPointItemEntity {
 	// 회원아이디
 	@Column(nullable = false)
 	private String memberId;
+	
+	// 이미지 파일
+	@Transient
+	private MultipartFile imgFile;
 }
