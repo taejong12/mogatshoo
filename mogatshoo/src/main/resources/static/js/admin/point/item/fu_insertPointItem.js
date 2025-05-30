@@ -32,11 +32,7 @@ function fu_insertPointItem() {
 
 	if (nameVal == '' || nameVal.length == 0) {
 		name.focus();
-		nameWarnMsg.textContent = '이름을 입력해주세요.';
-		nameWarnMsg.style.color = 'rgb(255, 107, 107)';
-		nameWarnMsg.style.fontSize = '0.8em';
-		nameWarnMsg.style.padding = '.375rem .75rem';
-		nameWarnMsg.style.display = 'inline';
+		showWarning(nameWarnMsg, '이름을 입력해주세요.');
 		nameCheck = false;
 	} else {
 		nameCheck = true;
@@ -44,11 +40,7 @@ function fu_insertPointItem() {
 
 	if (descriptionVal == '' || descriptionVal.length == 0) {
 		description.focus();
-		descriptionWarnMsg.textContent = '유의사항을 입력해주세요.';
-		descriptionWarnMsg.style.color = 'rgb(255, 107, 107)';
-		descriptionWarnMsg.style.fontSize = '0.8em';
-		descriptionWarnMsg.style.padding = '.375rem .75rem';
-		descriptionWarnMsg.style.display = 'inline';
+		showWarning(descriptionWarnMsg, '유의사항을 입력해주세요.');
 		descriptionCheck = false;
 	} else {
 		descriptionCheck = true;
@@ -56,11 +48,7 @@ function fu_insertPointItem() {
 
 	if (priceVal === '' || isNaN(priceVal) || Number(priceVal) <= 0) {
 		price.focus();
-		priceWarnMsg.textContent = '가격은 0보다 큰 숫자여야 합니다.';
-		priceWarnMsg.style.color = 'rgb(255, 107, 107)';
-		priceWarnMsg.style.fontSize = '0.8em';
-		priceWarnMsg.style.padding = '.375rem .75rem';
-		priceWarnMsg.style.display = 'inline';
+		showWarning(priceWarnMsg, '가격은 0보다 큰 숫자여야 합니다.');
 		priceCheck = false;
 	} else {
 		priceCheck = true;
@@ -68,11 +56,7 @@ function fu_insertPointItem() {
 
 	if (stockVal === '' || isNaN(stockVal) || Number(stockVal) <= 0) {
 		stock.focus();
-		stockWarnMsg.textContent = '재고는 0보다 큰 숫자여야 합니다.';
-		stockWarnMsg.style.color = 'rgb(255, 107, 107)';
-		stockWarnMsg.style.fontSize = '0.8em';
-		stockWarnMsg.style.padding = '.375rem .75rem';
-		stockWarnMsg.style.display = 'inline';
+		showWarning(stockWarnMsg, '재고는 0보다 큰 숫자여야 합니다.');
 		stockCheck = false;
 	} else {
 		stockCheck = true;
@@ -84,4 +68,12 @@ function fu_insertPointItem() {
 		insertPointItemForm.action = "/admin/point/item/insert";
 		insertPointItemForm.submit();
 	}
+}
+
+function showWarning(warnElement, message) {
+	warnElement.textContent = message;
+	warnElement.style.color = 'rgb(255, 107, 107)';
+	warnElement.style.fontSize = '0.8em';
+	warnElement.style.padding = '.375rem .75rem';
+	warnElement.style.display = 'inline';
 }
