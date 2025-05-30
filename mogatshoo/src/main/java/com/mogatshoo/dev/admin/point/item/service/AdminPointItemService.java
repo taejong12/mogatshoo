@@ -11,4 +11,6 @@ public interface AdminPointItemService {
 
 	Page<AdminPointItemEntity> findByPointCategoryId(Integer pointCategoryId, Pageable pageable);
 
+	void save(AdminPointItemEntity adminPointItemEntity);
+
 }

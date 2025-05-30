@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -78,7 +80,15 @@ public class AdminPointItemController {
 	}
 
 	@GetMapping("/insert")
-	public String pointItemInsertPage() {
+	public String pointItemInsertPage(Model model) {
+		List<AdminPointCategoryEntity> pointCategoryList = adminPointCategoryService.findAll();
+		model.addAttribute("pointCategoryList", pointCategoryList);
 		return "admin/point/item/insertPage";
+	}
+	
+	@PostMapping("/insert")
+	public String pointItemInsert(@ModelAttribute AdminPointItemEntity adminPointItemEntity) {
+		adminPointItemService.save(adminPointItemEntity);
+		return "redirect:/admin/point/item/list";
 	}
 }

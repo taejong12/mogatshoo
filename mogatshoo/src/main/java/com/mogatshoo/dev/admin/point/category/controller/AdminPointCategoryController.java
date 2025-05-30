@@ -1,7 +1,5 @@
 package com.mogatshoo.dev.admin.point.category.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
 import com.mogatshoo.dev.admin.point.category.service.AdminPointCategoryService;
-import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
-import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 
 @Controller
 @RequestMapping("/admin/point/category")

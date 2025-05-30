@@ -56,7 +56,7 @@ public class AdminPointItemEntity {
 	private String pointItemSaleStatus;
 
 	// 카테고리아이디
-	@Column(nullable = false)
+	@Column
 	private Integer pointCategoryId;
 
 	// 회원아이디

@@ -1,5 +1,5 @@
 function fu_insertCategory() {
-	let categoryForm = document.categoryForm;
+	let insertCategoryForm = document.insertCategoryForm;
 	let name = document.getElementById('pointCategoryName');
 	let sortOrder = document.getElementById('pointCategorySortOrder');
 	let nameWarnMsg = document.getElementById('nameWarnMsg');
@@ -40,8 +40,8 @@ function fu_insertCategory() {
 	}
 
 	if (nameCheck && sortOrderCheck) {
-		categoryForm.method = "post";
-		categoryForm.action = "/admin/point/category/insert";
-		categoryForm.submit();
+		insertCategoryForm.method = "post";
+		insertCategoryForm.action = "/admin/point/category/insert";
+		insertCategoryForm.submit();
 	}
 }
