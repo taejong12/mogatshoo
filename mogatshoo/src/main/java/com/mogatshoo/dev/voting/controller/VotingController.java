@@ -38,9 +38,7 @@ public class VotingController {
     @Autowired
     private HairLossTestService hairLossTestService;
 
-    /**
-     * 투표 페이지 로드
-     */
+    //투표 페이지 로드
     @GetMapping({"", "/voting"})
     public String votingPage(Model model, RedirectAttributes redirectAttributes) {
         try {
