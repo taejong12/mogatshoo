@@ -37,7 +37,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler{
         for (GrantedAuthority authority : authorities) {
             String role = authority.getAuthority(); 
             
-            System.out.println("사용자 권한: " + role);
             if (role.equals("ROLE_ADMIN")) {
                 response.sendRedirect("/admin/main");
                 return;

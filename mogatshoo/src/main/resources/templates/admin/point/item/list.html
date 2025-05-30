@@ -1,10 +1,73 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/fragments/layout}">
+<head th:with="layoutTitle='포인트상품목록'">
 </head>
 <body>
-
+	<div layout:fragment="content">
+		<!-- 카테고리 필터 -->
+		<ul class="nav nav-pills mb-3">
+			<li class="nav-item">
+				<a class="nav-link"
+					th:href="@{/admin/point/item/list}" 
+					th:classappend="${selectedCategoryId} == null ? 'active' : ''">전체</a>
+			</li>
+			<li class="nav-item" th:each="category : ${pointCategoryList}">
+				<a class="nav-link"
+					th:href="@{/admin/point/item/list(pointCategoryId=${category.pointCategoryId})}"
+					th:text="${category.pointCategoryName}"
+					th:classappend="${selectedCategoryId} == ${category.pointCategoryId} ? 'active' : ''"></a>
+			</li>
+		</ul>
+		
+	    <!-- 포인트 상품 테이블 -->
+	    <table class="table table-bordered">
+	        <thead>
+	            <tr class="text-center">
+	                <th>상품이름</th>
+	                <th>상품가격</th>
+	                <th>재고</th>
+	                <th>판매여부</th>
+					<th>카테고리아이디</th>
+					<th>등록일</th>
+					<th>수정일</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="item : ${pointItemPageList}">
+					<td th:text="${item.pointItemName}">상품이름</td>
+					<td th:text="${item.pointItemPrice}">상품가격</td>
+					<td th:text="${item.pointItemStock}">재고</td>
+					<td th:text="${item.pointItemSaleStatus == 'Y' ? '판매중' : '판매중지'}">판매여부</td>
+					<td th:text="${item.pointCategoryId}">카테고리아이디</td>
+					<td th:text="${#temporals.format(item.pointItemCreate, 'yyyy-MM-dd HH:mm')}">등록일</td>
+					<td th:text="${#temporals.format(item.pointItemUpdate, 'yyyy-MM-dd HH:mm')}">수정일</td>
+				</tr>
+				<tr th:if="${#lists.isEmpty(pointItemPageList)}">
+					<td colspan="7" class="text-center">등록된 상품이 없습니다.</td>
+				</tr>
+			</tbody>
+		</table>
+	
+	    <!-- 페이지네이션 -->
+	    <div class="pagination" th:if="${!#lists.isEmpty(pointItemList) and totalPages > 1}">
+	        <span th:if="${startPage > 0}">
+	            <a th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${startPage - 1})}">&laquo; 이전</a>
+	        </span>
+	
+	        <span th:each="i : ${#numbers.sequence(startPage, endPage - 1)}">
+	            <a th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
+	               th:text="${i + 1}"
+	               th:classappend="${i} == ${currentPage} ? 'active' : ''"></a>
+	        </span>
+	
+	        <span th:if="${endPage < totalPages}">
+	            <a th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${endPage})}">다음 &raquo;</a>
+	        </span>
+	    </div>
+	    
+	    <a class="btn btn-outline-secondary" th:href="@{/admin/point/item/insert}">상품등록</a>
+	</div>
 </body>
 </html>
