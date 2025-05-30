@@ -4,11 +4,11 @@
       layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='포인트 사용내역'">
 </head>
+
 <body>
 	<div layout:fragment="content">
-	
+		<div class="pointContant">
 		<h1 class="text-center mb-5">포인트내역</h1>
-		
 		<table class="table table-bordered">
 		    <thead>
 		        <tr>
@@ -51,6 +51,7 @@
 		    <span th:if="${endPage < totalPages}">
 		        <a th:href="@{|/point/list?memberId=${memberId}&page=${endPage}|}">다음 &raquo;</a>
 		    </span>
+		</div>
 		</div>
 	</div>
 </body>

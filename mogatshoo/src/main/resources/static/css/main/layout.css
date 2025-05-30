@@ -28,7 +28,7 @@ body::before {
 	bottom: 0;
 	width: 100%;
 	height: 100%;
-	background-color: #008080;
+	background-color: rgb(192, 192, 192);
 	background-size: contain;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -61,7 +61,6 @@ body::before {
 	/* 가로 스크롤 방지 */
 	padding-bottom: 0px;
 	/* 푸터 높이만큼 하단 패딩 추가 */
-	background-color: #008080;
 }
 
 .content-wrapper {
@@ -75,33 +74,6 @@ body::before {
 
 	/* 데스크톱: flex 비활성화 (꽉 찬 레이아웃) */
 	display: block;
-}
-
-/* 푸터 영역 - 수정 (fixed로 변경) */
-.footer-area {
-	width: 100%;
-	position: fixed;
-	/* 화면 하단에 고정 */
-	bottom: 0;
-	/* 화면 하단에 배치 */
-	left: 0;
-	/* 왼쪽 정렬 */
-	z-index: 100;
-	/* 다른 콘텐츠 위에 표시 */
-}
-
-.footer {
-	color: rgb(255, 255, 0);
-	font-size: 1.5rem;
-	font-weight: bold;
-	text-align: center;
-	padding: 10px 0;
-	/* 상하 패딩 추가 */
-}
-
-.container-fluid {
-	padding-right: 0 !important;
-	padding-left: 0 !important;
 }
 
 /* 반응형 조정 (유지) */

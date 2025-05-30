@@ -195,7 +195,7 @@
 .content-with-sidebar {
 	margin-left: 120px;
 	transition: margin-left 0.3s ease;
-	background-color:#008080;
+	background-color:rgb(192, 192, 192);
 }
 
 /* 기본 윈도우95 창 스타일 */
