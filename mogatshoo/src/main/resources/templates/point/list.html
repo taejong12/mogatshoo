@@ -3,56 +3,351 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='포인트 사용내역'">
+<style>
+.p-win95-window {
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.p-title-bar {
+    background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+    color: white;
+    padding: 2px;
+    font-weight: bold;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.p-title-text {
+    padding-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.p-title-icon {
+    width: 16px;
+    height: 16px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFYSURBVDiNpZM9SwNBEIafgJ2FhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhY=') center/contain no-repeat;
+}
+
+.p-window-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.p-control-btn {
+    width: 16px;
+    height: 14px;
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.p-control-btn:active {
+    border: 1px inset #c0c0c0;
+}
+
+.p-window-content {
+    padding: 8px;
+    background: #c0c0c0;
+}
+
+.p-main-title {
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    color: #000080;
+    text-align: center;
+}
+
+.p-table-container {
+    border: 2px inset #c0c0c0;
+    background: white;
+    margin-bottom: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.p-main-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 11px;
+}
+
+.p-table-head {
+    background: #c0c0c0;
+    position: sticky;
+    top: 0;
+}
+
+.p-table-header {
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    padding: 4px 8px;
+    font-weight: bold;
+    text-align: left;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.p-table-cell {
+    border: 1px solid #e0e0e0;
+    padding: 4px 8px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.p-table-row:nth-child(even) {
+    background: #f0f0f0;
+}
+
+.p-table-row:hover {
+    background: #0078d4;
+    color: white;
+}
+
+.p-empty-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+.p-status-bar {
+    background: #c0c0c0;
+    border: 1px inset #c0c0c0;
+    padding: 2px 8px;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.p-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin: 8px 0;
+}
+
+.p-pagination a, .p-pagination span {
+    padding: 2px 8px;
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    text-decoration: none;
+    color: black;
+    font-size: 11px;
+    min-width: 20px;
+    text-align: center;
+    display: inline-block;
+}
+
+.p-pagination a:hover {
+    background: #e0e0e0;
+}
+
+.p-pagination a:active {
+    border: 1px inset #c0c0c0;
+}
+
+.p-pagination a.p-active {
+    background: #000080;
+    color: white;
+    border: 1px inset #c0c0c0;
+}
+
+.p-point-positive {
+    color: #008000;
+    font-weight: bold;
+}
+
+.p-point-negative {
+    color: #800000;
+    font-weight: bold;
+}
+
+.p-point-type-earn {
+    color: #000080;
+    font-weight: bold;
+}
+
+.p-point-type-use {
+    color: #800080;
+    font-weight: bold;
+}
+
+/* 스크롤바 스타일링 */
+.p-table-container::-webkit-scrollbar {
+    width: 16px;
+}
+
+.p-table-container::-webkit-scrollbar-track {
+    background: #c0c0c0;
+    border: 1px inset #c0c0c0;
+}
+
+.p-table-container::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+}
+
+.p-table-container::-webkit-scrollbar-button {
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    height: 16px;
+}
+
+.p-table-container::-webkit-scrollbar-button:vertical:start:decrement {
+    background: #c0c0c0 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 4l4 6H4z"/></svg>') center no-repeat;
+}
+
+.p-table-container::-webkit-scrollbar-button:vertical:end:increment {
+    background: #c0c0c0 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4 6l4 6 4-6z"/></svg>') center no-repeat;
+}
+</style>
 </head>
-
 <body>
-	<div layout:fragment="content">
-		<div class="pointContant">
-		<h1 class="text-center mb-5">포인트내역</h1>
-		<table class="table table-bordered">
-		    <thead>
-		        <tr>
-		            <th>내역</th>
-		            <th>포인트변동</th>
-		            <th>타입</th>
-		            <th>날짜</th>
-		        </tr>
-		    </thead>
-		    <tbody>
-		        <tr th:each="point : ${pointHistoryList}">
-		            <td th:text="${point.reason}">내역</td>
-		            <td th:text="${point.changePoint}">포인트변동</td>
-		            <td th:text="${point.type}">타입</td>
-		            <td th:text="${#temporals.format(point.pointCreate, 'yyyy-MM-dd HH:mm')}">날짜</td>
-		        </tr>
-		        
-		        <!-- 결과가 없을 경우 -->
-		        <tr th:if="${#lists.isEmpty(pointHistoryList)}">
-		            <td colspan="5" class="text-center">포인트 사용 내역이 없습니다.</td>
-		        </tr>
-		    </tbody>
-		</table>
+<div layout:fragment="content">
+    <div class="p-win95-window">
+        <div class="p-window-content">
+            <h1 class="p-main-title">포인트 사용내역</h1>
+            
+            <div class="p-table-container">
+                <table class="p-main-table">
+                    <thead class="p-table-head">
+                        <tr>
+                            <th class="p-table-header">내역</th>
+                            <th class="p-table-header">포인트변동</th>
+                            <th class="p-table-header">타입</th>
+                            <th class="p-table-header">날짜</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="p-table-row" th:each="point : ${pointHistoryList}">
+                            <td class="p-table-cell" th:text="${point.reason}">포인트 적립</td>
+                            <td class="p-table-cell" th:text="${point.changePoint}" 
+                                th:classappend="${point.changePoint > 0} ? 'p-point-positive' : 'p-point-negative'"></td>
+                            <td class="p-table-cell" th:text="${point.type}" 
+                                th:classappend="${point.type == 'EARN'} ? 'p-point-type-earn' : 'p-point-type-use'"></td>
+                            <td class="p-table-cell" th:text="${#temporals.format(point.pointCreate, 'yyyy-MM-dd HH:mm')}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(pointHistoryList)}">
+                            <td colspan="4" class="p-table-cell p-empty-message">
+                                😔 포인트 사용 내역이 없습니다.
+                                <br>포인트를 적립하고 사용해보세요!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-		
-		<div class="pagination">
-		    <!-- 이전 버튼 -->
-		    <span th:if="${startPage > 0}">
-		        <a th:href="@{|/point/list?memberId=${memberId}&page=${startPage - 1}|}">&laquo; 이전</a>
-		    </span>
-		
-		    <!-- 페이지 번호 -->
-		    <span th:each="i : ${#numbers.sequence(startPage, endPage - 1)}">
-		        <a th:href="@{|/point/list?memberId=${memberId}&page=${i}|}"
-		           th:text="${i + 1}"
-		           th:classappend="${i} == ${currentPage} ? 'active' : ''"></a>
-		    </span>
-		
-		    <!-- 다음 버튼 -->
-		    <span th:if="${endPage < totalPages}">
-		        <a th:href="@{|/point/list?memberId=${memberId}&page=${endPage}|}">다음 &raquo;</a>
-		    </span>
-		</div>
-		</div>
-	</div>
+            <div class="p-pagination">
+                <span th:if="${startPage > 0}">
+                    <a th:href="@{|/point/list?memberId=${memberId}&page=${startPage - 1}|}">&laquo; 이전</a>
+                </span>
+
+                <span th:each="i : ${#numbers.sequence(startPage, endPage - 1)}">
+                    <a th:href="@{|/point/list?memberId=${memberId}&page=${i}|}"
+                       th:text="${i + 1}"
+                       th:classappend="${i} == ${currentPage} ? 'p-active' : ''">1</a>
+                </span>
+
+                <span th:if="${endPage < totalPages}">
+                    <a th:href="@{|/point/list?memberId=${memberId}&page=${endPage}|}">다음 &raquo;</a>
+                </span>
+            </div>
+            
+            <div class="p-status-bar">
+                <div>포인트 내역 조회 완료</div>
+                <div th:text="|총 ${totalElements}개 항목|">총 0개 항목</div>
+            </div>
+        </div>
+    </div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    // 테이블 행 클릭 효과
+	    const rows = document.querySelectorAll('.p-table-row');
+	    rows.forEach(row => {
+	        row.addEventListener('click', function() {
+	            // 기존 선택 해제
+	            rows.forEach(r => {
+	                r.style.background = '';
+	                r.style.color = '';
+	            });
+	            // 현재 행 선택
+	            this.style.background = '#0078d4';
+	            this.style.color = 'white';
+	        });
+	    });
+	    
+	    // iframe 높이 자동 조절 함수
+	    function resizeIframe() {
+	        try {
+	            // 현재 문서의 전체 높이 계산
+	            const bodyHeight = document.body.scrollHeight;
+	            const windowHeight = document.documentElement.scrollHeight;
+	            const contentHeight = Math.max(bodyHeight, windowHeight);
+	            
+	            // 부모 window에 메시지 전송 (iframe 외부에서 크기 조절)
+	            if (window.parent && window.parent !== window) {
+	                window.parent.postMessage({
+	                    type: 'resizeIframe',
+	                    height: contentHeight + 20, // 여백 추가
+	                    source: 'pointHistory'
+	                }, '*');
+	            }
+	        } catch (e) {
+	            console.log('iframe resize error:', e);
+	        }
+	    }
+	    
+	    // 초기 로드 시 크기 조절
+	    resizeIframe();
+	    
+	    // 창 크기 변경 시 재조절
+	    window.addEventListener('resize', resizeIframe);
+	    
+	    // MutationObserver로 DOM 변경 감지
+	    const observer = new MutationObserver(function(mutations) {
+	        let shouldResize = false;
+	        mutations.forEach(function(mutation) {
+	            if (mutation.type === 'childList' || mutation.type === 'attributes') {
+	                shouldResize = true;
+	            }
+	        });
+	        if (shouldResize) {
+	            setTimeout(resizeIframe, 100); // 약간의 지연 후 크기 조절
+	        }
+	    });
+	    
+	    // DOM 변경 관찰 시작
+	    observer.observe(document.body, {
+	        childList: true,
+	        subtree: true,
+	        attributes: true,
+	        attributeFilter: ['style', 'class']
+	    });
+	    
+	    // 테이블 데이터 로드 완료 시 크기 재조절
+	    setTimeout(function() {
+	        resizeIframe();
+	    }, 500);
+	});
+
+</script>
+</div>
 </body>
 </html>

@@ -32,15 +32,15 @@ body {
 }
 
 .main-box {
-	display: flex;
-	justify-content: space-between;
-	gap: 20px;
-	width: 1420px;
-	height: 805px;
-	background-color: #d4d0c8;
-	padding-left: 135px;
-	padding-top: 110px;
-	box-sizing: border-box;
+	    display: flex;
+	    justify-content: space-between;
+	    /* gap: 20px; */
+	    width: 1350px;
+	    /* height: 805px; */
+	    background-color: #d4d0c8;
+	    padding-left: 90px;
+	    padding-top: 110px;
+	    box-sizing: border-box;
 }
 
 .member-info-container {

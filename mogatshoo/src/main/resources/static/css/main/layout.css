@@ -50,7 +50,7 @@ body::before {
 .content-area {
 	flex: 1;
 	/* 가능한 모든 공간 사용 */
-	width: 100%;
+	width: 110%;
 	display: flex;
 	flex-direction: column;
 	position: relative;
@@ -61,6 +61,7 @@ body::before {
 	/* 가로 스크롤 방지 */
 	padding-bottom: 0px;
 	/* 푸터 높이만큼 하단 패딩 추가 */
+	
 }
 
 .content-wrapper {
@@ -69,7 +70,6 @@ body::before {
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: 1rem;
-	padding: 0 2rem;
 	box-sizing: border-box;
 
 	/* 데스크톱: flex 비활성화 (꽉 찬 레이아웃) */

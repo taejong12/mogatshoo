@@ -376,9 +376,7 @@ input[type="radio"] {
 
 /* 태블릿 (768px ~ 1024px) */
 @media screen and (max-width: 1024px) {
-	.pixel-bg {
-		padding: 15px;
-	}
+	
 
 	.main-container {
 		max-width: 90%;

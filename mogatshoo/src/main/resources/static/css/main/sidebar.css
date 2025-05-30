@@ -193,9 +193,11 @@
 
 /* 사이드바가 있을 때 메인 콘텐츠 영역 조정 */
 .content-with-sidebar {
-	margin-left: 120px;
-	transition: margin-left 0.3s ease;
-	background-color:rgb(192, 192, 192);
+	    height: 700px !important;
+	    width: 500px !important;
+	    background-color: rgb(192, 192, 192) !important;
+	    align-items: center !important;
+	    justify-content: center !important;
 }
 
 /* 기본 윈도우95 창 스타일 */

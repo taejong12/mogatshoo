@@ -70,7 +70,7 @@
 				<div class="win95-close">×</div>
 			</div>
 			<div class="win95-content">
-				<iframe id="windowContentFrame" style="width:1300px; height:580px; border:none; overflow:auto;"
+				<iframe id="windowContentFrame" style="background-color: rgb(192, 192, 192); border:none; overflow:auto;"
 					src="about:blank"></iframe>
 			</div>
 		</div>
@@ -80,6 +80,7 @@
 
 		<script>
 			console.log("🚀 사이드바 스크립트 로드됨 - 새 버전!");
+			
 
 			$(document).ready(function () {
 				// 현재 모드 상태 관리
@@ -402,6 +403,14 @@
 					openInIframe(currentURL, title);
 				}
 			});
+			window.addEventListener('message', function(event) {
+				    if (event.data.type === 'resizeIframe' && event.data.source === 'pointHistory') {
+				        const iframe = document.querySelector('#windowContentFrame'); // iframe ID에 맞게 수정
+				        if (iframe) {
+				            iframe.style.height = event.data.height + 'px';
+				        }
+				    }
+				});
 		</script>
 	</div>
 </body>

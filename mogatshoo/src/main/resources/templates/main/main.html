@@ -71,11 +71,20 @@
 			border-radius: 5px;
 
 		}
+		
+		.content-with-sidebar {
+		    height: 700px !important;
+		    width: 500px !important;
+		    background-color: #008080 !important;
+		    align-items: center !important;
+		    justify-content: center !important;
+		}
 	</style>
 </head>
 
 <body>
 	<!-- 본문 영역 -->
+		
 	<div layout:fragment="content">
 		<!-- 비디오 컨테이너 -->
 		<div class="video-container" id="videoContainer">
@@ -87,6 +96,7 @@
 			<h2>mogatshoo : itmogatshoo@gmail.com</h2>
 		</div>
 	</div>
+	
 
 	<!-- 페이지별 스크립트 -->
 	<th:block layout:fragment="additionalScripts">
