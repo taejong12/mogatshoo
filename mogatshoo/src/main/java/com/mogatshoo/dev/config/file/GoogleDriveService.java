@@ -6,6 +6,8 @@ import java.util.Collections;
 
 import jakarta.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,10 +19,13 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 
 @Service
 public class GoogleDriveService {
+
+	private static final Logger logger = LoggerFactory.getLogger(GoogleDriveService.class);
 
 	@Value("${google.drive.project.id:}")
 	private String projectId;
@@ -39,6 +44,9 @@ public class GoogleDriveService {
 
 	@Value("${google.drive.folder.id:}")
 	private String folderId;
+
+	@Value("${google.drive.point.item.path:}")
+	private String pointItemPath;
 
 	private Drive driveService;
 	private boolean isEnabled = false;
@@ -151,74 +159,73 @@ public class GoogleDriveService {
 			throw new IOException("사용자 폴더 처리 실패: " + e.getMessage(), e);
 		}
 	}
+
 	/**
 	 * 폴더 접근 권한 테스트용 메서드
 	 */
 	public void testFolderAccess() {
-	    if (!isEnabled) {
-	        System.out.println("[DEBUG] 구글 드라이브 서비스가 비활성화됨");
-	        return;
-	    }
-	    
-	    try {
-	        System.out.println("[DEBUG] 폴더 접근 테스트 시작");
-	        System.out.println("[DEBUG] 대상 폴더 ID: " + folderId);
-	        System.out.println("[DEBUG] 서비스 계정: " + clientEmail);
-	        
-	        // 폴더 정보 조회 시도
-	        var folder = driveService.files().get(folderId).setFields("id,name,owners,permissions").execute();
-	        System.out.println("[DEBUG] 폴더명: " + folder.getName());
-	        System.out.println("[DEBUG] 폴더 소유자: " + folder.getOwners());
-	        
-	        // 폴더 내 파일 목록 조회 시도
-	        var result = driveService.files().list()
-	            .setQ("parents in '" + folderId + "'")
-	            .setFields("files(id,name)")
-	            .setPageSize(5)
-	            .execute();
-	            
-	        System.out.println("[DEBUG] 폴더 내 파일 개수: " + (result.getFiles() != null ? result.getFiles().size() : 0));
-	        
-	    } catch (Exception e) {
-	        System.err.println("[DEBUG] 폴더 접근 실패: " + e.getMessage());
-	        e.printStackTrace();
-	    }
+		if (!isEnabled) {
+			System.out.println("[DEBUG] 구글 드라이브 서비스가 비활성화됨");
+			return;
+		}
+
+		try {
+			System.out.println("[DEBUG] 폴더 접근 테스트 시작");
+			System.out.println("[DEBUG] 대상 폴더 ID: " + folderId);
+			System.out.println("[DEBUG] 서비스 계정: " + clientEmail);
+
+			// 폴더 정보 조회 시도
+			var folder = driveService.files().get(folderId).setFields("id,name,owners,permissions").execute();
+			System.out.println("[DEBUG] 폴더명: " + folder.getName());
+			System.out.println("[DEBUG] 폴더 소유자: " + folder.getOwners());
+
+			// 폴더 내 파일 목록 조회 시도
+			var result = driveService.files().list().setQ("parents in '" + folderId + "'").setFields("files(id,name)")
+					.setPageSize(5).execute();
+
+			System.out.println("[DEBUG] 폴더 내 파일 개수: " + (result.getFiles() != null ? result.getFiles().size() : 0));
+
+		} catch (Exception e) {
+			System.err.println("[DEBUG] 폴더 접근 실패: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
+
 	/**
 	 * 사용자 폴더에 파일을 업로드합니다.
 	 */
 	public String uploadFileToUserFolder(MultipartFile file, String memberId, String fileName) throws IOException {
-	    if (!isEnabled) {
-	        throw new IOException("구글 드라이브 서비스가 비활성화되어 있습니다.");
-	    }
+		if (!isEnabled) {
+			throw new IOException("구글 드라이브 서비스가 비활성화되어 있습니다.");
+		}
 
-	    try {
-	        String userFolderId = createOrFindUserFolder(memberId);
+		try {
+			String userFolderId = createOrFindUserFolder(memberId);
 
-	        File fileMetadata = new File();
-	        fileMetadata.setName(fileName);
-	        fileMetadata.setParents(Collections.singletonList(userFolderId));
+			File fileMetadata = new File();
+			fileMetadata.setName(fileName);
+			fileMetadata.setParents(Collections.singletonList(userFolderId));
 
-	        InputStreamContent mediaContent = new InputStreamContent(file.getContentType(), file.getInputStream());
+			InputStreamContent mediaContent = new InputStreamContent(file.getContentType(), file.getInputStream());
 
-	        File uploadedFile = driveService.files().create(fileMetadata, mediaContent).setFields("id,name").execute();
+			File uploadedFile = driveService.files().create(fileMetadata, mediaContent).setFields("id,name").execute();
 
-	        // 🔥 디버깅 로그 추가!
-	        System.out.println("=== 구글 드라이브 업로드 디버깅 ===");
-	        System.out.println("멤버 ID: " + memberId);
-	        System.out.println("파일명: " + fileName);
-	        System.out.println("업로드된 파일명: " + uploadedFile.getName());
-	        System.out.println("실제 파일 ID: " + uploadedFile.getId());
-	        System.out.println("생성될 URL: " + getFileUrl(uploadedFile.getId()));
-	        System.out.println("=====================================");
+			// 🔥 디버깅 로그 추가!
+			System.out.println("=== 구글 드라이브 업로드 디버깅 ===");
+			System.out.println("멤버 ID: " + memberId);
+			System.out.println("파일명: " + fileName);
+			System.out.println("업로드된 파일명: " + uploadedFile.getName());
+			System.out.println("실제 파일 ID: " + uploadedFile.getId());
+			System.out.println("생성될 URL: " + getFileUrl(uploadedFile.getId()));
+			System.out.println("=====================================");
 
-	        makeFilePublic(uploadedFile.getId());
+			makeFilePublic(uploadedFile.getId());
 
-	        return uploadedFile.getId();
+			return uploadedFile.getId();
 
-	    } catch (Exception e) {
-	        throw new IOException("사용자 폴더 파일 업로드 실패: " + e.getMessage(), e);
-	    }
+		} catch (Exception e) {
+			throw new IOException("사용자 폴더 파일 업로드 실패: " + e.getMessage(), e);
+		}
 	}
 
 	private void makeFilePublic(String fileId) {
@@ -235,11 +242,11 @@ public class GoogleDriveService {
 	}
 
 	public String getFileUrl(String fileId) {
-	    if (fileId == null || fileId.isEmpty()) {
-	        return null;
-	    }
-	    // 이 형식이 HTML에서 더 잘 작동?
-	    return "https://lh3.googleusercontent.com/d/" + fileId;
+		if (fileId == null || fileId.isEmpty()) {
+			return null;
+		}
+		// 이 형식이 HTML에서 더 잘 작동?
+		return "https://lh3.googleusercontent.com/d/" + fileId;
 	}
 
 	public void deleteFile(String fileId) throws IOException {
@@ -254,59 +261,106 @@ public class GoogleDriveService {
 			System.err.println("[GoogleDriveService] 파일 삭제 실패: " + e.getMessage());
 		}
 	}
-	
+
 	public void deleteUserFolder(String memberId) throws IOException {
-	    if (!isEnabled || memberId == null || memberId.isEmpty()) {
-	        return;
-	    }
+		if (!isEnabled || memberId == null || memberId.isEmpty()) {
+			return;
+		}
 
-	    try {
-	        // 1. 사용자 폴더 찾기
-	        var result = driveService
-	                .files().list()
-	                .setQ("name='" + memberId + "' and mimeType='application/vnd.google-apps.folder' and parents in '" + folderId + "'")
-	                .setFields("files(id, name)")
-	                .execute();
+		try {
+			// 1. 사용자 폴더 찾기
+			var result = driveService
+					.files().list().setQ("name='" + memberId
+							+ "' and mimeType='application/vnd.google-apps.folder' and parents in '" + folderId + "'")
+					.setFields("files(id, name)").execute();
 
-	        if (result.getFiles() == null || result.getFiles().isEmpty()) {
-	            System.out.println("[GoogleDriveService] 삭제할 사용자 폴더가 없습니다: " + memberId);
-	            return;
-	        }
+			if (result.getFiles() == null || result.getFiles().isEmpty()) {
+				System.out.println("[GoogleDriveService] 삭제할 사용자 폴더가 없습니다: " + memberId);
+				return;
+			}
 
-	        String userFolderId = result.getFiles().get(0).getId();
-	        
-	        // 2. 폴더 안의 모든 파일 조회
-	        var filesInFolder = driveService
-	                .files().list()
-	                .setQ("parents in '" + userFolderId + "'")
-	                .setFields("files(id, name)")
-	                .execute();
+			String userFolderId = result.getFiles().get(0).getId();
 
-	        // 3. 폴더 안의 모든 파일 삭제
-	        if (filesInFolder.getFiles() != null) {
-	            for (var file : filesInFolder.getFiles()) {
-	                try {
-	                    driveService.files().delete(file.getId()).execute();
-	                    System.out.println("[GoogleDriveService] 폴더 내 파일 삭제: " + file.getName());
-	                } catch (Exception e) {
-	                    System.err.println("[GoogleDriveService] 파일 삭제 실패: " + file.getName() + " - " + e.getMessage());
-	                }
-	            }
-	        }
+			// 2. 폴더 안의 모든 파일 조회
+			var filesInFolder = driveService.files().list().setQ("parents in '" + userFolderId + "'")
+					.setFields("files(id, name)").execute();
 
-	        // 4. 빈 폴더 삭제
-	        driveService.files().delete(userFolderId).execute();
-	        System.out.println("[GoogleDriveService] 사용자 폴더 삭제 완료: " + memberId);
+			// 3. 폴더 안의 모든 파일 삭제
+			if (filesInFolder.getFiles() != null) {
+				for (var file : filesInFolder.getFiles()) {
+					try {
+						driveService.files().delete(file.getId()).execute();
+						System.out.println("[GoogleDriveService] 폴더 내 파일 삭제: " + file.getName());
+					} catch (Exception e) {
+						System.err.println("[GoogleDriveService] 파일 삭제 실패: " + file.getName() + " - " + e.getMessage());
+					}
+				}
+			}
 
-	    } catch (Exception e) {
-	        System.err.println("[GoogleDriveService] 사용자 폴더 삭제 실패: " + e.getMessage());
-	        throw new IOException("사용자 폴더 삭제 실패: " + e.getMessage(), e);
-	    }
+			// 4. 빈 폴더 삭제
+			driveService.files().delete(userFolderId).execute();
+			System.out.println("[GoogleDriveService] 사용자 폴더 삭제 완료: " + memberId);
+
+		} catch (Exception e) {
+			System.err.println("[GoogleDriveService] 사용자 폴더 삭제 실패: " + e.getMessage());
+			throw new IOException("사용자 폴더 삭제 실패: " + e.getMessage(), e);
+		}
 	}
-	
-	
+
 	// 프록시로 전달하는 메ㅔ서드추가 ㅎ
 	public Drive getDriveService() {
-	    return this.driveService;
+		return this.driveService;
+	}
+
+	// 포인트 상품 이미지 등록
+	public String uploadFileToPointItem(MultipartFile imgFile, String newFileName) {
+
+		try {
+			if (!isEnabled) {
+				throw new IOException("구글 드라이브 서비스가 비활성화되어 있습니다.");
+			}
+
+			File fileMetadata = new File();
+			fileMetadata.setName(newFileName);
+			fileMetadata.setParents(Collections.singletonList(pointItemPath));
+
+			InputStreamContent mediaContent = new InputStreamContent(imgFile.getContentType(),
+					imgFile.getInputStream());
+
+			// 파일 업로드
+			File uploadedFile = driveService.files().create(fileMetadata, mediaContent).setFields("id,name").execute();
+
+			logger.info("파일 업로드 완료 - 이름: {}, ID: {}", uploadedFile.getName(), uploadedFile.getId());
+			logger.debug("생성된 파일 URL: {}", getFileUrl(uploadedFile.getId()));
+
+			// 파일을 외부에 공개
+			makeFilePublic(uploadedFile.getId());
+
+			return uploadedFile.getId();
+
+		} catch (Exception e) {
+			logger.error("포인트 아이템 파일 업로드 실패", e);
+			throw new RuntimeException("포인트 아이템 파일 업로드 실패: " + e.getMessage(), e);
+		}
+	}
+
+	// 포인트 상품 이미지 삭제
+	public void deletePointItemImg(String pointItemImgFileId) {
+
+		try {
+			if (!isEnabled) {
+				throw new IOException("구글 드라이브 서비스가 비활성화되어 있습니다.");
+			}
+
+			if (pointItemImgFileId == null || pointItemImgFileId.isEmpty()) {
+				logger.warn("삭제할 파일명이 null 또는 비어 있어 삭제를 건너뜁니다.");
+				return;
+			}
+
+			driveService.files().delete(pointItemImgFileId).execute();
+			logger.info("포인트 아이템 이미지 삭제 완료: 파일 ID={}", pointItemImgFileId);
+		} catch (Exception e) {
+			logger.error("포인트 아이템 이미지 삭제 실패: 파일 ID={}", pointItemImgFileId, e);
+		}
 	}
 }

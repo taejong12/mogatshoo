@@ -1,6 +1,7 @@
 package com.mogatshoo.dev.admin.point.category.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,31 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 
 	@Override
 	public Page<AdminPointCategoryEntity> findAllPageable(Pageable pageable) {
-		return adminPointCategoryRepository.findAll(pageable);
+		try {
+			Page<AdminPointCategoryEntity> result = adminPointCategoryRepository.findAll(pageable);
+			logger.info("포인트 카테고리 페이지 조회 성공 - 페이지 번호: {}", pageable.getPageNumber());
+			return result;
+		} catch (Exception e) {
+			logger.error("포인트 카테고리 페이지 조회 실패", e);
+			return Page.empty();
+		}
 	}
+
+	@Override
+	public AdminPointCategoryEntity findById(Integer pointCategoryId) {
+		try {
+			Optional<AdminPointCategoryEntity> optionalEntity = adminPointCategoryRepository.findById(pointCategoryId);
+			if (optionalEntity.isPresent()) {
+				logger.info("포인트 카테고리 조회 성공 - ID: {}", pointCategoryId);
+				return optionalEntity.get();
+			} else {
+				logger.warn("포인트 카테고리가 존재하지 않음 - ID: {}", pointCategoryId);
+				return null;
+			}
+		} catch (Exception e) {
+			logger.error("포인트 카테고리 조회 중 오류 발생 - ID: {}", pointCategoryId, e);
+			return null;
+		}
+	}
+
 }

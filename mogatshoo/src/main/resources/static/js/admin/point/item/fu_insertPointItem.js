@@ -70,6 +70,7 @@ function fu_insertPointItem() {
 	}
 }
 
+// 경고메시지 함수
 function showWarning(warnElement, message) {
 	warnElement.textContent = message;
 	warnElement.style.color = 'rgb(255, 107, 107)';

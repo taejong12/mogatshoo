@@ -13,4 +13,6 @@ public interface AdminPointItemService {
 
 	void save(AdminPointItemEntity adminPointItemEntity);
 
+	AdminPointItemEntity findById(Long pointItemId);
+
 }

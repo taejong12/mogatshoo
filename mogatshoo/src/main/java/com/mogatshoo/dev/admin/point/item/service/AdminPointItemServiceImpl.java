@@ -1,5 +1,7 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,25 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 			}
 		} catch (Exception e) {
 			logger.error("포인트 아이템 저장 중 오류 발생", e);
+		}
+	}
+
+	@Override
+	public AdminPointItemEntity findById(Long pointItemId) {
+		try {
+			Optional<AdminPointItemEntity> optionalEntity = adminPointItemRepository.findById(pointItemId);
+
+			if (optionalEntity.isPresent()) {
+				logger.info("포인트 아이템 조회 성공. pointItemId: {}", pointItemId);
+				return optionalEntity.get();
+			} else {
+				logger.warn("포인트 아이템이 존재하지 않습니다. pointItemId: {}", pointItemId);
+				return null;
+			}
+
+		} catch (Exception e) {
+			logger.error("포인트 아이템 조회 중 오류 발생. pointItemId: {}", pointItemId, e);
+			return null;
 		}
 	}
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,8 @@ import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 import com.mogatshoo.dev.admin.point.item.service.AdminPointItemImgService;
 import com.mogatshoo.dev.admin.point.item.service.AdminPointItemService;
+
+import jakarta.websocket.server.PathParam;
 
 @Controller
 @RequestMapping("/admin/point/item")
@@ -85,10 +88,26 @@ public class AdminPointItemController {
 		model.addAttribute("pointCategoryList", pointCategoryList);
 		return "admin/point/item/insertPage";
 	}
-	
+
 	@PostMapping("/insert")
 	public String pointItemInsert(@ModelAttribute AdminPointItemEntity adminPointItemEntity) {
 		adminPointItemService.save(adminPointItemEntity);
 		return "redirect:/admin/point/item/list";
+	}
+
+	@GetMapping("/detail/{pointItemId}")
+	public String pointItemInsertPage(@PathVariable("pointItemId") Long pointItemId, Model model) {
+		AdminPointItemEntity adminPointItemEntity = adminPointItemService.findById(pointItemId);
+		AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgService.findByPointItemId(pointItemId);
+
+		AdminPointCategoryEntity adminPointCategoryEntity = null;
+		if (adminPointItemEntity != null && adminPointItemEntity.getPointCategoryId() != null) {
+			adminPointCategoryEntity = adminPointCategoryService.findById(adminPointItemEntity.getPointCategoryId());
+		}
+
+		model.addAttribute("pointItem", adminPointItemEntity);
+		model.addAttribute("itemImg", adminPointItemImgEntity);
+		model.addAttribute("pointCategory", adminPointCategoryEntity);
+		return "admin/point/item/detail";
 	}
 }

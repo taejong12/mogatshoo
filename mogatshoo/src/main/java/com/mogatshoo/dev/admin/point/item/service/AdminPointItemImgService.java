@@ -11,6 +11,8 @@ public interface AdminPointItemImgService {
 
 	List<AdminPointItemImgEntity> findByItemId(List<AdminPointItemEntity> AdminPointItemEntity);
 
-	void save(MultipartFile imgFile, Long itemId);
+	void save(MultipartFile imgFile, Long pointItemId);
+
+	AdminPointItemImgEntity findByPointItemId(Long pointItemId);
 
 }

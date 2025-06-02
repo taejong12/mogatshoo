@@ -15,4 +15,6 @@ public interface AdminPointCategoryService {
 
 	Page<AdminPointCategoryEntity> findAllPageable(Pageable pageable);
 
+	AdminPointCategoryEntity findById(Integer pointCategoryId);
+
 }
