@@ -1,8 +1,8 @@
 /**
- * 질문 목록 페이지 기능
+ * 질문 목록 페이지 기능 - 기존 JS + 검색 기능 추가
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // 검색 기능
+    // 기존 검색 기능
     const setupSearch = () => {
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const newRow = document.createElement('tr');
                     newRow.id = 'noResultsRow';
                     newRow.innerHTML = `
-                        <td colspan="5" class="empty-search">
+                        <td colspan="6" class="empty-search">
                             <div class="empty-state">
                                 <i class="fas fa-search fa-3x"></i>
                                 <p>"${searchTerm}"에 대한 검색 결과가 없습니다.</p>
@@ -169,17 +169,72 @@ document.addEventListener('DOMContentLoaded', function() {
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     
+    
+    
+    
+    // 페이지 크기 변경 함수 (검색 조건 유지)
+    window.changePageSize = function(newSize) {
+        const form = document.getElementById('advancedSearchForm');
+        const sizeInput = form.querySelector('input[name="size"]');
+        const pageInput = form.querySelector('input[name="page"]');
+        
+        sizeInput.value = newSize;
+        pageInput.value = '0'; // 페이지 크기 변경 시 첫 페이지로
+        
+        form.submit();
+    };
+    
+    // 고급 검색 폼 제출 시 페이지를 0으로 리셋
+    const setupAdvancedSearchForm = () => {
+        const advancedForm = document.getElementById('advancedSearchForm');
+        if (advancedForm) {
+            advancedForm.addEventListener('submit', function() {
+                this.querySelector('input[name="page"]').value = '0';
+            });
+        }
+    };
+    
+    // 검색 조건이 있을 때 고급 검색 폼 하이라이트
+    const highlightSearchForm = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasSearchCondition = urlParams.get('keyword') || urlParams.get('publicStatus') || 
+                                   urlParams.get('createdDate') || urlParams.get('votingDate');
+        
+        if (hasSearchCondition) {
+            const searchContainer = document.querySelector('.advanced-search-container');
+            if (searchContainer) {
+                searchContainer.style.borderColor = 'var(--primary-color)';
+                searchContainer.style.boxShadow = '0 0 0 0.2rem rgba(74, 107, 255, 0.25)';
+            }
+        }
+    };
+    
+    // URL 파라미터에서 성공/오류 메시지 처리 및 URL 정리
+    const handleUrlMessages = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+        const message = urlParams.get('message');
+        
+        if (status && message) {
+            const decodedMessage = decodeURIComponent(message);
+            showNotification(decodedMessage, status);
+            
+            // URL에서 status와 message 파라미터 제거 (뒤로가기 시 중복 표시 방지)
+            const cleanUrl = window.location.pathname + window.location.search
+                .replace(/[?&](status|message)=[^&]*/g, '')
+                .replace(/^&/, '?')
+                .replace(/\?$/, '');
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+    };
+    
     // URL 파라미터를 가져오는 헬퍼 함수
     const getUrlParameter = (name) => {
         const params = new URLSearchParams(window.location.search);
         return params.get(name);
     };
     
-    // 페이지 로드 시 실행되는 초기화 함수
-    const initListPage = () => {
-        setupSearch();
-        checkUrlParams();
-    };
+    
     
     initListPage();
 });

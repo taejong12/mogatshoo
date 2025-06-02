@@ -5,6 +5,124 @@
 <head>
     <title>질문 수정</title>
     <link rel="stylesheet" th:href="@{/css/question/detail.css}">
+    <style>
+        /* 투표 기간 관련 스타일 추가 */
+        .voting-period-section {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .voting-period-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .voting-period-title::before {
+            content: "📅";
+            margin-right: 8px;
+        }
+        
+        .date-input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .date-input-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 180px;
+        }
+        
+        .date-input-item label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        
+        .date-input-item input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+        
+        .date-input-item input[type="date"]:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .time-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 13px;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+        
+        .voting-status-display {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-진행중 {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-종료 {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-none {
+            background-color: #e2e3e5;
+            color: #6c757d;
+        }
+        
+        .validation-warning {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            color: #856404;
+            font-size: 13px;
+            display: none;
+        }
+        
+        .validation-warning.show {
+            display: block;
+        }
+        
+        .voting-period-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
     <div layout:fragment="content">
@@ -17,12 +135,13 @@
                 <p><strong>일련번호:</strong> <span th:text="${question?.serialNumber ?: '없음'}">N/A</span></p>
                 <p><strong>질문 객체:</strong> <span th:text="${question != null ? '존재함' : '없음'}">N/A</span></p>
                 <p><strong>공개상태:</strong> <span th:text="${question?.isPublic ?: '없음'}">N/A</span></p>
+                <p><strong>투표상태:</strong> <span th:text="${question?.votingStatus ?: '없음'}">N/A</span></p>
             </div>
             
             <!-- 질문이 존재하는 경우에만 폼 표시 -->
             <div th:if="${question != null}">
                 <form th:action="@{/questions/{serialNumber}(serialNumber=${question.serialNumber})}" 
-                      th:object="${question}" method="post">
+                      th:object="${question}" method="post" id="questionForm">
                     
                     <input type="hidden" th:field="*{serialNumber}" />
                     
@@ -51,6 +170,62 @@
                         </div>
                     </div>
                     
+                    <!-- 투표 기간 설정 섹션 추가 -->
+                    <div class="voting-period-section" id="votingPeriodSection">
+                        <div class="voting-period-title">투표 기간 설정</div>
+                        
+                        <div class="date-input-group">
+                            <div class="date-input-item">
+                                <label for="votingStartDate">투표 시작일</label>
+                                <input type="date" 
+                                       id="votingStartDate" 
+                                       name="votingStartDate"
+                                       th:value="${question.votingStartDate != null ? #temporals.format(question.votingStartDate, 'yyyy-MM-dd') : ''}">
+                            </div>
+                            
+                            <div class="date-input-item">
+                                <label for="votingEndDate">투표 종료일</label>
+                                <input type="date" 
+                                       id="votingEndDate" 
+                                       name="votingEndDate"
+                                       th:value="${question.votingEndDate != null ? #temporals.format(question.votingEndDate, 'yyyy-MM-dd') : ''}">
+                            </div>
+                            
+                            <div class="time-info">
+                                <div><strong>시작 시간:</strong> 오전 08:00</div>
+                                <div><strong>종료 시간:</strong> 오후 22:00</div>
+                                <div style="color: #007bff; font-size: 12px;">※ 시간은 자동으로 설정됩니다</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 투표 상태 표시 -->
+                        <div class="voting-status-display">
+                            <strong>투표 상태:</strong> 
+                            <span th:if="${question.votingStatus == '진행중'}" class="status-badge status-진행중">진행중</span>
+                            <span th:if="${question.votingStatus == '종료'}" class="status-badge status-종료">종료</span>
+                            <span th:if="${question.votingStatus == null or question.votingStatus == ''}" class="status-badge status-none">설정되지 않음</span>
+                            
+                            <!-- 현재 투표 기간 표시 -->
+                            <div th:if="${question.votingStartDate != null and question.votingEndDate != null}" style="margin-top: 8px; font-size: 13px;">
+                                <strong>설정된 기간:</strong> 
+                                <span th:text="${#temporals.format(question.votingStartDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                ~
+                                <span th:text="${#temporals.format(question.votingEndDate, 'yyyy-MM-dd HH:mm')}"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- 유효성 검사 경고 메시지 -->
+                        <div class="validation-warning" id="validationWarning">
+                            <strong>⚠️ 주의사항:</strong>
+                            <ul style="margin: 5px 0; padding-left: 20px;">
+                                <li>공개 질문으로 설정하려면 투표 시작일과 종료일을 모두 입력해야 합니다.</li>
+                                <li>비공개 질문에는 투표 기간을 설정할 수 없습니다.</li>
+                                <li>투표 시작일은 종료일보다 이전이어야 합니다.</li>
+                                <li>과거 날짜로는 투표를 시작할 수 없습니다.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="question">질문 내용</label>
                         <textarea id="question" th:field="*{question}" rows="3" required></textarea>
@@ -60,7 +235,7 @@
                         <label for="option1">보기 1</label>
                         <input type="text" id="option1" th:field="*{option1}" required>
                         <!-- 이미지 미리보기 -->
-                        <div th:if="${question.option1 != null and #strings.contains(question.option1, '/uploads/')}" class="image-preview">
+                        <div th:if="${question.option1 != null and (#strings.contains(question.option1, '/uploads/') or #strings.contains(question.option1, '/proxy/image/'))}" class="image-preview">
                             <img th:src="${question.option1}" alt="옵션1 이미지" style="max-width: 100px; max-height: 100px;" 
                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <div style="display: none; color: #800000; font-size: 10px;">이미지를 불러올 수 없습니다.</div>
@@ -70,7 +245,7 @@
                     <div class="form-group">
                         <label for="option2">보기 2</label>
                         <input type="text" id="option2" th:field="*{option2}" required>
-                        <div th:if="${question.option2 != null and #strings.contains(question.option2, '/uploads/')}" class="image-preview">
+                        <div th:if="${question.option2 != null and (#strings.contains(question.option2, '/uploads/') or #strings.contains(question.option2, '/proxy/image/'))}" class="image-preview">
                             <img th:src="${question.option2}" alt="옵션2 이미지" style="max-width: 100px; max-height: 100px;" 
                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <div style="display: none; color: #800000; font-size: 10px;">이미지를 불러올 수 없습니다.</div>
@@ -80,7 +255,7 @@
                     <div class="form-group">
                         <label for="option3">보기 3</label>
                         <input type="text" id="option3" th:field="*{option3}">
-                        <div th:if="${question.option3 != null and #strings.contains(question.option3, '/uploads/')}" class="image-preview">
+                        <div th:if="${question.option3 != null and (#strings.contains(question.option3, '/uploads/') or #strings.contains(question.option3, '/proxy/image/'))}" class="image-preview">
                             <img th:src="${question.option3}" alt="옵션3 이미지" style="max-width: 100px; max-height: 100px;" 
                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <div style="display: none; color: #800000; font-size: 10px;">이미지를 불러올 수 없습니다.</div>
@@ -90,7 +265,7 @@
                     <div class="form-group">
                         <label for="option4">보기 4</label>
                         <input type="text" id="option4" th:field="*{option4}">
-                        <div th:if="${question.option4 != null and #strings.contains(question.option4, '/uploads/')}" class="image-preview">
+                        <div th:if="${question.option4 != null and (#strings.contains(question.option4, '/uploads/') or #strings.contains(question.option4, '/proxy/image/'))}" class="image-preview">
                             <img th:src="${question.option4}" alt="옵션4 이미지" style="max-width: 100px; max-height: 100px;" 
                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <div style="display: none; color: #800000; font-size: 10px;">이미지를 불러올 수 없습니다.</div>
@@ -109,7 +284,7 @@
                         
                         <div class="button-group">
                             <a th:href="@{/questions}" class="btn btn-secondary">취소</a>
-                            <button type="submit" class="btn btn-primary">저장하기</button>
+                            <button type="submit" class="btn btn-primary" id="saveButton">저장하기</button>
                         </div>
                     </div>
                 </form>
@@ -131,6 +306,127 @@
     
     <th:block layout:fragment="scripts">
         <script th:src="@{/js/question/detail.js}"></script>
+        <script>
+            // 투표 기간 관련 JavaScript 추가
+            document.addEventListener('DOMContentLoaded', function() {
+                const publicRadio = document.getElementById('publicRadio');
+                const privateRadio = document.getElementById('privateRadio');
+                const votingPeriodSection = document.getElementById('votingPeriodSection');
+                const votingStartDate = document.getElementById('votingStartDate');
+                const votingEndDate = document.getElementById('votingEndDate');
+                const validationWarning = document.getElementById('validationWarning');
+                const currentStatus = document.getElementById('currentStatus');
+                const questionForm = document.getElementById('questionForm');
+                
+                // 초기 상태 설정
+                updateVotingPeriodVisibility();
+                
+                // 공개/비공개 라디오 버튼 변경 시
+                publicRadio.addEventListener('change', function() {
+                    updateVotingPeriodVisibility();
+                    updateCurrentStatus();
+                });
+                
+                privateRadio.addEventListener('change', function() {
+                    updateVotingPeriodVisibility();
+                    updateCurrentStatus();
+                });
+                
+                // 투표 기간 입력 시 유효성 검사
+                votingStartDate.addEventListener('change', validateDates);
+                votingEndDate.addEventListener('change', validateDates);
+                
+                // 폼 제출 시 유효성 검사
+                questionForm.addEventListener('submit', function(e) {
+                    if (!validateForm()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+                
+                function updateVotingPeriodVisibility() {
+                    if (privateRadio.checked) {
+                        votingPeriodSection.classList.add('voting-period-disabled');
+                        validationWarning.classList.remove('show');
+                        // 비공개 선택 시 투표 기간 초기화
+                        votingStartDate.value = '';
+                        votingEndDate.value = '';
+                    } else {
+                        votingPeriodSection.classList.remove('voting-period-disabled');
+                        if (publicRadio.checked) {
+                            validationWarning.classList.add('show');
+                        }
+                    }
+                }
+                
+                function updateCurrentStatus() {
+                    if (publicRadio.checked) {
+                        currentStatus.textContent = '공개';
+                    } else {
+                        currentStatus.textContent = '비공개';
+                    }
+                }
+                
+                function validateDates() {
+                    const startDate = new Date(votingStartDate.value);
+                    const endDate = new Date(votingEndDate.value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    let hasError = false;
+                    let errorMessage = '';
+                    
+                    // 시작일이 과거인지 확인
+                    if (votingStartDate.value && startDate < today) {
+                        hasError = true;
+                        errorMessage += '투표 시작일은 과거 날짜로 설정할 수 없습니다.\n';
+                    }
+                    
+                    // 시작일이 종료일보다 늦은지 확인
+                    if (votingStartDate.value && votingEndDate.value && startDate >= endDate) {
+                        hasError = true;
+                        errorMessage += '투표 시작일은 종료일보다 이전이어야 합니다.\n';
+                    }
+                    
+                    if (hasError) {
+                        alert(errorMessage.trim());
+                        return false;
+                    }
+                    
+                    return true;
+                }
+                
+                function validateForm() {
+                    const isPublic = publicRadio.checked;
+                    const hasStartDate = votingStartDate.value.trim() !== '';
+                    const hasEndDate = votingEndDate.value.trim() !== '';
+                    
+                    // 공개 상태인데 투표 기간이 설정되지 않은 경우
+                    if (isPublic && (!hasStartDate || !hasEndDate)) {
+                        alert('공개 질문으로 설정하려면 투표 시작일과 종료일을 모두 입력해야 합니다.');
+                        return false;
+                    }
+                    
+                    // 비공개 상태인데 투표 기간이 설정된 경우
+                    if (!isPublic && (hasStartDate || hasEndDate)) {
+                        alert('비공개 질문에는 투표 기간을 설정할 수 없습니다. 먼저 공개로 변경하세요.');
+                        return false;
+                    }
+                    
+                    // 날짜 유효성 검사
+                    if (hasStartDate && hasEndDate) {
+                        return validateDates();
+                    }
+                    
+                    return true;
+                }
+                
+                // 오늘 날짜를 최소값으로 설정
+                const today = new Date().toISOString().split('T')[0];
+                votingStartDate.min = today;
+                votingEndDate.min = today;
+            });
+        </script>
     </th:block>
 </body>
 </html>

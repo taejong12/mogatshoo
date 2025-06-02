@@ -1,6 +1,9 @@
 package com.mogatshoo.dev.question.service;
 
 import com.mogatshoo.dev.question.entity.QuestionEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface QuestionService {
@@ -28,4 +31,11 @@ public interface QuestionService {
 	
 	// 이미지 경로 수정 메서드 추가
 	List<QuestionEntity> getAllQuestionsWithFixedImagePaths();
+	
+	void updateExpiredVotingStatus();
+    void archiveCompletedQuestions();
+    
+    Page<QuestionEntity> getQuestionsWithPaging(Pageable pageable);
+    
+    Page<QuestionEntity> searchQuestions(String keyword, String publicStatus, LocalDate createdDate, LocalDate votingDate, Pageable pageable);
 }
