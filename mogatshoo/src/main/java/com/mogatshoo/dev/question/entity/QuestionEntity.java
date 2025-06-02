@@ -38,6 +38,17 @@ public class QuestionEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(3) DEFAULT 'no'")
     private String isPublic = "no";
     
+    // 투표 기간 필드 추가
+    @Column(name = "voting_start_date")
+    private LocalDateTime votingStartDate;
+    
+    @Column(name = "voting_end_date")
+    private LocalDateTime votingEndDate;
+    
+    // 투표 상태 필드 추가 (진행중, 종료)
+    @Column(name = "voting_status", columnDefinition = "VARCHAR(10) DEFAULT '진행중'")
+    private String votingStatus = "진행중";
+    
     @Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdAt;
 }

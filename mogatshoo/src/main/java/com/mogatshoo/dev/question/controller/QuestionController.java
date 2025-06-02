@@ -7,6 +7,11 @@ import com.mogatshoo.dev.member.service.MemberService;
 import com.mogatshoo.dev.question.entity.QuestionEntity;
 import com.mogatshoo.dev.question.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,10 +44,157 @@ public class QuestionController {
 
 	// 질문 목록 페이지 - 경로 수정
 	@GetMapping({ "", "/", "/list" })
-	public String getAllQuestions(Model model) {
-		List<QuestionEntity> questions = questionService.getAllQuestionsWithFixedImagePaths();
-		model.addAttribute("questions", questions);
+	public String getAllQuestions(
+			@RequestParam(value = "page", defaultValue = "0") int page,
+			@RequestParam(value = "size", defaultValue = "10") int size,
+			@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "publicStatus", required = false) String publicStatus,
+			@RequestParam(value = "createdDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate createdDate,
+			@RequestParam(value = "votingDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate votingDate,
+			Model model) {
+		
+		try {
+			// 페이지 번호는 0부터 시작하므로 음수 방지
+			if (page < 0) page = 0;
+			
+			// 페이지 크기 검증 (1~50 사이)
+			if (size < 1) size = 10;
+			if (size > 50) size = 50;
+			
+			// 페이징 객체 생성 - 최신 질문이 먼저 오도록 createdAt 내림차순 정렬
+			Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+			
+			// 검색 조건이 있는지 확인
+			boolean hasSearchCondition = (keyword != null && !keyword.trim().isEmpty()) ||
+					(publicStatus != null && !publicStatus.trim().isEmpty()) ||
+					(createdDate != null) ||
+					(votingDate != null);
+			
+			Page<QuestionEntity> questionPage;
+			
+			if (hasSearchCondition) {
+				// 검색 조건이 있는 경우 검색 실행
+				questionPage = questionService.searchQuestions(keyword, publicStatus, createdDate, votingDate, pageable);
+				System.out.println("=== 검색 실행 ===");
+				System.out.println("키워드: " + keyword);
+				System.out.println("공개상태: " + publicStatus);
+				System.out.println("생성날짜: " + createdDate);
+				System.out.println("투표날짜: " + votingDate);
+			} else {
+				// 검색 조건이 없는 경우 전체 목록 조회
+				questionPage = questionService.getQuestionsWithPaging(pageable);
+				System.out.println("=== 전체 목록 조회 ===");
+			}
+			
+			// 페이징 정보를 모델에 추가
+			model.addAttribute("questions", questionPage.getContent());
+			model.addAttribute("currentPage", page);
+			model.addAttribute("totalPages", questionPage.getTotalPages());
+			model.addAttribute("totalElements", questionPage.getTotalElements());
+			model.addAttribute("size", size);
+			model.addAttribute("hasNext", questionPage.hasNext());
+			model.addAttribute("hasPrevious", questionPage.hasPrevious());
+			
+			// 검색 조건을 모델에 추가 (검색 폼 유지용)
+			model.addAttribute("keyword", keyword);
+			model.addAttribute("publicStatus", publicStatus);
+			model.addAttribute("createdDate", createdDate);
+			model.addAttribute("votingDate", votingDate);
+			
+			// 페이지 번호 리스트 생성 (현재 페이지 주변 5개씩)
+			List<Integer> pageNumbers = generatePageNumbers(page, questionPage.getTotalPages());
+			model.addAttribute("pageNumbers", pageNumbers);
+			
+			// 검색 결과 정보
+			if (hasSearchCondition) {
+				model.addAttribute("isSearchResult", true);
+				model.addAttribute("searchResultMessage", buildSearchResultMessage(keyword, publicStatus, createdDate, votingDate, questionPage.getTotalElements()));
+			} else {
+				model.addAttribute("isSearchResult", false);
+			}
+			
+			System.out.println("=== 페이징 정보 ===");
+			System.out.println("현재 페이지: " + page);
+			System.out.println("페이지 크기: " + size);
+			System.out.println("전체 페이지: " + questionPage.getTotalPages());
+			System.out.println("전체 질문 수: " + questionPage.getTotalElements());
+			System.out.println("현재 페이지 질문 수: " + questionPage.getContent().size());
+			
+		} catch (Exception e) {
+			System.err.println("질문 목록 조회 중 오류 발생: " + e.getMessage());
+			e.printStackTrace();
+			
+			// 오류 발생 시 빈 페이지 정보 설정
+			model.addAttribute("questions", new ArrayList<>());
+			model.addAttribute("currentPage", 0);
+			model.addAttribute("totalPages", 0);
+			model.addAttribute("totalElements", 0L);
+			model.addAttribute("size", size);
+			model.addAttribute("hasNext", false);
+			model.addAttribute("hasPrevious", false);
+			model.addAttribute("pageNumbers", new ArrayList<>());
+			model.addAttribute("errorMessage", "질문 목록을 불러오는 중 오류가 발생했습니다.");
+		}
+		
 		return "question/list";
+	}
+	
+	/**
+	 * 페이지 번호 리스트 생성 (현재 페이지 중심으로 최대 10개)
+	 */
+	private List<Integer> generatePageNumbers(int currentPage, int totalPages) {
+		List<Integer> pageNumbers = new ArrayList<>();
+		
+		if (totalPages <= 10) {
+			// 총 페이지가 10개 이하면 모든 페이지 표시
+			for (int i = 0; i < totalPages; i++) {
+				pageNumbers.add(i);
+			}
+		} else {
+			// 총 페이지가 10개 초과면 현재 페이지 중심으로 10개 표시
+			int start = Math.max(0, currentPage - 5);
+			int end = Math.min(totalPages, start + 10);
+			
+			// 끝에서 10개가 안 되면 시작점 조정
+			if (end - start < 10) {
+				start = Math.max(0, end - 10);
+			}
+			
+			for (int i = start; i < end; i++) {
+				pageNumbers.add(i);
+			}
+		}
+		
+		return pageNumbers;
+	}
+	
+	/**
+	 * 검색 결과 메시지 생성
+	 */
+	private String buildSearchResultMessage(String keyword, String publicStatus, LocalDate createdDate, LocalDate votingDate, long totalElements) {
+		StringBuilder message = new StringBuilder();
+		List<String> conditions = new ArrayList<>();
+		
+		if (keyword != null && !keyword.trim().isEmpty()) {
+			conditions.add("키워드 '" + keyword + "'");
+		}
+		if (publicStatus != null && !publicStatus.trim().isEmpty()) {
+			String statusText = "yes".equals(publicStatus) ? "공개" : "비공개";
+			conditions.add("상태 '" + statusText + "'");
+		}
+		if (createdDate != null) {
+			conditions.add("생성일 '" + createdDate + "'");
+		}
+		if (votingDate != null) {
+			conditions.add("투표일 '" + votingDate + "'");
+		}
+		
+		if (!conditions.isEmpty()) {
+			message.append(String.join(", ", conditions));
+			message.append("에 대한 검색 결과 총 ").append(totalElements).append("개");
+		}
+		
+		return message.toString();
 	}
 
 	@GetMapping("/new")
@@ -261,57 +416,158 @@ public class QuestionController {
 		}
 	}
 
-	// 질문 수정 처리
+	// 질문 수정 처리 - 투표 기간 기능 추가 (수정된 부분)
 	@PostMapping("/{serialNumber}")
 	public String updateQuestion(@PathVariable("serialNumber") String serialNumber,
-			@ModelAttribute QuestionEntity questionForm) {
+			@RequestParam("question") String questionText,
+			@RequestParam("option1") String option1,
+			@RequestParam("option2") String option2,
+			@RequestParam("option3") String option3,
+			@RequestParam("option4") String option4,
+			@RequestParam("isPublic") String isPublic,
+			@RequestParam(value = "votingStartDate", required = false) String votingStartDateStr,
+			@RequestParam(value = "votingEndDate", required = false) String votingEndDateStr) {
 		try {
+			System.out.println("=== 질문 수정 요청 ===");
+			System.out.println("일련번호: " + serialNumber);
+			System.out.println("공개상태: " + isPublic);
+			System.out.println("투표시작일: " + votingStartDateStr);
+			System.out.println("투표종료일: " + votingEndDateStr);
+
 			// 기존 질문 가져오기
 			QuestionEntity existingQuestion = questionService.getQuestionBySerialNumber(serialNumber);
 
-			// 공개 상태 변경 여부 확인
-			boolean isPublicChanged = !existingQuestion.getIsPublic().equals(questionForm.getIsPublic());
-
 			// 폼에서 입력받은 값을 기존 질문에 복사
-			existingQuestion.setQuestion(questionForm.getQuestion());
-			existingQuestion.setOption1(questionForm.getOption1());
-			existingQuestion.setOption2(questionForm.getOption2());
-			existingQuestion.setOption3(questionForm.getOption3());
-			existingQuestion.setOption4(questionForm.getOption4());
+			existingQuestion.setQuestion(questionText);
+			existingQuestion.setOption1(option1);
+			existingQuestion.setOption2(option2);
+			existingQuestion.setOption3(option3);
+			existingQuestion.setOption4(option4);
 
-			// 공개 상태 업데이트
-			String isPublic = questionForm.getIsPublic();
+			// 공개 상태 처리
 			if (isPublic == null || (!isPublic.equals("yes") && !isPublic.equals("no"))) {
 				isPublic = "no";
 			}
+
+			// 투표 기간 처리
+			LocalDateTime votingStartDate = null;
+			LocalDateTime votingEndDate = null;
+			
+			if (votingStartDateStr != null && !votingStartDateStr.trim().isEmpty()) {
+				try {
+					LocalDate startDate = LocalDate.parse(votingStartDateStr);
+					votingStartDate = startDate.atTime(8, 0); // 08:00으로 설정
+					System.out.println("파싱된 투표시작일: " + votingStartDate);
+				} catch (Exception e) {
+					System.err.println("투표 시작일 파싱 오류: " + e.getMessage());
+				}
+			}
+			
+			if (votingEndDateStr != null && !votingEndDateStr.trim().isEmpty()) {
+				try {
+					LocalDate endDate = LocalDate.parse(votingEndDateStr);
+					votingEndDate = endDate.atTime(22, 0); // 22:00으로 설정
+					System.out.println("파싱된 투표종료일: " + votingEndDate);
+				} catch (Exception e) {
+					System.err.println("투표 종료일 파싱 오류: " + e.getMessage());
+				}
+			}
+
+			// 유효성 검사
+			String validationResult = validateQuestionUpdate(isPublic, votingStartDate, votingEndDate);
+			if (validationResult != null) {
+				String errorMessage = URLEncoder.encode(validationResult, StandardCharsets.UTF_8.toString());
+				return "redirect:/questions/" + serialNumber + "/edit?status=error&message=" + errorMessage;
+			}
+
+			// 공개 상태 변경 여부 확인
+			boolean isPublicChanged = !existingQuestion.getIsPublic().equals(isPublic);
+
+			// 값 설정
 			existingQuestion.setIsPublic(isPublic);
+			existingQuestion.setVotingStartDate(votingStartDate);
+			existingQuestion.setVotingEndDate(votingEndDate);
+			
+			// 투표 상태 설정 (공개이고 투표 기간이 설정된 경우에만 '진행중'으로 설정)
+			if ("yes".equals(isPublic) && votingStartDate != null && votingEndDate != null) {
+				existingQuestion.setVotingStatus("진행중");
+			} else {
+				existingQuestion.setVotingStatus(null); // 비공개이거나 투표 기간 없으면 null
+			}
+
+			System.out.println("저장할 질문 정보: " + existingQuestion);
 
 			// 수정된 기존 질문 저장
 			questionService.updateQuestion(existingQuestion);
 
 			// 성공 메시지 구성
-			String successMessage;
-			if (isPublicChanged) {
-				if (isPublic.equals("yes")) {
-					successMessage = String.format("질문 %s이(가) 수정되었으며, 비공개에서 공개 상태로 변경되었습니다.", serialNumber);
-				} else {
-					successMessage = String.format("질문 %s이(가) 수정되었으며, 공개에서 비공개 상태로 변경되었습니다.", serialNumber);
-				}
-			} else {
-				successMessage = String.format("질문 %s이(가) 성공적으로 수정되었습니다.", serialNumber);
-			}
+			String successMessage = buildSuccessMessage(serialNumber, isPublicChanged, isPublic, votingStartDate, votingEndDate);
 
 			return "redirect:/questions?status=success&message="
 					+ URLEncoder.encode(successMessage, StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
-				String errorMessage = URLEncoder.encode("질문 수정 중 오류가 발생했습니다.", StandardCharsets.UTF_8.toString());
+				String errorMessage = URLEncoder.encode("질문 수정 중 오류가 발생했습니다: " + e.getMessage(), StandardCharsets.UTF_8.toString());
 				return "redirect:/questions?status=error&message=" + errorMessage;
 			} catch (Exception ex) {
 				return "redirect:/error";
 			}
 		}
+	}
+
+	/**
+	 * 질문 수정 유효성 검사
+	 */
+	private String validateQuestionUpdate(String isPublic, LocalDateTime votingStartDate, LocalDateTime votingEndDate) {
+		// 공개 상태이면서 투표 기간이 설정되지 않은 경우
+		if ("yes".equals(isPublic) && (votingStartDate == null || votingEndDate == null)) {
+			return "공개 질문으로 설정하려면 투표 시작일과 종료일을 모두 입력해야 합니다.";
+		}
+		
+		// 비공개 상태이면서 투표 기간만 설정된 경우
+		if ("no".equals(isPublic) && (votingStartDate != null || votingEndDate != null)) {
+			return "비공개 질문에는 투표 기간을 설정할 수 없습니다. 먼저 공개로 변경하세요.";
+		}
+		
+		// 투표 기간이 설정된 경우 시작일과 종료일 검증
+		if (votingStartDate != null && votingEndDate != null) {
+			if (votingStartDate.isAfter(votingEndDate)) {
+				return "투표 시작일은 종료일보다 이전이어야 합니다.";
+			}
+			
+			if (votingStartDate.isBefore(LocalDateTime.now().minusDays(1))) {
+				return "투표 시작일은 과거 날짜로 설정할 수 없습니다.";
+			}
+		}
+		
+		return null; // 유효성 검사 통과
+	}
+
+	/**
+	 * 성공 메시지 구성
+	 */
+	private String buildSuccessMessage(String serialNumber, boolean isPublicChanged, String isPublic, 
+	                                  LocalDateTime votingStartDate, LocalDateTime votingEndDate) {
+		StringBuilder message = new StringBuilder();
+		message.append(String.format("질문 %s이(가) 성공적으로 수정되었습니다.", serialNumber));
+		
+		if (isPublicChanged) {
+			if ("yes".equals(isPublic)) {
+				message.append(" 비공개에서 공개 상태로 변경되었습니다.");
+			} else {
+				message.append(" 공개에서 비공개 상태로 변경되었습니다.");
+			}
+		}
+		
+		if (votingStartDate != null && votingEndDate != null) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			message.append(String.format(" 투표 기간: %s 08:00 ~ %s 22:00", 
+				votingStartDate.format(formatter), 
+				votingEndDate.format(formatter)));
+		}
+		
+		return message.toString();
 	}
 
 	// 질문 삭제 처리
