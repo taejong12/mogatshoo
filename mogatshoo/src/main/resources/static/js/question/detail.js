@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // 취소 버튼 확인 (변경사항이 있는 경우)
-    const cancelBtn = document.querySelector('a[href*="/questions"]:not([href*="/delete"])'); // 삭제 버튼 제외
+    const cancelBtn = document.querySelector('a[href*="/admin/questions"]:not([href*="/delete"])'); // 삭제 버튼 제외
     if (cancelBtn) {
         cancelBtn.addEventListener('click', function(e) {
             // 폼이 변경되었는지 확인하는 간단한 로직

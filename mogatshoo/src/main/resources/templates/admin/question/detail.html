@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+      layout:decorate="~{admin/fragments/layout}">
 <head>
     <title>질문 수정</title>
     <link rel="stylesheet" th:href="@{/css/question/detail.css}">
@@ -140,7 +140,7 @@
             
             <!-- 질문이 존재하는 경우에만 폼 표시 -->
             <div th:if="${question != null}">
-                <form th:action="@{/questions/{serialNumber}(serialNumber=${question.serialNumber})}" 
+                <form th:action="@{/admin/questions/{serialNumber}(serialNumber=${question.serialNumber})}" 
                       th:object="${question}" method="post" id="questionForm">
                     
                     <input type="hidden" th:field="*{serialNumber}" />
@@ -278,12 +278,12 @@
                     </div>
                     
                     <div class="button-row">
-                        <a th:href="@{/questions/{serialNumber}/delete(serialNumber=${question.serialNumber})}" 
+                        <a th:href="@{/admin/questions/{serialNumber}/delete(serialNumber=${question.serialNumber})}" 
                            class="btn btn-danger" 
                            onclick="return confirm('정말 이 질문을 삭제하시겠습니까?');">삭제하기</a>
                         
                         <div class="button-group">
-                            <a th:href="@{/questions}" class="btn btn-secondary">취소</a>
+                            <a th:href="@{/admin/questions}" class="btn btn-secondary">취소</a>
                             <button type="submit" class="btn btn-primary" id="saveButton">저장하기</button>
                         </div>
                     </div>
@@ -299,7 +299,7 @@
             <div th:if="${question == null}" class="error-message">
                 <h2>❌ 질문을 찾을 수 없습니다!</h2>
                 <p>요청하신 질문이 존재하지 않습니다.</p>
-                <a th:href="@{/questions}" class="btn btn-primary">질문 목록으로 돌아가기</a>
+                <a th:href="@{/admin/questions}" class="btn btn-primary">질문 목록으로 돌아가기</a>
             </div>
         </div>
     </div>

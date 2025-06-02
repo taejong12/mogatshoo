@@ -1,6 +1,6 @@
-package com.mogatshoo.dev.question.repository;
+package com.mogatshoo.dev.admin.question.repository;
 
-import com.mogatshoo.dev.question.entity.CompletedQuestionEntity;
+import com.mogatshoo.dev.admin.question.entity.CompletedQuestionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

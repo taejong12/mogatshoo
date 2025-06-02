@@ -1,6 +1,6 @@
-package com.mogatshoo.dev.question.repository;
+package com.mogatshoo.dev.admin.question.repository;
 
-import com.mogatshoo.dev.question.entity.QuestionEntity;
+import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;

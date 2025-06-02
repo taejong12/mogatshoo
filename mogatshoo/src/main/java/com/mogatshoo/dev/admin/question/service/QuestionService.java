@@ -1,6 +1,6 @@
-package com.mogatshoo.dev.question.service;
+package com.mogatshoo.dev.admin.question.service;
 
-import com.mogatshoo.dev.question.entity.QuestionEntity;
+import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;

@@ -1,11 +1,11 @@
-package com.mogatshoo.dev.question.controller;
+package com.mogatshoo.dev.admin.question.controller;
 
 import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
 import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
-import com.mogatshoo.dev.question.entity.QuestionEntity;
-import com.mogatshoo.dev.question.service.QuestionService;
+import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
+import com.mogatshoo.dev.admin.question.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/questions")
+@RequestMapping("/admin/questions")
 public class QuestionController {
 
 	@Autowired
@@ -136,7 +136,7 @@ public class QuestionController {
 			model.addAttribute("errorMessage", "질문 목록을 불러오는 중 오류가 발생했습니다.");
 		}
 		
-		return "question/list";
+		return "admin/question/list";
 	}
 	
 	/**
@@ -271,7 +271,7 @@ public class QuestionController {
 	        System.out.println("모델에 추가된 사진 목록 크기: " + randomPictures.size());
 	        System.out.println("모델에 추가된 닉네임 정보 크기: " + memberNicknames.size());
 
-	        return "question/create";
+	        return "admin/question/create";
 	    } catch (Exception e) {
 	        System.err.println("오류 발생: " + e.getMessage());
 	        e.printStackTrace();
@@ -320,9 +320,9 @@ public class QuestionController {
 	    try {
 	        String successMessage = URLEncoder.encode("새 질문이 성공적으로 생성되었습니다. (기본 상태: 비공개)",
 	                StandardCharsets.UTF_8.toString());
-	        return "redirect:/questions?status=success&message=" + successMessage;
+	        return "redirect:/admin/questions?status=success&message=" + successMessage;
 	    } catch (Exception e) {
-	        return "redirect:/questions";
+	        return "redirect:/admin/questions";
 	    }
 	}
 
@@ -342,15 +342,15 @@ public class QuestionController {
 			}
 
 			model.addAttribute("question", question);
-			return "question/detail"; // 기존 detail.html 사용
+			return "admin/question/detail"; // 기존 detail.html 사용
 		} catch (Exception e) {
 			System.err.println("질문 조회 실패: " + e.getMessage());
 			e.printStackTrace();
 			try {
 				String errorMessage = URLEncoder.encode("질문을 찾을 수 없습니다.", StandardCharsets.UTF_8.toString());
-				return "redirect:/questions?status=error&message=" + errorMessage;
+				return "redirect:/admin/questions?status=error&message=" + errorMessage;
 			} catch (Exception ex) {
-				return "redirect:/questions";
+				return "redirect:/admin/questions";
 			}
 		}
 	}
@@ -367,7 +367,7 @@ public class QuestionController {
 		}
 
 		model.addAttribute("question", question);
-		return "question/detail";
+		return "admin/question/detail";
 	}
 
 	// 공개 상태만 변경하는 API 엔드포인트
@@ -477,7 +477,7 @@ public class QuestionController {
 			String validationResult = validateQuestionUpdate(isPublic, votingStartDate, votingEndDate);
 			if (validationResult != null) {
 				String errorMessage = URLEncoder.encode(validationResult, StandardCharsets.UTF_8.toString());
-				return "redirect:/questions/" + serialNumber + "/edit?status=error&message=" + errorMessage;
+				return "redirect:/admin/questions/" + serialNumber + "/edit?status=error&message=" + errorMessage;
 			}
 
 			// 공개 상태 변경 여부 확인
@@ -503,13 +503,13 @@ public class QuestionController {
 			// 성공 메시지 구성
 			String successMessage = buildSuccessMessage(serialNumber, isPublicChanged, isPublic, votingStartDate, votingEndDate);
 
-			return "redirect:/questions?status=success&message="
+			return "redirect:/admin/questions?status=success&message="
 					+ URLEncoder.encode(successMessage, StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
 				String errorMessage = URLEncoder.encode("질문 수정 중 오류가 발생했습니다: " + e.getMessage(), StandardCharsets.UTF_8.toString());
-				return "redirect:/questions?status=error&message=" + errorMessage;
+				return "redirect:/admin/questions?status=error&message=" + errorMessage;
 			} catch (Exception ex) {
 				return "redirect:/error";
 			}
@@ -579,14 +579,14 @@ public class QuestionController {
 			System.out.println("삭제 완료: " + serialNumber);
 
 			String successMessage = URLEncoder.encode("질문이 성공적으로 삭제되었습니다.", StandardCharsets.UTF_8.toString());
-			return "redirect:/questions?status=success&message=" + successMessage;
+			return "redirect:/admin/questions?status=success&message=" + successMessage;
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("삭제 실패: " + e.getMessage());
 
 			try {
 				String errorMessage = URLEncoder.encode("질문 삭제 중 오류가 발생했습니다.", StandardCharsets.UTF_8.toString());
-				return "redirect:/questions?status=error&message=" + errorMessage;
+				return "redirect:/admin/questions?status=error&message=" + errorMessage;
 			} catch (Exception ex) {
 				return "redirect:/error";
 			}

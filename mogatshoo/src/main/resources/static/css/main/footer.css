@@ -247,18 +247,24 @@
 }
 
 .logout-btn {
-	display: flex;
-	align-items: center;
-	background: none;
-	border: none;
-	font-family: 'dalmoori', sans-serif;
-	/* 다른 푸터 요소와 통일 */
-	font-size: 12px;
-	cursor: pointer;
-	padding: 2px 6px;
-	width: 100%;
-	height: 100%;
-	color: red;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    font-family: 'dalmoori', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 6px;
+    width: 100%;
+    height: 100%;
+    color: red;
+    gap: 4px; /* 이미지와 텍스트 사이 간격 */
+}
+
+.logout-btn img {
+    width: 16px;
+    height: 16px;
+    margin-right: 0; /* 기존 margin 제거, gap으로 처리 */
 }
 
 .logoutFont {

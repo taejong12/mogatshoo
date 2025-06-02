@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+      layout:decorate="~{admin/fragments/layout}">
 <head th:with="layoutTitle='질문 생성 - 질문 관리 시스템'">
     <link rel="stylesheet" th:href="@{/css/question/create.css}">
 </head>
@@ -9,13 +9,13 @@
 <div layout:fragment="content">
     <div class="page-header">
         <h2>질문 생성</h2>
-        <a th:href="@{/questions}" class="btn btn-text">
+        <a th:href="@{/admin/questions}" class="btn btn-text">
             <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
         </a>
     </div>
 
     <div class="question-form-container">
-        <form th:action="@{/questions/creat}" method="post" id="questionForm">
+        <form th:action="@{/admin/questions/creat}" method="post" id="questionForm">
             <div class="form-header">
                 <div class="serial-number-display">
                     <label>일련번호:</label>

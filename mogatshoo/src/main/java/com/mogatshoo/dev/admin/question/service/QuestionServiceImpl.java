@@ -1,11 +1,11 @@
-package com.mogatshoo.dev.question.service;
+package com.mogatshoo.dev.admin.question.service;
 
 import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
 import com.mogatshoo.dev.hair_loss_test.repository.PictureRepository;
-import com.mogatshoo.dev.question.entity.CompletedQuestionEntity;
-import com.mogatshoo.dev.question.entity.QuestionEntity;
-import com.mogatshoo.dev.question.repository.CompletedQuestionRepository;
-import com.mogatshoo.dev.question.repository.QuestionRepository;
+import com.mogatshoo.dev.admin.question.entity.CompletedQuestionEntity;
+import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
+import com.mogatshoo.dev.admin.question.repository.CompletedQuestionRepository;
+import com.mogatshoo.dev.admin.question.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

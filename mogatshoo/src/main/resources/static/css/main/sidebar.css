@@ -131,8 +131,7 @@
 }
 
 .auth-item a,
-.auth-profile a,
-.logout-btn {
+.auth-profile a {
 	text-decoration: none;
 	display: flex;
 	flex-direction: column;

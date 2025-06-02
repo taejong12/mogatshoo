@@ -1,7 +1,7 @@
 package com.mogatshoo.dev.voting.service;
 
-import com.mogatshoo.dev.question.entity.QuestionEntity;
-import com.mogatshoo.dev.question.service.QuestionService;
+import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
+import com.mogatshoo.dev.admin.question.service.QuestionService;
 import com.mogatshoo.dev.voting.entity.VotingEntity;
 import com.mogatshoo.dev.voting.repository.VotingRepository;
 

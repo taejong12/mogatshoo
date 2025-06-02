@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.question.entity;
+package com.mogatshoo.dev.admin.question.entity;
 
 import java.time.LocalDateTime;
 

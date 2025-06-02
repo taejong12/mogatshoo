@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <body>
 	<div th:fragment="header">
@@ -9,7 +8,7 @@
 				<a class="navbar-brand" th:href="@{/admin/main}">
 					<img src="/img/logo/mogatshooLogo.PNG" alt="Logo" class="img-fluid" style="max-height: 40px;">
 				</a>
-				
+
 				<!-- 데스크탑용 메뉴 -->
 				<div class="d-none d-lg-flex ms-3">
 					<a class="nav-link" th:href="@{/admin/point/item/list}">포인트상품</a>
@@ -17,7 +16,10 @@
 				<div class="d-none d-lg-flex ms-3">
 					<a class="nav-link" th:href="@{/admin/point/category/list}">상품카테고리</a>
 				</div>
-				
+				<div class="d-none d-lg-flex ms-3">
+					<a class="nav-link" th:href="@{/admin/questions}">질문등록/수정</a>
+				</div>
+
 				<!-- 우측 유저 정보 (PC) -->
 				<div class="d-none d-lg-flex ms-auto align-items-center gap-3">
 					<span th:text="${#authentication.principal.nickName} + ' 님'"></span>
@@ -25,14 +27,15 @@
 						<button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
 					</form>
 				</div>
-				
+
 				<!-- 모바일 토글 버튼 -->
-				<button class="navbar-toggler d-lg-none ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+				<button class="navbar-toggler d-lg-none ms-auto" type="button" data-bs-toggle="offcanvas"
+					data-bs-target="#mobileMenu" aria-controls="mobileMenu">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 			</div>
 		</nav>
-		
+
 		<!-- 모바일 오프캔버스 메뉴 -->
 		<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
 			<div class="offcanvas-header">
@@ -46,12 +49,13 @@
 				<!-- 메뉴 목록 -->
 				<a class="nav-link mb-3" th:href="@{/admin/point/item/list}">포인트상품</a>
 				<a class="nav-link mb-3" th:href="@{/admin/point/category/list}">상품카테고리</a>
-			
+
 				<hr>
-				
+
 				<!-- 사용자 정보와 로그아웃 -->
 				<div class="mt-auto d-flex justify-content-end align-items-center gap-3">
-					<span th:text="${#authentication.principal.nickName} + ' 님'" class="d-flex align-items-center"></span>
+					<span th:text="${#authentication.principal.nickName} + ' 님'"
+						class="d-flex align-items-center"></span>
 					<form th:action="@{/logout}" method="post">
 						<button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
 					</form>
