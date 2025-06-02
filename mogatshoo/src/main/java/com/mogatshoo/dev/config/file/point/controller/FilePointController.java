@@ -8,7 +8,7 @@ public interface FilePointController {
 
 	void deletePointItemImg(AdminPointItemImgEntity oldImgEntity);
 
-	String uploadFileToPointItem(MultipartFile imgFile, String newFileName);
+	String uploadFileToPointItem(MultipartFile imgFile, String pointCategoryName, String newFileName);
 
 	String getFileUrl(String pointItemImgFileId);
 }

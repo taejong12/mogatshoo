@@ -1,10 +1,5 @@
 package com.mogatshoo.dev.config.file.point.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,10 +29,9 @@ public class FilePointServiceImpl implements FilePointService {
 		}
 	}
 
-
 	@Override
-	public String uploadFileToPointItem(MultipartFile imgFile, String newFileName) {
-		return googleDriveService.uploadFileToPointItem(imgFile, newFileName);
+	public String uploadFileToPointItem(MultipartFile imgFile, String pointCategoryName, String newFileName) {
+		return googleDriveService.uploadFileToPointItem(imgFile, pointCategoryName, newFileName);
 	}
 
 

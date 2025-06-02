@@ -50,7 +50,7 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 	}
 
 	@Override
-	public void save(MultipartFile imgFile, Long pointItemId) {
+	public void save(MultipartFile imgFile, String pointCategoryName, Long pointItemId) {
 		try {
 			AdminPointItemImgEntity oldImgEntity = adminPointItemImgRepository.findByPointItemId(pointItemId);
 			if (oldImgEntity != null && oldImgEntity.getPointItemImgName() != null) {
@@ -61,7 +61,7 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 			// 이미지 업로드
 			String originalFilename = imgFile.getOriginalFilename();
 			String newFileName = UUID.randomUUID().toString() + "_" + originalFilename;
-			String pointItemImgFileId = filePointController.uploadFileToPointItem(imgFile, newFileName);
+			String pointItemImgFileId = filePointController.uploadFileToPointItem(imgFile, pointCategoryName, newFileName);
 			String uploadDir = filePointController.getFileUrl(pointItemImgFileId);
 
 			// DB에 이미지 정보 저장
@@ -93,6 +93,25 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 		} catch (Exception e) {
 			logger.error("포인트 아이템 이미지 조회 중 오류 발생. pointItemId: {}", pointItemId, e);
 			return null;
+		}
+	}
+
+	@Override
+	public void deletePointItemImg(Long pointItemId) {
+		
+		try {
+			AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgRepository.findByPointItemId(pointItemId);
+			if (adminPointItemImgEntity != null) {
+				// 구글 이미지 삭제
+				filePointController.deletePointItemImg(adminPointItemImgEntity);
+				// DB 이미지 삭제
+				adminPointItemImgRepository.deleteById(adminPointItemImgEntity.getPointItemImgId());
+				logger.info("포인트 아이템 이미지 삭제 완료 - PointItemImgId: {}", adminPointItemImgEntity.getPointItemImgId());
+			} else {
+				logger.warn("해당 포인트 아이템에 대한 이미지가 존재하지 않음 - pointItemId: {}", pointItemId);
+			}
+		} catch (Exception e) {
+			logger.error("포인트 아이템 이미지 삭제 중 오류 발생 - pointItemId: {}, error: {}", pointItemId, e.getMessage(), e);
 		}
 	}
 }

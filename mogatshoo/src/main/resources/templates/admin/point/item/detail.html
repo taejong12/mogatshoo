@@ -77,24 +77,17 @@
 				<div class="d-flex justify-content-center aling-items-center gap-2">
 					<a class="btn btn-primary"
 						th:href="@{/admin/point/item/update/{id}(id=${pointItem.pointItemId})}">
-						수정하기 </a>
-					<button type="button" class="btn btn-danger"
-						th:onclick="'return confirmDelete(' + ${pointItem.pointItemId} + ');'">
-						삭제하기</button>
+						수정하기 
+					</a>
+					<form th:action="@{/admin/point/item/delete/{id}(id=${pointItem.pointItemId})}" method="post">
+						<button type="submit" class="btn btn-outline-secondary" onclick="return confirm('정말 삭제하시겠습니까?');">삭제하기</button>
+					</form>
 				</div>
 			</div>
 		</div>
 
-		<!-- 삭제 확인 JS -->
-		<script type="text/javascript">
-			function confirmDelete(id) {
-				if (confirm("정말 삭제하시겠습니까?")) {
-					location.href = "/admin/point/item/delete/" + id;
-				}
-				return false;
-			}
-		</script>
-
+		<!-- 삭제하기 버튼 클릭 -->
+		<script th:src="@{/js/admin/point/item/detail/fu_confirmDelete.js}"></script>
 	</div>
 </body>
 </html>

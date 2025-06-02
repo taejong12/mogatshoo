@@ -313,27 +313,31 @@ public class GoogleDriveService {
 	}
 
 	// 포인트 상품 이미지 등록
-	public String uploadFileToPointItem(MultipartFile imgFile, String newFileName) {
+	public String uploadFileToPointItem(MultipartFile imgFile, String pointCategoryName, String newFileName) {
 
 		try {
 			if (!isEnabled) {
 				throw new IOException("구글 드라이브 서비스가 비활성화되어 있습니다.");
 			}
 
+			// 1. pointItemPath 하위 폴더 중에서 pointCategoryName 이름의 폴더 찾기
+			String categoryFolderId = findCategoryFolder(pointCategoryName);
+
+			// 2. 업로드할 파일 메타데이터 설정
 			File fileMetadata = new File();
 			fileMetadata.setName(newFileName);
-			fileMetadata.setParents(Collections.singletonList(pointItemPath));
+			fileMetadata.setParents(Collections.singletonList(categoryFolderId));
 
 			InputStreamContent mediaContent = new InputStreamContent(imgFile.getContentType(),
 					imgFile.getInputStream());
 
-			// 파일 업로드
+			// 3. 파일 업로드
 			File uploadedFile = driveService.files().create(fileMetadata, mediaContent).setFields("id,name").execute();
 
 			logger.info("파일 업로드 완료 - 이름: {}, ID: {}", uploadedFile.getName(), uploadedFile.getId());
 			logger.debug("생성된 파일 URL: {}", getFileUrl(uploadedFile.getId()));
 
-			// 파일을 외부에 공개
+			// 4. 파일을 외부에 공개
 			makeFilePublic(uploadedFile.getId());
 
 			return uploadedFile.getId();
@@ -342,6 +346,32 @@ public class GoogleDriveService {
 			logger.error("포인트 아이템 파일 업로드 실패", e);
 			throw new RuntimeException("포인트 아이템 파일 업로드 실패: " + e.getMessage(), e);
 		}
+	}
+
+	private String findCategoryFolder(String pointCategoryName) throws IOException {
+		// 1. 폴더 검색
+		String query = String.format(
+				"mimeType='application/vnd.google-apps.folder' and name='%s' and '%s' in parents and trashed=false",
+				pointCategoryName, pointItemPath);
+
+		FileList result = driveService.files().list().setQ(query).setSpaces("drive").setFields("files(id, name)")
+				.execute();
+
+		// 2. 폴더가 존재하면 ID 반환
+		if (!result.getFiles().isEmpty()) {
+			return result.getFiles().get(0).getId();
+		}
+
+		// 3. 폴더가 없다면 생성
+		File folderMetadata = new File();
+		folderMetadata.setName(pointCategoryName);
+		folderMetadata.setMimeType("application/vnd.google-apps.folder");
+		folderMetadata.setParents(Collections.singletonList(pointItemPath));
+
+		File folder = driveService.files().create(folderMetadata).setFields("id").execute();
+
+		logger.info("새 카테고리 폴더 생성됨: {} (ID: {})", pointCategoryName, folder.getId());
+		return folder.getId();
 	}
 
 	// 포인트 상품 이미지 삭제

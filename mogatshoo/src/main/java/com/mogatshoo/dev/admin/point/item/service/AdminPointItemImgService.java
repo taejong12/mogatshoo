@@ -11,8 +11,10 @@ public interface AdminPointItemImgService {
 
 	List<AdminPointItemImgEntity> findByItemId(List<AdminPointItemEntity> AdminPointItemEntity);
 
-	void save(MultipartFile imgFile, Long pointItemId);
+	void save(MultipartFile imgFile, String pointCategoryName, Long pointItemId);
 
 	AdminPointItemImgEntity findByPointItemId(Long pointItemId);
+
+	void deletePointItemImg(Long pointItemId);
 
 }

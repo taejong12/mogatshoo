@@ -19,8 +19,8 @@ public class FilePointControllerImpl implements FilePointController{
 	}
 
 	@Override
-	public String uploadFileToPointItem(MultipartFile imgFile, String newFileName) {
-		return filePointService.uploadFileToPointItem(imgFile, newFileName);
+	public String uploadFileToPointItem(MultipartFile imgFile, String pointCategoryName, String newFileName) {
+		return filePointService.uploadFileToPointItem(imgFile, pointCategoryName, newFileName);
 	}
 
 	@Override

@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
+import com.mogatshoo.dev.admin.point.category.service.AdminPointCategoryService;
+import com.mogatshoo.dev.admin.point.category.service.AdminPointCategoryServiceImpl;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
 import com.mogatshoo.dev.admin.point.item.repository.AdminPointItemRepository;
 import com.mogatshoo.dev.common.authentication.CommonUserName;
@@ -20,6 +23,8 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class AdminPointItemServiceImpl implements AdminPointItemService {
 
+    private final AdminPointCategoryServiceImpl adminPointCategoryServiceImpl;
+
 	private static final Logger logger = LoggerFactory.getLogger(AdminPointItemServiceImpl.class);
 
 	@Autowired
@@ -27,9 +32,16 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 
 	@Autowired
 	private AdminPointItemImgService adminPointItemImgService;
-
+	
+	@Autowired
+	private AdminPointCategoryService adminPointCategoryService;
+	
 	@Autowired
 	private CommonUserName commonUserName;
+
+    AdminPointItemServiceImpl(AdminPointCategoryServiceImpl adminPointCategoryServiceImpl) {
+        this.adminPointCategoryServiceImpl = adminPointCategoryServiceImpl;
+    }
 
 	@Override
 	public Page<AdminPointItemEntity> findAll(Pageable pageable) {
@@ -54,9 +66,11 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 			MultipartFile imgFile = adminPointItemEntity.getImgFile();
 
 			if (!imgFile.isEmpty()) {
-				Long itemId = adminPointItemEntity.getPointItemId();
-				adminPointItemImgService.save(imgFile, itemId);
-				logger.info("이미지 저장 완료 - 파일명: {}, 아이템 ID: {}", imgFile.getOriginalFilename(), itemId);
+				Long pointItemId = adminPointItemEntity.getPointItemId();
+				AdminPointCategoryEntity adminPointCategoryEntity = adminPointCategoryService.findById(adminPointItemEntity.getPointCategoryId());
+				String pointCategoryName = adminPointCategoryEntity.getPointCategoryName();
+				adminPointItemImgService.save(imgFile, pointCategoryName, pointItemId);
+				logger.info("이미지 저장 완료 - 파일명: {}, 아이템 ID: {}", imgFile.getOriginalFilename(), pointItemId);
 			}
 		} catch (Exception e) {
 			logger.error("포인트 아이템 저장 중 오류 발생", e);
@@ -80,5 +94,22 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 			logger.error("포인트 아이템 조회 중 오류 발생. pointItemId: {}", pointItemId, e);
 			return null;
 		}
+	}
+
+	@Override
+	public void deletePointItem(Long pointItemId) {
+		
+		try {
+			// 1. 이미지 삭제 (구글 드라이브), DB 삭제
+			adminPointItemImgService.deletePointItemImg(pointItemId);
+
+			// 2. 포인트 물품 삭제
+			adminPointItemRepository.deleteById(pointItemId);
+			logger.info("포인트 아이템 정보 삭제 완료 - pointItemId: {}", pointItemId);
+
+		} catch (Exception e) {
+			logger.error("포인트 아이템 삭제 중 오류 발생 - pointItemId: {}, error: {}", pointItemId, e.getMessage(), e);
+		}
+
 	}
 }

@@ -75,6 +75,7 @@
 										th:text="${category.pointCategoryName}">
 								</option>
 							</select>
+							<div id="categoryWarnMsg"></div>
 						</div>
 
 						<!-- 버튼 영역 -->
@@ -87,10 +88,13 @@
 			</div>
 		</div>
 
+		<script type="text/javascript">
+			let categoryCount = "[[${pointCategoryList.size()}]]";
+		</script>
 		<!-- 등록하기버튼 클릭 -->
-		<script th:src="@{/js/admin/point/item/fu_insertPointItem.js}"></script>
+		<script th:src="@{/js/admin/point/item/insertPage/fu_insertPointItem.js}"></script>
 		<!-- 파일 이미지 보기 -->
-		<script th:src="@{/js/admin/point/item/ev_thumbnailImage.js}"></script>
+		<script th:src="@{/js/admin/point/item/insertPage/ev_thumbnailImage.js}"></script>
 	</div>
 </body>
 </html>

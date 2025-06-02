@@ -23,7 +23,7 @@ import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 import com.mogatshoo.dev.admin.point.item.service.AdminPointItemImgService;
 import com.mogatshoo.dev.admin.point.item.service.AdminPointItemService;
 
-import jakarta.websocket.server.PathParam;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin/point/item")
@@ -37,6 +37,7 @@ public class AdminPointItemController {
 
 	@Autowired
 	private AdminPointCategoryService adminPointCategoryService;
+
 
 	@GetMapping("/list")
 	public String pointItemListPage(@RequestParam(value = "pointCategoryId", required = false) Integer pointCategoryId,
@@ -109,5 +110,11 @@ public class AdminPointItemController {
 		model.addAttribute("itemImg", adminPointItemImgEntity);
 		model.addAttribute("pointCategory", adminPointCategoryEntity);
 		return "admin/point/item/detail";
+	}
+
+	@PostMapping("/delete/{pointItemId}")
+	public String pointItemDelete(@PathVariable("pointItemId") Long pointItemId, HttpSession session) {
+		adminPointItemService.deletePointItem(pointItemId);
+		return "redirect:/admin/point/item/list";
 	}
 }

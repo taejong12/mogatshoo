@@ -15,4 +15,6 @@ public interface AdminPointItemService {
 
 	AdminPointItemEntity findById(Long pointItemId);
 
+	void deletePointItem(Long pointItemId);
+
 }
