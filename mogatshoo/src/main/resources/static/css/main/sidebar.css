@@ -1,6 +1,3 @@
-/* 윈도우 95/98 스타일 사이드바 CSS */
-/* static/css/main/sidebar.css */
-
 /* 사이드바 기본 스타일 */
 .sidebar-component {
 	height: 100%;
@@ -218,8 +215,9 @@
 	width: 1300px;
 	height: 580px;
     border: none;
-    overflow: auto;
+    overflow-x: hidden;
     background-color: white;
+	
 }
 
 .win95-title-bar {

@@ -3,75 +3,84 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='회원업데이트'">
-	<link rel="stylesheet" th:href="@{/css/member/update.css}">
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <link rel="stylesheet" th:href="@{/css/member/update.css}">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
-	<div layout:fragment="content">
-	
-		<h1 class="text-center mb-5">회원수정</h1>
-		
-		<div class="row justify-content-center">
-			<div class="col-md-12 col-lg-12">
-				<form name="memberUpdateForm" class="p-4 shadow-sm rounded-3 bg-light">
-					<input type="hidden" id="nickChk" th:value="${member.memberNickName}" />
-					<div class="mb-3">
-						<label for="memberNickName" class="form-label">닉네임</label>
-						<input type="text" class="form-control" id="memberNickName" name="memberNickName" th:value="${member.memberNickName}" placeholder="닉네임 입력">
-						<div id="nickNameWarnMsg"></div>
-					</div>
-					<div class="mb-3">
-						<label for="memberName" class="form-label">이름</label>
-						<input type="text" class="form-control" id="memberName" name="memberName" th:value="${member.memberName}" placeholder="이름 입력">
-						<div id="nameWarnMsg"></div>
-					</div>
-					<div class="mb-3 d-flex">
-						<div class="flex-grow-1 me-3">
-							<label for="memberZipcode" class="form-label">우편번호</label>
-							<input type="text" class="form-control" id="memberZipcode" name="memberZipcode" th:value="${member.memberZipcode}" placeholder="우편번호 입력" readonly>
-							<div id="zipCodeWarnMsg"></div>
-						</div>
-						<div class="d-flex align-items-center">
-							<button type="button" onclick="fu_addrSearch()" class="text-nowrap bg-white border border-black px-3 py-2">주소검색</button>
-						</div>
-					</div>
-					<div class="mb-3">
-						<label for="memberAddress1" class="form-label">기본주소</label>
-						<input type="text" class="form-control" id="memberAddress1" name="memberAddress1" th:value="${member.memberAddress1}" placeholder="기본주소 입력" readonly>
-						<div id="addr1WarnMsg"></div>
-					</div>
-					<div class="mb-3">
-						<label for="memberAddress2" class="form-label">상세주소</label>
-						<input type="text" class="form-control" id="memberAddress2" name="memberAddress2" th:value="${member.memberAddress2}" placeholder="상세주소 입력">
-						<div id="addr2WarnMsg"></div>
-					</div>
-					<div class="mb-3">
-						<label for="memberTel" class="form-label">전화번호</label>
-						<input type="text" class="form-control" id="memberTel" name="memberTel" th:value="${member.memberTel}" placeholder="전화번호 입력">
-						<div style="color: gray; font-size: 0.8em;">* (-) 하이픈을 빼고 입력해주세요.</div>
-						<div id="telWarnMsg"></div>
-					</div>
-					<button type="button" class="btn btn-white border border-dark" onclick="fu_memberUpdate()">수정</button>
-				</form>
-			</div>
-		</div>
-		
-		<script type="text/javascript">
-			let nickNameCheck = false;
-		</script>
-		<!-- 수정 버튼 -->
-		<script th:src="@{/js/member/update/fu_memberUpdate.js}"></script>
-		<!-- 주소 API -->
-		<script th:src="@{/js/member/update/fu_addrSearch.js}"></script>
-		<!-- 유효성 검사 -->
-		<script th:src="@{/js/member/update/fu_nickNameVali.js}"></script>
-		<script th:src="@{/js/member/update/fu_nameVali.js}"></script>
-		<script th:src="@{/js/member/update/fu_zipCodeVali.js}"></script>
-		<script th:src="@{/js/member/update/fu_addr1Vali.js}"></script>
-		<script th:src="@{/js/member/update/fu_addr2Vali.js}"></script>
-		<script th:src="@{/js/member/update/fu_telVali.js}"></script>
-		<!-- 닉네임 중복 체크 -->
-		<script th:src="@{/js/member/update/ev_nickNameCheck.js}"></script>		
-	</div>
+<div layout:fragment="content" class="pixel-bg">
+        <!-- 폼 내용 -->
+        <div class="form-content">
+            <h1>정보 업데이트</h1>
+            <form name="memberUpdateForm">
+                <input type="hidden" id="nickChk" th:value="${member.memberNickName}" />
+                
+                <div class="form-group">
+                    <label for="memberNickName" class="form-label">👤 닉네임</label>
+                    <input type="text" class="form-control" id="memberNickName" name="memberNickName" 
+                           th:value="${member.memberNickName}" placeholder="닉네임 입력">
+                    <div id="nickNameWarnMsg"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="memberName" class="form-label">📝 이름</label>
+                    <input type="text" class="form-control" id="memberName" name="memberName" 
+                           th:value="${member.memberName}" placeholder="이름 입력">
+                    <div id="nameWarnMsg"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="memberZipcode" class="form-label">📮 우편번호</label>
+                    <div class="address-container">
+                        <div class="address-input">
+                            <input type="text" class="form-control" id="memberZipcode" name="memberZipcode" 
+                                   th:value="${member.memberZipcode}" placeholder="우편번호 입력" readonly>
+                            <div id="zipCodeWarnMsg"></div>
+                        </div>
+                        <button type="button" onclick="fu_addrSearch()" class="win95-button">주소검색</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="memberAddress1" class="form-label">🏠 기본주소</label>
+                    <input type="text" class="form-control" id="memberAddress1" name="memberAddress1" 
+                           th:value="${member.memberAddress1}" placeholder="기본주소 입력" readonly>
+                    <div id="addr1WarnMsg"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="memberAddress2" class="form-label">🏘️ 상세주소</label>
+                    <input type="text" class="form-control" id="memberAddress2" name="memberAddress2" 
+                           th:value="${member.memberAddress2}" placeholder="상세주소 입력">
+                    <div id="addr2WarnMsg"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="memberTel" class="form-label">📞 전화번호</label>
+                    <input type="text" class="form-control" id="memberTel" name="memberTel" 
+                           th:value="${member.memberTel}" placeholder="전화번호 입력">
+                    <div class="help-text">* (-) 하이픈을 빼고 입력해주세요.</div>
+                    <div id="telWarnMsg"></div>
+                </div>
+                
+                <button type="button" class="win95-button-primary" onclick="fu_memberUpdate()">
+                    💾 정보 수정
+                </button>
+            </form>
+        </div>
+    
+    <script type="text/javascript">
+        let nickNameCheck = false;
+    </script>
+    <!-- 기존 스크립트들 -->
+    <script th:src="@{/js/member/update/fu_memberUpdate.js}"></script>
+    <script th:src="@{/js/member/update/fu_addrSearch.js}"></script>
+    <script th:src="@{/js/member/update/fu_nickNameVali.js}"></script>
+    <script th:src="@{/js/member/update/fu_nameVali.js}"></script>
+    <script th:src="@{/js/member/update/fu_zipCodeVali.js}"></script>
+    <script th:src="@{/js/member/update/fu_addr1Vali.js}"></script>
+    <script th:src="@{/js/member/update/fu_addr2Vali.js}"></script>
+    <script th:src="@{/js/member/update/fu_telVali.js}"></script>
+    <script th:src="@{/js/member/update/ev_nickNameCheck.js}"></script>
+</div>
 </body>
 </html>

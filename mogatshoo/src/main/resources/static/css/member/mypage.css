@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-/* 폰트 설정 */
 @font-face {
 	font-family: 'dalmoori';
 	src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
@@ -8,167 +7,445 @@
 	font-style: normal;
 }
 
-html,
-body {
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	font-family: 'dalmoori', sans-serif;
+/* 모든 요소의 내부 스크롤 제거 */
+* {
+    overflow: visible !important;
 }
 
-.container {
+html, body {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: auto !important; /* 바깥 스크롤만 허용 */
+}
+
+body {
+	background-color: #c0c0c0 !important;
+	font-family: 'dalmoori', sans-serif;
+	font-size: 14px;
+	color: #000000;
+}
+
+/* 전체화면 컨테이너 */
+.pixel-bg {
 	display: flex;
+	align-items: stretch;
 	justify-content: center;
-	align-items: center;
 	width: 100vw;
 	height: 100vh;
-	margin: 0;
+	background-color: #c0c0c0 !important;
 	padding: 0;
 	box-sizing: border-box;
-	background-color: #d4d0c8;
-	/* 배경색 설정 */
-}
-
-.main-box {
-	display: flex;
-	justify-content: space-between;
-	gap: 20px;
-	width: 1420px;
-	height: 805px;
-	background-color: #d4d0c8;
-	padding-left: 135px;
-	padding-top: 110px;
-	box-sizing: border-box;
-}
-
-.member-info-container {
-	flex: 1;
-	background-color: #d4d0c8;
-	border: 2px solid #808080;
-	box-shadow: inset -2px -2px 0 #ffffff, inset 2px 2px 0 #404040;
-	display: flex;
-	flex-direction: column;
 	overflow: hidden;
 }
 
-.main-title {
-	background-color: #000080;
-	color: white;
-	text-align: center;
-	padding: 10px;
-	font-size: 20px;
-	font-weight: bold;
-	border-bottom: 2px solid black;
-}
-
-.info-scroll-container {
-	flex: 1;
-	overflow-y: auto;
-	padding: 10px;
-}
-
-.info-group {
+/* 탐색기 스타일 컨테이너 */
+.explorer-container {
+	width: 100%;
+	max-width: 100vw;
+	height: 100%;
+	max-height: 100vh;
+	padding: 15px;
 	display: flex;
-	margin-bottom: 10px;
-}
-
-.info-label {
-	width: 100px;
-	font-weight: bold;
-}
-
-.info-value {
-	flex: 1;
-	padding: 6px;
-	background-color: #fff;
-	border: 1px solid #a0a0a0;
-	box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080;
-}
-
-.button-group {
-	display: flex;
-	justify-content: center;
-	padding: 10px;
-	gap: 10px;
-}
-
-.btn {
-	padding: 6px 15px;
-	font-weight: bold;
-	background-color: #e0e0e0;
-	color: black;
-	border: 1px solid #404040;
-	box-shadow: -1px -1px 0 #ffffff, 1px 1px 0 #808080;
-	cursor: pointer;
-}
-
-.btn:hover {
+	box-sizing: border-box;
 	background-color: #c0c0c0;
 }
 
-.btn-delete {
+/* Bootstrap 변수 오버라이드 */
+:root {
+	--bs-body-bg: #c0c0c0 !important;
+	--win95-gray: #c0c0c0;
+	--win95-dark-gray: #808080;
+	--win95-light-gray: #dfdfdf;
+	--win95-blue: #000080;
+	--win95-white: #ffffff;
+	--win95-black: #000000;
+}
+
+/* body::before 오버라이드 */
+body::before {
+	background-color: #c0c0c0 !important;
+}
+
+html,
+body {
+	margin: 0 !important;
+	padding: 0 !important;
+	width: 100% !important;
+	height: 100vh !important;
+	font-family: 'dalmoori', sans-serif !important;
+	font-size: 14px !important;
+	background-color: #c0c0c0 !important;
+}
+
+/* 왼쪽 트리 패널 */
+.tree-panel {
+	width: 200px;
+	background-color: #ffffff;
+	border: 2px inset #c0c0c0;
+	display: flex;
+	flex-direction: column;
+	margin-right: 4px;
+}
+
+/* 트리 헤더 */
+.tree-header {
+	background-color: #c0c0c0;
+	border-bottom: 1px solid #808080;
+	padding: 2px 8px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+}
+
+/* 트리 내용 */
+.tree-content {
+	flex: 1;
+	background-color: #ffffff;
+	overflow-y: auto;
+	/* 독립 스크롤 */
+	padding: 4px;
+	height: 100%;
+}
+
+/* 트리 아이템 */
+.tree-item {
+	display: flex;
+	align-items: center;
+	padding: 1px 4px;
+	cursor: pointer;
+	font-size: 14px;
+	line-height: 16px;
+}
+
+.tree-item:hover {
+	background-color: #000080;
+	color: #ffffff;
+}
+
+.tree-item.selected {
+	background-color: #000080;
+	color: #ffffff;
+}
+
+.tree-item::before {
+	content: "📁";
+	margin-right: 4px;
+	font-size: 14px;
+}
+
+/* 오른쪽 내용 패널 */
+.content-panel {
+	flex: 1;
+	background-color: #ffffff;
+	border: 2px inset #c0c0c0;
+	display: flex;
+	flex-direction: column;
+}
+
+/* 내용 헤더 */
+.content-header {
+	background-color: #c0c0c0;
+	border-bottom: 1px solid #808080;
+	padding: 2px 8px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+}
+
+/* 내용 영역 */
+.content-area {
+	flex: 1;
+	background-color: #008080;
+	height: 100%;
+	/* 높이 명시 */
+}
+
+.panalContent {
+	background-color: #ffffff;
+}
+
+/* 아이콘 그리드 레이아웃 */
+.icon-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+	gap: 19px;
+	padding: 8px;
+	margin-right: 25px;
+}
+
+/* 아이콘 아이템 */
+.icon-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 0;
+}
+
+.icon-item:hover {
+	background-color: #000080;
+	color: #ffffff;
+}
+
+.icon-item:hover .icon-label {
+	color: #ffffff;
+}
+
+/* 아이콘 이미지/텍스트 */
+.icon-image {
+	width: 32px;
+	height: 32px;
+	margin-bottom: 4px;
+	font-size: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* 아이콘 라벨 */
+.icon-label {
+	font-size: 10px;
+	color: #000000;
+	word-wrap: break-word;
+	max-width: 70px;
+	line-height: 1.2;
+}
+
+/* 정보 표시 영역 (아이콘 형태) */
+.info-icon {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	cursor: pointer;
+	padding: 8px;
+	margin: 4px;
+	min-width: 80px;
+}
+
+.info-icon:hover {
+	background-color: #000080;
+	color: #ffffff;
+}
+
+.info-icon .info-icon-image {
+	width: 32px;
+	height: 32px;
+	margin-bottom: 4px;
+	font-size: 24px;
+}
+
+.info-icon .info-icon-label {
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 8px;
+	color: #000000;
+}
+
+.info-icon .info-icon-value {
+	font-size: 14px;
+	color: rgb(0, 0, 0);
+	word-wrap: break-word;
+	max-width: 80px;
+}
+
+.info-icon:hover .info-icon-label,
+.info-icon:hover .info-icon-value {
+	color: #ffffff;
+}
+
+/* 탈모분석 결과 영역 */
+.analysis-result {
+	margin-top: 16px;
+	border-top: 1px solid #c0c0c0;
+	padding-top: 16px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	/* 가운데 정렬 추가 */
+}
+
+.analysis-image {
+	width: 100%;
+	max-width: 250px;
+	height: auto;
+	border: 2px inset #c0c0c0;
+	margin-bottom: 8px;
+	object-fit: contain;
+
+}
+
+.analysis-text {
+	background-color: rgb(255, 255, 255);
+	color: rgb(0, 0, 0);
+	padding: 8px;
+	font-size: 14px;
+	min-height: 60px;
+}
+
+/* 버튼 영역 */
+.button-area {
+	display: flex;
+	justify-content: center;
+	gap: 15px;
+	margin-top: 16px;
+	padding-top: 8px;
+	padding-bottom: 24px;
+}
+
+/* 윈도우95 버튼 */
+.win95-button {
+	background-color: #c0c0c0;
+	border: 2px outset #c0c0c0;
+	border-radius: 0;
+	color: #000000;
+	padding: 4px 12px;
+	font-size: 11px;
+	cursor: pointer;
+	min-width: 60px;
+	text-align: center;
+	font-family: 'dalmoori', sans-serif;
+	text-decoration: none;
+}
+
+.win95-button:hover {
+	background-color: #d4d0c8;
+	border: 2px outset #d4d0c8;
+	color: #000000;
+}
+
+.win95-button:active {
+	border: 2px inset #c0c0c0;
+	background-color: #a0a0a0;
+}
+
+/* 삭제 버튼 */
+.win95-button-delete {
 	background-color: #c00000;
-	color: white;
-	border: 1px solid #800000;
+	border: 2px outset #c00000;
+	color: #ffffff;
 }
 
-.btn-delete:hover {
+.win95-button-delete:hover {
 	background-color: #a00000;
+	border: 2px outset #a00000;
+	color: #ffffff;
 }
 
-/* 스크롤바 스타일 */
-.info-scroll-container::-webkit-scrollbar {
-	width: 10px;
+.win95-button-delete:active {
+	border: 2px inset #c00000;
+	background-color: #800000;
 }
 
-.info-scroll-container::-webkit-scrollbar-track {
-	background: #c0c0c0;
+/* 윈도우95 스타일 스크롤바 - 아이프레임용 */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
 }
 
-.info-scroll-container::-webkit-scrollbar-thumb {
-	background-color: #808080;
-	border: 1px solid #404040;
-	box-shadow: inset -1px -1px 0 #ffffff, inset 1px 1px 0 #404040;
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+    background-color: #c0c0c0;
+    border: 1px inset #c0c0c0;
 }
 
-@media (max-width: 1000px) {
-	.main-box {
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    min-height: 20px;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:hover {
+    background-color: #d4d0c8;
+    border: 2px outset #d4d0c8;
+}
+
+html::-webkit-scrollbar-thumb:active,
+body::-webkit-scrollbar-thumb:active,
+::-webkit-scrollbar-thumb:active {
+    background-color: #a0a0a0;
+    border: 2px inset #c0c0c0;
+}
+
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button,
+::-webkit-scrollbar-button {
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    height: 16px;
+    width: 16px;
+}
+
+html::-webkit-scrollbar-button:hover,
+body::-webkit-scrollbar-button:hover,
+::-webkit-scrollbar-button:hover {
+    background-color: #d4d0c8;
+    border: 2px outset #d4d0c8;
+}
+
+html::-webkit-scrollbar-button:active,
+body::-webkit-scrollbar-button:active,
+::-webkit-scrollbar-button:active {
+    background-color: #a0a0a0;
+    border: 2px inset #c0c0c0;
+}
+
+/* 스크롤바 모서리 */
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+::-webkit-scrollbar-corner {
+    background-color: #c0c0c0;
+}
+
+/* 폼 스타일 */
+form {
+	display: inline;
+	margin: 0;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+	.explorer-container {
 		flex-direction: column;
-		padding-left: 0px;
-		padding-top: 0px;
-		/* 세로 배치 유지 */
-	}
-}
-
-/* 작은 화면(태블릿 이하) */
-@media (max-width: 1000px) {
-	.main-box {
-		flex-direction: column;
-		width: 95vw;
-		height: auto;
-		max-height: 90vh;
-		overflow-y: auto;
-		padding-left: 0px;
-		padding-top: 0px;
-		/* 세로 스크롤 허용 */
-	}
-}
-
-/* 모바일 (작은 스마트폰) */
-@media (max-width: 576px) {
-	.container {
-		padding: 0 0px;
-		margin-top: -50px;
-		margin-left: -10px;
-
+		padding: 10px;
 	}
 
-	.main-box {
-		width: 120%;
-		gap: 10px;
-		padding-left: 0px;
-		padding-top: 0px;
+	.tree-panel {
+		width: 100%;
+		height: 120px;
+		margin-right: 0;
+		margin-bottom: 4px;
+	}
+
+	.icon-grid {
+		grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+		gap: 8px;
+	}
+
+	.info-icon {
+		min-width: 60px;
+		padding: 4px;
+	}
+
+	.icon-label,
+	.info-icon-label {
+		font-size: 9px;
+	}
+
+	.info-icon-value {
+		font-size: 8px;
+	}
+
+	.analysis-image {
+		max-width: 150px;
 	}
 }

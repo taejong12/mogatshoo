@@ -33,14 +33,14 @@ public class PointController {
 			@RequestParam(value = "page", defaultValue = "0") int page, Model model) {
 		
 		// 페이지당 데이터 수
-		int size = 10;
+		int size = 12;
 	    Pageable pageable = PageRequest.of(page, size, Sort.by("pointHistoryId").descending());
 	    Page<PointHistoryEntity> pointHistoryPage = pointHistoryService.findByMemberId(memberId, pageable);
 
 	    int currentPage = pointHistoryPage.getNumber();
 	    int totalPages = pointHistoryPage.getTotalPages();
 
-	    int pageBlockSize = 10;
+	    int pageBlockSize = 12;
 	    int startPage = (currentPage / pageBlockSize) * pageBlockSize;
 	    int endPage = Math.min(startPage + pageBlockSize, totalPages);
 

@@ -4,15 +4,23 @@
 	font-weight: normal;
 	font-style: normal;
 }
-body {
-    background-color: #c0c0c0;
-	font-family: 'dalmoori', sans-serif;
-    font-size: 14px;
+html, body {
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+	background-color: #c0c0c0;
 }
 
+
 .container {
-    background-color: #c0c0c0;
-    padding: 8px;
+    height: 100vh !important;
+    width: 100vw !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    overflow: auto !important;
+	background-color: #c0c0c0;
 }
 
 /* 제목 스타일 */

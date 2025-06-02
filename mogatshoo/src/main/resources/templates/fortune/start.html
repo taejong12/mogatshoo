@@ -6,7 +6,8 @@
     <link rel="stylesheet" th:href="@{/css/fortune/start.css}">
 </head>
 <body>
-<div layout:fragment="content">
+<div layout:fragment="content" class="pixel-bg">
+	<div class="fortune-container">
     <!-- 포인트 표시 -->
     <div class="point-indicator">
         보유 포인트: <span id="point" th:text="${point}"></span>
@@ -36,7 +37,7 @@
     <div class="footer-info">
         ※ 운세 1회 사용 시 10 포인트가 차감됩니다 ※
     </div>
-
+	</div>
     <!-- 운세 시작 -->
     <script th:src="@{/js/fortune/fu_fortuneStart.js}"></script>
 </div>

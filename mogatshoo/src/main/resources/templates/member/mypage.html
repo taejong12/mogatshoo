@@ -1,101 +1,117 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{fragments/layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='내 정보'">
-	<link rel="stylesheet" th:href="@{/css/member/mypage.css}">
+    <link rel="stylesheet" th:href="@{/css/member/mypage.css}">
 </head>
 <body>
-	<div layout:fragment="content">
-		<div class="container">
-			<div class="d-flex gap-5">
-			<div class="main-box">
-				<div class="member-info-container">
-					<h1 class="main-title">회원정보</h1>
-					<div class="info-scroll-container">
-						<div class="info-group">
-							<div class="info-label">아이디</div>
-							<div class="info-value" th:text="${member.memberNickName}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">이름</div>
-							<div class="info-value" th:text="${member.memberName}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">성별</div>
-							<div class="info-value" th:text="${member.memberGender}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">우편번호</div>
-							<div class="info-value" th:text="${member.memberZipcode}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">기본주소</div>
-							<div class="info-value" th:text="${member.memberAddress1}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">상세주소</div>
-							<div class="info-value" th:text="${member.memberAddress2}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">전화번호</div>
-							<div class="info-value" th:text="${member.memberTel}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">생년월일</div>
-							<div class="info-value" th:text="${member.memberBirth}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">이메일</div>
-							<div class="info-value" th:text="${member.memberEmail}"></div>
-						</div>
-
-						<div class="info-group">
-							<div class="info-label">가입일</div>
-							<div class="info-value" th:text="${member.memberCreate}"></div>
-						</div>
-					</div>
-
-					<div class="button-group">
-						<a class="btn btn-custom"
-							th:href="@{/member/update(memberId=${member.memberId})}"> 수정
-						</a>
-						<form id="deleteForm" action="/member/delete" method="post"
-							style="display: inline;">
-							<input type="hidden" name="memberId"
-								th:value="${member.memberId}">
-							<button type="button" class="btn btn-delete"
-								th:onclick="'if(confirm(\'정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.\')) document.getElementById(\'deleteForm\').submit();'">
-								탈퇴</button>
-						</form>
-					</div>
+<div layout:fragment="content" class="pixel-bg">
+    <div class="explorer-container">
+        <!-- 왼쪽 트리 패널 -->
+        <div class="tree-panel">
+            <div class="tree-header">All Folders</div>
+            <div class="tree-content">
+                <div class="tree-item selected">회원정보</div>
+            </div>
+        </div>
+        
+        <!-- 오른쪽 내용 패널 -->
+        <div class="content-panel">
+            <div class="content-header">Contents of 'Member Information'</div>
+            <div class="content-area">
+				<div class="panalContent">
+                <!-- 회원정보 아이콘들 -->
+                <div class="icon-grid">
+                    <div class="info-icon">
+                        <div class="info-icon-image">👤</div>
+                        <div class="info-icon-label">아이디</div>
+                        <div class="info-icon-value" th:text="${member.memberNickName}">아이디</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">📝</div>
+                        <div class="info-icon-label">이름</div>
+                        <div class="info-icon-value" th:text="${member.memberName}">이름</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">⚧️</div>
+                        <div class="info-icon-label">성별</div>
+                        <div class="info-icon-value" th:text="${member.memberGender}">성별</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">📮</div>
+                        <div class="info-icon-label">우편번호</div>
+                        <div class="info-icon-value" th:text="${member.memberZipcode}">우편번호</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">🏠</div>
+                        <div class="info-icon-label">기본주소</div>
+                        <div class="info-icon-value" th:text="${member.memberAddress1}">기본주소</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">🏘️</div>
+                        <div class="info-icon-label">상세주소</div>
+                        <div class="info-icon-value" th:text="${member.memberAddress2}">상세주소</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">📞</div>
+                        <div class="info-icon-label">전화번호</div>
+                        <div class="info-icon-value" th:text="${member.memberTel}">전화번호</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">🎂</div>
+                        <div class="info-icon-label">생년월일</div>
+                        <div class="info-icon-value" th:text="${member.memberBirth}">생년월일</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">📧</div>
+                        <div class="info-icon-label">이메일</div>
+                        <div class="info-icon-value" th:text="${member.memberEmail}">이메일</div>
+                    </div>
+                    
+                    <div class="info-icon">
+                        <div class="info-icon-image">📅</div>
+                        <div class="info-icon-label">가입일</div>
+                        <div class="info-icon-value" th:text="${member.memberCreate}">가입일</div>
+                    </div>
+                </div>
+                
+                <!-- 탈모분석 결과 -->
+                <div class="analysis-result">
+                    <img th:src="@{${picture.hairPicture}}" class="analysis-image" alt="탈모분석 이미지">
+                    <div class="analysis-text">
+                        <div id="hairMsg">분석 결과를 불러오는 중...</div>
+                    </div>
+                </div>
+                
+                <!-- 버튼 영역 -->
+                <div class="button-area">
+                    <a class="win95-button" th:href="@{/member/update(memberId=${member.memberId})}">수정</a>
+                    <form id="deleteForm" action="/member/delete" method="post">
+                        <input type="hidden" name="memberId" th:value="${member.memberId}">
+                        <button type="button" class="win95-button win95-button-delete"
+                                th:onclick="'if(confirm(\'정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.\')) document.getElementById(\'deleteForm\').submit();'">
+                            탈퇴
+                        </button>
+                    </form>
+                </div>
 				</div>
-				<div class="member-info-container">
-					<h1 class="main-title">탈모분석결과</h1>
-					<div class="info-scroll-container">
-						<div>
-							내 이미지 <img th:src="@{${picture.hairPicture}}" class="w-100" style="height: 300px;">
-						</div>
-						<div>
-							<div id="hairMsg"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		</div>
-		<script type="text/javascript">
-			let hairStage = "[[${stage.hairStage}]]".trim();
-		</script>
-		<script th:src="@{/js/member/mypage/hairMypage.js}"></script>
-	</div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        let hairStage = "[[${stage.hairStage}]]".trim();
+    </script>
+    <script th:src="@{/js/member/mypage/hairMypage.js}"></script>
+</div>
 </body>
 </html>

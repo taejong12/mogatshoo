@@ -36,7 +36,7 @@ console.log(hairStage);
 let customResult = customResults[hairStage];
 
 let hairMsg = document.getElementById("hairMsg");
-hairMsg.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+hairMsg.style.backgroundColor = "#c0c0c0";
 hairMsg.style.padding = "20px";
 hairMsg.style.borderRadius = "5px";
 hairMsg.style.marginTop = "20px";
@@ -54,7 +54,7 @@ hairMsgDiv.innerHTML =
     <p style="font-size: 18px; margin-bottom: 20px; color: var(--text-dark);">
         ${customResult.description}
     </p>
-    <div style="background-color: rgba(43, 43, 216, 0.1); padding: 15px; border-radius: 5px; border: 2px solid ${customResult.color};">
+    <div style="background-color: #c0c0c0; padding: 15px; border-radius: 5px; border: 2px solid ${customResult.color};">
         <strong style="color: var(--primary-color);">추천:</strong> 
         <span style="color: var(--text-dark);">${customResult.recommendation}</span>
     </div>`;

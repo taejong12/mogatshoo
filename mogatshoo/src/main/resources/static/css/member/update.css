@@ -1,8 +1,251 @@
 @charset "UTF-8";
 
-#nickNameWarnMsg, #nameWarnMsg, #zipCodeWarnMsg, #addr1WarnMsg, #addr2WarnMsg, #telWarnMsg{
-	color: red;
-	font-size: 0.8em;
-	padding: .375rem .75rem;
+@font-face {
+    font-family: 'dalmoori';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
+/* 모든 내부 스크롤 제거 - 아이프레임 스크롤만 사용 */
+* {
+	overflow: visible !important;
+}
+
+/* 기본 설정 */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #c0c0c0 !important;
+    font-family: 'dalmoori', sans-serif !important;
+    font-size: 14px !important;
+    color: #000000 !important;
+    height: auto !important;
+    overflow: auto !important;
+}
+
+/* Bootstrap 변수 오버라이드 */
+:root {
+    --bs-body-bg: #c0c0c0 !important;
+}
+
+body::before {
+    background-color: #c0c0c0 !important;
+}
+
+/* 윈도우95 스타일 스크롤바 */
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #c0c0c0;
+    border: 1px inset #c0c0c0;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    min-height: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #d4d0c8;
+    border: 2px outset #d4d0c8;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: #a0a0a0;
+    border: 2px inset #c0c0c0;
+}
+
+::-webkit-scrollbar-button {
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    height: 16px;
+    width: 16px;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: #c0c0c0;
+}
+
+/* 메인 컨테이너 */
+.pixel-bg {
+    width: 100vw;
+    min-height: 100vh;
+    background-color: #c0c0c0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* 윈도우 프레임 */
+.update-container {
+    width: 100%;
+    max-width: 500px;
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+/* 폼 내용 영역 */
+.form-content {
+    padding: 15px;
+    background-color: #c0c0c0;
+	width: 1250px;
+}
+
+/* 제목 */
+h1 {
+    text-align: center;
+    color: #000080;
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-shadow: 1px 1px 0px #ffffff;
+    font-family: 'dalmoori', sans-serif;
+}
+
+/* 폼 그룹 */
+.form-group {
+    margin-bottom: 12px;
+}
+
+/* 라벨 */
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #000000;
+}
+
+/* 입력 필드 */
+.form-control {
+    width: 100%;
+    padding: 4px 6px;
+    background-color: #ffffff;
+    border: 2px inset #c0c0c0;
+    border-radius: 0;
+    font-size: 14px;
+    font-family: 'dalmoori', sans-serif;
+    color: #000000;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    background-color: #ffffff;
+    border: 2px inset #c0c0c0;
+}
+
+.form-control:read-only {
+    background-color: #f0f0f0;
+    color: #666666;
+}
+
+/* 주소검색 컨테이너 */
+.address-container {
+    display: flex;
+    gap: 8px;
+    align-items: end;
+}
+
+.address-input {
+    flex: 1;
+}
+
+/* 버튼 */
+.win95-button {
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    border-radius: 0;
+    color: #000000;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'dalmoori', sans-serif;
+    white-space: nowrap;
+}
+
+.win95-button:hover {
+    background-color: #d4d0c8;
+    border: 2px outset #d4d0c8;
+}
+
+.win95-button:active {
+    border: 2px inset #c0c0c0;
+    background-color: #a0a0a0;
+}
+
+/* 메인 버튼 */
+.win95-button-primary {
+    background-color: #000080;
+    border: 2px outset #000080;
+    color: #ffffff;
+    padding: 8px 20px;
+    font-size: 14px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.win95-button-primary:hover {
+    background-color: #000060;
+    border: 2px outset #000060;
+    color: #ffffff;
+}
+
+.win95-button-primary:active {
+    border: 2px inset #000080;
+    background-color: #000040;
+}
+
+/* 경고 메시지 */
+#nickNameWarnMsg,
+#nameWarnMsg,
+#zipCodeWarnMsg,
+#addr1WarnMsg,
+#addr2WarnMsg,
+#telWarnMsg {
+    color: #c00000;
+    font-size: 11px;
+    background-color: #ffffcc;
+    border-left: 3px solid #c00000;
+    padding: 2px 6px;
+    margin-top: 4px;
+}
+
+/* 안내 텍스트 */
+.help-text {
+    color: #666666;
+    font-size: 11px;
+    margin-top: 2px;
+    font-style: italic;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .pixel-bg {
+        padding: 5px;
+    }
+    
+    .update-container {
+        max-width: 100%;
+    }
+    
+    .form-content {
+        padding: 10px;
+    }
+    
+    .address-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .address-container .win95-button {
+        margin-top: 4px;
+    }
+}
