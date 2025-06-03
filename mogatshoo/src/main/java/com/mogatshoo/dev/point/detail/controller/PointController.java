@@ -44,6 +44,6 @@ public class PointController {
 		model.addAttribute("endPage", endPage);
 		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("memberId", memberId);
-		return "point/list";
+		return "point/detail/list";
 	}
 }

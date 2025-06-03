@@ -64,5 +64,5 @@ public class PointShopEntity {
 
 	// 이미지 파일
 	@Transient
-	private MultipartFile imgFile;
+	private PointShopImgEntity imgFile;
 }

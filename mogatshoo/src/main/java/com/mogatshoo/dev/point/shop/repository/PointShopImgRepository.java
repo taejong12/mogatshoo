@@ -6,4 +6,6 @@ import com.mogatshoo.dev.point.shop.entity.PointShopImgEntity;
 
 public interface PointShopImgRepository extends JpaRepository<PointShopImgEntity, Long> {
 
+	PointShopImgEntity findByPointItemId(Long pointItemId);
+
 }

@@ -162,6 +162,10 @@ function createStartMenu() {
                     <img src="/img/icons/computer.png" width="16" height="16" class="startImg">
                     <span>병원지도</span>
                 </div>
+                <div class="start-menu-item-95" onclick="navigateTo('/point/shop/list')">
+                    <img src="/img/icons/computer.png" width="16" height="16" class="startImg">
+                    <span>포인트샵</span>
+                </div>
                 <hr class="win95-divider">
                 <div class="start-menu-item-95" onclick="navigateToMypage('/member/mypage')">
                     <img src="/img/icons/computer.png" width="16" height="16" class="startImg">
