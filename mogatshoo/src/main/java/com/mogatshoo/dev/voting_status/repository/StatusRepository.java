@@ -2,12 +2,8 @@ package com.mogatshoo.dev.voting_status.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,113 +14,132 @@ public class StatusRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    //모든 질문의 기본 정보 조회
+    /**
+     * 모든 질문의 기본 정보 조회 (컬럼명 수정)
+     */
     public List<Map<String, Object>> getAllQuestionInfo() {
         try {
-            // 먼저 테이블이 존재하는지 확인
-            String checkTableSql = "SHOW TABLES LIKE 'question'";
-            List<Map<String, Object>> tableExists = jdbcTemplate.queryForList(checkTableSql);
-            
-            if (tableExists.isEmpty()) {
-                System.out.println("question 테이블이 존재하지 않습니다.");
-                return List.of();
-            }
-            
-            // 컬럼이 존재하는지 확인
-            String checkColumnSql = "SHOW COLUMNS FROM question LIKE 'serialNumber'";
-            List<Map<String, Object>> columnExists = jdbcTemplate.queryForList(checkColumnSql);
-            
-            if (columnExists.isEmpty()) {
-                System.out.println("question 테이블에 serialNumber 컬럼이 존재하지 않습니다.");
-                return List.of();
-            }
-            
+            // 실제 데이터베이스 컬럼명에 맞춰 수정
             String sql = """
                 SELECT 
-                    q.serialNumber,
+                    q.serial_number as serialNumber,
                     q.question as questionContent,
-                    q.isPublic as isEnded,
-                    q.createdAt
+                    q.is_public as isEnded,
+                    q.created_at as createdAt
                 FROM question q
-                ORDER BY q.createdAt DESC
+                ORDER BY q.created_at DESC
             """;
             
-            List<Map<String, Object>> results = jdbcTemplate.queryForList(sql);
-            
-            if (results.isEmpty()) {
-                System.out.println("question 테이블에 데이터가 없습니다.");
-            }
-            
-            return results;
+            return jdbcTemplate.queryForList(sql);
             
         } catch (Exception e) {
             System.err.println("질문 정보 조회 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
-            return List.of(); // 빈 리스트 반환
+            return List.of();
         }
     }
 
-    //특정 질문의 투표 통계 조회
+    /**
+     * 특정 질문의 투표 통계 조회 (컬럼명 수정)
+     */
     public Map<String, Object> getQuestionVoteStatistics(String serialNumber) {
-        String sql = """
-            SELECT 
-                v.votedId,
-                COUNT(*) as voteCount,
-                m.memberName
-            FROM voting v
-            LEFT JOIN member m ON v.votedId = m.memberId
-            WHERE v.serialNumber = ?
-            GROUP BY v.votedId, m.memberName
-            ORDER BY voteCount DESC
-        """;
-        
-        List<Map<String, Object>> results = jdbcTemplate.queryForList(sql, serialNumber);
-        
         Map<String, Object> statistics = new HashMap<>();
-        Map<String, Long> voteDetails = new HashMap<>();
         
-        if (!results.isEmpty()) {
-            // 최다득표자 정보
-            Map<String, Object> topResult = results.get(0);
-            statistics.put("topVotedId", topResult.get("votedId"));
-            statistics.put("topVotedName", topResult.get("memberName"));
-            statistics.put("topVoteCount", ((Number) topResult.get("voteCount")).longValue());
+        try {
+            // 각 후보별 득표수와 후보 이름 조회
+            String voteSql = """
+                SELECT 
+                    v.voted_id as votedId,
+                    COUNT(*) as voteCount,
+                    COALESCE(m.member_name, v.voted_id) as memberName
+                FROM voting v
+                LEFT JOIN member m ON v.voted_id = m.member_id
+                WHERE v.serial_number = ?
+                GROUP BY v.voted_id, m.member_name
+                ORDER BY voteCount DESC
+            """;
             
-            // 전체 투표 결과
-            long totalVotes = 0;
-            for (Map<String, Object> result : results) {
-                String votedId = (String) result.get("votedId");
-                Long voteCount = ((Number) result.get("voteCount")).longValue();
-                voteDetails.put(votedId, voteCount);
-                totalVotes += voteCount;
+            List<Map<String, Object>> voteResults = jdbcTemplate.queryForList(voteSql, serialNumber);
+            
+            // 총 투표수 계산
+            String totalVotesSql = """
+                SELECT COUNT(*) as totalVotes
+                FROM voting 
+                WHERE serial_number = ?
+            """;
+            Long totalVotes = jdbcTemplate.queryForObject(totalVotesSql, Long.class, serialNumber);
+            
+            // 고유 투표자 수 계산
+            String uniqueVotersSql = """
+                SELECT COUNT(DISTINCT voter_id) as uniqueVoters
+                FROM voting 
+                WHERE serial_number = ?
+            """;
+            Long uniqueVoters = jdbcTemplate.queryForObject(uniqueVotersSql, Long.class, serialNumber);
+            
+            // 결과 설정
+            Map<String, Long> voteDetails = new HashMap<>();
+            
+            if (!voteResults.isEmpty()) {
+                // 최다득표자 정보
+                Map<String, Object> topResult = voteResults.get(0);
+                statistics.put("topVotedId", topResult.get("votedId"));
+                statistics.put("topVotedName", topResult.get("memberName"));
+                statistics.put("topVoteCount", ((Number) topResult.get("voteCount")).longValue());
+                
+                // 모든 후보의 득표 결과
+                for (Map<String, Object> result : voteResults) {
+                    String votedId = (String) result.get("votedId");
+                    Long voteCount = ((Number) result.get("voteCount")).longValue();
+                    voteDetails.put(votedId, voteCount);
+                }
+            } else {
+                statistics.put("topVotedId", null);
+                statistics.put("topVotedName", "투표 없음");
+                statistics.put("topVoteCount", 0L);
             }
-            statistics.put("totalVotes", totalVotes);
-        } else {
+            
+            statistics.put("totalVotes", totalVotes != null ? totalVotes : 0L);
+            statistics.put("uniqueVoters", uniqueVoters != null ? uniqueVoters : 0L);
+            statistics.put("voteDetails", voteDetails);
+            
+            return statistics;
+            
+        } catch (Exception e) {
+            System.err.println("투표 통계 조회 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            
+            // 기본값 반환
             statistics.put("topVotedId", null);
-            statistics.put("topVotedName", "투표 없음");
+            statistics.put("topVotedName", "오류 발생");
             statistics.put("topVoteCount", 0L);
             statistics.put("totalVotes", 0L);
+            statistics.put("uniqueVoters", 0L);
+            statistics.put("voteDetails", new HashMap<String, Long>());
+            
+            return statistics;
         }
-        
-        statistics.put("voteDetails", voteDetails);
-        return statistics;
     }
 
-    //전체 멤버 수 조회
+    /**
+     * 전체 멤버 수 조회
+     */
     public Long getTotalMemberCount() {
         try {
             String sql = "SELECT COUNT(*) FROM member";
             return jdbcTemplate.queryForObject(sql, Long.class);
         } catch (Exception e) {
             System.err.println("멤버 수 조회 오류: " + e.getMessage());
-            return 0L; // 기본값 반환
+            return 0L;
         }
     }
 
-    //특정 질문에 투표한 고유 회원 수 조회
+    /**
+     * 특정 질문에 투표한 고유 회원 수 조회
+     */
     public Long getUniqueVoterCount(String serialNumber) {
         try {
-            String sql = "SELECT COUNT(DISTINCT voterId) FROM voting WHERE serialNumber = ?";
+            String sql = "SELECT COUNT(DISTINCT voter_id) FROM voting WHERE serial_number = ?";
             return jdbcTemplate.queryForObject(sql, Long.class, serialNumber);
         } catch (Exception e) {
             System.err.println("투표자 수 조회 오류: " + e.getMessage());
@@ -132,17 +147,19 @@ public class StatusRepository {
         }
     }
 
-    //특정 질문의 상세 정보 조회
+    /**
+     * 특정 질문의 상세 정보 조회
+     */
     public Map<String, Object> getQuestionDetail(String serialNumber) {
         try {
             String sql = """
                 SELECT 
-                    serialNumber,
+                    serial_number as serialNumber,
                     question as questionContent,
-                    isPublic as isEnded,
-                    createdAt
+                    is_public as isEnded,
+                    created_at as createdAt
                 FROM question
-                WHERE serialNumber = ?
+                WHERE serial_number = ?
             """;
             
             List<Map<String, Object>> results = jdbcTemplate.queryForList(sql, serialNumber);
@@ -153,14 +170,33 @@ public class StatusRepository {
         }
     }
 
-    //모든 활성 질문의 시리얼 넘버 목록 조회
+    /**
+     * 모든 활성 질문의 시리얼 넘버 목록 조회
+     */
     public List<String> getAllQuestionSerialNumbers() {
         try {
-            String sql = "SELECT serialNumber FROM question ORDER BY createdAt DESC";
+            String sql = "SELECT serial_number FROM question ORDER BY created_at DESC";
             return jdbcTemplate.queryForList(sql, String.class);
         } catch (Exception e) {
             System.err.println("질문 시리얼 넘버 조회 오류: " + e.getMessage());
-            return List.of(); // 빈 리스트 반환
+            return List.of();
+        }
+    }
+
+    /**
+     * 디버깅용: 테이블 레코드 수 확인
+     */
+    public void debugTableCounts() {
+        try {
+            Long questionCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM question", Long.class);
+            Long votingCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM voting", Long.class);
+            Long memberCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM member", Long.class);
+            
+            System.out.println("=== 디버깅: question 테이블 레코드 수: " + questionCount);
+            System.out.println("=== 디버깅: voting 테이블 레코드 수: " + votingCount);
+            System.out.println("=== 디버깅: member 테이블 레코드 수: " + memberCount);
+        } catch (Exception e) {
+            System.err.println("디버깅 중 오류: " + e.getMessage());
         }
     }
 }
