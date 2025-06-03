@@ -1,5 +1,7 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -13,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
 import com.mogatshoo.dev.admin.point.category.service.AdminPointCategoryService;
-import com.mogatshoo.dev.admin.point.category.service.AdminPointCategoryServiceImpl;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
 import com.mogatshoo.dev.admin.point.item.repository.AdminPointItemRepository;
 import com.mogatshoo.dev.common.authentication.CommonUserName;
@@ -165,5 +166,43 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 		} catch (Exception e) {
 			logger.error("updatePointItem 중 예외 발생: {}", e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public Map<String, Object> deletePointCategoryCheck(Integer pointCategoryId) {
+		Map<String, Object> result = new HashMap<>();
+
+		try {
+			// 1. 카테고리 정보 조회
+			AdminPointCategoryEntity category = adminPointCategoryService.findById(pointCategoryId);
+			String categoryName = category.getPointCategoryName();
+
+			// 2. 해당 카테고리 폴더 내 이미지 존재 여부 확인
+			boolean hasImg = adminPointItemImgService.pointCategoryImgCheck(categoryName);
+
+			if (hasImg) {
+				// 이미지가 존재할 경우 삭제 불가 처리
+				result.put("hasItems", true);
+				logger.warn("카테고리 '{}'에 이미지 파일이 존재하여 삭제할 수 없습니다.", categoryName);
+				result.put("message", "'" + categoryName + "' 카테고리에 이미지 파일이 있어 삭제할 수 없습니다.");
+			} else {
+				// 이미지가 없으면 DB에 상품 존재 여부 확인
+				long itemCount = adminPointItemRepository.countByPointCategoryId(pointCategoryId);
+				logger.info("카테고리 ID {}에 포함된 상품 수: {}", pointCategoryId, itemCount);
+
+				if (itemCount > 0) {
+					result.put("hasItems", true);
+					result.put("message", "'" + categoryName + "' 카테고리에 등록된 상품이 있어 삭제할 수 없습니다.");
+				} else {
+					result.put("hasItems", false);
+					result.put("message", "'" + categoryName + "' 카테고리는 삭제 가능합니다.");
+				}
+			}
+		} catch (Exception e) {
+			logger.error("카테고리 삭제 가능 여부 확인 중 오류 발생. ID: {}", pointCategoryId, e);
+			result.put("message", "카테고리 삭제 확인 중 오류가 발생했습니다. 관리자에게 문의해주세요.");
+		}
+
+		return result;
 	}
 }

@@ -21,4 +21,6 @@ public interface AdminPointItemImgService {
 
 	void moveImgToNewCategory(Long pointItemId, String oldCategoryName, String newCategoryName);
 
+	boolean pointCategoryImgCheck(String pointCategoryName);
+
 }

@@ -17,6 +17,7 @@
 					<th>관리자아이디</th>
 					<th>등록일</th>
 					<th>수정일</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -26,6 +27,10 @@
 					<td th:text="${category.memberId}">관리자아이디</td>
 					<td th:text="${#temporals.format(category.pointCategoryCreate, 'yyyy-MM-dd HH:mm')}">등록일</td>
 					<td th:text="${#temporals.format(category.pointCategoryUpdate, 'yyyy-MM-dd HH:mm')}">수정일</td>
+					<td  class="text-center">
+						<a class="btn btn-outline-secondary" 
+							th:href="@{/admin/point/category/detail/{id}(id=${category.pointCategoryId})}">상세보기</a>
+					</td>
 				</tr>
 				<tr th:if="${#lists.isEmpty(pointCategoryList)}">
 					<td colspan="5" class="text-center">등록된 카테고리가 없습니다.</td>

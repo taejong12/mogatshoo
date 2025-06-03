@@ -395,7 +395,9 @@ public class GoogleDriveService {
 		}
 	}
 
+	// 파일 이동
 	public void moveImgToNewCategory(String fileId, String newCategoryName, String oldCategoryName) {
+
 		try {
 			if (!isEnabled) {
 				throw new IOException("구글 드라이브 서비스가 비활성화되어 있습니다.");
@@ -425,4 +427,69 @@ public class GoogleDriveService {
 		}
 	}
 
+	// 카테고리 폴더에 이미지 존재하는지 체크
+	public boolean pointCategoryImgCheck(String pointCategoryName) {
+
+		try {
+			// 1. 카테고리 폴더 ID 조회
+			String query = String.format(
+					"mimeType='application/vnd.google-apps.folder' and name='%s' and '%s' in parents and trashed=false",
+					pointCategoryName, pointItemPath);
+
+			FileList result = driveService.files().list().setQ(query).setSpaces("drive").setFields("files(id, name)")
+					.execute();
+
+			if (result.getFiles().isEmpty()) {
+				logger.info("pointCategoryImgCheck: 해당 카테고리 폴더가 존재하지 않습니다. 카테고리명: {}", pointCategoryName);
+				return false;
+			}
+
+			// 2. 폴더 내 이미지 존재 여부 확인
+			String folderId = result.getFiles().get(0).getId();
+			String fileQuery = String.format("'%s' in parents and trashed=false", folderId);
+
+			FileList fileResult = driveService.files().list().setQ(fileQuery).setSpaces("drive").setFields("files(id)")
+					.setPageSize(1).execute();
+
+			boolean hasFiles = !fileResult.getFiles().isEmpty();
+
+			logger.info("pointCategoryImgCheck: 카테고리 '{}' 폴더에 이미지 존재 여부: {}", pointCategoryName, hasFiles);
+
+			return hasFiles;
+		} catch (Exception e) {
+			logger.error("pointCategoryImgCheck 중 오류 발생: 카테고리명: {}, 오류: {}", pointCategoryName, e.getMessage(), e);
+			return false;
+		}
+	}
+
+	// 포인트 상품 카테고리 폴더 삭제
+	public void deletePointItemFolder(String categoryName) {
+		try {
+			// 1. 카테고리 폴더 ID 조회
+			String query = String.format(
+					"mimeType='application/vnd.google-apps.folder' and name='%s' and '%s' in parents and trashed=false",
+					categoryName, pointItemPath);
+
+			FileList result = driveService.files().list().setQ(query).setSpaces("drive").setFields("files(id, name)")
+					.execute();
+
+			if (result.getFiles().isEmpty()) {
+				logger.info("deletePointItemFolder: 삭제할 폴더가 존재하지 않습니다. 카테고리명: {}", categoryName);
+				return;
+			}
+
+			String folderId = result.getFiles().get(0).getId();
+
+			// 2. 폴더 삭제 (휴지통으로 이동)
+			driveService.files().delete(folderId).execute();
+
+			logger.info("deletePointItemFolder: 폴더 삭제 완료. 카테고리명: {}, 폴더 ID: {}", categoryName, folderId);
+
+		} catch (IOException e) {
+			logger.error("deletePointItemFolder: Google Drive API 오류 발생 - 카테고리명: {}, 오류: {}", categoryName,
+					e.getMessage(), e);
+		} catch (Exception e) {
+			logger.error("deletePointItemFolder: 알 수 없는 오류 발생 - 카테고리명: {}, 오류: {}", categoryName, e.getMessage(), e);
+		}
+	}
 }

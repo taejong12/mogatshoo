@@ -157,4 +157,9 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 		}
 
 	}
+
+	@Override
+	public boolean pointCategoryImgCheck(String pointCategoryName) {
+		return googleDriveService.pointCategoryImgCheck(pointCategoryName);
+	}
 }

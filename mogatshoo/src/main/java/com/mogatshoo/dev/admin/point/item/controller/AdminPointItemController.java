@@ -23,8 +23,6 @@ import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 import com.mogatshoo.dev.admin.point.item.service.AdminPointItemImgService;
 import com.mogatshoo.dev.admin.point.item.service.AdminPointItemService;
 
-import jakarta.servlet.http.HttpSession;
-
 @Controller
 @RequestMapping("/admin/point/item")
 public class AdminPointItemController {
@@ -37,7 +35,6 @@ public class AdminPointItemController {
 
 	@Autowired
 	private AdminPointCategoryService adminPointCategoryService;
-
 
 	@GetMapping("/list")
 	public String pointItemListPage(@RequestParam(value = "pointCategoryId", required = false) Integer pointCategoryId,
@@ -117,7 +114,7 @@ public class AdminPointItemController {
 		adminPointItemService.deletePointItem(pointItemId);
 		return "redirect:/admin/point/item/list";
 	}
-	
+
 	@GetMapping("/update/{pointItemId}")
 	public String pointItemUpdatePage(@PathVariable("pointItemId") Long pointItemId, Model model) {
 		AdminPointItemEntity adminPointItemEntity = adminPointItemService.findById(pointItemId);
@@ -127,19 +124,19 @@ public class AdminPointItemController {
 		if (adminPointItemEntity != null && adminPointItemEntity.getPointCategoryId() != null) {
 			adminPointCategoryEntity = adminPointCategoryService.findById(adminPointItemEntity.getPointCategoryId());
 		}
-		
+
 		List<AdminPointCategoryEntity> pointCategoryList = adminPointCategoryService.findAll();
-		
+
 		model.addAttribute("pointItem", adminPointItemEntity);
 		model.addAttribute("itemImg", adminPointItemImgEntity);
 		model.addAttribute("pointCategory", adminPointCategoryEntity);
 		model.addAttribute("pointCategoryList", pointCategoryList);
 		return "admin/point/item/update";
 	}
-	
+
 	@PostMapping("/update")
 	public String pointItemUpdate(@ModelAttribute AdminPointItemEntity adminPointItemEntity) {
 		adminPointItemService.updatePointItem(adminPointItemEntity);
-		return "redirect:/admin/point/item/detail/"+adminPointItemEntity.getPointItemId();
+		return "redirect:/admin/point/item/detail/" + adminPointItemEntity.getPointItemId();
 	}
 }

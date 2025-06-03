@@ -17,4 +17,8 @@ public interface AdminPointCategoryService {
 
 	AdminPointCategoryEntity findById(Integer pointCategoryId);
 
+	void deletePointCategory(Integer pointCategoryId);
+
+	void updatePointCategory(AdminPointCategoryEntity adminPointCategoryEntity);
+
 }

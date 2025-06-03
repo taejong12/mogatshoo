@@ -26,13 +26,13 @@ public class FortuneController {
 
 	@Autowired
 	private MemberService memberService;
-	
+
 	@Autowired
 	private FortuneService fortuneService;
-	
+
 	@Autowired
 	private PointService pointService;
-	
+
 	@GetMapping("/start")
 	public String fortuneStartPage(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -41,22 +41,21 @@ public class FortuneController {
 		model.addAttribute("point", point);
 		return "fortune/start";
 	}
-	
-	
+
 	@PostMapping("/start")
 	@ResponseBody
 	public Map<String, Object> fortuneStart() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String memberId = authentication.getName();
 		MemberEntity member = memberService.findByMemberId(memberId);
-		
+
 		String name = member.getMemberName();
-        LocalDate birth = member.getMemberBirth();
-        String gender = member.getMemberGender();
-        
-        Map<String, Object> map = new HashMap<>();
-        map = fortuneService.fortuneMsg(memberId, name, birth, gender);
-		
+		LocalDate birth = member.getMemberBirth();
+		String gender = member.getMemberGender();
+
+		Map<String, Object> map = new HashMap<>();
+		map = fortuneService.fortuneMsg(memberId, name, birth, gender);
+
 		return map;
 	}
 }

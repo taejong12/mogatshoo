@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
 import com.mogatshoo.dev.admin.point.category.repository.AdminPointCategoryRepository;
 import com.mogatshoo.dev.common.authentication.CommonUserName;
+import com.mogatshoo.dev.config.file.GoogleDriveService;
 
 import jakarta.transaction.Transactional;
 
@@ -28,6 +29,9 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 
 	@Autowired
 	private CommonUserName commonUserName;
+
+	@Autowired
+	private GoogleDriveService googleDriveService;
 
 	@Override
 	public List<AdminPointCategoryEntity> findAll() {
@@ -81,6 +85,37 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 			logger.error("포인트 카테고리 조회 중 오류 발생 - ID: {}", pointCategoryId, e);
 			return null;
 		}
+	}
+
+	@Override
+	public void deletePointCategory(Integer pointCategoryId) {
+		try {
+			AdminPointCategoryEntity adminPointCategoryEntity = adminPointCategoryRepository.findById(pointCategoryId)
+					.orElse(null);
+
+			if (adminPointCategoryEntity == null) {
+				logger.warn("deletePointCategory: 존재하지 않는 카테고리입니다. ID: {}", pointCategoryId);
+				return;
+			}
+
+			String categoryName = adminPointCategoryEntity.getPointCategoryName();
+
+			// 1. 카테고리 폴더 삭제
+			googleDriveService.deletePointItemFolder(categoryName);
+
+			// 2. 카테고리 삭제
+			adminPointCategoryRepository.deleteById(pointCategoryId);
+			logger.info("deletePointCategory: 카테고리 DB 삭제 완료. ID: {}", pointCategoryId);
+
+		} catch (Exception e) {
+			logger.error("deletePointCategory: 카테고리 삭제 중 예외 발생. ID: {}, 오류: {}", pointCategoryId, e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void updatePointCategory(AdminPointCategoryEntity adminPointCategoryEntity) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

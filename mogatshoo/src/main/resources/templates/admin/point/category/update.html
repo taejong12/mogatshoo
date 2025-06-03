@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{admin/fragments/layout}">
-<head th:with="layoutTitle='카테고리등록'">
+<head th:with="layoutTitle='카테고리수정'">
 </head>
 <body>
 	<div layout:fragment="content">
 		<div class="col-12 col-md-6">
-			<h1 class="mb-5">카테고리 등록</h1>
+			<h1 class="mb-5">카테고리수정</h1>
 
 			<div class="card">
 				<div class="card-body">
@@ -37,6 +37,7 @@
 				</div>
 			</div>
 		</div>
+		
 		<!-- 등록하기버튼 클릭 -->
 		<script
 			th:src="@{/js/admin/point/category/insertPage/fu_insertCategory.js}"></script>

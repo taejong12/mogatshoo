@@ -1,5 +1,7 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,5 +20,7 @@ public interface AdminPointItemService {
 	void deletePointItem(Long pointItemId);
 
 	void updatePointItem(AdminPointItemEntity adminPointItemEntity);
+
+	Map<String, Object> deletePointCategoryCheck(Integer pointCategoryId);
 
 }

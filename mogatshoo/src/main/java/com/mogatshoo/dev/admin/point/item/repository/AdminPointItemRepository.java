@@ -10,4 +10,5 @@ public interface AdminPointItemRepository extends JpaRepository<AdminPointItemEn
 
 	Page<AdminPointItemEntity> findByPointCategoryId(Integer pointCategoryId, Pageable pageable);
 
+	long countByPointCategoryId(Integer pointCategoryId);
 }
