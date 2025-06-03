@@ -8,15 +8,24 @@
 
 <body>
 	<div layout:fragment="content">
+		<!-- 수정된 헤더 부분 - 질문생성 버튼을 왼쪽, 질문목록 제목을 오른쪽으로 -->
 		<div class="page-header">
-			<h2>질문 목록</h2>
-			<a th:href="@{/admin/questions/new}" class="btn btn-primary">
-				<i class="fas fa-plus"></i> 질문 생성
-			</a>
+			<div class="page-header-left">
+				<a th:href="@{/admin/questions/new}" class="btn-create">
+					<i class="fas fa-plus"></i> 질문 생성
+				</a>
+			</div>
+			<div class="page-header-right">
+				<h2>질문 목록</h2>
+			</div>
 		</div>
 
-		<!-- 고급 검색 폼 추가 -->
-		<div class="advanced-search-container">
+		<!-- 메인 컨텐츠 래퍼 - 3분할 레이아웃 -->
+		<div class="main-content-wrapper">
+			<!-- 왼쪽 1/3: 고급 검색 영역 -->
+			<div class="search-section">
+				<!-- 고급 검색 폼 추가 -->
+				<div class="advanced-search-container">
 			<div class="advanced-search-title">
 				<i class="fas fa-filter"></i>
 				고급 검색
@@ -85,9 +94,12 @@
 				<input type="hidden" name="page" value="0">
 				<input type="hidden" name="size" th:value="${size}">
 			</form>
-		</div>
+				</div>
+			</div>
 
-		<!-- 검색 결과 정보 표시 -->
+			<!-- 오른쪽 2/3: 테이블 영역 -->
+			<div class="table-section">
+				<!-- 검색 결과 정보 표시 -->
 		<div th:if="${isSearchResult}" class="search-result-info">
 			<i class="fas fa-info-circle"></i>
 			<span th:text="${searchResultMessage}">검색 결과</span>
@@ -100,15 +112,6 @@
 				<span th:if="${totalPages > 0}">
 					(현재 <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">1</span> 페이지)
 				</span>
-			</div>
-			<div>
-				<label for="pageSizeSelect">페이지당 표시: </label>
-				<select id="pageSizeSelect" onchange="changePageSize(this.value)">
-					<option value="5" th:selected="${size == 5}">5개</option>
-					<option value="10" th:selected="${size == 10}">10개</option>
-					<option value="20" th:selected="${size == 20}">20개</option>
-					<option value="50" th:selected="${size == 50}">50개</option>
-				</select>
 			</div>
 		</div>
 
@@ -248,6 +251,9 @@
 				<span th:if="${currentPage >= totalPages - 1}" class="prev-next disabled">
 					마지막 <i class="fas fa-angle-double-right"></i>
 				</span>
+			</div>
+				</div>
+
 			</div>
 		</div>
 

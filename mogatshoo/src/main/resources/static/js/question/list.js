@@ -169,21 +169,6 @@ document.addEventListener('DOMContentLoaded', function() {
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     
-    
-    
-    
-    // 페이지 크기 변경 함수 (검색 조건 유지)
-    window.changePageSize = function(newSize) {
-        const form = document.getElementById('advancedSearchForm');
-        const sizeInput = form.querySelector('input[name="size"]');
-        const pageInput = form.querySelector('input[name="page"]');
-        
-        sizeInput.value = newSize;
-        pageInput.value = '0'; // 페이지 크기 변경 시 첫 페이지로
-        
-        form.submit();
-    };
-    
     // 고급 검색 폼 제출 시 페이지를 0으로 리셋
     const setupAdvancedSearchForm = () => {
         const advancedForm = document.getElementById('advancedSearchForm');
