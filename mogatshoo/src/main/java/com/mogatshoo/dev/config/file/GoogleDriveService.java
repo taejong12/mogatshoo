@@ -3,6 +3,7 @@ package com.mogatshoo.dev.config.file;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 
@@ -490,6 +491,61 @@ public class GoogleDriveService {
 					e.getMessage(), e);
 		} catch (Exception e) {
 			logger.error("deletePointItemFolder: 알 수 없는 오류 발생 - 카테고리명: {}, 오류: {}", categoryName, e.getMessage(), e);
+		}
+	}
+
+	// 폴더 변경 시 파일 이동
+	public void updateCategoryName(String newCategoryName, String oldCategoryName) {
+
+		try {
+			if (!isEnabled) {
+				throw new IOException("구글 드라이브 서비스가 비활성화되어 있습니다.");
+			}
+
+			// 1. 카테고리 폴더 ID 조회
+			String newFolderId = findCategoryFolder(newCategoryName);
+			String oldFolderId = findCategoryFolder(oldCategoryName);
+
+			if (oldFolderId == null || newFolderId == null) {
+				logger.warn("updateCategoryName: 폴더 ID를 찾을 수 없습니다. oldName='{}', newName='{}'", oldCategoryName,
+						newCategoryName);
+				return;
+			}
+
+			// 2. 기존 폴더 안의 모든 파일 조회
+			String query = "'" + oldFolderId + "' in parents and trashed = false";
+			FileList fileList = driveService.files().list().setQ(query).setFields("files(id, name, parents)").execute();
+
+			List<File> files = fileList.getFiles();
+			if (files == null || files.isEmpty()) {
+				logger.info("기존 폴더 '{}'에 파일이 없습니다. 폴더 삭제를 진행합니다.", oldCategoryName);
+				deletePointItemFolder(oldCategoryName);
+				return;
+			}
+
+			// 3. 각 파일을 새 폴더로 이동
+			for (File file : files) {
+				String fileId = file.getId();
+				List<String> parents = file.getParents();
+
+				if (parents != null && !parents.isEmpty()) {
+					// 대부분 하나만 있음
+					String oldParent = parents.get(0);
+
+					driveService.files().update(fileId, null).setAddParents(newFolderId).setRemoveParents(oldParent)
+							.setFields("id, parents").execute();
+
+					logger.debug("[파일 이동] '{}' 파일을 '{}' → '{}' 폴더로 이동 완료", file.getName(), oldCategoryName,
+							newCategoryName);
+				}
+			}
+
+			// 4. 폴더 삭제
+			deletePointItemFolder(oldCategoryName);
+
+		} catch (Exception e) {
+			logger.error("[폴더 이동 오류] 구글 드라이브 폴더 이름 변경 중 오류 발생: old='{}', new='{}'", oldCategoryName, newCategoryName,
+					e);
 		}
 	}
 }

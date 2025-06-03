@@ -1,6 +1,8 @@
 package com.mogatshoo.dev.admin.point.category.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -114,8 +116,41 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 
 	@Override
 	public void updatePointCategory(AdminPointCategoryEntity adminPointCategoryEntity) {
-		// TODO Auto-generated method stub
+		Integer categoryId = adminPointCategoryEntity.getPointCategoryId();
 
+		try {
+			// 1. 기존 카테고리 조회
+			AdminPointCategoryEntity updateCategory = adminPointCategoryRepository.findById(categoryId).orElse(null);
+
+			if (updateCategory == null) {
+				logger.warn("[카테고리 수정 실패] ID {}에 해당하는 카테고리를 찾을 수 없습니다.", categoryId);
+				return;
+			}
+
+			String oldCategoryName = updateCategory.getPointCategoryName();
+			String newCategoryName = adminPointCategoryEntity.getPointCategoryName();
+			boolean categoryNameChange = !Objects.equals(newCategoryName, oldCategoryName);
+
+			// 2. 카테고리 이름이 변경된 경우: 구글 드라이브 폴더 이동
+			if (categoryNameChange) {
+				logger.info("[카테고리 이름 변경 감지] '{}' → '{}'", oldCategoryName, newCategoryName);
+
+				googleDriveService.updateCategoryName(newCategoryName, oldCategoryName);
+				logger.info("[구글 드라이브 업데이트 완료] 카테고리 폴더 이동 완료");
+			}
+
+			// 3. DB 업데이트
+			String memberId = commonUserName.getUserName();
+			updateCategory.setMemberId(memberId);
+			updateCategory.setPointCategoryName(newCategoryName);
+			updateCategory.setPointCategorySortOrder(adminPointCategoryEntity.getPointCategorySortOrder());
+			updateCategory.setPointCategoryUpdate(LocalDateTime.now());
+
+			logger.info("[DB 업데이트 완료] 카테고리 ID {} 정보가 성공적으로 업데이트되었습니다.", categoryId);
+
+		} catch (Exception e) {
+			logger.error("[카테고리 수정 중 오류 발생] ID {} 처리 중 예외 발생", adminPointCategoryEntity.getPointCategoryId(), e);
+		}
 	}
 
 }

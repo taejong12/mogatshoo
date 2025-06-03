@@ -1,5 +1,5 @@
-function fu_insertCategory() {
-	let insertCategoryForm = document.insertCategoryForm;
+function fu_updateCategory() {
+	let updateCategoryForm = document.updateCategoryForm;
 
 	let name = document.getElementById('pointCategoryName');
 	let sortOrder = document.getElementById('pointCategorySortOrder');
@@ -36,8 +36,8 @@ function fu_insertCategory() {
 	}
 
 	if (nameCheck && sortOrderCheck) {
-		insertCategoryForm.method = "post";
-		insertCategoryForm.action = "/admin/point/category/insert";
-		insertCategoryForm.submit();
+		updateCategoryForm.method = "post";
+		updateCategoryForm.action = "/admin/point/category/update";
+		updateCategoryForm.submit();
 	}
 }

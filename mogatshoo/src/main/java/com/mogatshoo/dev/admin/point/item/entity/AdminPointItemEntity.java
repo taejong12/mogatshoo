@@ -48,7 +48,7 @@ public class AdminPointItemEntity {
 	private LocalDateTime pointItemCreate;
 
 	// 수정일
-	@Column(insertable = false, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+	@Column(insertable = false, updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
 	private LocalDateTime pointItemUpdate;
 
 	// 판매여부 (Y/N)
