@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/layout}">
+      layout:decorate="~{admin/fragments/layout}">
 <head th:with="layoutTitle='질문 생성 - 질문 관리 시스템'">
     <link rel="stylesheet" th:href="@{/css/question/create.css}">
 </head>
@@ -9,13 +9,13 @@
 <div layout:fragment="content">
     <div class="page-header">
         <h2>질문 생성</h2>
-        <a th:href="@{/questions}" class="btn btn-text">
+        <a th:href="@{/admin/questions}" class="btn btn-text">
             <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
         </a>
     </div>
 
     <div class="question-form-container">
-        <form th:action="@{/questions/creat}" method="post" id="questionForm">
+        <form th:action="@{/admin/questions/creat}" method="post" id="questionForm">
             <div class="form-header">
                 <div class="serial-number-display">
                     <label>일련번호:</label>
@@ -43,7 +43,7 @@
                 <!-- 보기 1 + 사진 1 (프록시 적용) -->
                 <div class="option-row">
                     <div class="form-group">
-                        <label for="option1">보기 1 <span class="required">*</span></label>
+                        <label for="option1">보기 1 <span class="required"></span></label>
                         <input type="text" id="option1" name="option1" required 
                                th:value="${randomPictures != null && randomPictures.size() > 0 && memberNicknames != null ? 
                                         memberNicknames.get(randomPictures[0].memberId) : ''}">
@@ -67,7 +67,7 @@
                 <!-- 보기 2 + 사진 2 (프록시 적용) -->
                 <div class="option-row">
                     <div class="form-group">
-                        <label for="option2">보기 2 <span class="required">*</span></label>
+                        <label for="option2">보기 2 <span class="required"></span></label>
                         <input type="text" id="option2" name="option2" required 
                                th:value="${randomPictures != null && randomPictures.size() > 1 && memberNicknames != null ? 
                                         memberNicknames.get(randomPictures[1].memberId) : ''}">
@@ -90,7 +90,7 @@
                 <!-- 보기 3 + 사진 3 (프록시 적용) -->
                 <div class="option-row">
                     <div class="form-group">
-                        <label for="option3">보기 3 <span class="required">*</span></label>
+                        <label for="option3">보기 3 <span class="required"></span></label>
                         <input type="text" id="option3" name="option3" required 
                                th:value="${randomPictures != null && randomPictures.size() > 2 && memberNicknames != null ? 
                                         memberNicknames.get(randomPictures[2].memberId) : ''}">
@@ -113,7 +113,7 @@
                 <!-- 보기 4 + 사진 4 (프록시 적용) -->
                 <div class="option-row">
                     <div class="form-group">
-                        <label for="option4">보기 4 <span class="required">*</span></label>
+                        <label for="option4">보기 4 <span class="required"></span></label>
                         <input type="text" id="option4" name="option4" required 
                                th:value="${randomPictures != null && randomPictures.size() > 3 && memberNicknames != null ? 
                                         memberNicknames.get(randomPictures[3].memberId) : ''}">

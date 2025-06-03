@@ -106,13 +106,6 @@ function previewImage() {
 			type: file.type
 		});
 
-		// 파일 크기 체크 (5MB)
-		if (file.size > 5 * 1024 * 1024) {
-			showWin95Alert('파일 크기가 5MB를 초과합니다.\n더 작은 파일을 선택해주세요.', 'warning');
-			input.value = '';
-			return;
-		}
-
 		// 파일 형식 체크
 		const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 		if (!allowedTypes.includes(file.type)) {
@@ -120,6 +113,13 @@ function previewImage() {
 			input.value = '';
 			return;
 		}
+		// 파일 크기 체크 (5MB)
+		if (file.size > 5 * 1024 * 1024) {
+			showWin95Alert('파일 크기가 5MB를 초과합니다.\n더 작은 파일을 선택해주세요.', 'warning');
+			input.value = '';
+			return;
+		}
+
 
 		const reader = new FileReader();
 

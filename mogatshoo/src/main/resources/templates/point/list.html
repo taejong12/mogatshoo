@@ -3,13 +3,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='포인트 사용내역'">
+	<link rel="stylesheet" th:href="@{/css/point/point.css}">
 </head>
 <body>
-	<div layout:fragment="content">
-	
-		<h1 class="text-center mb-5">포인트내역</h1>
-		
-		<table class="table table-bordered">
+	<div layout:fragment="content" class="pixel-bg">
+		<div class="point-container">
+		<h1 class="point-title">포인트내역</h1>
+		<div class="point-history-area">
+		<table class="win95-table">
 		    <thead>
 		        <tr>
 		            <th>내역</th>
@@ -52,6 +53,8 @@
 		        <a th:href="@{|/point/list?memberId=${memberId}&page=${endPage}|}">다음 &raquo;</a>
 		    </span>
 		</div>
+	</div>
+	</div>
 	</div>
 </body>
 </html>

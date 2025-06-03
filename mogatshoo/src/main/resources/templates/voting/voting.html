@@ -39,27 +39,95 @@
                     <p class="question-serial" th:text="'질문 번호: ' + ${question.serialNumber}">질문 번호: Q00001</p>
                 </div>
                 
-                <!-- 투표 옵션 (사진) -->
+                <!-- 투표 옵션 (사진) - memberName 사용 -->
                 <div class="options-container">
                     <div class="options-grid">
-                        <div th:each="picture, status : ${randomPictures}" class="option-item">
+                        <!-- 옵션 1 -->
+                        <div class="option-item" th:if="${randomPictures != null and randomPictures.size() > 0}">
                             <div class="picture-option" 
-                                 th:data-member-id="${picture.memberId}"
                                  th:data-serial-number="${question.serialNumber}"
-                                 th:data-option-index="${status.index}"
+                                 th:data-option-index="0"
+                                 th:data-member-id="${randomPictures[0].memberId}"
                                  onclick="selectPicture(this)">
                                 <div class="pic-container">
-                                    <img th:src="@{${picture.hairPicture}}" 
-                                         th:alt="'투표 옵션 ' + ${status.index + 1}"
+                                    <img th:src="@{'/proxy/image/' + ${randomPictures[0].googleDriveFileId}}" 
+                                         th:alt="'투표 옵션 1'"
                                          class="option-image"
                                          onload="this.style.opacity='1';"
                                          onerror="handleImageError(this);"
                                          style="opacity: 0; transition: opacity 0.3s ease;">
                                 </div>
-                                <div class="option-text" th:text="${question.option1}" th:if="${status.index == 0}">옵션 1</div>
-                                <div class="option-text" th:text="${question.option2}" th:if="${status.index == 1}">옵션 2</div>
-                                <div class="option-text" th:text="${question.option3}" th:if="${status.index == 2}">옵션 3</div>
-                                <div class="option-text" th:text="${question.option4}" th:if="${status.index == 3}">옵션 4</div>
+                                <!-- memberName 사용 (실제 이름) -->
+                                <div class="option-text" 
+                                     th:text="${memberNicknames != null ? memberNicknames.get(randomPictures[0].memberId) : '참가자 1'}">
+                                     참가자 1
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 옵션 2 -->
+                        <div class="option-item" th:if="${randomPictures != null and randomPictures.size() > 1}">
+                            <div class="picture-option" 
+                                 th:data-serial-number="${question.serialNumber}"
+                                 th:data-option-index="1"
+                                 th:data-member-id="${randomPictures[1].memberId}"
+                                 onclick="selectPicture(this)">
+                                <div class="pic-container">
+                                    <img th:src="@{'/proxy/image/' + ${randomPictures[1].googleDriveFileId}}" 
+                                         th:alt="'투표 옵션 2'"
+                                         class="option-image"
+                                         onload="this.style.opacity='1';"
+                                         onerror="handleImageError(this);"
+                                         style="opacity: 0; transition: opacity 0.3s ease;">
+                                </div>
+                                <div class="option-text" 
+                                     th:text="${memberNicknames != null ? memberNicknames.get(randomPictures[1].memberId) : '참가자 2'}">
+                                     참가자 2
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 옵션 3 -->
+                        <div class="option-item" th:if="${randomPictures != null and randomPictures.size() > 2}">
+                            <div class="picture-option" 
+                                 th:data-serial-number="${question.serialNumber}"
+                                 th:data-option-index="2"
+                                 th:data-member-id="${randomPictures[2].memberId}"
+                                 onclick="selectPicture(this)">
+                                <div class="pic-container">
+                                    <img th:src="@{'/proxy/image/' + ${randomPictures[2].googleDriveFileId}}" 
+                                         th:alt="'투표 옵션 3'"
+                                         class="option-image"
+                                         onload="this.style.opacity='1';"
+                                         onerror="handleImageError(this);"
+                                         style="opacity: 0; transition: opacity 0.3s ease;">
+                                </div>
+                                <div class="option-text" 
+                                     th:text="${memberNicknames != null ? memberNicknames.get(randomPictures[2].memberId) : '참가자 3'}">
+                                     참가자 3
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 옵션 4 -->
+                        <div class="option-item" th:if="${randomPictures != null and randomPictures.size() > 3}">
+                            <div class="picture-option" 
+                                 th:data-serial-number="${question.serialNumber}"
+                                 th:data-option-index="3"
+                                 th:data-member-id="${randomPictures[3].memberId}"
+                                 onclick="selectPicture(this)">
+                                <div class="pic-container">
+                                    <img th:src="@{'/proxy/image/' + ${randomPictures[3].googleDriveFileId}}" 
+                                         th:alt="'투표 옵션 4'"
+                                         class="option-image"
+                                         onload="this.style.opacity='1';"
+                                         onerror="handleImageError(this);"
+                                         style="opacity: 0; transition: opacity 0.3s ease;">
+                                </div>
+                                <div class="option-text" 
+                                     th:text="${memberNicknames != null ? memberNicknames.get(randomPictures[3].memberId) : '참가자 4'}">
+                                     참가자 4
+                                </div>
                             </div>
                         </div>
                     </div>

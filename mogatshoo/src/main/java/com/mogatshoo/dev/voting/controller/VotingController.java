@@ -4,8 +4,8 @@ import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
 import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
-import com.mogatshoo.dev.question.entity.QuestionEntity;
-import com.mogatshoo.dev.question.service.QuestionService;
+import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
+import com.mogatshoo.dev.admin.question.service.QuestionService;
 import com.mogatshoo.dev.voting.entity.VotingEntity;
 import com.mogatshoo.dev.voting.service.VotingService;
 
@@ -38,9 +38,7 @@ public class VotingController {
     @Autowired
     private HairLossTestService hairLossTestService;
 
-    /**
-     * 투표 페이지 로드
-     */
+    //투표 페이지 로드
     @GetMapping({"", "/voting"})
     public String votingPage(Model model, RedirectAttributes redirectAttributes) {
         try {

@@ -1,152 +1,229 @@
 @charset "UTF-8";
 
-/* 복고풍 색상 및 기본 스타일 */
+/* 전체화면 기본 설정 */
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+}
+
+@font-face {
+    font-family: 'dalmoori';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
+    background-color: #c0c0c0 !important;
+    font-family: 'dalmoori', sans-serif;
+    font-size: 14px;
+    color: #000000;
+}
+
+/* 다른 성공한 페이지와 같은 방식 - 전체 영역 채우기 */
+.pixel-bg {
+    display: flex;
+    align-items: stretch; /* center에서 stretch로 변경 */
+    width: 100vw;
+    height: 100vh;
+    background-color: #c0c0c0 !important;
+    padding: 0; /* 패딩 제거 */
+}
+
+/* 운세 컨테이너 - 전체 높이 사용 */
+.fortune-container {
+	width: 98%;
+	    height: 100%;
+	    /* display: flex; */
+    flex-direction: column;
+    justify-content: space-between; /* 공간 균등 분배 */
+}
+
+/* Bootstrap 변수 오버라이드 */
+:root {
+    --bs-body-bg: #c0c0c0 !important;
+    --win95-gray: #c0c0c0;
+    --win95-dark-gray: #808080;
+    --win95-light-gray: #dfdfdf;
+    --win95-blue: #000080;
+    --win95-white: #ffffff;
+    --win95-black: #000000;
+    --win95-yellow: #ffff00;
+    --win95-green: #008000;
+}
+
+/* body::before 오버라이드 (초록 배경 제거) */
+body::before {
+    background-color: #c0c0c0 !important;
+}
+
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100vh !important; /* min-height에서 변경 */
+    font-family: 'dalmoori', sans-serif !important;
+    font-size: 14px !important;
+    overflow: hidden !important; /* 스크롤 제거 */
+    background-color: #c0c0c0 !important;
 }
 
 /* 포인트 표시 영역 */
 .point-indicator {
-  background-color: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #808080;
-  border-bottom: 2px solid #808080;
-  padding: 6px 10px;
-  text-align: right;
-  margin-bottom: 15px;
+    background-color: #c0c0c0;
+    border: 2px inset #c0c0c0;
+    padding: 6px 10px;
+    text-align: right;
+    margin-bottom: 8px;
+    font-size: 12px;
+    flex-shrink: 0; /* 크기 고정 */
 }
 
 #point {
-  background-color: #000080; /* 네이비 블루 */
-  color: yellow;
-  padding: 2px 8px;
-  font-weight: bold;
-  margin-left: 5px;
-  display: inline-block;
+    background-color: #000080;
+    color: #ffff00;
+    padding: 2px 8px;
+    font-weight: bold;
+    margin-left: 5px;
+    display: inline-block;
+    font-family: 'dalmoori', sans-serif;
 }
 
 /* 타이틀 스타일 */
 h1.retro-title {
-  text-align: center;
-  background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff);
-  color: black;
-  text-shadow: 2px 2px 0 white;
-  padding: 10px;
-  font-size: 32px;
-  letter-spacing: 2px;
-  margin: 15px 0;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(2px 2px 0 white);
+    text-align: center;
+    background-color: #c0c0c0;
+    color: #000080;
+    text-shadow: 1px 1px 0px #ffffff;
+    padding: 12px;
+    font-size: 24px;
+    letter-spacing: 2px;
+    margin: 8px 0;
+    border: 2px inset #c0c0c0;
+    font-family: 'dalmoori', sans-serif;
+    flex-shrink: 0; /* 크기 고정 */
 }
 
-/* 운세 내용 디스플레이 */
+/* 운세 내용 디스플레이 - 적당한 크기 */
 .fortune-display {
-  background-color: #000080; /* 네이비 블루 */
-  color: white;
-  padding: 20px;
-  margin: 15px 0;
-  min-height: 200px;
-  text-align: center;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    background-color: #000000;
+    color: #00ff00;
+    padding: 20px;
+    margin: 10px 0;
+    text-align: center;
+    border: 2px inset #c0c0c0;
+    height: 53%; /* 고정 높이로 변경 */
+    max-height: 400px; /* 최대 높이 제한 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* 운세 아이템 */
 #fortuneItem {
-  color: yellow;
-  font-size: 24px;
-  margin-bottom: 15px;
-  letter-spacing: 1px;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    color: #ffff00;
+    font-size: 20px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    font-weight: bold;
 }
 
 /* 운세 메시지 */
 #fortuneMsg {
-  color: #ffffff;
-  font-size: 18px;
-  margin: 20px 0;
-  line-height: 1.5;
+    color: #00ff00;
+    font-size: 14px;
+    margin: 16px 0;
+    line-height: 1.5;
 }
 
 /* 버튼 스타일 */
 .retro-button {
-  background-color: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #808080;
-  border-bottom: 2px solid #808080;
-  color: black;
-  padding: 8px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  margin: 10px auto;
-  display: inline-block;
-  min-width: 120px;
-  text-align: center;
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    border-radius: 0;
+    color: #000000;
+    padding: 8px 20px;
+    font-size: 12px;
+    cursor: pointer;
+    margin: 4px;
+    display: inline-block;
+    min-width: 120px;
+    text-align: center;
+    font-family: 'dalmoori', sans-serif;
+    text-decoration: none;
+}
+
+.retro-button:hover {
+    background-color: #d4d0c8;
+    border: 2px outset #d4d0c8;
+    color: #000000;
 }
 
 .retro-button:active {
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-  background-color: #b0b0b0;
+    border: 2px inset #c0c0c0;
+    background-color: #a0a0a0;
 }
 
 /* 버튼 컨테이너 */
 .button-container {
-  text-align: center;
-  margin: 20px 0;
+    text-align: center;
+    margin: 12px 0;
 }
 
 /* 포인트 부족 메시지 */
 .point-warning {
-  color: #ff0000;
-  background-color: #ffff00;
-  padding: 8px;
-  margin-bottom: 10px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-  border: 2px dashed #ff0000;
+    color: #800000;
+    background-color: #ffffcc;
+    padding: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    border: 2px inset #c0c0c0;
 }
 
 /* 하단 정보 */
 .footer-info {
-  background-color: #c0c0c0;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-  padding: 110px;
-  text-align: center;
-  margin-top: 15px;
-  font-weight: bold;
-  color: #800000; /* 어두운 적색 */
+    background-color: #c0c0c0;
+    border: 2px inset #c0c0c0;
+    padding: 8px;
+    text-align: center;
+    margin-top: 8px;
+    font-weight: bold;
+    color: #800000;
+    font-size: 12px;
+    flex-shrink: 0; /* 크기 고정 */
 }
 
 /* 깜빡이는 효과 */
 @keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0.3; }
-  100% { opacity: 1; }
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
 }
 
 .blink {
-  animation: blink 1.5s infinite;
+    animation: blink 1.5s infinite;
 }
 
-/* 반응형 스타일 */
+/* 반응형 */
 @media (max-width: 768px) {
-  h1.retro-title {
-    font-size: 24px;
-  }
-  
-  .retro-button {
-    width: 80%;
-  }
+    h1.retro-title {
+        font-size: 18px;
+        padding: 8px;
+    }
+    
+    .retro-button {
+        width: 80%;
+        display: block;
+        margin: 8px auto;
+    }
+    
+    .fortune-container {
+        padding: 10px;
+    }
 }

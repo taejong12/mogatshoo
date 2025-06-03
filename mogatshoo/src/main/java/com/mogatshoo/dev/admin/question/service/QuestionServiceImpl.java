@@ -1,12 +1,19 @@
-package com.mogatshoo.dev.question.service;
+package com.mogatshoo.dev.admin.question.service;
 
 import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
 import com.mogatshoo.dev.hair_loss_test.repository.PictureRepository;
-import com.mogatshoo.dev.question.entity.QuestionEntity;
-import com.mogatshoo.dev.question.repository.QuestionRepository;
+import com.mogatshoo.dev.admin.question.entity.CompletedQuestionEntity;
+import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
+import com.mogatshoo.dev.admin.question.repository.CompletedQuestionRepository;
+import com.mogatshoo.dev.admin.question.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,8 +22,12 @@ public class QuestionServiceImpl implements QuestionService {
 	
 	@Autowired
 	private QuestionRepository questionRepository;
+	
 	@Autowired
-	PictureRepository picRepository;
+	private CompletedQuestionRepository completedQuestionRepository; // 추가된 Repository
+	
+	@Autowired
+	private PictureRepository picRepository;
 	
 	@Override
 	public QuestionEntity createQuestion(QuestionEntity questionEntity) {
@@ -149,6 +160,11 @@ public class QuestionServiceImpl implements QuestionService {
 	    // isPublic 상태도 업데이트하도록 추가
 	    existingQuestion.setIsPublic(questionEntity.getIsPublic());
 	    
+	    // 투표 기간 업데이트 추가
+	    existingQuestion.setVotingStartDate(questionEntity.getVotingStartDate());
+	    existingQuestion.setVotingEndDate(questionEntity.getVotingEndDate());
+	    existingQuestion.setVotingStatus(questionEntity.getVotingStatus());
+	    
 	    // 저장 및 반환
 	    return questionRepository.save(existingQuestion);
 	}
@@ -188,4 +204,123 @@ public class QuestionServiceImpl implements QuestionService {
 	        return Collections.emptyList();
 	    }
 	}
+	
+    /**
+     * 투표 기간이 만료된 질문들의 상태를 '종료'로 업데이트
+     */
+    @Override
+    @Transactional
+    public void updateExpiredVotingStatus() {
+        try {
+            LocalDateTime currentTime = LocalDateTime.now();
+            List<QuestionEntity> expiredQuestions = questionRepository.findExpiredVotingQuestions(currentTime);
+            
+            System.out.println("만료된 투표 질문 수: " + expiredQuestions.size());
+            
+            for (QuestionEntity question : expiredQuestions) {
+                question.setVotingStatus("종료");
+                questionRepository.save(question);
+                System.out.println("질문 " + question.getSerialNumber() + " 투표 상태를 '종료'로 변경");
+            }
+        } catch (Exception e) {
+            System.err.println("투표 상태 업데이트 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+	
+	/**
+	 * 종료된 지 하루가 지난 질문들을 완료 테이블로 이동
+	 */
+    @Override
+    @Transactional
+    public void archiveCompletedQuestions() {
+        try {
+            LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
+            List<QuestionEntity> questionsToArchive = questionRepository.findQuestionsForArchiving(oneDayAgo);
+            
+            System.out.println("아카이빙 대상 질문 수: " + questionsToArchive.size());
+            
+            for (QuestionEntity question : questionsToArchive) {
+                // 완료 테이블에 저장
+                CompletedQuestionEntity completedQuestion = new CompletedQuestionEntity(question);
+                completedQuestionRepository.save(completedQuestion);
+                
+                // 기존 테이블에서 삭제
+                questionRepository.delete(question);
+                
+                System.out.println("질문 " + question.getSerialNumber() + " 아카이빙 완료");
+            }
+        } catch (Exception e) {
+            System.err.println("질문 아카이빙 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+	 * 페이징된 질문 목록 조회 (최신순 정렬)
+	 */
+	@Override
+	public Page<QuestionEntity> getQuestionsWithPaging(Pageable pageable) {
+		try {
+			// 페이징된 질문 목록 조회
+			Page<QuestionEntity> questionPage = questionRepository.findAll(pageable);
+			
+			// 각 질문의 이미지 경로 수정
+			questionPage.getContent().forEach(question -> {
+				question.setOption1(fixImagePath(question.getOption1()));
+				question.setOption2(fixImagePath(question.getOption2()));
+				question.setOption3(fixImagePath(question.getOption3()));
+				question.setOption4(fixImagePath(question.getOption4()));
+			});
+			
+			System.out.println("페이징 조회 결과:");
+			System.out.println("- 페이지 번호: " + pageable.getPageNumber());
+			System.out.println("- 페이지 크기: " + pageable.getPageSize());
+			System.out.println("- 전체 요소 수: " + questionPage.getTotalElements());
+			System.out.println("- 전체 페이지 수: " + questionPage.getTotalPages());
+			System.out.println("- 현재 페이지 요소 수: " + questionPage.getNumberOfElements());
+			
+			return questionPage;
+		} catch (Exception e) {
+			System.err.println("페이징 질문 조회 실패: " + e.getMessage());
+			e.printStackTrace();
+			// 오류 발생 시 빈 페이지 반환
+			return Page.empty(pageable);
+		}
+	}
+	
+	/**
+	 * 통합 검색 기능
+	 */
+	@Override
+	public Page<QuestionEntity> searchQuestions(String keyword, String publicStatus, LocalDate createdDate, LocalDate votingDate, Pageable pageable) {
+		try {
+			System.out.println("=== 검색 실행 ===");
+			System.out.println("키워드: " + keyword);
+			System.out.println("공개상태: " + publicStatus);
+			System.out.println("생성날짜: " + createdDate);
+			System.out.println("투표날짜: " + votingDate);
+			
+			// 검색 쿼리 실행
+			Page<QuestionEntity> searchResult = questionRepository.searchQuestions(keyword, publicStatus, createdDate, votingDate, pageable);
+			
+			// 각 질문의 이미지 경로 수정
+			searchResult.getContent().forEach(question -> {
+				question.setOption1(fixImagePath(question.getOption1()));
+				question.setOption2(fixImagePath(question.getOption2()));
+				question.setOption3(fixImagePath(question.getOption3()));
+				question.setOption4(fixImagePath(question.getOption4()));
+			});
+			
+			System.out.println("검색 결과: " + searchResult.getTotalElements() + "개");
+			
+			return searchResult;
+		} catch (Exception e) {
+			System.err.println("검색 중 오류 발생: " + e.getMessage());
+			e.printStackTrace();
+			// 오류 발생 시 빈 페이지 반환
+			return Page.empty(pageable);
+		}
+	}
+    
 }
