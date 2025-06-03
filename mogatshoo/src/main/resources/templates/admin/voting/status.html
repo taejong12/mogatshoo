@@ -7,350 +7,7 @@
     <title>투표 관리 현황 - Mogatshoo</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #4f46e5;
-            --secondary-color: #7c3aed;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --light-bg: #f8fafc;
-            --dark-text: #1e293b;
-            --muted-text: #64748b;
-        }
-
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .main-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin: 20px auto;
-            max-width: 1400px;
-        }
-
-        .header-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .header-section h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .header-section p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 0;
-        }
-
-        .stats-grid {
-            background: var(--light-bg);
-            padding: 40px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            color: var(--muted-text);
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        .controls-section {
-            padding: 20px 40px;
-            border-bottom: 1px solid #e2e8f0;
-            background: white;
-        }
-
-        .btn-refresh {
-            background: linear-gradient(135deg, var(--success-color), #059669);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-refresh:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-            color: white;
-        }
-
-        .table-section {
-            padding: 40px;
-            background: white;
-        }
-
-        .voting-table {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-
-        .voting-table thead th {
-            background: linear-gradient(135deg, #1e293b, #334155);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border: none;
-            padding: 20px 15px;
-        }
-
-        .voting-table tbody td {
-            padding: 18px 15px;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
-
-        .voting-table tbody tr:hover {
-            background-color: #f8fafc;
-        }
-
-        .serial-number {
-            font-weight: 600;
-            color: var(--dark-text);
-            font-size: 1.1rem;
-        }
-
-        .question-content {
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            color: var(--muted-text);
-        }
-
-        .status-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-align: center;
-            display: inline-block;
-            min-width: 80px;
-        }
-
-        .status-active {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-ended {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .top-voter-info {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .voter-name {
-            font-weight: 600;
-            color: var(--dark-text);
-        }
-
-        .vote-count {
-            font-size: 0.85rem;
-            color: var(--muted-text);
-        }
-
-        .voting-rate-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .rate-number {
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .rate-high { color: var(--success-color); }
-        .rate-medium { color: var(--warning-color); }
-        .rate-low { color: var(--danger-color); }
-
-        .progress-bar-custom {
-            width: 80px;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
-
-        .btn-email {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-email:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-            color: white;
-        }
-
-        .btn-email:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .btn-detail {
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-detail:hover {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .actions-container {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .loading-content {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .spinner {
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 60px;
-            color: var(--muted-text);
-        }
-
-        .no-data i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                margin: 10px;
-                border-radius: 15px;
-            }
-
-            .header-section {
-                padding: 30px 20px;
-            }
-
-            .header-section h1 {
-                font-size: 2rem;
-            }
-
-            .stats-grid {
-                padding: 20px;
-            }
-
-            .table-section {
-                padding: 20px;
-            }
-
-            .voting-table {
-                font-size: 0.9rem;
-            }
-
-            .question-content {
-                max-width: 200px;
-            }
-
-            .actions-container {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/voting/status.css}">
 </head>
 <body>
     <div class="container-fluid">
@@ -416,8 +73,8 @@
                             <div class="col-md-6">
                                 <select class="form-select" id="rateFilter">
                                     <option value="all">전체 투표율</option>
-                                    <option value="high">33% 이상</option>
-                                    <option value="low">33% 미만</option>
+                                    <option value="high">40% 이상</option>
+                                    <option value="low">40% 미만</option>
                                 </select>
                             </div>
                         </div>
@@ -434,6 +91,24 @@
 
             <!-- 테이블 섹션 -->
             <div class="table-section">
+                <!-- 페이지 정보 표시 -->
+                <div th:if="${totalElements > 0}" class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="page-info">
+                        <small class="text-muted">
+                            총 <strong th:text="${totalElements}">0</strong>개 중 
+                            <strong th:text="${currentPage * pageSize + 1}">1</strong>-<strong th:text="${currentPage * pageSize + votingStatistics.size()}">10</strong>개 표시
+                        </small>
+                    </div>
+                    <div class="page-size-selector">
+                        <select class="form-select form-select-sm" id="pageSizeSelect" onchange="changePageSize(this.value)">
+                            <option value="5" th:selected="${pageSize == 5}">5개씩</option>
+                            <option value="10" th:selected="${pageSize == 10}">10개씩</option>
+                            <option value="20" th:selected="${pageSize == 20}">20개씩</option>
+                            <option value="50" th:selected="${pageSize == 50}">50개씩</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div th:if="${votingStatistics != null and !votingStatistics.empty}" class="table-responsive">
                     <table class="table voting-table mb-0">
                         <thead>
@@ -442,7 +117,7 @@
                                 <th>질문 내용</th>
                                 <th>상태</th>
                                 <th>최다득표자</th>
-                                <th>투표율</th>
+                                <th>투표율 (%)</th>
                                 <th>작업</th>
                             </tr>
                         </thead>
@@ -451,8 +126,11 @@
                                 th:data-status="${stat.isEnded}" 
                                 th:data-rate="${stat.votingRate}">
                                 <td class="serial-number" th:text="${stat.serialNumber}"></td>
+                                
                                 <td class="question-content" th:text="${stat.questionContent}" 
-                                    th:title="${stat.questionContent}"></td>
+                                    th:title="${stat.questionContent}">
+                                </td>
+                                
                                 <td>
                                     <span th:class="'status-badge ' + (${stat.isEnded == 'yes'} ? 'status-ended' : 'status-active')"
                                           th:text="${stat.endedStatusKorean}"></span>
@@ -463,15 +141,11 @@
                                           th:text="${stat.topVoteCount + '표'}"></span>
                                 </td>
                                 <td class="voting-rate-container">
-                                    <span th:class="'rate-number ' + 
-                                                  (${stat.votingRate >= 50} ? 'rate-high' : 
-                                                   ${stat.votingRate >= 33.33} ? 'rate-medium' : 'rate-low')"
+                                    <span th:class="${'rate-number ' + (stat.votingRate >= 50 ? 'rate-high' : stat.votingRate >= 40 ? 'rate-medium' : 'rate-low')}"
                                           th:text="${stat.formattedVotingRate}"></span>
                                     <div class="progress-bar-custom">
                                         <div class="progress-fill" 
-                                             th:style="'width: ' + ${stat.votingRate} + '%; background: ' + 
-                                                      (${stat.votingRate >= 50} ? '#10b981' : 
-                                                       ${stat.votingRate >= 33.33} ? '#f59e0b' : '#ef4444') + ';'"></div>
+                                             th:style="${'width: ' + stat.votingRate + '%; background: ' + (stat.votingRate >= 50 ? '#10b981' : stat.votingRate >= 40 ? '#f59e0b' : '#ef4444') + ';'}"></div>
                                     </div>
                                 </td>
                                 <td class="actions-container">
@@ -484,14 +158,52 @@
                                             class="btn btn-email" disabled>
                                         <i class="fas fa-envelope me-2"></i>이메일
                                     </button>
-                                    <button class="btn btn-detail" 
-                                            th:onclick="'showDetail(\'' + ${stat.serialNumber} + '\')'">
-                                        <i class="fas fa-info-circle me-1"></i>상세
-                                    </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- 페이지네이션 -->
+                <div th:if="${totalPages > 1}" class="d-flex justify-content-center mt-4">
+                    <nav aria-label="투표 통계 페이지네이션">
+                        <ul class="pagination pagination-lg">
+                            <!-- 처음 페이지 -->
+                            <li th:class="'page-item ' + (${currentPage == 0} ? 'disabled' : '')">
+                                <a class="page-link" th:href="@{/voting-status(page=0, size=${pageSize})}" aria-label="처음">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            
+                            <!-- 이전 페이지 -->
+                            <li th:class="'page-item ' + (${!hasPrevious} ? 'disabled' : '')">
+                                <a class="page-link" th:href="@{/voting-status(page=${currentPage - 1}, size=${pageSize})}" aria-label="이전">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            
+                            <!-- 페이지 번호들 -->
+                            <li th:each="pageNum : ${pageNumbers}" 
+                                th:class="'page-item ' + (${pageNum == currentPage} ? 'active' : '')">
+                                <a class="page-link" th:href="@{/voting-status(page=${pageNum}, size=${pageSize})}" 
+                                   th:text="${pageNum + 1}">1</a>
+                            </li>
+                            
+                            <!-- 다음 페이지 -->
+                            <li th:class="'page-item ' + (${!hasNext} ? 'disabled' : '')">
+                                <a class="page-link" th:href="@{/voting-status(page=${currentPage + 1}, size=${pageSize})}" aria-label="다음">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            
+                            <!-- 마지막 페이지 -->
+                            <li th:class="'page-item ' + (${currentPage == totalPages - 1} ? 'disabled' : '')">
+                                <a class="page-link" th:href="@{/voting-status(page=${totalPages - 1}, size=${pageSize})}" aria-label="마지막">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
 
                 <!-- 데이터 없음 표시 -->
@@ -515,102 +227,6 @@
 
     <!-- Bootstrap & Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // 필터링 기능
-        document.addEventListener('DOMContentLoaded', function() {
-            const statusFilter = document.getElementById('statusFilter');
-            const rateFilter = document.getElementById('rateFilter');
-
-            if (statusFilter && rateFilter) {
-                statusFilter.addEventListener('change', filterTable);
-                rateFilter.addEventListener('change', filterTable);
-            }
-
-            // 진행바 애니메이션
-            setTimeout(() => {
-                const progressFills = document.querySelectorAll('.progress-fill');
-                progressFills.forEach(fill => {
-                    const width = fill.style.width;
-                    fill.style.width = '0%';
-                    setTimeout(() => {
-                        fill.style.width = width;
-                    }, 100);
-                });
-            }, 500);
-        });
-
-        function filterTable() {
-            const statusFilter = document.getElementById('statusFilter').value;
-            const rateFilter = document.getElementById('rateFilter').value;
-            const tbody = document.querySelector('.voting-table tbody');
-            
-            if (!tbody) return;
-            
-            const rows = tbody.querySelectorAll('tr');
-
-            rows.forEach(row => {
-                let showRow = true;
-                const status = row.dataset.status;
-                const rate = parseFloat(row.dataset.rate);
-
-                // 상태 필터
-                if (statusFilter !== 'all') {
-                    if (statusFilter === 'active' && status === 'yes') showRow = false;
-                    if (statusFilter === 'ended' && status === 'no') showRow = false;
-                }
-
-                // 투표율 필터
-                if (rateFilter !== 'all') {
-                    if (rateFilter === 'high' && rate < 33) showRow = false;
-                    if (rateFilter === 'low' && rate >= 33) showRow = false;
-                }
-
-                row.style.display = showRow ? '' : 'none';
-            });
-        }
-
-        // 상세 정보 보기
-        function showDetail(serialNumber) {
-            fetch(`/voting-status/detail/${serialNumber}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        let detailInfo = `
-                            질문: ${data.questionContent}
-                            시리얼 번호: ${data.serialNumber}
-                            총 투표수: ${data.totalVotes || 0}표
-                            투표율: ${data.formattedVotingRate || '0.00%'}
-                            최다득표자: ${data.topVotedName || '없음'}
-                            최다득표수: ${data.topVoteCount || 0}표
-                        `;
-                        alert(detailInfo);
-                    } else {
-                        alert('상세 정보를 불러올 수 없습니다.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
-                });
-        }
-
-        // 폼 제출시 로딩 표시
-        document.addEventListener('submit', function(e) {
-            if (e.target.querySelector('button[type="submit"]')) {
-                showLoading();
-            }
-        });
-
-        function showLoading() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
-        }
-
-        // 페이지 로드 완료시 로딩 숨김
-        window.addEventListener('load', hideLoading);
-    </script>
+    <script th:src="@{/js/voting/status.js}"></script>
 </body>
 </html>

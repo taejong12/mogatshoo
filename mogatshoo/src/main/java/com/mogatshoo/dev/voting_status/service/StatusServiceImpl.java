@@ -3,6 +3,9 @@ package com.mogatshoo.dev.voting_status.service;
 import com.mogatshoo.dev.voting_status.entity.StatusEntity;
 import com.mogatshoo.dev.voting_status.repository.StatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -55,6 +58,32 @@ public class StatusServiceImpl implements StatusService {
             System.err.println("전체 투표 통계 조회 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+    
+    @Override
+    public Page<StatusEntity> getAllVotingStatistics(Pageable pageable) {
+        try {
+            // 전체 데이터 조회
+            List<StatusEntity> allStatistics = getAllVotingStatistics();
+            
+            // 페이지네이션 적용
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), allStatistics.size());
+            
+            List<StatusEntity> pagedStatistics;
+            if (start > allStatistics.size()) {
+                pagedStatistics = new ArrayList<>();
+            } else {
+                pagedStatistics = allStatistics.subList(start, end);
+            }
+            
+            return new PageImpl<>(pagedStatistics, pageable, allStatistics.size());
+            
+        } catch (Exception e) {
+            System.err.println("페이징된 투표 통계 조회 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
         }
     }
 
@@ -143,18 +172,30 @@ public class StatusServiceImpl implements StatusService {
             statusEntity.setSerialNumber(serialNumber);
             statusEntity.setQuestionContent((String) questionInfo.get("questionContent"));
             statusEntity.setIsEnded((String) questionInfo.get("isEnded"));
-            statusEntity.setCreatedAt((LocalDateTime) questionInfo.get("createdAt"));
+            
+            // createdAt 타입 변환 처리 (오류 수정 부분)
+            Object createdAtObj = questionInfo.get("createdAt");
+            if (createdAtObj instanceof java.sql.Timestamp) {
+                statusEntity.setCreatedAt(((java.sql.Timestamp) createdAtObj).toLocalDateTime());
+            } else if (createdAtObj instanceof LocalDateTime) {
+                statusEntity.setCreatedAt((LocalDateTime) createdAtObj);
+            } else {
+                statusEntity.setCreatedAt(null);
+                System.out.println("createdAt 값이 예상되지 않은 타입입니다: " + 
+                    (createdAtObj != null ? createdAtObj.getClass().getName() : "null"));
+            }
             
             // 투표 통계 설정
             statusEntity.setTopVotedId((String) voteStats.get("topVotedId"));
             statusEntity.setTopVotedName((String) voteStats.get("topVotedName"));
             statusEntity.setTopVoteCount((Long) voteStats.get("topVoteCount"));
             statusEntity.setTotalVotes((Long) voteStats.get("totalVotes"));
+            statusEntity.setUniqueVoters((Long) voteStats.get("uniqueVoters")); // 고유 투표자 수 추가
             statusEntity.setVoteDetails((Map<String, Long>) voteStats.get("voteDetails"));
             
             // 멤버 정보 및 투표율 계산
             statusEntity.setTotalMembers(totalMembers);
-            statusEntity.calculateVotingRate();
+            statusEntity.calculateRates(); // calculateVotingRate() 대신 calculateRates() 사용
             
             return statusEntity;
             
