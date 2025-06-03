@@ -1,11 +1,7 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -17,9 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 import com.mogatshoo.dev.admin.point.item.repository.AdminPointItemImgRepository;
-import com.mogatshoo.dev.config.file.point.controller.FilePointController;
-import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
-import com.mogatshoo.dev.hair_loss_test.entity.StageEntity;
+import com.mogatshoo.dev.config.file.GoogleDriveService;
 
 import jakarta.transaction.Transactional;
 
@@ -33,7 +27,7 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 	private AdminPointItemImgRepository adminPointItemImgRepository;
 
 	@Autowired
-	private FilePointController filePointController;
+	private GoogleDriveService googleDriveService;
 
 	@Override
 	public List<AdminPointItemImgEntity> findByItemId(List<AdminPointItemEntity> AdminPointItemEntity) {
@@ -55,14 +49,15 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 			AdminPointItemImgEntity oldImgEntity = adminPointItemImgRepository.findByPointItemId(pointItemId);
 			if (oldImgEntity != null && oldImgEntity.getPointItemImgName() != null) {
 				// 기존 파일 삭제
-				filePointController.deletePointItemImg(oldImgEntity);
+				googleDriveService.deletePointItemImg(oldImgEntity.getPointItemImgFileId());
 			}
 
 			// 이미지 업로드
 			String originalFilename = imgFile.getOriginalFilename();
 			String newFileName = UUID.randomUUID().toString() + "_" + originalFilename;
-			String pointItemImgFileId = filePointController.uploadFileToPointItem(imgFile, pointCategoryName, newFileName);
-			String uploadDir = filePointController.getFileUrl(pointItemImgFileId);
+			String pointItemImgFileId = googleDriveService.uploadFileToPointItem(imgFile, pointCategoryName,
+					newFileName);
+			String uploadDir = googleDriveService.getFileUrl(pointItemImgFileId);
 
 			// DB에 이미지 정보 저장
 			AdminPointItemImgEntity imgEntity = new AdminPointItemImgEntity();
@@ -98,12 +93,16 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 
 	@Override
 	public void deletePointItemImg(Long pointItemId) {
-		
+
 		try {
-			AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgRepository.findByPointItemId(pointItemId);
+			AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgRepository
+					.findByPointItemId(pointItemId);
 			if (adminPointItemImgEntity != null) {
-				// 구글 이미지 삭제
-				filePointController.deletePointItemImg(adminPointItemImgEntity);
+				// 구글 드라이브 이미지 삭제
+				if (adminPointItemImgEntity != null && adminPointItemImgEntity.getPointItemImgFileId() != null
+						&& googleDriveService.isEnabled()) {
+					googleDriveService.deletePointItemImg(adminPointItemImgEntity.getPointItemImgFileId());
+				}
 				// DB 이미지 삭제
 				adminPointItemImgRepository.deleteById(adminPointItemImgEntity.getPointItemImgId());
 				logger.info("포인트 아이템 이미지 삭제 완료 - PointItemImgId: {}", adminPointItemImgEntity.getPointItemImgId());
@@ -113,5 +112,49 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 		} catch (Exception e) {
 			logger.error("포인트 아이템 이미지 삭제 중 오류 발생 - pointItemId: {}, error: {}", pointItemId, e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void updatePointItemImg(MultipartFile imgFile, String pointCategoryName, Long pointItemId) {
+
+		try {
+			// 기존 이미지 삭제
+			deletePointItemImg(pointItemId);
+			logger.info("기존 이미지 삭제 완료. pointItemId: {}", pointItemId);
+
+			// 새 이미지 등록
+			save(imgFile, pointCategoryName, pointItemId);
+			logger.info("새 이미지 저장 완료. pointItemId: {}, 카테고리: {}", pointItemId, pointCategoryName);
+		} catch (Exception e) {
+			logger.error("이미지 업데이트 중 예외 발생. pointItemId: {}, 메시지: {}", pointItemId, e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public void moveImgToNewCategory(Long pointItemId, String oldCategoryName, String newCategoryName) {
+		try {
+			// 1. 기존 이미지 정보 조회
+			AdminPointItemImgEntity imgEntity = adminPointItemImgRepository.findByPointItemId(pointItemId);
+
+			if (imgEntity == null) {
+				logger.warn("moveImgToNewCategory: 이미지 정보가 존재하지 않음. ID: {}", pointItemId);
+				return;
+			}
+
+			// 구글 드라이브 파일 ID
+			String fileId = imgEntity.getPointItemImgFileId();
+
+			if (fileId == null) {
+				logger.warn("moveImgToNewCategory: 이미지 파일 ID가 존재하지 않음. ID: {}", pointItemId);
+				return;
+			}
+
+			// 2. 폴더 이동
+			googleDriveService.moveImgToNewCategory(fileId, newCategoryName, oldCategoryName);
+
+		} catch (Exception e) {
+			logger.error("이미지 카테고리 이동 실패. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName, e);
+		}
+
 	}
 }

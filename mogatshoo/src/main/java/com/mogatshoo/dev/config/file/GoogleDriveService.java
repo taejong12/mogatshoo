@@ -348,6 +348,7 @@ public class GoogleDriveService {
 		}
 	}
 
+	// 포인트 상품 카테고리 폴더 생성
 	private String findCategoryFolder(String pointCategoryName) throws IOException {
 		// 1. 폴더 검색
 		String query = String.format(
@@ -393,4 +394,35 @@ public class GoogleDriveService {
 			logger.error("포인트 아이템 이미지 삭제 실패: 파일 ID={}", pointItemImgFileId, e);
 		}
 	}
+
+	public void moveImgToNewCategory(String fileId, String newCategoryName, String oldCategoryName) {
+		try {
+			if (!isEnabled) {
+				throw new IOException("구글 드라이브 서비스가 비활성화되어 있습니다.");
+			}
+
+			// 1. 카테고리 폴더 ID 조회
+			String newFolderId = findCategoryFolder(newCategoryName);
+			String oldFolderId = findCategoryFolder(oldCategoryName);
+
+			if (newFolderId == null || oldFolderId == null) {
+				logger.warn("moveImgToNewCategory: 폴더 ID를 찾을 수 없음. old: {}, new: {}", oldCategoryName, newCategoryName);
+				return;
+			}
+
+			// 2. 파일 이동
+			driveService.files().update(fileId, null).setAddParents(newFolderId).setRemoveParents(oldFolderId)
+					.setFields("id, parents").execute();
+
+			logger.info("파일이 성공적으로 카테고리 이동됨. fileId: {}, {} → {}", fileId, oldCategoryName, newCategoryName);
+
+		} catch (IOException e) {
+			logger.error("moveImgToNewCategory: 파일 이동 중 IOException 발생. fileId: {}, {} → {}, 에러: {}", fileId,
+					oldCategoryName, newCategoryName, e.getMessage(), e);
+		} catch (Exception e) {
+			logger.error("moveImgToNewCategory: 파일 이동 중 예기치 못한 오류 발생. fileId: {}, {} → {}, 에러: {}", fileId,
+					oldCategoryName, newCategoryName, e.getMessage(), e);
+		}
+	}
+
 }

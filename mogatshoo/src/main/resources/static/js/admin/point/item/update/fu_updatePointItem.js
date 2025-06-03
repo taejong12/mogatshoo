@@ -1,5 +1,5 @@
-function fu_insertPointItem() {
-	let insertPointItemForm = document.insertPointItemForm;
+function fu_updatePointItem() {
+	let updatePointItemForm = document.updatePointItemForm;
 
 	let name = document.getElementById('pointItemName');
 	let description = document.getElementById('pointItemDescription');
@@ -9,8 +9,8 @@ function fu_insertPointItem() {
 
 	let nameWarnMsg = document.getElementById('nameWarnMsg');
 	let descriptionWarnMsg = document.getElementById('descriptionWarnMsg');
-	let stockWarnMsg = document.getElementById('stockWarnMsg');
 	let priceWarnMsg = document.getElementById('priceWarnMsg');
+	let stockWarnMsg = document.getElementById('stockWarnMsg');
 	let categoryWarnMsg = document.getElementById('categoryWarnMsg');
 
 	let nameVal = name.value.trim();
@@ -49,7 +49,6 @@ function fu_insertPointItem() {
 		categoryCheck = true;
 	}
 
-
 	if (stockVal === '' || isNaN(stockVal) || Number(stockVal) <= 0) {
 		stock.focus();
 		fu_showWarning(stockWarnMsg, '재고는 0보다 큰 숫자여야 합니다.');
@@ -84,8 +83,9 @@ function fu_insertPointItem() {
 
 	if (nameCheck && descriptionCheck && priceCheck
 		&& stockCheck && categoryCheck) {
-		insertPointItemForm.method = "post";
-		insertPointItemForm.action = "/admin/point/item/insert";
-		insertPointItemForm.submit();
+		updatePointItemForm.method = "post";
+		updatePointItemForm.action = "/admin/point/item/update";
+		updatePointItemForm.submit();
 	}
+
 }

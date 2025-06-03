@@ -97,7 +97,7 @@ public class AdminPointItemController {
 	}
 
 	@GetMapping("/detail/{pointItemId}")
-	public String pointItemInsertPage(@PathVariable("pointItemId") Long pointItemId, Model model) {
+	public String pointItemDetailPage(@PathVariable("pointItemId") Long pointItemId, Model model) {
 		AdminPointItemEntity adminPointItemEntity = adminPointItemService.findById(pointItemId);
 		AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgService.findByPointItemId(pointItemId);
 
@@ -113,8 +113,33 @@ public class AdminPointItemController {
 	}
 
 	@PostMapping("/delete/{pointItemId}")
-	public String pointItemDelete(@PathVariable("pointItemId") Long pointItemId, HttpSession session) {
+	public String pointItemDelete(@PathVariable("pointItemId") Long pointItemId) {
 		adminPointItemService.deletePointItem(pointItemId);
 		return "redirect:/admin/point/item/list";
+	}
+	
+	@GetMapping("/update/{pointItemId}")
+	public String pointItemUpdatePage(@PathVariable("pointItemId") Long pointItemId, Model model) {
+		AdminPointItemEntity adminPointItemEntity = adminPointItemService.findById(pointItemId);
+		AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgService.findByPointItemId(pointItemId);
+
+		AdminPointCategoryEntity adminPointCategoryEntity = null;
+		if (adminPointItemEntity != null && adminPointItemEntity.getPointCategoryId() != null) {
+			adminPointCategoryEntity = adminPointCategoryService.findById(adminPointItemEntity.getPointCategoryId());
+		}
+		
+		List<AdminPointCategoryEntity> pointCategoryList = adminPointCategoryService.findAll();
+		
+		model.addAttribute("pointItem", adminPointItemEntity);
+		model.addAttribute("itemImg", adminPointItemImgEntity);
+		model.addAttribute("pointCategory", adminPointCategoryEntity);
+		model.addAttribute("pointCategoryList", pointCategoryList);
+		return "admin/point/item/update";
+	}
+	
+	@PostMapping("/update")
+	public String pointItemUpdate(@ModelAttribute AdminPointItemEntity adminPointItemEntity) {
+		adminPointItemService.updatePointItem(adminPointItemEntity);
+		return "redirect:/admin/point/item/detail/"+adminPointItemEntity.getPointItemId();
 	}
 }

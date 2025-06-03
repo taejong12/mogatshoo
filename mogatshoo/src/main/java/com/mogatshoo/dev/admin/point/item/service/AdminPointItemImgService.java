@@ -17,4 +17,8 @@ public interface AdminPointItemImgService {
 
 	void deletePointItemImg(Long pointItemId);
 
+	void updatePointItemImg(MultipartFile imgFile, String pointCategoryName, Long pointItemId);
+
+	void moveImgToNewCategory(Long pointItemId, String oldCategoryName, String newCategoryName);
+
 }

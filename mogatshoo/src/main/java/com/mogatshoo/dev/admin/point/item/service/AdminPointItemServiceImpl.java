@@ -1,5 +1,6 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -23,8 +24,6 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class AdminPointItemServiceImpl implements AdminPointItemService {
 
-    private final AdminPointCategoryServiceImpl adminPointCategoryServiceImpl;
-
 	private static final Logger logger = LoggerFactory.getLogger(AdminPointItemServiceImpl.class);
 
 	@Autowired
@@ -32,16 +31,13 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 
 	@Autowired
 	private AdminPointItemImgService adminPointItemImgService;
-	
+
 	@Autowired
 	private AdminPointCategoryService adminPointCategoryService;
-	
+
+	// 스프링 시큐리티 세션 유저정보 공통함수
 	@Autowired
 	private CommonUserName commonUserName;
-
-    AdminPointItemServiceImpl(AdminPointCategoryServiceImpl adminPointCategoryServiceImpl) {
-        this.adminPointCategoryServiceImpl = adminPointCategoryServiceImpl;
-    }
 
 	@Override
 	public Page<AdminPointItemEntity> findAll(Pageable pageable) {
@@ -65,9 +61,10 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 
 			MultipartFile imgFile = adminPointItemEntity.getImgFile();
 
-			if (!imgFile.isEmpty()) {
+			if (imgFile != null && !imgFile.isEmpty()) {
 				Long pointItemId = adminPointItemEntity.getPointItemId();
-				AdminPointCategoryEntity adminPointCategoryEntity = adminPointCategoryService.findById(adminPointItemEntity.getPointCategoryId());
+				AdminPointCategoryEntity adminPointCategoryEntity = adminPointCategoryService
+						.findById(adminPointItemEntity.getPointCategoryId());
 				String pointCategoryName = adminPointCategoryEntity.getPointCategoryName();
 				adminPointItemImgService.save(imgFile, pointCategoryName, pointItemId);
 				logger.info("이미지 저장 완료 - 파일명: {}, 아이템 ID: {}", imgFile.getOriginalFilename(), pointItemId);
@@ -98,7 +95,7 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 
 	@Override
 	public void deletePointItem(Long pointItemId) {
-		
+
 		try {
 			// 1. 이미지 삭제 (구글 드라이브), DB 삭제
 			adminPointItemImgService.deletePointItemImg(pointItemId);
@@ -111,5 +108,62 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 			logger.error("포인트 아이템 삭제 중 오류 발생 - pointItemId: {}, error: {}", pointItemId, e.getMessage(), e);
 		}
 
+	}
+
+	@Override
+	public void updatePointItem(AdminPointItemEntity adminPointItemEntity) {
+
+		try {
+			// 1. 이미지 수정 (구글드라이브), DB 수정
+			MultipartFile imgFile = adminPointItemEntity.getImgFile();
+			if (imgFile != null && !imgFile.isEmpty()) {
+				Long pointItemId = adminPointItemEntity.getPointItemId();
+				AdminPointCategoryEntity adminPointCategoryEntity = adminPointCategoryService
+						.findById(adminPointItemEntity.getPointCategoryId());
+				String pointCategoryName = adminPointCategoryEntity.getPointCategoryName();
+				adminPointItemImgService.updatePointItemImg(imgFile, pointCategoryName, pointItemId);
+			}
+
+			// 2. 포인트 물품 수정
+			Long pointItemId = adminPointItemEntity.getPointItemId();
+			if (pointItemId == null) {
+				logger.warn("updatePointItem: pointItemId가 null입니다. 업데이트 중단.");
+				return;
+			}
+
+			AdminPointItemEntity oldPointItemEntity = adminPointItemRepository.findById(pointItemId).orElse(null);
+
+			if (oldPointItemEntity != null) {
+				boolean categoryChanged = !Objects.equals(adminPointItemEntity.getPointCategoryId(),
+						oldPointItemEntity.getPointCategoryId());
+
+				// 2-1. 이미지 수정 안 했고, 카테고리만 바뀐 경우 → 이미지 이동
+				if ((imgFile == null || imgFile.isEmpty()) && categoryChanged) {
+					String oldCategoryName = adminPointCategoryService.findById(oldPointItemEntity.getPointCategoryId())
+							.getPointCategoryName();
+					String newCategoryName = adminPointCategoryService
+							.findById(adminPointItemEntity.getPointCategoryId()).getPointCategoryName();
+					adminPointItemImgService.moveImgToNewCategory(pointItemId, oldCategoryName, newCategoryName);
+					logger.info("이미지를 새로운 카테고리로 이동 완료. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName);
+				}
+
+				// 2-2. 나머지 정보 수정
+				String memberId = commonUserName.getUserName();
+				oldPointItemEntity.setMemberId(memberId);
+				oldPointItemEntity.setPointItemName(adminPointItemEntity.getPointItemName());
+				oldPointItemEntity.setPointItemDescription(adminPointItemEntity.getPointItemDescription());
+				oldPointItemEntity.setPointItemPrice(adminPointItemEntity.getPointItemPrice());
+				oldPointItemEntity.setPointItemStock(adminPointItemEntity.getPointItemStock());
+				oldPointItemEntity.setPointItemSaleStatus(adminPointItemEntity.getPointItemSaleStatus());
+				oldPointItemEntity.setPointCategoryId(adminPointItemEntity.getPointCategoryId());
+
+				logger.info("포인트 상품이 성공적으로 수정되었습니다. ID: {}", pointItemId);
+			} else {
+				logger.warn("updatePointItem: 해당 ID의 포인트 상품이 존재하지 않습니다. ID: {}", pointItemId);
+			}
+
+		} catch (Exception e) {
+			logger.error("updatePointItem 중 예외 발생: {}", e.getMessage(), e);
+		}
 	}
 }
