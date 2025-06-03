@@ -11,13 +11,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class MemberAccessDeniedHandler implements AccessDeniedHandler{
+public class MemberAccessDeniedHandler implements AccessDeniedHandler {
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
 		// 로그인한 사용자가 접근하면 리다이렉트될 경로
-        response.sendRedirect("/");
+		response.sendRedirect("/");
 	}
 
 }

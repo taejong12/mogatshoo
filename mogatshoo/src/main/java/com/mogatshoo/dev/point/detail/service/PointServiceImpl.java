@@ -1,11 +1,12 @@
-package com.mogatshoo.dev.point.service;
+package com.mogatshoo.dev.point.detail.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mogatshoo.dev.point.entity.PointEntity;
-import com.mogatshoo.dev.point.entity.PointHistoryEntity;
-import com.mogatshoo.dev.point.repository.PointRepository;
+import com.mogatshoo.dev.point.detail.service.PointHistoryService;
+import com.mogatshoo.dev.point.detail.entity.PointEntity;
+import com.mogatshoo.dev.point.detail.entity.PointHistoryEntity;
+import com.mogatshoo.dev.point.detail.repository.PointRepository;
 
 import jakarta.transaction.Transactional;
 

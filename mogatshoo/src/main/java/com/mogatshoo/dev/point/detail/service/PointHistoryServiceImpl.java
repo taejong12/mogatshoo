@@ -1,16 +1,16 @@
-package com.mogatshoo.dev.point.service;
+package com.mogatshoo.dev.point.detail.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mogatshoo.dev.point.entity.PointHistoryEntity;
-import com.mogatshoo.dev.point.repository.PointHistoryRepository;
+import com.mogatshoo.dev.point.detail.service.PointHistoryService;
+import com.mogatshoo.dev.point.detail.entity.PointHistoryEntity;
+import com.mogatshoo.dev.point.detail.repository.PointHistoryRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -37,7 +37,7 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 		String reason = "출석";
 		return countByMemberIdAndReasonAndPointCreateBetween(memberId, reason);
 	}
-	
+
 	public int countByMemberIdAndReasonAndPointCreateBetween(String memberId, String reason) {
 		LocalDate today = LocalDate.now();
 		LocalDateTime start = today.atStartOfDay();
@@ -54,5 +54,5 @@ public class PointHistoryServiceImpl implements PointHistoryService {
 	public void memberDelete(String memberId) {
 		pointHistoryRepository.deleteAllByMemberId(memberId);
 	}
-	
+
 }

@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.admin.point.item.entity;
+package com.mogatshoo.dev.point.shop.entity;
 
 import java.time.LocalDateTime;
 
@@ -15,13 +15,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "admin_point_item")
+@Entity(name = "point_item")
 @Table(name = "point_item")
 @Getter
 @Setter
 @ToString
-public class AdminPointItemEntity {
-
+public class PointShopEntity {
 	// 상품아이디
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,7 +61,7 @@ public class AdminPointItemEntity {
 	// 회원아이디
 	@Column(nullable = false)
 	private String memberId;
-	
+
 	// 이미지 파일
 	@Transient
 	private MultipartFile imgFile;

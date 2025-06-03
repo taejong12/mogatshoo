@@ -52,7 +52,7 @@
 						<!-- 로그인 상태일 때 표시되는 내용 -->
 						<div sec:authorize="isAuthenticated()" class="auth-container">
 							<div class="navbar-text">
-								<a class="nav-link pixel-font" th:href="@{/point/list(memberId=${#authentication.name})}">포인트내역</a>
+								<a class="nav-link pixel-font" th:href="@{/point/detail/list(memberId=${#authentication.name})}">포인트내역</a>
 							</div>
 							<div class="navbar-text">
 								<a th:href="@{/member/mypage(memberId=${#authentication.name})}"

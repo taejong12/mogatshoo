@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.point.service;
+package com.mogatshoo.dev.point.detail.service;
 
 public interface PointService {
 

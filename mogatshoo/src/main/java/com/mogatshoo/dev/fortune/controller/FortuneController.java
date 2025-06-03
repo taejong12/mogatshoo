@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.mogatshoo.dev.fortune.service.FortuneService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
-import com.mogatshoo.dev.point.service.PointService;
+import com.mogatshoo.dev.point.detail.service.PointService;
 
 @Controller
 @RequestMapping("/fortune")

@@ -38,19 +38,19 @@
 		<div class="pagination">
 		    <!-- 이전 버튼 -->
 		    <span th:if="${startPage > 0}">
-		        <a th:href="@{|/point/list?memberId=${memberId}&page=${startPage - 1}|}">&laquo; 이전</a>
+		        <a th:href="@{|/point/detail/list?memberId=${memberId}&page=${startPage - 1}|}">&laquo; 이전</a>
 		    </span>
 		
 		    <!-- 페이지 번호 -->
 		    <span th:each="i : ${#numbers.sequence(startPage, endPage - 1)}">
-		        <a th:href="@{|/point/list?memberId=${memberId}&page=${i}|}"
+		        <a th:href="@{|/point/detail/list?memberId=${memberId}&page=${i}|}"
 		           th:text="${i + 1}"
 		           th:classappend="${i} == ${currentPage} ? 'active' : ''"></a>
 		    </span>
 		
 		    <!-- 다음 버튼 -->
 		    <span th:if="${endPage < totalPages}">
-		        <a th:href="@{|/point/list?memberId=${memberId}&page=${endPage}|}">다음 &raquo;</a>
+		        <a th:href="@{|/point/detail/list?memberId=${memberId}&page=${endPage}|}">다음 &raquo;</a>
 		    </span>
 		</div>
 	</div>

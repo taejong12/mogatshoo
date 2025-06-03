@@ -167,7 +167,7 @@ function createStartMenu() {
                     <img src="/img/icons/computer.png" width="16" height="16" class="startImg">
                     <span>내정보</span>
                 </div>
-            <div class="start-menu-item-95" onclick="navigateTo('/point/list?memberId=${memberId}')">
+            <div class="start-menu-item-95" onclick="navigateTo('/point/detail/list?memberId=${memberId}')">
                <img src="/img/icons/computer.png" width="16" height="16" class="startImg">
                <span>포인트 내역</span>
             </div>

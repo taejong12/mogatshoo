@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.point.entity;
+package com.mogatshoo.dev.point.detail.entity;
 
 import java.time.LocalDateTime;
 
