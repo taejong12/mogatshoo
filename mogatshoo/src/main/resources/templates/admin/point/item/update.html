@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/fragments/layout}">
+<head th:with="layoutTitle='포인트상품수정'">
+</head>
+<body>
+	<div layout:fragment="content">
+
+		<div class="col-12 col-md-6">
+			<h1 class="my-4 text-center">포인트상품수정</h1>
+
+			<div class="card shadow-sm mb-5">
+				<div class="card-body">
+					<form name="updatePointItemForm" enctype="multipart/form-data">
+						<input type="hidden" name="pointItemId" th:value="${pointItem.pointItemId}" />
+						<!-- 기존 이미지 및 미리보기 공통 -->
+						<div class="mb-4 text-center">
+							<label class="form-label fw-bold">이미지</label>
+							<div>
+								<img th:if="${itemImg != null}"
+									th:src="@{${itemImg.pointItemImgPath}}" id="previewImage"
+									class="img-fluid border rounded"
+									style="max-width: 300px; object-fit: contain;" alt="상품 이미지" />
+								<p th:if="${itemImg == null}">이미지가 없습니다</p>
+							</div>
+						</div>
+
+						<!-- 새 이미지 업로드 -->
+						<div class="mb-3">
+							<label for="imgFile" class="form-label">이미지 파일</label> <input
+								type="file" class="form-control" id="imgFile" name="imgFile"
+								accept="image/*">
+						</div>
+
+						<!-- 상품 이름 -->
+						<div class="mb-3">
+							<label for="pointItemName" class="form-label">이름</label> <input
+								type="text" class="form-control" id="pointItemName"
+								name="pointItemName" placeholder="이름 입력"
+								th:value="${pointItem.pointItemName}">
+							<div id="nameWarnMsg"></div>
+						</div>
+
+						<!-- 유의사항 -->
+						<div class="mb-3">
+							<label for="pointItemDescription" class="form-label">유의사항</label>
+							<textarea class="form-control" id="pointItemDescription"
+								name="pointItemDescription" rows="4" placeholder="유의사항 입력"
+								th:text="${pointItem.pointItemDescription}"></textarea>
+							<div id="descriptionWarnMsg"></div>
+						</div>
+
+						<!-- 상품 가격 -->
+						<div class="mb-3">
+							<label for="pointItemPrice" class="form-label">상품 가격</label> <input
+								type="number" class="form-control" id="pointItemPrice"
+								name="pointItemPrice" placeholder="상품 가격 입력"
+								th:value="${pointItem.pointItemPrice}">
+							<div id="priceWarnMsg"></div>
+						</div>
+
+						<!-- 재고 수량 -->
+						<div class="mb-3">
+							<label for="pointItemStock" class="form-label">재고 수량</label> <input
+								type="number" class="form-control" id="pointItemStock"
+								name="pointItemStock" placeholder="재고 수량 입력"
+								th:value="${pointItem.pointItemStock}">
+							<div id="stockWarnMsg"></div>
+						</div>
+
+						<!-- 판매 여부 -->
+						<div class="mb-3">
+							<label class="form-label">판매 여부</label>
+							<div class="form-check">
+								<input class="form-check-input" type="radio"
+									name="pointItemSaleStatus" id="yes" value="Y"
+									th:checked="${pointItem.pointItemSaleStatus == 'Y'}"> <label
+									class="form-check-label" for="yes">예</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio"
+									name="pointItemSaleStatus" id="no" value="N"
+									th:checked="${pointItem.pointItemSaleStatus == 'N'}"> <label
+									class="form-check-label" for="no">아니오</label>
+							</div>
+						</div>
+
+						<!-- 카테고리 -->
+						<div class="mb-4">
+							<label for="pointCategoryId" class="form-label">카테고리</label> <select
+								class="form-select" id="pointCategoryId" name="pointCategoryId">
+								<option value="" disabled>-- 카테고리를 선택하세요 --</option>
+								<option th:each="category : ${pointCategoryList}"
+									th:value="${category.pointCategoryId}"
+									th:text="${category.pointCategoryName}"
+									th:selected="${pointCategory != null and pointCategory.pointCategoryId == category.pointCategoryId}">
+								</option>
+							</select>
+							<div id="categoryWarnMsg"></div>
+						</div>
+
+						<div
+							class="d-flex justify-content-center aling-items-center gap-2">
+							<button type="button" class="btn btn-outline-secondary" onclick="fu_updatePointItem()">수정하기</button>
+							<a class="btn btn-outline-secondary" th:href="@{/admin/point/item/list}">취소하기</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			let categoryCount = "[[${pointCategoryList.size()}]]";
+		</script>
+		<!-- 이미지변경 -->
+		<script th:src="@{/js/admin/point/item/update/ev_image.js}"></script>
+		<!-- 수정하기 버튼클릭 -->
+		<script th:src="@{/js/admin/point/item/update/fu_updatePointItem.js}"></script>
+		<!-- 경고문구 -->
+		<script th:src="@{/js/common/fu_showWarning.js}"></script>
+	</div>
+</body>
+</html>

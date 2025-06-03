@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{admin/fragments/layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/fragments/layout}">
 <head th:with="layoutTitle='포인트상품목록'">
 </head>
 <body>
 	<div layout:fragment="content">
 		<!-- 카테고리 필터 -->
-		<ul class="nav nav-pills mb-3">
+		<ul class="nav nav-pills my-4">
 			<li class="nav-item">
 				<a class="nav-link"
-					th:href="@{/admin/point/item/list}" 
+					th:href="@{/admin/point/item/list}"
 					th:classappend="${selectedCategoryId} == null ? 'active' : ''">전체</a>
 			</li>
 			<li class="nav-item" th:each="category : ${pointCategoryList}">
@@ -20,54 +20,74 @@
 					th:classappend="${selectedCategoryId} == ${category.pointCategoryId} ? 'active' : ''"></a>
 			</li>
 		</ul>
-		
-	    <!-- 포인트 상품 테이블 -->
-	    <table class="table table-bordered">
-	        <thead>
-	            <tr class="text-center">
-	                <th>상품이름</th>
-	                <th>상품가격</th>
-	                <th>재고</th>
-	                <th>판매여부</th>
-					<th>카테고리아이디</th>
+
+		<!-- 포인트 상품 테이블 -->
+		<table class="table table-bordered">
+			<thead>
+				<tr class="text-center">
+					<th>상품이름</th>
+					<th>상품가격</th>
+					<th>재고</th>
+					<th>판매여부</th>
 					<th>등록일</th>
 					<th>수정일</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="item : ${pointItemPageList}">
+				<tr th:each="item : ${pointItemList}" class="align-middle">
 					<td th:text="${item.pointItemName}">상품이름</td>
 					<td th:text="${item.pointItemPrice}">상품가격</td>
 					<td th:text="${item.pointItemStock}">재고</td>
 					<td th:text="${item.pointItemSaleStatus == 'Y' ? '판매중' : '판매중지'}">판매여부</td>
-					<td th:text="${item.pointCategoryId}">카테고리아이디</td>
 					<td th:text="${#temporals.format(item.pointItemCreate, 'yyyy-MM-dd HH:mm')}">등록일</td>
 					<td th:text="${#temporals.format(item.pointItemUpdate, 'yyyy-MM-dd HH:mm')}">수정일</td>
+					<td  class="text-center">
+						<a class="btn btn-outline-secondary" 
+							th:href="@{/admin/point/item/detail/{id}(id=${item.pointItemId})}">상세보기</a>
+					</td>
 				</tr>
-				<tr th:if="${#lists.isEmpty(pointItemPageList)}">
-					<td colspan="7" class="text-center">등록된 상품이 없습니다.</td>
+				<tr th:if="${#lists.isEmpty(pointItemList)}">
+					<td colspan="7" class="text-center align-middle">등록된 상품이 없습니다.</td>
 				</tr>
 			</tbody>
 		</table>
-	
-	    <!-- 페이지네이션 -->
-	    <div class="pagination" th:if="${!#lists.isEmpty(pointItemList) and totalPages > 1}">
-	        <span th:if="${startPage > 0}">
-	            <a th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${startPage - 1})}">&laquo; 이전</a>
-	        </span>
-	
-	        <span th:each="i : ${#numbers.sequence(startPage, endPage - 1)}">
-	            <a th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
-	               th:text="${i + 1}"
-	               th:classappend="${i} == ${currentPage} ? 'active' : ''"></a>
-	        </span>
-	
-	        <span th:if="${endPage < totalPages}">
-	            <a th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${endPage})}">다음 &raquo;</a>
-	        </span>
-	    </div>
-	    
-	    <a class="btn btn-outline-secondary" th:href="@{/admin/point/item/insert}">상품등록</a>
+
+		<!-- 페이지네이션 -->
+		<nav th:if="${!#lists.isEmpty(pointItemList)}" aria-label="Page navigation">
+			<ul class="pagination justify-content-center">
+
+				<!-- 이전 버튼: startPage가 10 이상일 때만 보임 -->
+				<li class="page-item" th:if="${startPage >= 10}">
+					<a class="page-link"
+						th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${startPage - 10})}"
+						aria-label="Previous">
+						<span aria-hidden="true">&laquo;이전</span>
+					</a>
+				</li>
+
+				<!-- 페이지 번호 -->
+				<li class="page-item"
+					th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
+					th:classappend="${i} == ${currentPage} ? ' active' : ''">
+					<a class="page-link"
+						th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
+						th:text="${i + 1}">
+					</a>
+				</li>
+
+				<!-- 다음 버튼: endPage가 totalPages보다 작을 때만 보임 -->
+				<li class="page-item" th:if="${endPage < totalPages}">
+					<a class="page-link"
+						th:href="@{/admin/point/item/list(pointCategoryId=${selectedCategoryId}, page=${endPage})}"
+						aria-label="Next">
+						<span aria-hidden="true">다음 &raquo;</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+		
+		<a class="btn btn-outline-secondary" th:href="@{/admin/point/item/insert}">상품등록</a>
 	</div>
 </body>
 </html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/fragments/layout}">
+<head th:with="layoutTitle='카테고리상세'">
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="col-12 col-md-6">
+			<h1 class="text-center mb-4">카테고리상세</h1>
+			<div class="card">
+				<div class="card-body">
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">카테고리이름</label>
+						<p class="form-control-plaintext"
+							th:text="${pointCategory.pointCategoryName}">카테고리이름</p>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">정렬순서</label>
+						<p class="form-control-plaintext"
+							th:text="${pointCategory.pointCategorySortOrder}">정렬순서</p>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">등록일</label>
+						<p class="form-control-plaintext"
+							th:text="${pointCategory.pointCategoryCreate}">등록일</p>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">수정일</label>
+						<p class="form-control-plaintext"
+							th:text="${pointCategory.pointCategoryUpdate}">수정일</p>
+					</div>
+
+					<!-- 버튼 -->
+					<div class="d-flex justify-content-center aling-items-center gap-2">
+						<a class="btn btn-outline-secondary"
+							th:href="@{/admin/point/category/update/{id}(id=${pointCategory.pointCategoryId})}">
+							수정하기 </a>
+						<form name="deletePointCategoryForm">
+							<input type="hidden" name="pointCategoryId"
+								th:value="${pointCategory.pointCategoryId}">
+							<button type="button" class="btn btn-outline-secondary" onclick="fu_deleteCategory()">삭제하기</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 삭제하기 버튼클릭 -->
+		<script th:src="@{/js/admin/point/category/detail/fu_deleteCategory.js}"></script>
+	</div>
+</body>
+</html>
