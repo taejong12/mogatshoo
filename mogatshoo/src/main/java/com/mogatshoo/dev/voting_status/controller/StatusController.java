@@ -1,5 +1,6 @@
 package com.mogatshoo.dev.voting_status.controller;
 
+import com.mogatshoo.dev.admin.amdinEmail.service.AdminEmailService; // 추가
 import com.mogatshoo.dev.voting_status.entity.StatusEntity;
 import com.mogatshoo.dev.voting_status.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,13 +8,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity; // 추가
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.HashMap; // 추가
 import java.util.List;
+import java.util.Map; // 추가
 
 @Controller
 @RequestMapping("/voting-status")
@@ -21,8 +25,11 @@ public class StatusController {
 
     @Autowired
     private StatusService statusService;
+    
+    @Autowired
+    private AdminEmailService adminEmailService; // 추가
 
-    // 투표 관리 현황 페이지 (페이지네이션 추가)
+    // 기존 투표 관리 현황 페이지 (페이지네이션 추가) - 수정된 부분
     @GetMapping("")
     public String votingStatusPage(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -57,8 +64,21 @@ public class StatusController {
             
             List<StatusEntity> votingStatistics = votingStatisticsPage.getContent();
             
+            // 각 질문별 이메일 전송 여부 확인 추가
+            Map<String, Boolean> emailSentStatus = new HashMap<>();
+            for (StatusEntity status : votingStatistics) {
+                if (status.getTopVotedId() != null) {
+                    boolean emailSent = adminEmailService.isDuplicateEmail(
+                        status.getSerialNumber(), status.getTopVotedId());
+                    emailSentStatus.put(status.getSerialNumber(), emailSent);
+                } else {
+                    emailSentStatus.put(status.getSerialNumber(), false);
+                }
+            }
+            
             // 기본 통계 정보
             model.addAttribute("votingStatistics", votingStatistics);
+            model.addAttribute("emailSentStatus", emailSentStatus); // 추가
             
             // 전체 통계 (페이징과 별도로 계산)
             int totalQuestions = (int) votingStatisticsPage.getTotalElements();
@@ -135,7 +155,7 @@ public class StatusController {
         }
     }
 
-    // 이메일 전송 페이지로 이동
+    // 이메일 전송 페이지로 이동 - 기존 메서드 수정
     @GetMapping("/email/{serialNumber}")
     public String emailPage(@PathVariable String serialNumber, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -158,10 +178,16 @@ public class StatusController {
                 return "redirect:/voting-status";
             }
             
+            // 이미 전송했는지 확인
+            if (adminEmailService.isDuplicateEmail(questionStats.getSerialNumber(), questionStats.getTopVotedId())) {
+                redirectAttributes.addFlashAttribute("warningMessage", "이미 해당 당첨자에게 이메일을 전송했습니다.");
+                return "redirect:/admin/email/history/" + serialNumber;
+            }
+            
             model.addAttribute("questionStats", questionStats);
             model.addAttribute("serialNumber", serialNumber);
             
-            return "admin/email";
+            return "redirect:/admin/email/send/" + serialNumber;
         } catch (Exception e) {
             System.err.println("이메일 페이지 이동 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
@@ -185,5 +211,56 @@ public class StatusController {
             redirectAttributes.addFlashAttribute("errorMessage", "통계 새로고침 중 오류가 발생했습니다.");
         }
         return "redirect:/voting-status?page=" + page;
+    }
+    
+    // 빠른 이메일 전송 API 추가
+    @PostMapping("/quick-email/{serialNumber}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> quickSendEmail(@PathVariable String serialNumber) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // 투표 통계 조회
+            StatusEntity questionStats = statusService.getQuestionStatistics(serialNumber);
+            
+            if (questionStats == null) {
+                response.put("success", false);
+                response.put("message", "질문 정보를 찾을 수 없습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // 조건 확인
+            if (!"yes".equals(questionStats.getIsEnded())) {
+                response.put("success", false);
+                response.put("message", "진행 중인 질문은 이메일을 전송할 수 없습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            if (questionStats.getVotingRate() < 40.0) {
+                response.put("success", false);
+                response.put("message", "투표율이 40% 미만입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // 중복 전송 체크
+            if (adminEmailService.isDuplicateEmail(serialNumber, questionStats.getTopVotedId())) {
+                response.put("success", false);
+                response.put("message", "이미 해당 당첨자에게 이메일을 전송했습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            response.put("success", true);
+            response.put("message", "이메일 전송 페이지로 이동합니다.");
+            response.put("redirectUrl", "/admin/email/send/" + serialNumber);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            System.err.println("빠른 이메일 전송 체크 중 오류: " + e.getMessage());
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "시스템 오류가 발생했습니다.");
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

@@ -29,7 +29,7 @@ public class AdminPointCategoryEntity {
 	private LocalDateTime pointCategoryCreate;
 
 	// 수정일
-	@Column(insertable = false, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+	@Column(insertable = false, updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
 	private LocalDateTime pointCategoryUpdate;
 
 	// 회원아이디

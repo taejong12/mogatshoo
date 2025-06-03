@@ -10,6 +10,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -78,8 +81,62 @@ public class AdminPointItemController {
 	}
 
 	@GetMapping("/insert")
-	public String pointItemInsertPage() {
+	public String pointItemInsertPage(Model model) {
+		List<AdminPointCategoryEntity> pointCategoryList = adminPointCategoryService.findAll();
+		model.addAttribute("pointCategoryList", pointCategoryList);
+		return "admin/point/item/insertPage";
+	}
 
-		return "admin/point/item/insertItem";
+	@PostMapping("/insert")
+	public String pointItemInsert(@ModelAttribute AdminPointItemEntity adminPointItemEntity) {
+		adminPointItemService.save(adminPointItemEntity);
+		return "redirect:/admin/point/item/list";
+	}
+
+	@GetMapping("/detail/{pointItemId}")
+	public String pointItemDetailPage(@PathVariable("pointItemId") Long pointItemId, Model model) {
+		AdminPointItemEntity adminPointItemEntity = adminPointItemService.findById(pointItemId);
+		AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgService.findByPointItemId(pointItemId);
+
+		AdminPointCategoryEntity adminPointCategoryEntity = null;
+		if (adminPointItemEntity != null && adminPointItemEntity.getPointCategoryId() != null) {
+			adminPointCategoryEntity = adminPointCategoryService.findById(adminPointItemEntity.getPointCategoryId());
+		}
+
+		model.addAttribute("pointItem", adminPointItemEntity);
+		model.addAttribute("itemImg", adminPointItemImgEntity);
+		model.addAttribute("pointCategory", adminPointCategoryEntity);
+		return "admin/point/item/detail";
+	}
+
+	@PostMapping("/delete/{pointItemId}")
+	public String pointItemDelete(@PathVariable("pointItemId") Long pointItemId) {
+		adminPointItemService.deletePointItem(pointItemId);
+		return "redirect:/admin/point/item/list";
+	}
+
+	@GetMapping("/update/{pointItemId}")
+	public String pointItemUpdatePage(@PathVariable("pointItemId") Long pointItemId, Model model) {
+		AdminPointItemEntity adminPointItemEntity = adminPointItemService.findById(pointItemId);
+		AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgService.findByPointItemId(pointItemId);
+
+		AdminPointCategoryEntity adminPointCategoryEntity = null;
+		if (adminPointItemEntity != null && adminPointItemEntity.getPointCategoryId() != null) {
+			adminPointCategoryEntity = adminPointCategoryService.findById(adminPointItemEntity.getPointCategoryId());
+		}
+
+		List<AdminPointCategoryEntity> pointCategoryList = adminPointCategoryService.findAll();
+
+		model.addAttribute("pointItem", adminPointItemEntity);
+		model.addAttribute("itemImg", adminPointItemImgEntity);
+		model.addAttribute("pointCategory", adminPointCategoryEntity);
+		model.addAttribute("pointCategoryList", pointCategoryList);
+		return "admin/point/item/update";
+	}
+
+	@PostMapping("/update")
+	public String pointItemUpdate(@ModelAttribute AdminPointItemEntity adminPointItemEntity) {
+		adminPointItemService.updatePointItem(adminPointItemEntity);
+		return "redirect:/admin/point/item/detail/" + adminPointItemEntity.getPointItemId();
 	}
 }

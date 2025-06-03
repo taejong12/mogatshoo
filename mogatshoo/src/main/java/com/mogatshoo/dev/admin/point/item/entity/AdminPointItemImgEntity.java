@@ -43,5 +43,9 @@ public class AdminPointItemImgEntity {
 	// 상품아이디
 	@Column(nullable = false)
 	private Long pointItemId;
+	
+	// 실제 파일 저장 아이디
+	@Column(nullable = false)
+	private String pointItemImgFileId;
 
 }

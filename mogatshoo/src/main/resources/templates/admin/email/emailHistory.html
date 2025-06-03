@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이메일 전송 이력 - Mogatshoo Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .main-content {
+            padding: 2rem;
+        }
+        .card-custom {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .status-badge {
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+        }
+        .email-content-preview {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+        .table-custom {
+            background: white;
+            border-radius: 0.375rem;
+        }
+        .btn-custom {
+            border-radius: 0.375rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main-content">
+            <!-- 헤더 -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-history text-primary"></i> 이메일 전송 이력
+                    </h2>
+                    <p class="text-muted mb-0" th:if="${questionStats}">
+                        질문: <strong th:text="${questionStats.questionContent}"></strong> 
+                        (<span th:text="${questionStats.serialNumber}"></span>)
+                    </p>
+                </div>
+                <div>
+                    <a href="/voting-status" class="btn btn-outline-secondary btn-custom me-2">
+                        <i class="fas fa-arrow-left"></i> 투표 현황으로
+                    </a>
+                    <a th:href="@{'/admin/email/send/' + ${serialNumber}}" class="btn btn-primary btn-custom"
+                       th:if="${questionStats != null and questionStats.votingRate >= 40.0 and questionStats.isEnded == 'yes'}">
+                        <i class="fas fa-plus"></i> 새 이메일 전송
+                    </a>
+                </div>
+            </div>
+
+            <!-- 알림 메시지 -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- 질문 정보 요약 -->
+            <div class="card card-custom mb-4" th:if="${questionStats}">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle"></i> 질문 정보 요약
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>질문 번호:</strong>
+                            <span class="badge bg-primary" th:text="${questionStats.serialNumber}"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>당첨자:</strong>
+                            <span th:text="${questionStats.topVotedName} + ' (' + ${questionStats.topVotedId} + ')'"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>득표율:</strong>
+                            <span class="text-success fw-bold" th:text="${questionStats.formattedVotingRate}"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>진행 상태:</strong>
+                            <span class="badge" 
+                                  th:classappend="${questionStats.isEnded == 'yes'} ? 'bg-secondary' : 'bg-success'"
+                                  th:text="${questionStats.isEnded == 'yes'} ? '종료' : '진행중'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 이메일 전송 이력 테이블 -->
+            <div class="card card-custom">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-envelope"></i> 전송 이력 
+                            <span class="badge bg-info" th:text="${#lists.size(emailHistory)}"></span>
+                        </h5>
+                        <button class="btn btn-outline-primary btn-sm" onclick="location.reload()">
+                            <i class="fas fa-sync-alt"></i> 새로고침
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(emailHistory)}" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">전송된 이메일이 없습니다</h5>
+                        <p class="text-muted">아직 이 질문에 대한 이메일 전송 이력이 없습니다.</p>
+                        <a th:href="@{'/admin/email/send/' + ${serialNumber}}" class="btn btn-primary btn-custom"
+                           th:if="${questionStats != null and questionStats.votingRate >= 40.0 and questionStats.isEnded == 'yes'}">
+                            <i class="fas fa-paper-plane"></i> 첫 이메일 전송하기
+                        </a>
+                    </div>
+
+                    <div th:if="${not #lists.isEmpty(emailHistory)}">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-custom">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">전송 상태</th>
+                                        <th scope="col">당첨자</th>
+                                        <th scope="col">이메일</th>
+                                        <th scope="col">득표율</th>
+                                        <th scope="col">전송자</th>
+                                        <th scope="col">전송 시간</th>
+                                        <th scope="col">액션</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="email, iterStat : ${emailHistory}">
+                                        <td th:text="${iterStat.count}"></td>
+                                        <td>
+                                            <span class="badge status-badge"
+                                                  th:classappend="${email.emailStatus == 'SENT'} ? 'bg-success' : (${email.emailStatus == 'FAILED'} ? 'bg-danger' : 'bg-warning')"
+                                                  th:text="${email.emailStatusKorean}"></span>
+                                        </td>
+                                        <td>
+                                            <strong th:text="${email.winnerName}"></strong>
+                                            <small class="text-muted d-block" th:text="'(' + ${email.winnerId} + ')'"></small>
+                                        </td>
+                                        <td th:text="${email.winnerEmail}"></td>
+                                        <td>
+                                            <span class="text-success fw-bold" th:text="${email.formattedVotingRate}"></span>
+                                            <small class="text-muted d-block" th:text="${email.voteCount} + '표'"></small>
+                                        </td>
+                                        <td th:text="${email.senderId}"></td>
+                                        <td>
+                                            <span th:if="${email.sentAt != null}" 
+                                                  th:text="${#temporals.format(email.sentAt, 'yyyy-MM-dd HH:mm')}"></span>
+                                            <span th:if="${email.sentAt == null}" 
+                                                  th:text="${#temporals.format(email.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-info" 
+                                                        th:onclick="'showEmailDetail(' + ${email.id} + ')'"
+                                                        title="상세보기">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-warning"
+                                                        th:if="${email.emailStatus == 'FAILED'}"
+                                                        th:onclick="'resendEmail(' + ${email.id} + ')'"
+                                                        title="재전송">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이메일 상세보기 모달 -->
+    <div class="modal fade" id="emailDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-envelope-open"></i> 이메일 상세 정보
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="emailDetailContent">
+                        <!-- AJAX로 로드될 내용 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> 닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 재전송 확인 모달 -->
+    <div class="modal fade" id="resendConfirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle"></i> 이메일 재전송 확인
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>정말로 이메일을 재전송하시겠습니까?</strong></p>
+                    <p class="text-muted">이전에 전송 실패한 이메일을 다시 전송합니다.</p>
+                    <div id="resendEmailInfo">
+                        <!-- 재전송할 이메일 정보 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> 취소
+                    </button>
+                    <button type="button" class="btn btn-warning" id="confirmResendBtn">
+                        <i class="fas fa-redo"></i> 재전송하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 로딩 모달 -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="mb-2">처리 중</h5>
+                    <p class="text-muted mb-0">잠시만 기다려주세요...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        let currentEmailId = null;
+
+        // 이메일 상세보기
+        function showEmailDetail(emailId) {
+            // 로딩 표시
+            const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+            loadingModal.show();
+
+            // 이메일 이력에서 해당 이메일 정보 찾기
+            const emailHistory = /*[[${emailHistory}]]*/ [];
+            const email = emailHistory.find(e => e.id === emailId);
+            
+            if (email) {
+                const detailContent = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-info-circle text-primary"></i> 기본 정보</h6>
+                            <table class="table table-sm">
+                                <tr><td><strong>전송 상태:</strong></td><td>
+                                    <span class="badge ${email.emailStatus === 'SENT' ? 'bg-success' : (email.emailStatus === 'FAILED' ? 'bg-danger' : 'bg-warning')}">
+                                        ${email.emailStatusKorean}
+                                    </span>
+                                </td></tr>
+                                <tr><td><strong>당첨자:</strong></td><td>${email.winnerName} (${email.winnerId})</td></tr>
+                                <tr><td><strong>이메일:</strong></td><td>${email.winnerEmail}</td></tr>
+                                <tr><td><strong>득표율:</strong></td><td><span class="text-success fw-bold">${email.formattedVotingRate}</span></td></tr>
+                                <tr><td><strong>득표수:</strong></td><td>${email.voteCount}표</td></tr>
+                                <tr><td><strong>전송자:</strong></td><td>${email.senderId}</td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-clock text-info"></i> 시간 정보</h6>
+                            <table class="table table-sm">
+                                <tr><td><strong>생성 시간:</strong></td><td>${new Date(email.createdAt).toLocaleString('ko-KR')}</td></tr>
+                                <tr><td><strong>전송 시간:</strong></td><td>${email.sentAt ? new Date(email.sentAt).toLocaleString('ko-KR') : '미전송'}</td></tr>
+                                ${email.failureReason ? `<tr><td><strong>실패 이유:</strong></td><td class="text-danger">${email.failureReason}</td></tr>` : ''}
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <h6><i class="fas fa-envelope text-primary"></i> 이메일 내용</h6>
+                            <div class="mb-3">
+                                <strong>제목:</strong> ${email.emailSubject}
+                            </div>
+                            ${email.customContent ? `
+                            <div class="mb-3">
+                                <strong>당첨 내용:</strong>
+                                <div class="alert alert-info">
+                                    ${email.customContent.replace(/\n/g, '<br>')}
+                                </div>
+                            </div>
+                            ` : ''}
+                            ${email.attachmentOriginalName ? `
+                            <div class="mb-3">
+                                <strong>첨부파일:</strong> 
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-paperclip"></i> ${email.attachmentOriginalName}
+                                </span>
+                            </div>
+                            ` : ''}
+                            <div class="email-content-preview">
+                                ${email.emailContent || '<p class="text-muted">이메일 내용을 불러올 수 없습니다.</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('emailDetailContent').innerHTML = detailContent;
+                
+                // 로딩 모달 닫고 상세보기 모달 열기
+                loadingModal.hide();
+                setTimeout(() => {
+                    new bootstrap.Modal(document.getElementById('emailDetailModal')).show();
+                }, 300);
+            } else {
+                loadingModal.hide();
+                alert('이메일 정보를 찾을 수 없습니다.');
+            }
+        }
+
+        // 이메일 재전송
+        function resendEmail(emailId) {
+            currentEmailId = emailId;
+            
+            // 재전송할 이메일 정보 표시
+            const emailHistory = /*[[${emailHistory}]]*/ [];
+            const email = emailHistory.find(e => e.id === emailId);
+            
+            if (email) {
+                const resendInfo = `
+                    <div class="alert alert-warning">
+                        <strong>재전송할 이메일:</strong><br>
+                        당첨자: ${email.winnerName} (${email.winnerId})<br>
+                        이메일: ${email.winnerEmail}<br>
+                        실패 이유: ${email.failureReason || '알 수 없음'}
+                    </div>
+                `;
+                document.getElementById('resendEmailInfo').innerHTML = resendInfo;
+                new bootstrap.Modal(document.getElementById('resendConfirmModal')).show();
+            }
+        }
+
+        // 재전송 확인
+        document.getElementById('confirmResendBtn').addEventListener('click', function() {
+            if (currentEmailId) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/admin/email/resend/${currentEmailId}`;
+                document.body.appendChild(form);
+                
+                // 로딩 표시
+                new bootstrap.Modal(document.getElementById('loadingModal')).show();
+                
+                form.submit();
+            }
+        });
+
+        // 자동 알림 메시지 제거
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    if (alert.classList.contains('show')) {
+                        new bootstrap.Alert(alert).close();
+                    }
+                });
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

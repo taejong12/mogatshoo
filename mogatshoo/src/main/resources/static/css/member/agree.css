@@ -1,23 +1,32 @@
 @charset "UTF-8";
 
-/* Windows 95 로그인 화면 배경 및 글꼴 설정을 위한 body의 전역 스타일 */
+/* 기본 리셋 */
+* {
+    box-sizing: border-box;
+}
+
+/* 기본 body 설정 */
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: #c0c0c0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 body {
-	/* 사용자가 설정한 폰트는 유지하되, 픽셀화된 느낌을 위해 font-smoothing 비활성화 */
-	-webkit-font-smoothing: none !important; 
-	background-image: url('/img/background/95background.jpg') !important; /* 사용자가 제공한 배경 이미지 */
-    background-size: cover !important; /* 배경 이미지를 커버하도록 설정 */
-    background-position: center !important; /* 배경 이미지 중앙 정렬 */
-    background-repeat: no-repeat !important; /* 배경 이미지 반복 없음 */
-    background-color: #000080 !important; /* Windows 95 로그인 화면의 진한 파란색 배경 */
-	
-	display: flex; /* Flexbox를 사용하여 내용을 중앙에 배치 */
-	justify-content: center; /* 가로 중앙 정렬 */
-	align-items: center; /* 세로 중앙 정렬 */
-	min-height: 100vh; /* 뷰포트 높이의 최소 100% */
-	margin: 0; /* 기본 마진 제거 */
-	padding: 0; /* 창 주변 패딩 제거 */
-	box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
-	overflow: hidden; /* body의 스크롤바 제거 */
+    background-image: url('/img/background/95background.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-color: #000080 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 10px;
 }
 
 /* 기존 layout.css의 body::before 오버라이드 */
@@ -25,308 +34,449 @@ body::before {
     display: none !important;
 }
 
-/* Windows 95 스타일 창을 감싸는 컨테이너 (중앙 정렬용) */
+/* 메인 컨테이너 */
 .windows95-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
-    width: 100%; /* 부모 너비에 맞춤 */
-    height: 100%; /* 부모 높이에 맞춤 */
+    padding: 10px;
+    width: 100%;
+}
+
+/* 약관동의 다이얼로그 */
+.windows95-dialog {
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: 15px;
+    width: 100%;
+    max-width: 500px;
+    min-width: 300px;
+    position: relative;
     box-sizing: border-box;
 }
 
-.windows95-dialog {
-	background-color: #c0c0c0; /* 표준 Windows 95 회색 */
-	border-top: 2px solid #fff; /* 상단 밝은 테두리 */
-	border-left: 2px solid #fff; /* 왼쪽 밝은 테두리 */
-	border-right: 2px solid #000; /* 오른쪽 어두운 테두리 */
-	border-bottom: 2px solid #000; /* 하단 어두운 테두리 */
-	box-shadow: 4px 4px #808080; /* 더 강한 그림자로 3D 효과 강조 */
-	max-width: 500px; /* 너비 조정 */
-	width: 90%; /* 유동적인 너비 */
-	box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
-	overflow: hidden; /* 내부 스크롤바는 필요시 form에 적용 */
-	resize: none; /* 크기 조정 비활성화 */
-}
-
-/* 창 상단의 제목 표시줄 */
+/* 제목 표시줄 */
 .title-bar {
-	background: linear-gradient(90deg, #0000ff 0%, #000080 100%); /* 고전적인 Windows 95 파란색 그라데이션 */
-	color: white;
-	padding: 2px 4px; /* 패딩 조정 */
-	display: flex;
-	justify-content: flex-start; /* 텍스트를 왼쪽으로 정렬 */
-	align-items: center;
-	font-weight: bold;
-	font-size: 14px; /* 글꼴 크기 */
-	border-bottom: 1px solid #000; /* 제목 표시줄 아래 미묘한 테두리 */
-	cursor: default; /* 마우스 커서 기본값 */
+    background: linear-gradient(90deg, #0000ff 0%, #000080 100%);
+    color: white;
+    padding: 4px 6px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    box-sizing: border-box;
 }
 
-/* 제목 표시줄 내 텍스트 */
 .title-bar-text {
-	padding-left: 0; /* 패딩 제거 */
-	white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-	overflow: hidden; /* 넘치는 텍스트 숨기기 */
-	text-overflow: ellipsis; /* 넘치는 텍스트에 줄임표 추가 */
-	font-size: 14px; /* 사용자 폰트 적용을 위해 명시 */
-}
-
-/* 최소화, 최대화, 닫기 버튼 컨테이너 (이 페이지에는 없음) */
-.title-bar-controls {
-	display: none; /* 버튼 숨김 */
-}
-
-/* 창의 본문 내용 영역 */
-.dialog-content {
-	padding: 16px; /* 내부 패딩 조정 */
-	background-color: #c0c0c0; /* 본문 배경이 회색인지 확인 */
-}
-
-/* 제목 (다음 내용에 동의해주세요.) */
-.title {
-	color: #000; /* 검은색 텍스트 */
-	font-weight: bold;
-	font-size: 18px;
-	margin-bottom: 20px;
-	text-align: center;
-}
-
-/* 일반적인 입력 그룹 (체크박스 포함) */
-.input-group {
     display: flex;
     align-items: center;
-    margin-bottom: 8px; /* 간격 조정 */
+    gap: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
 }
 
-/* 체크박스 그룹 */
-.checkbox-group {
-	margin-bottom: 12px; /* 간격 조정 */
-}
-
-/* 체크박스 그룹 내 버튼 포함 */
-.checkbox-group.with-button {
-    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
-}
-
-/* 체크박스 래퍼 (정렬용) */
-.checkbox-wrapper {
-    flex-shrink: 0; /* 줄어들지 않도록 설정 */
-    margin-right: 8px; /* 체크박스와 레이블 간 간격 */
-}
-
-/* 체크박스 자체 스타일 */
-.form-check-input {
-	appearance: none; /* 기본 체크박스 스타일 제거 */
-	width: 13px; /* 너비 */
-	height: 13px; /* 높이 */
-	border-top: 1px solid #808080;
-	border-left: 1px solid #808080;
-	border-right: 1px solid #fff;
-	border-bottom: 1px solid #fff;
-	background-color: #c0c0c0;
-	position: relative;
-	cursor: pointer;
-	flex-shrink: 0; /* 줄어들지 않도록 설정 */
-	margin: 0; /* 기본 마진 제거 */
-}
-
-.form-check-input:checked {
-	background-color: #c0c0c0; /* 체크 시 배경색 유지 */
-	border-top: 1px solid #000; /* 체크 시 테두리 반전 */
-	border-left: 1px solid #000;
-	border-right: 1px solid #fff;
-	border-bottom: 1px solid #fff;
-}
-
-.form-check-input:checked::before {
-	content: '\2713'; /* 체크 표시 (유니코드 틱) */
-	display: block;
-	position: absolute;
-	top: -3px; /* 위치 조정 */
-	left: 0px; /* 위치 조정 */
-	font-size: 12px; /* 체크 표시 크기 */
-	color: #000; /* 체크 표시 색상 */
-	line-height: 1;
-}
-
-/* 체크박스 레이블 스타일 */
-.form-check-label {
-	color: #000; /* 검은색 텍스트 */
-	font-size: 14px;
-	flex-grow: 1; /* 남은 공간 차지 */
-	cursor: pointer;
-}
-
-/* 버튼 그룹 스타일 */
-.button-group {
+.title-bar-controls {
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 20px; /* 상단 마진 */
+    gap: 2px;
 }
 
-/* 일반적인 Windows 95 스타일 버튼 */
-.windows95-button {
-	background-color: #c0c0c0;
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
-	border-right: 1px solid #000;
-	border-bottom: 1px solid #000;
-	font-family: inherit; /* 부모로부터 글꼴 상속 (사용자 설정 폰트) */
-	font-size: 14px;
-	padding: 4px 16px;
-	cursor: pointer;
-	box-shadow: 1px 1px #808080; /* 3D 효과를 위한 작은 그림자 */
-	white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-	min-width: 80px;
-	height: 27px;
-}
-
-/* 버튼 호버 상태 */
-.windows95-button:hover {
-    background-color: #d4d4d4;
-}
-
-/* 버튼 활성 상태 (눌렀을 때) */
-.windows95-button:active {
-	border-top: 1px solid #000;
-	border-left: 1px solid #000;
-	border-right: 1px solid #fff;
-	border-bottom: 1px solid #fff;
-	box-shadow: none; /* 눌렀을 때 그림자 제거 */
-	transform: translate(1px, 1px); /* 눌렀을 때 버튼을 약간 이동 */
-}
-
-/* 작은 버튼 스타일 (약관보기 버튼) */
-.windows95-button.btn-small {
-    padding: 2px 10px;
-    height: 22px;
-    margin-left: auto; /* 오른쪽으로 정렬 */
-    flex-shrink: 0; /* 줄어들지 않도록 설정 */
-}
-
-/* 메인 버튼 (다음 버튼) */
-.windows95-button.primary {
-    border: 3px outset #c0c0c0; /* 더 두꺼운 테두리 */
+.title-bar-control {
+    width: 18px;
+    height: 16px;
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    font-size: 10px;
+    text-align: center;
+    line-height: 14px;
+    cursor: pointer;
     font-weight: bold;
-    width: 100%; /* 너비 100% */
-    max-width: 200px; /* 최대 너비 제한 */
 }
 
-/* 경고 메시지 스타일 */
+/* 다이얼로그 내용 */
+.dialog-content {
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 제목 */
+.agree-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #000080;
+}
+
+/* 약관 동의 항목 */
+.agree-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.agree-item.total {
+    border-bottom: 1px solid #808080;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+/* 체크박스 */
+.agree-checkbox {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px inset #c0c0c0;
+    background-color: #c0c0c0;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.agree-checkbox:checked {
+    background-color: #c0c0c0;
+    border: 2px inset #c0c0c0;
+}
+
+.agree-checkbox:checked::before {
+    content: '✓';
+    display: block;
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    font-size: 14px;
+    color: #000000;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* 라벨 */
+.agree-label {
+    color: #000000;
+    font-size: 15px;
+    cursor: pointer;
+    flex: 1;
+    min-width: 150px;
+    line-height: 1.3;
+}
+
+/* 약관보기 버튼 */
+.agree-view-btn {
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    padding: 4px 12px;
+    font-size: 15px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 80px;
+    height: 28px;
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    text-align: center;
+    line-height: 20px;
+}
+
+.agree-view-btn:hover {
+    background: #d4d4d4;
+    color: black;
+    text-decoration: none;
+}
+
+.agree-view-btn:active {
+    border: 2px inset #c0c0c0;
+}
+
+/* 경고 메시지 */
 .warn-msg {
-	color: red; /* 기본 경고 메시지는 빨간색 */
-	font-size: 12px;
-	margin-top: 2px;
-	padding-left: 30px; /* 체크박스 위치에 맞춰 패딩 조정 */
-	display: none; /* 기본적으로 숨김, JavaScript가 표시/숨김 */
-	width: 100%; /* 전체 너비 차지 */
-	box-sizing: border-box;
+    color: red;
+    font-size: 15px;
+    margin-top: 4px;
+    display: none;
+    width: 100%;
 }
 
-/* 스크롤바 스타일링 (Windows 95 스타일) */
-form::-webkit-scrollbar {
-	width: 16px; /* 스크롤바 너비 */
-	height: 16px; /* 스크롤바 높이 */
+/* 다음 버튼 */
+.agree-next-btn {
+    background: #c0c0c0;
+    border: 3px outset #c0c0c0;
+    padding: 8px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    max-width: 200px;
+    height: 35px;
+    text-decoration: none;
+    color: black;
+    display: block;
+    text-align: center;
+    line-height: 19px;
+    margin: 20px auto 0 auto;
 }
 
-form::-webkit-scrollbar-track {
-	background-color: #c0c0c0; /* 트랙 배경색 */
-	border-top: 1px solid #808080;
-	border-left: 1px solid #808080;
-	border-right: 1px solid #fff;
-	border-bottom: 1px solid #fff;
+.agree-next-btn:hover {
+    background: #d4d4d4;
+    color: black;
+    text-decoration: none;
 }
 
-form::-webkit-scrollbar-thumb {
-	background-color: #c0c0c0; /* 썸 배경색 */
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
-	border-right: 1px solid #000;
-	border-bottom: 1px solid #000;
-	box-shadow: 1px 1px #808080; /* 썸 그림자 */
+.agree-next-btn:active {
+    border: 3px inset #c0c0c0;
 }
 
-form::-webkit-scrollbar-thumb:active {
-	border-top: 1px solid #000;
-	border-left: 1px solid #000;
-	border-right: 1px solid #fff;
-	border-bottom: 1px solid #fff;
-	box-shadow: none;
+/* ============================================ */
+/* 태블릿 (768px 이하) */
+/* ============================================ */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 5px;
+    }
+    
+    .windows95-dialog {
+        max-width: 100%;
+        min-width: 280px;
+    }
+    
+    .dialog-content {
+        padding: 15px;
+    }
+    
+    .agree-title {
+        font-size: 16px;
+    }
+    
+    .agree-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .agree-checkbox {
+        width: 18px;
+        height: 18px;
+        align-self: flex-start;
+    }
+    
+    .agree-checkbox:checked::before {
+        font-size: 15px;
+        top: -1px;
+        left: 2px;
+    }
+    
+    .agree-label {
+        min-width: auto;
+        margin-left: 26px;
+        margin-top: -18px;
+    }
+    
+    .agree-view-btn {
+        width: 100%;
+        max-width: 150px;
+        margin-left: 26px;
+    }
+    
+    .agree-next-btn {
+        width: 100%;
+        max-width: 250px;
+    }
 }
 
-::-webkit-scrollbar-button {
-	background-color: #c0c0c0;
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
-	border-right: 1px solid #000;
-	border-bottom: 1px solid #000;
-	box-shadow: 1px 1px #808080;
-	display: block;
-	width: 16px;
-	height: 16px;
+/* ============================================ */
+/* 모바일 (480px 이하) */
+/* ============================================ */
+@media screen and (max-width: 480px) {
+    body {
+        padding: 3px;
+    }
+    
+    .windows95-dialog {
+        min-width: 260px;
+    }
+    
+    .dialog-content {
+        padding: 12px;
+    }
+    
+    .title-bar {
+        font-size: 15px;
+        padding: 3px 5px;
+    }
+    
+    .agree-title {
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .agree-item {
+        margin-bottom: 12px;
+    }
+    
+    .agree-checkbox {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .agree-checkbox:checked::before {
+        font-size: 16px;
+        top: 0px;
+        left: 3px;
+    }
+    
+    .agree-label {
+        font-size: 15px;
+        margin-top: -20px;
+        margin-left: 28px;
+    }
+    
+    .agree-view-btn {
+        font-size: 15px;
+        margin-left: 28px;
+        width: 100%;
+        max-width: 120px;
+    }
+    
+    .agree-next-btn {
+        font-size: 15px;
+        width: 100%;
+    }
 }
 
-::-webkit-scrollbar-button:active {
-	border-top: 1px solid #000;
-	border-left: 1px solid #000;
-	border-right: 1px solid #fff;
-	border-bottom: 1px solid #fff;
-	box-shadow: none;
+/* ============================================ */
+/* 초소형 모바일 (360px 이하) */
+/* ============================================ */
+@media screen and (max-width: 360px) {
+    body {
+        padding: 2px;
+    }
+    
+    .windows95-dialog {
+        min-width: 240px;
+    }
+    
+    .dialog-content {
+        padding: 10px;
+    }
+    
+    .agree-title {
+        font-size: 15px;
+    }
+    
+    .agree-checkbox {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .agree-checkbox:checked::before {
+        font-size: 17px;
+        top: 1px;
+        left: 4px;
+    }
+    
+    .agree-label {
+        margin-top: -22px;
+        margin-left: 30px;
+    }
+    
+    .agree-view-btn {
+        margin-left: 30px;
+        max-width: 100px;
+    }
 }
 
-/* 스크롤바 화살표 (Windows 95에는 화살표가 없으므로 숨김) */
-::-webkit-scrollbar-button:vertical:decrement {
-	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="8 4 4 12 12 12" /></svg>');
-	background-repeat: no-repeat;
-	background-position: center;
+/* ============================================ */
+/* 데스크톱 (992px 이상) */
+/* ============================================ */
+@media screen and (min-width: 992px) {
+    body {
+        padding: 15px;
+    }
+    
+    .windows95-dialog {
+        max-width: 600px;
+    }
+    
+    .dialog-content {
+        padding: 25px;
+    }
+    
+    .agree-title {
+        font-size: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .agree-item {
+        margin-bottom: 18px;
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .agree-checkbox {
+        width: 16px;
+        height: 16px;
+        margin-right: 10px;
+    }
+    
+    .agree-checkbox:checked::before {
+        font-size: 14px;
+        top: -2px;
+        left: 1px;
+    }
+    
+    .agree-label {
+        font-size: 16px;
+        margin: 0;
+        margin-right: 15px;
+    }
+    
+    .agree-view-btn {
+        font-size: 15px;
+        min-width: 90px;
+        margin: 0;
+    }
+    
+    .agree-next-btn {
+        font-size: 16px;
+        max-width: 220px;
+        margin-top: 25px;
+    }
 }
-::-webkit-scrollbar-button:vertical:increment {
-	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="8 12 4 4 12 4" /></svg>');
-	background-repeat: no-repeat;
-	background-position: center;
+
+/* ============================================ */
+/* 터치 디바이스 최적화 */
+/* ============================================ */
+@media (hover: none) and (pointer: coarse) {
+    .agree-checkbox {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .agree-view-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .agree-next-btn {
+        min-height: 44px;
+    }
 }
-::-webkit-scrollbar-button:horizontal:decrement {
-	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="4 8 12 4 12 12" /></svg>');
-	background-repeat: no-repeat;
-	background-position: center;
-}
-::-webkit-scrollbar-button:horizontal:increment {
-	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="12 8 4 4 4 12" /></svg>');
-	background-repeat: no-repeat;
-	background-position: center;
-}
 
-/* 더 작은 화면에 대한 반응형 조정 */
-@media (max-width: 768px) {
-	.windows95-dialog {
-		width: 95%; /* 작은 화면에서 더 넓게 */
-		padding: 10px;
-	}
-
-	.input-group {
-		flex-direction: column; /* 요소를 수직으로 쌓기 */
-		align-items: flex-start;
-	}
-	
-	.checkbox-wrapper {
-		margin-bottom: 5px; /* 체크박스 래퍼 아래 간격 */
-	}
-
-	.form-check-label {
-		margin-left: 0; /* 레이블 마진 제거 */
-	}
-
-	.windows95-button.btn-small {
-		margin-left: 0; /* 버튼 마진 제거 */
-		margin-top: 5px; /* 버튼 상단 마진 추가 */
-		width: 100%; /* 전체 너비 */
-	}
-
-	.windows95-button.primary {
-		width: 100%; /* 전체 너비 */
-	}
+/* ============================================ */
+/* 접근성 개선 */
+/* ============================================ */
+@media (prefers-contrast: high) {
+    .agree-checkbox {
+        border: 2px solid #000000;
+    }
+    
+    .agree-label {
+        color: #000000;
+        font-weight: bold;
+    }
 }
