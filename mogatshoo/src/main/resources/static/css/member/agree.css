@@ -1,37 +1,332 @@
 @charset "UTF-8";
 
-.warn-msg {
-	color: rgb(255, 107, 107);
-	font-size: 0.8em;
-	padding: .375rem .75rem;
-	display: none;
+/* Windows 95 로그인 화면 배경 및 글꼴 설정을 위한 body의 전역 스타일 */
+body {
+	/* 사용자가 설정한 폰트는 유지하되, 픽셀화된 느낌을 위해 font-smoothing 비활성화 */
+	-webkit-font-smoothing: none !important; 
+	background-image: url('/img/background/95background.jpg') !important; /* 사용자가 제공한 배경 이미지 */
+    background-size: cover !important; /* 배경 이미지를 커버하도록 설정 */
+    background-position: center !important; /* 배경 이미지 중앙 정렬 */
+    background-repeat: no-repeat !important; /* 배경 이미지 반복 없음 */
+    background-color: #000080 !important; /* Windows 95 로그인 화면의 진한 파란색 배경 */
+	
+	display: flex; /* Flexbox를 사용하여 내용을 중앙에 배치 */
+	justify-content: center; /* 가로 중앙 정렬 */
+	align-items: center; /* 세로 중앙 정렬 */
+	min-height: 100vh; /* 뷰포트 높이의 최소 100% */
+	margin: 0; /* 기본 마진 제거 */
+	padding: 0; /* 창 주변 패딩 제거 */
+	box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+	overflow: hidden; /* body의 스크롤바 제거 */
 }
 
-.title{
-	color: yellow;
+/* 기존 layout.css의 body::before 오버라이드 */
+body::before {
+    display: none !important;
 }
 
-.text-color{
-	color: rgb(255, 255, 255);
+/* Windows 95 스타일 창을 감싸는 컨테이너 (중앙 정렬용) */
+.windows95-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    width: 100%; /* 부모 너비에 맞춤 */
+    height: 100%; /* 부모 높이에 맞춤 */
+    box-sizing: border-box;
 }
 
-.background-border-color {
-	background-color: #808080;
-	border: 10px solid #c0c0c0;
+.windows95-dialog {
+	background-color: #c0c0c0; /* 표준 Windows 95 회색 */
+	border-top: 2px solid #fff; /* 상단 밝은 테두리 */
+	border-left: 2px solid #fff; /* 왼쪽 밝은 테두리 */
+	border-right: 2px solid #000; /* 오른쪽 어두운 테두리 */
+	border-bottom: 2px solid #000; /* 하단 어두운 테두리 */
+	box-shadow: 4px 4px #808080; /* 더 강한 그림자로 3D 효과 강조 */
+	max-width: 500px; /* 너비 조정 */
+	width: 90%; /* 유동적인 너비 */
+	box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+	overflow: hidden; /* 내부 스크롤바는 필요시 form에 적용 */
+	resize: none; /* 크기 조정 비활성화 */
 }
 
-.agreeBtn, .modalBtn {
+/* 창 상단의 제목 표시줄 */
+.title-bar {
+	background: linear-gradient(90deg, #0000ff 0%, #000080 100%); /* 고전적인 Windows 95 파란색 그라데이션 */
+	color: white;
+	padding: 2px 4px; /* 패딩 조정 */
+	display: flex;
+	justify-content: flex-start; /* 텍스트를 왼쪽으로 정렬 */
+	align-items: center;
+	font-weight: bold;
+	font-size: 14px; /* 글꼴 크기 */
+	border-bottom: 1px solid #000; /* 제목 표시줄 아래 미묘한 테두리 */
+	cursor: default; /* 마우스 커서 기본값 */
+}
+
+/* 제목 표시줄 내 텍스트 */
+.title-bar-text {
+	padding-left: 0; /* 패딩 제거 */
+	white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+	overflow: hidden; /* 넘치는 텍스트 숨기기 */
+	text-overflow: ellipsis; /* 넘치는 텍스트에 줄임표 추가 */
+	font-size: 14px; /* 사용자 폰트 적용을 위해 명시 */
+}
+
+/* 최소화, 최대화, 닫기 버튼 컨테이너 (이 페이지에는 없음) */
+.title-bar-controls {
+	display: none; /* 버튼 숨김 */
+}
+
+/* 창의 본문 내용 영역 */
+.dialog-content {
+	padding: 16px; /* 내부 패딩 조정 */
+	background-color: #c0c0c0; /* 본문 배경이 회색인지 확인 */
+}
+
+/* 제목 (다음 내용에 동의해주세요.) */
+.title {
+	color: #000; /* 검은색 텍스트 */
+	font-weight: bold;
+	font-size: 18px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+/* 일반적인 입력 그룹 (체크박스 포함) */
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px; /* 간격 조정 */
+}
+
+/* 체크박스 그룹 */
+.checkbox-group {
+	margin-bottom: 12px; /* 간격 조정 */
+}
+
+/* 체크박스 그룹 내 버튼 포함 */
+.checkbox-group.with-button {
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
+}
+
+/* 체크박스 래퍼 (정렬용) */
+.checkbox-wrapper {
+    flex-shrink: 0; /* 줄어들지 않도록 설정 */
+    margin-right: 8px; /* 체크박스와 레이블 간 간격 */
+}
+
+/* 체크박스 자체 스타일 */
+.form-check-input {
+	appearance: none; /* 기본 체크박스 스타일 제거 */
+	width: 13px; /* 너비 */
+	height: 13px; /* 높이 */
+	border-top: 1px solid #808080;
+	border-left: 1px solid #808080;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
 	background-color: #c0c0c0;
-	border: 10px solid #c0c0c0;
-} 
-
-.agreeBtn:hover, .modalBtn:hover {
-	background-color: rgb(102, 102, 102);
-	border-color: rgb(153, 153, 153);
+	position: relative;
+	cursor: pointer;
+	flex-shrink: 0; /* 줄어들지 않도록 설정 */
+	margin: 0; /* 기본 마진 제거 */
 }
 
-.closeBtn{
-	filter: brightness(0) invert(1) contrast(150%);
-	font-size: 24px; 
+.form-check-input:checked {
+	background-color: #c0c0c0; /* 체크 시 배경색 유지 */
+	border-top: 1px solid #000; /* 체크 시 테두리 반전 */
+	border-left: 1px solid #000;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+}
+
+.form-check-input:checked::before {
+	content: '\2713'; /* 체크 표시 (유니코드 틱) */
+	display: block;
+	position: absolute;
+	top: -3px; /* 위치 조정 */
+	left: 0px; /* 위치 조정 */
+	font-size: 12px; /* 체크 표시 크기 */
+	color: #000; /* 체크 표시 색상 */
+	line-height: 1;
+}
+
+/* 체크박스 레이블 스타일 */
+.form-check-label {
+	color: #000; /* 검은색 텍스트 */
+	font-size: 14px;
+	flex-grow: 1; /* 남은 공간 차지 */
 	cursor: pointer;
-}	
+}
+
+/* 버튼 그룹 스타일 */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px; /* 상단 마진 */
+}
+
+/* 일반적인 Windows 95 스타일 버튼 */
+.windows95-button {
+	background-color: #c0c0c0;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #000;
+	border-bottom: 1px solid #000;
+	font-family: inherit; /* 부모로부터 글꼴 상속 (사용자 설정 폰트) */
+	font-size: 14px;
+	padding: 4px 16px;
+	cursor: pointer;
+	box-shadow: 1px 1px #808080; /* 3D 효과를 위한 작은 그림자 */
+	white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+	min-width: 80px;
+	height: 27px;
+}
+
+/* 버튼 호버 상태 */
+.windows95-button:hover {
+    background-color: #d4d4d4;
+}
+
+/* 버튼 활성 상태 (눌렀을 때) */
+.windows95-button:active {
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	box-shadow: none; /* 눌렀을 때 그림자 제거 */
+	transform: translate(1px, 1px); /* 눌렀을 때 버튼을 약간 이동 */
+}
+
+/* 작은 버튼 스타일 (약관보기 버튼) */
+.windows95-button.btn-small {
+    padding: 2px 10px;
+    height: 22px;
+    margin-left: auto; /* 오른쪽으로 정렬 */
+    flex-shrink: 0; /* 줄어들지 않도록 설정 */
+}
+
+/* 메인 버튼 (다음 버튼) */
+.windows95-button.primary {
+    border: 3px outset #c0c0c0; /* 더 두꺼운 테두리 */
+    font-weight: bold;
+    width: 100%; /* 너비 100% */
+    max-width: 200px; /* 최대 너비 제한 */
+}
+
+/* 경고 메시지 스타일 */
+.warn-msg {
+	color: red; /* 기본 경고 메시지는 빨간색 */
+	font-size: 12px;
+	margin-top: 2px;
+	padding-left: 30px; /* 체크박스 위치에 맞춰 패딩 조정 */
+	display: none; /* 기본적으로 숨김, JavaScript가 표시/숨김 */
+	width: 100%; /* 전체 너비 차지 */
+	box-sizing: border-box;
+}
+
+/* 스크롤바 스타일링 (Windows 95 스타일) */
+form::-webkit-scrollbar {
+	width: 16px; /* 스크롤바 너비 */
+	height: 16px; /* 스크롤바 높이 */
+}
+
+form::-webkit-scrollbar-track {
+	background-color: #c0c0c0; /* 트랙 배경색 */
+	border-top: 1px solid #808080;
+	border-left: 1px solid #808080;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+}
+
+form::-webkit-scrollbar-thumb {
+	background-color: #c0c0c0; /* 썸 배경색 */
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #000;
+	border-bottom: 1px solid #000;
+	box-shadow: 1px 1px #808080; /* 썸 그림자 */
+}
+
+form::-webkit-scrollbar-thumb:active {
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	box-shadow: none;
+}
+
+::-webkit-scrollbar-button {
+	background-color: #c0c0c0;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #000;
+	border-bottom: 1px solid #000;
+	box-shadow: 1px 1px #808080;
+	display: block;
+	width: 16px;
+	height: 16px;
+}
+
+::-webkit-scrollbar-button:active {
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	box-shadow: none;
+}
+
+/* 스크롤바 화살표 (Windows 95에는 화살표가 없으므로 숨김) */
+::-webkit-scrollbar-button:vertical:decrement {
+	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="8 4 4 12 12 12" /></svg>');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+::-webkit-scrollbar-button:vertical:increment {
+	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="8 12 4 4 12 4" /></svg>');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+::-webkit-scrollbar-button:horizontal:decrement {
+	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="4 8 12 4 12 12" /></svg>');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+::-webkit-scrollbar-button:horizontal:increment {
+	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black"><polygon points="12 8 4 4 4 12" /></svg>');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+/* 더 작은 화면에 대한 반응형 조정 */
+@media (max-width: 768px) {
+	.windows95-dialog {
+		width: 95%; /* 작은 화면에서 더 넓게 */
+		padding: 10px;
+	}
+
+	.input-group {
+		flex-direction: column; /* 요소를 수직으로 쌓기 */
+		align-items: flex-start;
+	}
+	
+	.checkbox-wrapper {
+		margin-bottom: 5px; /* 체크박스 래퍼 아래 간격 */
+	}
+
+	.form-check-label {
+		margin-left: 0; /* 레이블 마진 제거 */
+	}
+
+	.windows95-button.btn-small {
+		margin-left: 0; /* 버튼 마진 제거 */
+		margin-top: 5px; /* 버튼 상단 마진 추가 */
+		width: 100%; /* 전체 너비 */
+	}
+
+	.windows95-button.primary {
+		width: 100%; /* 전체 너비 */
+	}
+}

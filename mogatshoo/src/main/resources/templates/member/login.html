@@ -1,69 +1,86 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/noLoginLayout}">
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='로그인'">
-	<link rel="stylesheet" th:href="@{/css/member/login.css}">
+<link rel="stylesheet" th:href="@{/css/member/login.css}">
 </head>
 <body>
-	<div layout:fragment="content">
-		<div class="col-12 col-lg-5">
-			<form name="loginForm" class="background-border-color p-4 rounded-3">
-				<h1 class="title text-center mb-5">로그인</h1>
-				
-				<div class="row align-items-center mb-3">
-				    <label for="memberId" class="col-4 text-nowrap fs-3 text-color">아이디</label>
-				    <div class="col-8">
-				        <input type="text" class="form-control login-input" id="memberId" name="memberId" placeholder="아이디 입력">
-				        <div id="idWarnMsg" class="warn-msg"></div>
-				    </div>
-				</div>
-				
-				<div class="row align-items-center mb-3">
-				    <label for="memberPwd" class="col-4 text-nowrap fs-3 text-color">비밀번호</label>
-				    <div class="col-8">
-				        <input type="password" class="form-control login-input" id="memberPwd" name="memberPwd" placeholder="비밀번호 입력">
-				        <div id="pwdWarnMsg" class="warn-msg"></div>
-				    </div>
-				</div>
-				
-		        <th:block th:if="${param.error != null}">
-			        <div class="mb-3 text-center">
-				        <div style="display: inline;" class="warn-msg">
-				            아이디 또는 비밀번호가 잘못되었습니다.
-						</div>
-					</div>
-		        </th:block>
-	
-				<div class="row text-center mb-3 g-2">
-				    <div class="col-12 col-sm-4">
-				        <button type="button" class="btn w-100 loginFormBtn" onclick="fu_memberLogin()">로그인</button>
-				    </div>
-				    <div class="col-12 col-sm-4">
-				        <a class="btn w-100 loginFormBtn" th:href="@{/member/agree}">회원가입</a>
-				    </div>
-				    <div class="col-12 col-sm-4">
-				        <a class="btn w-100 loginFormBtn" th:href="@{/member/lost}">ID/PW 찾기</a>
-				    </div>
-				</div>
-
-				<div class="d-flex text-center">
-					<a th:href="@{/oauth2/authorization/kakao}">
-						<img th:src="@{/img/member/login/kakao_logo.png}" alt="카톡이미지" class="img-fluid w-50">
-					</a>
-					<a th:href="@{/oauth2/authorization/naver}">
-						<img th:src="@{/img/member/login/naver_logo.png}" alt="네이버이미지" class="img-fluid w-50">
-					</a>
-					<a th:href="@{/oauth2/authorization/google}">
-						<img th:src="@{/img/member/login/google_logo.png}" alt="구글이미지" class="img-fluid w-50">
-					</a>
-				</div>
-			</form>
-		</div>
-		<!-- 로그인 엔터 처리 -->
-		<script th:src="@{/js/member/login/ev_enter.js}"></script>
-		<!-- 로그인 버튼 -->
-		<script th:src="@{/js/member/login/fu_memberLogin.js}"></script>
-	</div>
+<div layout:fragment="content">
+    <div class="windows95-container">
+        <div class="windows95-dialog">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <span>🔑</span>
+                    <span>탈모인들이여 신조오사사게오</span>
+                </div>
+                <div class="title-bar-controls">
+                    <div class="title-bar-control">?</div>
+                    <div class="title-bar-control">✕</div>
+                </div>
+            </div>
+            
+            <div class="dialog-content">
+                <form name="loginForm">
+                    <div class="dialog-icon"></div>
+                    <div class="dialog-text">
+                        탈모인을 위한 공간 모가슈에 오신걸 환영합니다!
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label" for="memberId">Id:</label>
+                        <input type="text" class="windows95-input" id="memberId" name="memberId" placeholder="아이디 입력">
+                    </div>
+                    <div id="idWarnMsg" class="warn-msg"></div>
+                    
+                    <div class="input-group">
+                        <label class="input-label" for="memberPwd">Password:</label>
+                        <input type="password" class="windows95-input" id="memberPwd" name="memberPwd" placeholder="비밀번호 입력">
+                    </div>
+                    <div id="pwdWarnMsg" class="warn-msg"></div>
+                    
+                    <th:block th:if="${param.error != null}">
+                        <div class="warn-msg" style="display: block; text-align: center; margin: 8px 0;">
+                            아이디 또는 비밀번호가 잘못되었습니다.
+                        </div>
+                    </th:block>
+                    
+                    <div class="button-group">
+                        <button type="button" class="windows95-button primary" onclick="fu_memberLogin()">로그인</button>
+                    </div>
+                    
+                    <!-- 추가 버튼들 -->
+                    <div style="margin-top: 12px; text-align: center;">
+                        <button type="button" class="windows95-button" style="margin: 2px;">
+                            <a th:href="@{/member/agree}" style="text-decoration: none; color: black;">회원가입</a>
+                        </button>
+                        <button type="button" class="windows95-button" style="margin: 2px;">
+                            <a th:href="@{/member/lost}" style="text-decoration: none; color: black;">ID/PW 찾기</a>
+                        </button>
+                    </div>
+                    
+                    <!-- 소셜 로그인 -->
+                    <div class="social-login-group">
+                        <div style="font-size: 12px; margin-bottom: 8px;">Social Login</div>
+                        <a th:href="@{/oauth2/authorization/kakao}">
+                            <img th:src="@{/img/member/login/kakao_logo.png}" alt="카톡이미지">
+                        </a>
+                        <a th:href="@{/oauth2/authorization/naver}">
+                            <img th:src="@{/img/member/login/naver_logo.png}" alt="네이버이미지">
+                        </a>
+                        <a th:href="@{/oauth2/authorization/google}">
+                            <img th:src="@{/img/member/login/google_logo.png}" alt="구글이미지">
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 로그인 엔터 처리 -->
+    <script th:src="@{/js/member/login/ev_enter.js}"></script>
+    <!-- 로그인 버튼 -->
+    <script th:src="@{/js/member/login/fu_memberLogin.js}"></script>
+</div>
 </body>
 </html>
