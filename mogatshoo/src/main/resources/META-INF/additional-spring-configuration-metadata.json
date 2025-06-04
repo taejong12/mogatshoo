@@ -10,38 +10,73 @@
     "description": "A description for 'kakao.api.key'"
   },
   {
-    "name": "google.drive.credentials.file.path",
+    "name": "firebase.project.id",
     "type": "java.lang.String",
-    "description": "A description for 'google.drive.credentials.file.path'"
+    "description": "A description for 'firebase.project.id'"
   },
   {
-    "name": "google.drive.folder.id",
+    "name": "firebase.universe.domain",
     "type": "java.lang.String",
-    "description": "A description for 'google.drive.folder.id'"
+    "description": "A description for 'firebase.universe.domain'"
   },
   {
-    "name": "google.drive.project.id",
+    "name": "firebase.client.x509.cert.url",
     "type": "java.lang.String",
-    "description": "A description for 'google.drive.project.id'"
+    "description": "A description for 'firebase.client.x509.cert.url'"
   },
   {
-    "name": "google.drive.private.key.id",
+    "name": "firebase.auth.provider.x509.cert.url",
     "type": "java.lang.String",
-    "description": "A description for 'google.drive.private.key.id'"
+    "description": "A description for 'firebase.auth.provider.x509.cert.url'"
   },
   {
-    "name": "google.drive.client.email",
+    "name": "firebase.database.url",
     "type": "java.lang.String",
-    "description": "A description for 'google.drive.client.email'"
+    "description": "A description for 'firebase.database.url'"
   },
   {
-    "name": "google.drive.client.id",
+    "name": "firebase.token.uri",
     "type": "java.lang.String",
-    "description": "A description for 'google.drive.client.id'"
+    "description": "A description for 'firebase.token.uri'"
   },
   {
-    "name": "google.drive.point.item.path",
+    "name": "firebase.auth.uri",
     "type": "java.lang.String",
-    "description": "A description for 'google.drive.point.item.path'"
+    "description": "A description for 'firebase.auth.uri'"
+  },
+  {
+    "name": "firebase.client.id",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.client.id'"
+  },
+  {
+    "name": "firebase.client.email",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.client.email'"
+  },
+  {
+    "name": "firebase.private.key",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.private.key'"
+  },
+  {
+    "name": "firebase.private.key.id",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.private.key.id'"
+  },
+  {
+    "name": "firebase.storage.bucket",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.storage.bucket'"
+  },
+  {
+    "name": "firebase.type",
+    "type": "java.lang.String",
+    "description": "A description for 'firebase.type'"
+  },
+  {
+    "name": "server.servlet.session.store-type",
+    "type": "java.lang.String",
+    "description": "A description for 'server.servlet.session.store-type'"
   }
 ]}

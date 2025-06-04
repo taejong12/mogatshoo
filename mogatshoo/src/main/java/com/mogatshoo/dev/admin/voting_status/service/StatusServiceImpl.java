@@ -1,7 +1,7 @@
-package com.mogatshoo.dev.voting_status.service;
+package com.mogatshoo.dev.admin.voting_status.service;
 
-import com.mogatshoo.dev.voting_status.entity.StatusEntity;
-import com.mogatshoo.dev.voting_status.repository.StatusRepository;
+import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
+import com.mogatshoo.dev.admin.voting_status.repository.StatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

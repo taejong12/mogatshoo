@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
 import com.mogatshoo.dev.admin.point.category.repository.AdminPointCategoryRepository;
 import com.mogatshoo.dev.common.authentication.CommonUserName;
-import com.mogatshoo.dev.config.file.GoogleDriveService;
+import com.mogatshoo.dev.config.file.FirebaseStorageService;
 
 import jakarta.transaction.Transactional;
 
@@ -33,7 +33,7 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 	private CommonUserName commonUserName;
 
 	@Autowired
-	private GoogleDriveService googleDriveService;
+	private FirebaseStorageService firebaseStorageService;
 
 	@Override
 	public List<AdminPointCategoryEntity> findAll() {
@@ -102,8 +102,8 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 
 			String categoryName = adminPointCategoryEntity.getPointCategoryName();
 
-			// 1. 카테고리 폴더 삭제
-			googleDriveService.deletePointItemFolder(categoryName);
+			// 1. Firebase Storage 카테고리 폴더 삭제
+			firebaseStorageService.deletePointItemFolder(categoryName);
 
 			// 2. 카테고리 삭제
 			adminPointCategoryRepository.deleteById(pointCategoryId);
@@ -131,12 +131,12 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 			String newCategoryName = adminPointCategoryEntity.getPointCategoryName();
 			boolean categoryNameChange = !Objects.equals(newCategoryName, oldCategoryName);
 
-			// 2. 카테고리 이름이 변경된 경우: 구글 드라이브 폴더 이동
+			// 2. 카테고리 이름이 변경된 경우: Firebase Storage 파일 이동
 			if (categoryNameChange) {
 				logger.info("[카테고리 이름 변경 감지] '{}' → '{}'", oldCategoryName, newCategoryName);
 
-				googleDriveService.updateCategoryName(newCategoryName, oldCategoryName);
-				logger.info("[구글 드라이브 업데이트 완료] 카테고리 폴더 이동 완료");
+				firebaseStorageService.updateCategoryName(newCategoryName, oldCategoryName);
+				logger.info("[Firebase Storage 업데이트 완료] 카테고리 파일 이동 완료");
 			}
 
 			// 3. DB 업데이트

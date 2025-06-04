@@ -7,142 +7,216 @@
 </head>
 <body>
 <div layout:fragment="content">
+    <!-- 페이지 헤더 -->
     <div class="page-header">
-        <h2>질문 생성</h2>
-        <a th:href="@{/admin/questions}" class="btn btn-text">
-            <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
-        </a>
+        <div class="page-header-left">
+            <h2><i class="fas fa-plus-circle"></i> 질문 생성</h2>
+        </div>
+        <div class="page-header-right">
+            <a th:href="@{/admin/questions}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>목록으로 돌아가기
+            </a>
+        </div>
     </div>
 
+    <!-- 메인 폼 컨테이너 -->
     <div class="question-form-container">
         <form th:action="@{/admin/questions/creat}" method="post" id="questionForm">
+            
+            <!-- 폼 헤더 -->
             <div class="form-header">
-                <div class="serial-number-display">
-                    <label>일련번호:</label>
-                    <div class="serial-number" th:text="${question.serialNumber}">Q0001</div>
-                    <input type="hidden" name="serialNumber" th:value="${question.serialNumber}" />
+                <div class="serial-number-section">
+                    <div class="serial-number-display">
+                        <label>일련번호</label>
+                        <div class="serial-number" th:text="${question.serialNumber}">Q0001</div>
+                        <input type="hidden" name="serialNumber" th:value="${question.serialNumber}" />
+                    </div>
                 </div>
-                <div class="status-badge private">
-                    <i class="fas fa-eye-slash"></i> 비공개 상태로 생성됩니다
-                    <input type="hidden" name="isPublic" value="no" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="questionText">질문 내용 <span class="required">*</span></label>
-                <textarea id="questionText" name="question" rows="3" required
-                    placeholder="질문 내용을 입력하세요"></textarea>
-                <div class="character-counter">
-                    <span id="questionCharCount">0</span> / 500
+                <div class="status-section">
+                    <div class="status-badge private">
+                        <i class="fas fa-eye-slash"></i> 
+                        <span class="status-text">비공개로 생성</span>
+                        <input type="hidden" name="isPublic" value="no" />
+                    </div>
                 </div>
             </div>
 
-            <div class="options-container">
-                <h3>보기 항목</h3>
+            <!-- 질문 내용 입력 -->
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="questionText" class="form-label">
+                        <i class="fas fa-question-circle"></i>
+                        질문 내용 <span class="required">*</span>
+                    </label>
+                    <textarea id="questionText" name="question" rows="4" required
+                        placeholder="질문 내용을 입력하세요" maxlength="500"></textarea>
+                    <div class="character-counter">
+                        <span id="questionCharCount">0</span> / 500
+                    </div>
+                </div>
+            </div>
 
-                <!-- 보기 1 + 사진 1 (프록시 적용) -->
-                <div class="option-row">
-                    <div class="form-group">
-                        <label for="option1">보기 1 <span class="required"></span></label>
-                        <input type="text" id="option1" name="option1" required 
-                               th:value="${randomPictures != null && randomPictures.size() > 0 && memberNicknames != null ? 
-                                        memberNicknames.get(randomPictures[0].memberId) : ''}">
-                        <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 0 && memberNicknames != null}">
-                            <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[0].memberId)}">닉네임</span>
-                            <span class="member-id" th:text="'(ID: ' + ${randomPictures[0].memberId} + ')'">회원 ID</span>
+            <!-- 보기 항목 섹션 -->
+            <div class="options-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-list-ol"></i> 보기 항목</h3>
+                    <div class="section-subtitle">각 보기에 해당하는 이미지가 자동으로 연결됩니다</div>
+                </div>
+
+                <!-- 보기 1 -->
+                <div class="option-card">
+                    <div class="option-number">1</div>
+                    <div class="option-content">
+                        <div class="form-group">
+                            <label for="option1" class="option-label">보기 1 <span class="required">*</span></label>
+                            <input type="text" id="option1" name="option1" required 
+                                   placeholder="첫 번째 보기를 입력하세요"
+                                   th:value="${randomPictures != null && randomPictures.size() > 0 && memberNicknames != null ? 
+                                            memberNicknames.get(randomPictures[0].memberId) : ''}">
+                            <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 0 && memberNicknames != null}">
+                                <span class="member-badge">
+                                    <i class="fas fa-user"></i>
+                                    <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[0].memberId)}">닉네임</span>
+                                </span>
+                                <span class="member-id" th:text="'ID: ' + ${randomPictures[0].memberId}">회원 ID</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 0}">
-                        <img th:src="@{'/proxy/image/' + ${randomPictures[0].googleDriveFileId}}"
-                             alt="참고 이미지 1" 
-                             class="option-image" />
-                        <input type="hidden" name="imageReference1" th:value="${randomPictures[0].googleDriveFileId}" />
-                    </div>
-                    <!-- 이미지가 없을 경우 대체 표시 -->
-                    <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 0}">
-                        <span>이미지 없음</span>
+                        <div class="image-container">
+                            <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 0}">
+                                <img th:src="${randomPictures[0].firebaseStorageUrl}"
+                                     alt="참고 이미지 1" 
+                                     class="option-image" />
+                                <input type="hidden" name="imageReference1" th:value="${randomPictures[0].firebaseStorageUrl}" />
+                            </div>
+                            <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 0}">
+                                <i class="fas fa-image"></i>
+                                <span>이미지 없음</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- 보기 2 + 사진 2 (프록시 적용) -->
-                <div class="option-row">
-                    <div class="form-group">
-                        <label for="option2">보기 2 <span class="required"></span></label>
-                        <input type="text" id="option2" name="option2" required 
-                               th:value="${randomPictures != null && randomPictures.size() > 1 && memberNicknames != null ? 
-                                        memberNicknames.get(randomPictures[1].memberId) : ''}">
-                        <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 1 && memberNicknames != null}">
-                            <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[1].memberId)}">닉네임</span>
-                            <span class="member-id" th:text="'(ID: ' + ${randomPictures[1].memberId} + ')'">회원 ID</span>
+                <!-- 보기 2 -->
+                <div class="option-card">
+                    <div class="option-number">2</div>
+                    <div class="option-content">
+                        <div class="form-group">
+                            <label for="option2" class="option-label">보기 2 <span class="required">*</span></label>
+                            <input type="text" id="option2" name="option2" required 
+                                   placeholder="두 번째 보기를 입력하세요"
+                                   th:value="${randomPictures != null && randomPictures.size() > 1 && memberNicknames != null ? 
+                                            memberNicknames.get(randomPictures[1].memberId) : ''}">
+                            <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 1 && memberNicknames != null}">
+                                <span class="member-badge">
+                                    <i class="fas fa-user"></i>
+                                    <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[1].memberId)}">닉네임</span>
+                                </span>
+                                <span class="member-id" th:text="'ID: ' + ${randomPictures[1].memberId}">회원 ID</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 1}">
-                        <img th:src="@{'/proxy/image/' + ${randomPictures[1].googleDriveFileId}}"
-                             alt="참고 이미지 2" 
-                             class="option-image" />
-                        <input type="hidden" name="imageReference2" th:value="${randomPictures[1].googleDriveFileId}" />
-                    </div>
-                    <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 1}">
-                        <span>이미지 없음</span>
+                        <div class="image-container">
+                            <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 1}">
+                                <img th:src="${randomPictures[1].firebaseStorageUrl}"
+                                     alt="참고 이미지 2" 
+                                     class="option-image" />
+                                <input type="hidden" name="imageReference2" th:value="${randomPictures[1].firebaseStorageUrl}" />
+                            </div>
+                            <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 1}">
+                                <i class="fas fa-image"></i>
+                                <span>이미지 없음</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 보기 3 + 사진 3 (프록시 적용) -->
-                <div class="option-row">
-                    <div class="form-group">
-                        <label for="option3">보기 3 <span class="required"></span></label>
-                        <input type="text" id="option3" name="option3" required 
-                               th:value="${randomPictures != null && randomPictures.size() > 2 && memberNicknames != null ? 
-                                        memberNicknames.get(randomPictures[2].memberId) : ''}">
-                        <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 2 && memberNicknames != null}">
-                            <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[2].memberId)}">닉네임</span>
-                            <span class="member-id" th:text="'(ID: ' + ${randomPictures[2].memberId} + ')'">회원 ID</span>
+                <!-- 보기 3 -->
+                <div class="option-card">
+                    <div class="option-number">3</div>
+                    <div class="option-content">
+                        <div class="form-group">
+                            <label for="option3" class="option-label">보기 3 <span class="required">*</span></label>
+                            <input type="text" id="option3" name="option3" required 
+                                   placeholder="세 번째 보기를 입력하세요"
+                                   th:value="${randomPictures != null && randomPictures.size() > 2 && memberNicknames != null ? 
+                                            memberNicknames.get(randomPictures[2].memberId) : ''}">
+                            <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 2 && memberNicknames != null}">
+                                <span class="member-badge">
+                                    <i class="fas fa-user"></i>
+                                    <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[2].memberId)}">닉네임</span>
+                                </span>
+                                <span class="member-id" th:text="'ID: ' + ${randomPictures[2].memberId}">회원 ID</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 2}">
-                        <img th:src="@{'/proxy/image/' + ${randomPictures[2].googleDriveFileId}}"
-                             alt="참고 이미지 3" 
-                             class="option-image" />
-                        <input type="hidden" name="imageReference3" th:value="${randomPictures[2].googleDriveFileId}" />
-                    </div>
-                    <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 2}">
-                        <span>이미지 없음</span>
+                        <div class="image-container">
+                            <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 2}">
+                                <img th:src="${randomPictures[2].firebaseStorageUrl}"
+                                     alt="참고 이미지 3" 
+                                     class="option-image" />
+                                <input type="hidden" name="imageReference3" th:value="${randomPictures[2].firebaseStorageUrl}" />
+                            </div>
+                            <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 2}">
+                                <i class="fas fa-image"></i>
+                                <span>이미지 없음</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- 보기 4 + 사진 4 (프록시 적용) -->
-                <div class="option-row">
-                    <div class="form-group">
-                        <label for="option4">보기 4 <span class="required"></span></label>
-                        <input type="text" id="option4" name="option4" required 
-                               th:value="${randomPictures != null && randomPictures.size() > 3 && memberNicknames != null ? 
-                                        memberNicknames.get(randomPictures[3].memberId) : ''}">
-                        <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 3 && memberNicknames != null}">
-                            <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[3].memberId)}">닉네임</span>
-                            <span class="member-id" th:text="'(ID: ' + ${randomPictures[3].memberId} + ')'">회원 ID</span>
+                <!-- 보기 4 -->
+                <div class="option-card">
+                    <div class="option-number">4</div>
+                    <div class="option-content">
+                        <div class="form-group">
+                            <label for="option4" class="option-label">보기 4 <span class="required">*</span></label>
+                            <input type="text" id="option4" name="option4" required 
+                                   placeholder="네 번째 보기를 입력하세요"
+                                   th:value="${randomPictures != null && randomPictures.size() > 3 && memberNicknames != null ? 
+                                            memberNicknames.get(randomPictures[3].memberId) : ''}">
+                            <div class="member-info" th:if="${randomPictures != null && randomPictures.size() > 3 && memberNicknames != null}">
+                                <span class="member-badge">
+                                    <i class="fas fa-user"></i>
+                                    <span class="member-nickname" th:text="${memberNicknames.get(randomPictures[3].memberId)}">닉네임</span>
+                                </span>
+                                <span class="member-id" th:text="'ID: ' + ${randomPictures[3].memberId}">회원 ID</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 3}">
-                        <img th:src="@{'/proxy/image/' + ${randomPictures[3].googleDriveFileId}}"
-                             alt="참고 이미지 4" 
-                             class="option-image" />
-                        <input type="hidden" name="imageReference4" th:value="${randomPictures[3].googleDriveFileId}" />
-                    </div>
-                    <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 3}">
-                        <span>이미지 없음</span>
+                        <div class="image-container">
+                            <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 3}">
+                                <img th:src="${randomPictures[3].firebaseStorageUrl}"
+                                     alt="참고 이미지 4" 
+                                     class="option-image" />
+                                <input type="hidden" name="imageReference4" th:value="${randomPictures[3].firebaseStorageUrl}" />
+                            </div>
+                            <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 3}">
+                                <i class="fas fa-image"></i>
+                                <span>이미지 없음</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 액션 버튼들 -->
             <div class="form-actions">
-                <a href="/questions" class="btn btn-outline" id="cancelBtn">취소</a>
-                <button type="submit" class="btn btn-primary" id="saveBtn">
-                    <i class="fas fa-save"></i> 저장하기
-                </button>
+                <div class="actions-group">
+                    <a href="/admin/questions" class="btn-cancel" id="cancelBtn">
+                        <i class="fas fa-times"></i> 취소
+                    </a>
+                    <button type="submit" class="btn-save" id="saveBtn">
+                        <i class="fas fa-save"></i> 저장하기
+                    </button>
+                </div>
             </div>
             
+            <!-- 안내 메시지 -->
             <div class="form-info">
-                <p><i class="fas fa-info-circle"></i> 질문 저장 후 수정 페이지에서 공개 상태로 전환할 수 있습니다.</p>
+                <div class="info-content">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="info-text">
+                        <strong>안내:</strong> 질문은 비공개 상태로 저장됩니다. 
+                        저장 후 수정 페이지에서 공개 상태로 전환할 수 있습니다.
+                    </div>
+                </div>
             </div>
         </form>
     </div>

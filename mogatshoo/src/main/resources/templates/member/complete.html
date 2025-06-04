@@ -1,54 +1,91 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/noLoginLayout}">
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='완료'">
-	<link rel="stylesheet" th:href="@{/css/member/complete.css}">
+<link rel="stylesheet" th:href="@{/css/member/complete.css}">
 </head>
 <body>
-	<div layout:fragment="content">
-		<div th:if="${postMapping == 'join'}" class="background-border-color p-4 rounded-3">
-			<h1 class="title text-center mb-5">회원가입완료</h1>
-			<p th:inline="text" class="text-color text-center fs-6 mb-5">[[${memberNickName}]]님 환영합니다.</p>
-			<div class="row text-center g-2">
-			    <div class="col-12 col-sm-6">
-			        <a class="btn w-100 completeBtn" th:href="@{/member/login}">로그인</a>
-			    </div>
-			    <div class="col-12 col-sm-6">
-			        <a class="btn w-100 completeBtn" th:href="@{/}">메인</a>
-			    </div>
-			</div>
-		</div>
-		<div th:if="${postMapping == 'findById'}" class="background-border-color p-4 rounded-3">
-			<h1 class="title text-center mb-5">아이디찾기완료</h1>
-			<p th:inline="text" class="text-color text-center fs-6 mb-5">
-				회원님의 아이디가 등록된 이메일 주소로 전송되었습니다.<br>
-				메일함을 확인해 주세요.
-			</p>
-			<div class="row text-center g-2">
-			    <div class="col-12 col-sm-6">
-			        <a class="btn w-100 completeBtn" th:href="@{/member/login}">로그인</a>
-			    </div>
-			    <div class="col-12 col-sm-6">
-			        <a class="btn w-100 completeBtn" th:href="@{/member/findByPwd}">비밀번호 찾기</a>
-			    </div>
-			</div>
-		</div>
-		<div th:if="${postMapping == 'findByPwd'}" class="background-border-color p-4 rounded-3">
-			<h1 class="title text-center mb-5">비밀번호변경완료</h1>
-			<p th:inline="text" class="text-color text-center fs-6 mb-5">
-				비밀번호가 성공적으로 변경되었습니다.<br>
-				다시 로그인해주세요.
-			</p>
-			<div class="row text-center g-2">
-			    <div class="col-12 col-sm-6">
-			        <a class="btn w-100 completeBtn" th:href="@{/member/login}">로그인</a>
-			    </div>
-			    <div class="col-12 col-sm-6">
-			        <a class="btn w-100 completeBtn" th:href="@{/}">메인</a>
-			    </div>
-			</div>
-		</div>
-	</div>
+<div layout:fragment="content">
+    <div class="windows95-container">
+        <!-- 회원가입 완료 -->
+        <div th:if="${postMapping == 'join'}" class="windows95-dialog">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <span>ℹ️</span>
+                    <span>Registration Complete</span>
+                </div>
+                <div class="title-bar-controls">
+                    <div class="title-bar-control">✕</div>
+                </div>
+            </div>
+            
+            <div class="dialog-content">
+                <div class="dialog-icon icon-join"></div>
+                <div class="complete-title">회원가입완료</div>
+                <div class="complete-message" th:inline="text">
+                    [[${memberNickName}]]님 환영합니다.<br>
+                    회원가입이 성공적으로 완료되었습니다.
+                </div>
+                <div class="button-group">
+                    <a class="windows95-button primary" th:href="@{/member/login}">로그인</a>
+                    <a class="windows95-button" th:href="@{/}">메인</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 아이디 찾기 완료 -->
+        <div th:if="${postMapping == 'findById'}" class="windows95-dialog">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <span>ℹ️</span>
+                    <span>Find ID Complete</span>
+                </div>
+                <div class="title-bar-controls">
+                    <div class="title-bar-control">✕</div>
+                </div>
+            </div>
+            
+            <div class="dialog-content">
+                <div class="dialog-icon icon-find-id"></div>
+                <div class="complete-title">아이디찾기완료</div>
+                <div class="complete-message">
+                    회원님의 아이디가 등록된 이메일 주소로 전송되었습니다.<br>
+                    메일함을 확인해 주세요.
+                </div>
+                <div class="button-group">
+                    <a class="windows95-button primary" th:href="@{/member/login}">로그인</a>
+                    <a class="windows95-button" th:href="@{/member/findByPwd}">비밀번호 찾기</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 비밀번호 변경 완료 -->
+        <div th:if="${postMapping == 'findByPwd'}" class="windows95-dialog">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <span>ℹ️</span>
+                    <span>Password Change Complete</span>
+                </div>
+                <div class="title-bar-controls">
+                    <div class="title-bar-control">✕</div>
+                </div>
+            </div>
+            
+            <div class="dialog-content">
+                <div class="dialog-icon icon-find-pwd"></div>
+                <div class="complete-title">비밀번호변경완료</div>
+                <div class="complete-message">
+                    비밀번호가 성공적으로 변경되었습니다.<br>
+                    다시 로그인해주세요.
+                </div>
+                <div class="button-group">
+                    <a class="windows95-button primary" th:href="@{/member/login}">로그인</a>
+                    <a class="windows95-button" th:href="@{/}">메인</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

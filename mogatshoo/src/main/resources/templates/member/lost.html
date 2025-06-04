@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/noLoginLayout}">
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='아이디/비밀번호 찾기'">
-	<link rel="stylesheet" th:href="@{/css/member/lost.css}">
+<link rel="stylesheet" th:href="@{/css/member/lost.css}">
 </head>
 <body>
-	<div layout:fragment="content">
-		<div class="background-border-color p-4 rounded-3">
-
-			<h1 class="title text-center mb-5">아이디/비밀번호 찾기</h1>
-	
-			<div class="row text-center mb-3 g-2">
-			    <div class="col-12">
-			        <a class="btn w-100 lostBtn" th:href="@{/member/findById}">아이디찾기</a>
-			    </div>
-			    <div class="col-12">
-			        <a class="btn w-100 lostBtn" th:href="@{/member/findByPwd}">비밀번호찾기</a>
-			    </div>
-			    <div class="col-12">
-			        <a class="btn w-100 lostBtn" th:href="@{/member/login}">로그인</a>
-			    </div>
-			</div>
-		</div>
-	</div>
+<div layout:fragment="content">
+    <div class="windows95-container">
+        <div class="windows95-dialog">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <span>🔍</span>
+                    <span>Account Recovery</span>
+                </div>
+                <div class="title-bar-controls">
+                    <div class="title-bar-control">?</div>
+                    <div class="title-bar-control">✕</div>
+                </div>
+            </div>
+            
+            <div class="dialog-content">
+                <div class="dialog-icon">🔐</div>
+                <div class="dialog-title">아이디/비밀번호 찾기</div>
+                <div class="dialog-text">
+                    아이디나 비밀번호를 잊어버리셨나요?<br>
+                    아래 옵션을 선택해 주세요.
+                </div>
+                
+                <div class="button-group">
+                    <a class="windows95-button primary" th:href="@{/member/findById}">아이디찾기</a>
+                    <a class="windows95-button" th:href="@{/member/findByPwd}">비밀번호찾기</a>
+                    <a class="windows95-button" th:href="@{/member/login}">로그인</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

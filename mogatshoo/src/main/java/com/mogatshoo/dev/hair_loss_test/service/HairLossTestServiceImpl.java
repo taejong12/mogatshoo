@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mogatshoo.dev.config.file.GoogleDriveService;
+import com.mogatshoo.dev.config.file.FirebaseStorageService;
 import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
 import com.mogatshoo.dev.hair_loss_test.entity.StageEntity;
 import com.mogatshoo.dev.hair_loss_test.repository.PictureRepository;
@@ -33,7 +33,7 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 	private StageRepository stageRepository;
 	
 	 @Autowired
-	 private GoogleDriveService googleDriveService;
+	 private FirebaseStorageService firebaseStorageService;
 
 	@Value("${file.upload-dir:/uploads}")
 	private String uploadDir;
@@ -55,23 +55,23 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 		PictureEntity existingPicture = pictureRepository.findById(memberId).orElse(null);
 		if (existingPicture != null) {
 			System.out.println("[사진 재등록] 기존 사진 삭제 시작: " + memberId);
-			// 기존 로컬 파일과 구글 드라이브 파일 삭제
-			deleteImageFile(existingPicture.getHairPicture(), existingPicture.getGoogleDriveFileId());
+			// 기존 로컬 파일과 Firebase Storage 파일 삭제
+			deleteImageFile(existingPicture.getHairPicture(), existingPicture.getFirebaseStoragePath());
 			System.out.println("[사진 재등록] 기존 사진 삭제 완료");
 		}
 	    
-	    //로컬 + 구글 드라이브 동시 저장 (saveImageFile에서 처리)
+	    // 로컬 + Firebase Storage 동시 저장 (saveImageFile에서 처리)
 	    Map<String, String> uploadResult = saveImageFile(imageFile, memberId);
 	    String fileName = uploadResult.get("localPath");
-	    String googleDriveUrl = uploadResult.get("googleDriveUrl");
-	    String googleDriveFileId = uploadResult.get("googleDriveFileId");
+	    String firebaseStorageUrl = uploadResult.get("firebaseStorageUrl");
+	    String firebaseStoragePath = uploadResult.get("firebaseStoragePath");
 
-	    //PictureEntity 저장 로직
+	    // PictureEntity 저장 로직
 	    PictureEntity pictureEntity = pictureRepository.findById(memberId).orElse(new PictureEntity());
 	    pictureEntity.setMemberId(memberId);
 	    pictureEntity.setHairPicture(fileName);
-	    pictureEntity.setGoogleDriveUrl(googleDriveUrl);
-	    pictureEntity.setGoogleDriveFileId(googleDriveFileId);
+	    pictureEntity.setFirebaseStorageUrl(firebaseStorageUrl);
+	    pictureEntity.setFirebaseStoragePath(firebaseStoragePath);
 	    
 
 	    if (pictureEntity.getCreatedAt() == null) {
@@ -124,25 +124,25 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 	    String localPath = "/uploads/" + memberId + "/" + fileName;
 	    System.out.println("로컬 파일 저장 완료: " + filePath.toAbsolutePath().toString());
 
-	    // 2. 구글 드라이브 저장 (사용자 폴더에)
-	    String googleDriveUrl = null;
-	    String googleDriveFileId = null;
+	    // 2. Firebase Storage 저장 (사용자 폴더에)
+	    String firebaseStorageUrl = null;
+	    String firebaseStoragePath = null;
 	    
 	    try {
-	        // 구글 드라이브에 사용자별 폴더 생성 후 파일 저장
-	        String driveFileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-	        googleDriveFileId = googleDriveService.uploadFileToUserFolder(imageFile, memberId, driveFileName);
-	        googleDriveUrl = googleDriveService.getFileUrl(googleDriveFileId);
-	        System.out.println("구글 드라이브 사용자 폴더에 업로드 성공: " + googleDriveUrl);
+	        // Firebase Storage에 사용자별 폴더 생성 후 파일 저장
+	        String firebaseFileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+	        firebaseStoragePath = firebaseStorageService.uploadFileToUserFolder(imageFile, memberId, firebaseFileName);
+	        firebaseStorageUrl = firebaseStorageService.getFileUrl(firebaseStoragePath);
+	        System.out.println("Firebase Storage 사용자 폴더에 업로드 성공: " + firebaseStorageUrl);
 	    } catch (Exception e) {
-	        System.err.println("구글 드라이브 업로드 실패: " + e.getMessage());
+	        System.err.println("Firebase Storage 업로드 실패: " + e.getMessage());
 	    }
 
 	    // 3. 결과 반환
 	    Map<String, String> result = new HashMap<>();
 	    result.put("localPath", localPath);
-	    result.put("googleDriveUrl", googleDriveUrl);
-	    result.put("googleDriveFileId", googleDriveFileId);
+	    result.put("firebaseStorageUrl", firebaseStorageUrl);
+	    result.put("firebaseStoragePath", firebaseStoragePath);
 	    
 	    return result;
 	}
@@ -216,18 +216,18 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 	    PictureEntity pictureEntity = pictureRepository.findById(memberId).orElse(null);
 	    
 	    if(pictureEntity != null) {
-	        // 로컬 파일과 구글 드라이브 파일 모두 삭제
-	        deleteImageFile(pictureEntity.getHairPicture(), pictureEntity.getGoogleDriveFileId());
+	        // 로컬 파일과 Firebase Storage 파일 모두 삭제
+	        deleteImageFile(pictureEntity.getHairPicture(), pictureEntity.getFirebaseStoragePath());
 	    }
 	    
-	    // 구글 드라이브 사용자 폴더 전체 삭제
+	    // Firebase Storage 사용자 폴더 전체 삭제
 	    try {
-	        if (googleDriveService.isEnabled()) {
-	            googleDriveService.deleteUserFolder(memberId);
-	            System.out.println("[회원 탈퇴] 구글 드라이브 사용자 폴더 삭제 완료: " + memberId);
+	        if (firebaseStorageService.isEnabled()) {
+	            firebaseStorageService.deleteUserFolder(memberId);
+	            System.out.println("[회원 탈퇴] Firebase Storage 사용자 폴더 삭제 완료: " + memberId);
 	        }
 	    } catch (Exception e) {
-	        System.err.println("[회원 탈퇴] 구글 드라이브 사용자 폴더 삭제 실패: " + e.getMessage());
+	        System.err.println("[회원 탈퇴] Firebase Storage 사용자 폴더 삭제 실패: " + e.getMessage());
 	    }
 	    
 	    // 로컬 사용자 폴더 삭제
@@ -239,7 +239,7 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 	}
 
 	// 회원탈퇴시 이미지 삭제
-	public void deleteImageFile(String imagePath, String googleDriveFileId) {
+	public void deleteImageFile(String imagePath, String firebaseStoragePath) {
 	    try {
 	        if (imagePath != null && !imagePath.isEmpty()) {
 	            String fullPath = uploadDir + imagePath.replace("/uploads", "");
@@ -250,13 +250,13 @@ public class HairLossTestServiceImpl implements HairLossTestService {
 	        e.printStackTrace();
 	    }
 	    
-	    // 구글 드라이브 파일 삭제용
+	    // Firebase Storage 파일 삭제
 	    try {
-	        if (googleDriveFileId != null && !googleDriveFileId.isEmpty() && googleDriveService.isEnabled()) {
-	            googleDriveService.deleteFile(googleDriveFileId);
+	        if (firebaseStoragePath != null && !firebaseStoragePath.isEmpty() && firebaseStorageService.isEnabled()) {
+	            firebaseStorageService.deleteFile(firebaseStoragePath);
 	        }
 	    } catch (Exception e) {
-	        System.err.println("구글 드라이브 파일 삭제 실패: " + e.getMessage());
+	        System.err.println("Firebase Storage 파일 삭제 실패: " + e.getMessage());
 	        e.printStackTrace();
 	    }
 	}

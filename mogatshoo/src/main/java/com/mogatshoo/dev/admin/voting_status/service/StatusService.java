@@ -1,6 +1,6 @@
-package com.mogatshoo.dev.voting_status.service;
+package com.mogatshoo.dev.admin.voting_status.service;
 
-import com.mogatshoo.dev.voting_status.entity.StatusEntity;
+import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

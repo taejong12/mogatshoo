@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 import com.mogatshoo.dev.admin.point.item.repository.AdminPointItemImgRepository;
-import com.mogatshoo.dev.config.file.GoogleDriveService;
+import com.mogatshoo.dev.config.file.FirebaseStorageService;
 
 import jakarta.transaction.Transactional;
 
@@ -28,7 +28,7 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 	private AdminPointItemImgRepository adminPointItemImgRepository;
 
 	@Autowired
-	private GoogleDriveService googleDriveService;
+	private FirebaseStorageService firebaseStorageService;
 
 	@Override
 	public List<AdminPointItemImgEntity> findByItemId(List<AdminPointItemEntity> AdminPointItemEntity) {
@@ -49,23 +49,23 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 		try {
 			AdminPointItemImgEntity oldImgEntity = adminPointItemImgRepository.findByPointItemId(pointItemId);
 			if (oldImgEntity != null && oldImgEntity.getPointItemImgName() != null) {
-				// 기존 파일 삭제
-				googleDriveService.deletePointItemImg(oldImgEntity.getPointItemImgFileId());
+				// 기존 파일 삭제 (Firebase Storage Path 사용)
+				firebaseStorageService.deletePointItemImg(oldImgEntity.getPointItemImgFileId());
 			}
 
 			// 이미지 업로드
 			String originalFilename = imgFile.getOriginalFilename();
 			String newFileName = UUID.randomUUID().toString() + "_" + originalFilename;
-			String pointItemImgFileId = googleDriveService.uploadFileToPointItem(imgFile, pointCategoryName,
+			String firebaseStoragePath = firebaseStorageService.uploadFileToPointItem(imgFile, pointCategoryName,
 					newFileName);
-			String uploadDir = googleDriveService.getFileUrl(pointItemImgFileId);
+			String firebaseStorageUrl = firebaseStorageService.getFileUrl(firebaseStoragePath);
 
 			// DB에 이미지 정보 저장
 			AdminPointItemImgEntity imgEntity = new AdminPointItemImgEntity();
 			imgEntity.setPointItemId(pointItemId);
-			imgEntity.setPointItemImgFileId(pointItemImgFileId);
+			imgEntity.setPointItemImgFileId(firebaseStoragePath); // Firebase Storage Path 저장
 			imgEntity.setPointItemImgName(newFileName);
-			imgEntity.setPointItemImgPath(uploadDir);
+			imgEntity.setPointItemImgPath(firebaseStorageUrl); // Firebase Storage URL 저장
 
 			adminPointItemImgRepository.save(imgEntity);
 			logger.info("DB 이미지 정보 저장 완료 - pointItemId: {}, 파일명: {}", pointItemId, newFileName);
@@ -99,10 +99,10 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 			AdminPointItemImgEntity adminPointItemImgEntity = adminPointItemImgRepository
 					.findByPointItemId(pointItemId);
 			if (adminPointItemImgEntity != null) {
-				// 구글 드라이브 이미지 삭제
+				// Firebase Storage 이미지 삭제
 				if (adminPointItemImgEntity != null && adminPointItemImgEntity.getPointItemImgFileId() != null
-						&& googleDriveService.isEnabled()) {
-					googleDriveService.deletePointItemImg(adminPointItemImgEntity.getPointItemImgFileId());
+						&& firebaseStorageService.isEnabled()) {
+					firebaseStorageService.deletePointItemImg(adminPointItemImgEntity.getPointItemImgFileId());
 				}
 				// DB 이미지 삭제
 				adminPointItemImgRepository.deleteById(adminPointItemImgEntity.getPointItemImgId());
@@ -142,16 +142,27 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 				return;
 			}
 
-			// 구글 드라이브 파일 ID
-			String fileId = imgEntity.getPointItemImgFileId();
+			// Firebase Storage 파일 경로
+			String filePath = imgEntity.getPointItemImgFileId();
 
-			if (fileId == null) {
-				logger.warn("moveImgToNewCategory: 이미지 파일 ID가 존재하지 않음. ID: {}", pointItemId);
+			if (filePath == null) {
+				logger.warn("moveImgToNewCategory: 이미지 파일 경로가 존재하지 않음. ID: {}", pointItemId);
 				return;
 			}
 
-			// 2. 폴더 이동
-			googleDriveService.moveImgToNewCategory(fileId, newCategoryName, oldCategoryName);
+			// 2. 파일 이동 (Firebase Storage에서는 파일 경로로 이동)
+			firebaseStorageService.moveImgToNewCategory(filePath, newCategoryName, oldCategoryName);
+
+			// 3. DB 업데이트 - 새로운 파일 경로로 업데이트
+			String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+			String newFilePath = "point-items/" + newCategoryName + "/" + fileName;
+			String newFileUrl = firebaseStorageService.getFileUrl(newFilePath);
+			
+			imgEntity.setPointItemImgFileId(newFilePath);
+			imgEntity.setPointItemImgPath(newFileUrl);
+			adminPointItemImgRepository.save(imgEntity);
+
+			logger.info("이미지 카테고리 이동 및 DB 업데이트 완료. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName);
 
 			imgEntity.setPointItemImgUpdate(LocalDateTime.now());
 
@@ -162,6 +173,6 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 
 	@Override
 	public boolean pointCategoryImgCheck(String pointCategoryName) {
-		return googleDriveService.pointCategoryImgCheck(pointCategoryName);
+		return firebaseStorageService.pointCategoryImgCheck(pointCategoryName);
 	}
 }
