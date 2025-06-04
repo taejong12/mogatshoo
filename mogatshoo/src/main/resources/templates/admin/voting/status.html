@@ -28,9 +28,21 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
-                        <div class="stat-card">
+                        <div class="stat-card pending">
+                            <div class="stat-number" th:text="${pendingQuestions ?: 0}">0</div>
+                            <div class="stat-label">보류 질문</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card active">
                             <div class="stat-number" th:text="${activeQuestions ?: 0}">0</div>
                             <div class="stat-label">진행중 질문</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card ended">
+                            <div class="stat-number" th:text="${endedQuestions ?: 0}">0</div>
+                            <div class="stat-label">종료 질문</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
@@ -61,25 +73,38 @@
             <!-- 컨트롤 섹션 -->
             <div class="controls-section">
                 <div class="row align-items-center">
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <select class="form-select" id="statusFilter">
                                     <option value="all">전체 상태</option>
+                                    <option value="pending">보류</option>
                                     <option value="active">진행중</option>
                                     <option value="ended">종료</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <select class="form-select" id="rateFilter">
-                                    <option value="all">전체 투표율</option>
+                                    <option value="all">전체 참여율</option>
                                     <option value="high">40% 이상</option>
                                     <option value="low">40% 미만</option>
                                 </select>
                             </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="emailFilter">
+                                    <option value="all">전체</option>
+                                    <option value="eligible">이메일 전송 가능</option>
+                                    <option value="not-eligible">이메일 전송 불가</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+                                    <i class="fas fa-times me-2"></i>필터 초기화
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
                         <form th:action="@{/admin/voting-status/refresh}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-refresh">
                                 <i class="fas fa-sync-alt me-2"></i>새로고침
@@ -115,16 +140,20 @@
                             <tr>
                                 <th>시리얼 번호</th>
                                 <th>질문 내용</th>
-                                <th>상태</th>
+                                <th>투표 상태</th>
+                                <th>투표 기간</th>
                                 <th>최다득표자</th>
-                                <th>투표율 (%)</th>
+                                <th>참여율 (%)</th>
                                 <th>작업</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="stat : ${votingStatistics}" 
-                                th:data-status="${stat.isEnded}" 
-                                th:data-rate="${stat.votingRate}">
+                                th:data-voting-status="${stat.currentVotingStatus}"
+                                th:data-participation-rate="${stat.participationRate}"
+                                th:data-email-eligible="${stat.emailEligible}"
+                                class="voting-row">
+                                
                                 <td class="serial-number" th:text="${stat.serialNumber}"></td>
                                 
                                 <td class="question-content" th:text="${stat.questionContent}" 
@@ -132,33 +161,79 @@
                                 </td>
                                 
                                 <td>
-                                    <span th:class="'status-badge ' + (${stat.isEnded == 'yes'} ? 'status-ended' : 'status-active')"
-                                          th:text="${stat.endedStatusKorean}"></span>
+                                    <!-- 동적 상태 표시 -->
+                                    <span th:switch="${stat.currentVotingStatus}">
+                                        <span th:case="'보류'" class="status-pending">
+                                            <i class="fas fa-pause-circle me-1"></i>보류
+                                        </span>
+                                        <span th:case="'진행중'" class="status-active">
+                                            <i class="fas fa-play-circle me-1"></i>진행중
+                                        </span>
+                                        <span th:case="'종료'" class="status-ended">
+                                            <i class="fas fa-stop-circle me-1"></i>종료
+                                        </span>
+                                        <span th:case="*" class="status-pending">
+                                            <i class="fas fa-question-circle me-1"></i>알 수 없음
+                                        </span>
+                                    </span>
                                 </td>
+
+                                <td class="voting-period-info">
+                                    <div th:if="${stat.votingStartDate != null and stat.votingEndDate != null}">
+                                        <small class="voting-period">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            <span th:text="${#temporals.format(stat.votingStartDate, 'MM/dd HH:mm')}"></span>
+                                            ~
+                                            <span th:text="${#temporals.format(stat.votingEndDate, 'MM/dd HH:mm')}"></span>
+                                        </small>
+                                    </div>
+                                    <div th:if="${stat.votingStartDate == null or stat.votingEndDate == null}">
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>미설정
+                                        </small>
+                                    </div>
+                                </td>
+                                
                                 <td class="top-voter-info">
                                     <span class="voter-name" th:text="${stat.topVotedName ?: '투표 없음'}"></span>
                                     <span class="vote-count" th:if="${stat.topVoteCount != null and stat.topVoteCount > 0}" 
                                           th:text="${stat.topVoteCount + '표'}"></span>
                                 </td>
+                                
                                 <td class="voting-rate-container">
-                                    <span th:class="${'rate-number ' + (stat.votingRate >= 50 ? 'rate-high' : stat.votingRate >= 40 ? 'rate-medium' : 'rate-low')}"
-                                          th:text="${stat.formattedVotingRate}"></span>
+                                    <span th:class="${'rate-number ' + (stat.participationRate >= 50 ? 'rate-high' : stat.participationRate >= 40 ? 'rate-medium' : 'rate-low')}"
+                                          th:text="${stat.formattedParticipationRate}"></span>
                                     <div class="progress-bar-custom">
                                         <div class="progress-fill" 
-                                             th:style="${'width: ' + stat.votingRate + '%; background: ' + (stat.votingRate >= 50 ? '#10b981' : stat.votingRate >= 40 ? '#f59e0b' : '#ef4444') + ';'}"></div>
+                                             th:style="${'width: ' + stat.participationRate + '%; background: ' + (stat.participationRate >= 50 ? '#10b981' : stat.participationRate >= 40 ? '#f59e0b' : '#ef4444') + ';'}"></div>
+                                    </div>
+                                    <small class="text-muted d-block mt-1">
+                                        <span th:text="${stat.uniqueVoters ?: 0}">0</span>명 참여 / 
+                                        <span th:text="${stat.totalVotes ?: 0}">0</span>표
+                                    </small>
+                                </td>
+                                
+                                <td class="actions-container">
+                                    <div class="btn-group-vertical btn-group-sm">
+                                        <!-- 이메일 전송 버튼 -->
+                                        <a th:if="${stat.emailEligible and stat.currentVotingStatus == '종료'}" 
+                                           th:href="@{/admin/email/emailSend/{serialNumber}(serialNumber=${stat.serialNumber})}"
+                                           class="btn btn-email btn-sm">
+                                            <i class="fas fa-envelope me-2"></i>이메일
+                                        </a>
+                                        <button th:if="${!stat.emailEligible or stat.currentVotingStatus != '종료'}" 
+                                                class="btn btn-email btn-sm" disabled
+                                                th:title="${stat.emailEligible ? '투표가 종료되지 않음' : '참여율 40% 미만'}">
+                                            <i class="fas fa-envelope me-2"></i>이메일
+                                        </button>
+                                        
+                                        <!-- 상세 보기 버튼 -->
+                                        <a th:href="@{/admin/questions/{serialNumber}(serialNumber=${stat.serialNumber})}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-2"></i>상세
+                                        </a>
                                     </div>
                                 </td>
-								<td class="actions-container">
-								    <a th:if="${stat.emailEligible}" 
-								       th:href="@{/admin/email/emailSend/{serialNumber}(serialNumber=${stat.serialNumber})}"
-								       class="btn btn-email">
-								        <i class="fas fa-envelope me-2"></i>이메일
-								    </a>
-								    <button th:if="${!stat.emailEligible}" 
-								            class="btn btn-email" disabled>
-								        <i class="fas fa-envelope me-2"></i>이메일
-								    </button>
-								</td>
                             </tr>
                         </tbody>
                     </table>

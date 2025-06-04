@@ -1,6 +1,6 @@
 package com.mogatshoo.dev.admin.voting_status.controller;
 
-import com.mogatshoo.dev.admin.amdinEmail.service.AdminEmailService; // 추가
+import com.mogatshoo.dev.admin.amdinEmail.service.AdminEmailService;
 import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
 import com.mogatshoo.dev.admin.voting_status.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,16 +8,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity; // 추가
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
-import java.util.HashMap; // 추가
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map; // 추가
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/voting-status")
@@ -27,7 +27,7 @@ public class StatusController {
     private StatusService statusService;
     
     @Autowired
-    private AdminEmailService adminEmailService; // 추가
+    private AdminEmailService adminEmailService;
 
     // 기존 투표 관리 현황 페이지 (페이지네이션 추가) - 수정된 부분
     @GetMapping("")
@@ -48,8 +48,10 @@ public class StatusController {
                 model.addAttribute("message", "현재 등록된 질문이 없습니다.");
                 model.addAttribute("votingStatistics", new ArrayList<>());
                 model.addAttribute("totalQuestions", 0);
-                model.addAttribute("eligibleQuestions", 0);
+                model.addAttribute("pendingQuestions", 0);
                 model.addAttribute("activeQuestions", 0);
+                model.addAttribute("endedQuestions", 0);
+                model.addAttribute("eligibleQuestions", 0);
                 model.addAttribute("totalMembers", 0);
                 
                 // 페이지네이션 정보
@@ -64,7 +66,7 @@ public class StatusController {
             
             List<StatusEntity> votingStatistics = votingStatisticsPage.getContent();
             
-            // 각 질문별 이메일 전송 여부 확인 추가
+            // 각 질문별 이메일 전송 여부 확인
             Map<String, Boolean> emailSentStatus = new HashMap<>();
             for (StatusEntity status : votingStatistics) {
                 if (status.getTopVotedId() != null) {
@@ -78,24 +80,33 @@ public class StatusController {
             
             // 기본 통계 정보
             model.addAttribute("votingStatistics", votingStatistics);
-            model.addAttribute("emailSentStatus", emailSentStatus); // 추가
+            model.addAttribute("emailSentStatus", emailSentStatus);
             
             // 전체 통계 (페이징과 별도로 계산)
             int totalQuestions = (int) votingStatisticsPage.getTotalElements();
             model.addAttribute("totalQuestions", totalQuestions);
             
-            // 투표율 40% 이상이고 종료된 질문 수 계산 (현재 페이지 기준)
+            // 상태별 통계 계산 (동적 상태 기준)
+            long pendingQuestions = votingStatistics.stream()
+                    .filter(stat -> "보류".equals(stat.getCurrentVotingStatus()))
+                    .count();
+            long activeQuestions = votingStatistics.stream()
+                    .filter(stat -> "진행중".equals(stat.getCurrentVotingStatus()))
+                    .count();
+            long endedQuestions = votingStatistics.stream()
+                    .filter(stat -> "종료".equals(stat.getCurrentVotingStatus()))
+                    .count();
+            
+            model.addAttribute("pendingQuestions", pendingQuestions);
+            model.addAttribute("activeQuestions", activeQuestions);
+            model.addAttribute("endedQuestions", endedQuestions);
+            
+            // 이메일 전송 가능한 질문 수 계산 (종료되고 참여율 40% 이상)
             long eligibleQuestions = votingStatistics.stream()
-                    .filter(stat -> "yes".equals(stat.getIsEnded()) && 
-                                   stat.getVotingRate() != null && stat.getVotingRate() >= 40.0)
+                    .filter(stat -> "종료".equals(stat.getCurrentVotingStatus()) && 
+                                   stat.getParticipationRate() != null && stat.getParticipationRate() >= 40.0)
                     .count();
             model.addAttribute("eligibleQuestions", eligibleQuestions);
-            
-            // 진행중인 질문 수 계산 (현재 페이지 기준)
-            long activeQuestions = votingStatistics.stream()
-                    .filter(stat -> "no".equals(stat.getIsEnded()))
-                    .count();
-            model.addAttribute("activeQuestions", activeQuestions);
             
             // 전체 회원 수
             if (!votingStatistics.isEmpty()) {
@@ -155,7 +166,7 @@ public class StatusController {
         }
     }
 
-    // 이메일 전송 페이지로 이동 - 기존 메서드 수정
+    // 이메일 전송 페이지로 이동 - 참여율 기준으로 수정
     @GetMapping("/email/{serialNumber}")
     public String emailPage(@PathVariable String serialNumber, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -167,14 +178,18 @@ public class StatusController {
                 return "redirect:/admin/voting-status";
             }
             
-            // 투표율 40% 이상인지 확인 (종료된 질문만)
-            if (!"yes".equals(questionStats.getIsEnded())) {
-                redirectAttributes.addFlashAttribute("errorMessage", "진행 중인 질문은 이메일을 전송할 수 없습니다.");
+            // 종료된 질문인지 확인 (동적 상태 확인)
+            if (!"종료".equals(questionStats.getCurrentVotingStatus())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "투표가 종료된 질문만 이메일을 전송할 수 있습니다.");
                 return "redirect:/admin/voting-status";
             }
             
-            if (questionStats.getVotingRate() < 40.0) {
-                redirectAttributes.addFlashAttribute("errorMessage", "투표율이 40% 미만인 질문은 이메일을 전송할 수 없습니다.");
+            // 참여율 40% 이상인지 확인
+            if (questionStats.getParticipationRate() < 40.0) {
+                redirectAttributes.addFlashAttribute("errorMessage", 
+                    String.format("참여율이 40%% 미만입니다. (현재: %.1f%%, 참여자: %d명)", 
+                        questionStats.getParticipationRate(), 
+                        questionStats.getUniqueVoters()));
                 return "redirect:/admin/voting-status";
             }
             
@@ -213,7 +228,7 @@ public class StatusController {
         return "redirect:/admin/voting-status?page=" + page;
     }
     
-    // 빠른 이메일 전송 API 추가
+    // 빠른 이메일 전송 API - 참여율 기준으로 수정
     @PostMapping("/quick-email/{serialNumber}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> quickSendEmail(@PathVariable String serialNumber) {
@@ -229,16 +244,18 @@ public class StatusController {
                 return ResponseEntity.badRequest().body(response);
             }
             
-            // 조건 확인
-            if (!"yes".equals(questionStats.getIsEnded())) {
+            // 종료된 질문인지 확인 (동적 상태 확인)
+            if (!"종료".equals(questionStats.getCurrentVotingStatus())) {
                 response.put("success", false);
-                response.put("message", "진행 중인 질문은 이메일을 전송할 수 없습니다.");
+                response.put("message", "투표가 종료된 질문만 이메일을 전송할 수 있습니다.");
                 return ResponseEntity.badRequest().body(response);
             }
             
-            if (questionStats.getVotingRate() < 40.0) {
+            // 참여율 40% 이상인지 확인
+            if (questionStats.getParticipationRate() < 40.0) {
                 response.put("success", false);
-                response.put("message", "투표율이 40% 미만입니다.");
+                response.put("message", String.format("참여율이 40%% 미만입니다. (현재: %.1f%%)", 
+                    questionStats.getParticipationRate()));
                 return ResponseEntity.badRequest().body(response);
             }
             
