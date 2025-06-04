@@ -215,7 +215,7 @@ public class FirebaseStorageService {
         }
 
         try {
-            String folderPrefix = "users/" + memberId + "/";
+            String folderPrefix = "member/" + memberId + "/";
             
             // 해당 접두사를 가진 모든 파일 조회 및 삭제
             storage.list(storageBucket, Storage.BlobListOption.prefix(folderPrefix))
