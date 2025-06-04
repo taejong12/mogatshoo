@@ -21,7 +21,7 @@
 
     <!-- 메인 폼 컨테이너 -->
     <div class="question-form-container">
-        <form th:action="@{/admin/questions/create}" method="post" id="questionForm">
+        <form th:action="@{/admin/questions/creat}" method="post" id="questionForm">
             
             <!-- 폼 헤더 -->
             <div class="form-header">
@@ -83,10 +83,10 @@
                         </div>
                         <div class="image-container">
                             <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 0}">
-                                <img th:src="@{'/proxy/image/' + ${randomPictures[0].googleDriveFileId}}"
+                                <img th:src="${randomPictures[0].firebaseStorageUrl}"
                                      alt="참고 이미지 1" 
                                      class="option-image" />
-                                <input type="hidden" name="imageReference1" th:value="${randomPictures[0].googleDriveFileId}" />
+                                <input type="hidden" name="imageReference1" th:value="${randomPictures[0].firebaseStorageUrl}" />
                             </div>
                             <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 0}">
                                 <i class="fas fa-image"></i>
@@ -116,10 +116,10 @@
                         </div>
                         <div class="image-container">
                             <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 1}">
-                                <img th:src="@{'/proxy/image/' + ${randomPictures[1].googleDriveFileId}}"
+                                <img th:src="${randomPictures[1].firebaseStorageUrl}"
                                      alt="참고 이미지 2" 
                                      class="option-image" />
-                                <input type="hidden" name="imageReference2" th:value="${randomPictures[1].googleDriveFileId}" />
+                                <input type="hidden" name="imageReference2" th:value="${randomPictures[1].firebaseStorageUrl}" />
                             </div>
                             <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 1}">
                                 <i class="fas fa-image"></i>
@@ -149,10 +149,10 @@
                         </div>
                         <div class="image-container">
                             <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 2}">
-                                <img th:src="@{'/proxy/image/' + ${randomPictures[2].googleDriveFileId}}"
+                                <img th:src="${randomPictures[2].firebaseStorageUrl}"
                                      alt="참고 이미지 3" 
                                      class="option-image" />
-                                <input type="hidden" name="imageReference3" th:value="${randomPictures[2].googleDriveFileId}" />
+                                <input type="hidden" name="imageReference3" th:value="${randomPictures[2].firebaseStorageUrl}" />
                             </div>
                             <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 2}">
                                 <i class="fas fa-image"></i>
@@ -182,10 +182,10 @@
                         </div>
                         <div class="image-container">
                             <div class="image-preview" th:if="${randomPictures != null && randomPictures.size() > 3}">
-                                <img th:src="@{'/proxy/image/' + ${randomPictures[3].googleDriveFileId}}"
+                                <img th:src="${randomPictures[3].firebaseStorageUrl}"
                                      alt="참고 이미지 4" 
                                      class="option-image" />
-                                <input type="hidden" name="imageReference4" th:value="${randomPictures[3].googleDriveFileId}" />
+                                <input type="hidden" name="imageReference4" th:value="${randomPictures[3].firebaseStorageUrl}" />
                             </div>
                             <div class="no-image-placeholder" th:unless="${randomPictures != null && randomPictures.size() > 3}">
                                 <i class="fas fa-image"></i>

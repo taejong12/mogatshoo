@@ -233,10 +233,10 @@ public class QuestionController {
 	            for (int i = 0; i < fetchedPictures.size(); i++) {
 	                PictureEntity pic = fetchedPictures.get(i);
 	                if (pic != null) {
-	                    System.out.println("사진 " + i + " - ID: " + pic.getMemberId() + ", Google Drive URL: " + pic.getGoogleDriveUrl());
+	                    System.out.println("사진 " + i + " - ID: " + pic.getMemberId() + ", Firebase Storage URL: " + pic.getFirebaseStorageUrl());
 
-	                    // 구글 드라이브 URL이 있는 사진만 추가
-	                    if (pic.getGoogleDriveUrl() != null && !pic.getGoogleDriveUrl().isEmpty()) {
+	                    // Firebase Storage URL이 있는 사진만 추가
+	                    if (pic.getFirebaseStorageUrl() != null && !pic.getFirebaseStorageUrl().isEmpty()) {
 	                        randomPictures.add(pic);
 	                        
 	                        // 회원 ID로 닉네임 조회 및 저장
@@ -252,7 +252,7 @@ public class QuestionController {
 	                            memberNicknames.put(pic.getMemberId(), "알 수 없음");
 	                        }
 	                    } else {
-	                        System.out.println("구글 드라이브 URL 없음, 건너뜀: " + pic.getMemberId());
+	                        System.out.println("Firebase Storage URL 없음, 건너뜀: " + pic.getMemberId());
 	                    }
 	                } else {
 	                    System.out.println("사진 " + i + "는 null입니다");
@@ -300,18 +300,18 @@ public class QuestionController {
 	    System.out.println("imageReference3: " + imageReference3);
 	    System.out.println("imageReference4: " + imageReference4);
 	    
-	    // 이미지 파일 ID를 프록시 URL로 변환해서 저장
+	    // Firebase Storage URL을 직접 저장
 	    if (imageReference1 != null && !imageReference1.isEmpty()) {
-	        question.setOption1("/proxy/image/" + imageReference1);
+	        question.setOption1(imageReference1); // Firebase Storage URL 직접 저장
 	    }
 	    if (imageReference2 != null && !imageReference2.isEmpty()) {
-	        question.setOption2("/proxy/image/" + imageReference2);
+	        question.setOption2(imageReference2); // Firebase Storage URL 직접 저장
 	    }
 	    if (imageReference3 != null && !imageReference3.isEmpty()) {
-	        question.setOption3("/proxy/image/" + imageReference3);
+	        question.setOption3(imageReference3); // Firebase Storage URL 직접 저장
 	    }
 	    if (imageReference4 != null && !imageReference4.isEmpty()) {
-	        question.setOption4("/proxy/image/" + imageReference4);
+	        question.setOption4(imageReference4); // Firebase Storage URL 직접 저장
 	    }
 
 	    System.out.println("저장될 질문: " + question);
