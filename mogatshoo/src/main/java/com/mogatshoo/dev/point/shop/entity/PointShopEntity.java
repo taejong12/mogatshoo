@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.admin.point.item.entity;
+package com.mogatshoo.dev.point.shop.entity;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Getter;
@@ -21,8 +20,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AdminPointItemEntity {
-
+public class PointShopEntity {
 	// 상품아이디
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,14 +61,12 @@ public class AdminPointItemEntity {
 	// 회원아이디
 	@Column(nullable = false)
 	private String memberId;
-	
+
 	// 이미지 파일
 	@Transient
-	private MultipartFile imgFile;
+	private PointShopImgEntity imgFile;
 	
-	// 수정일 자동 설정
-	@PreUpdate
-	protected void onUpdate() {
-		this.pointItemUpdate = LocalDateTime.now();
-	}
+	// 카테고리
+	@Transient
+	private PointShopCategoryEntity category;
 }

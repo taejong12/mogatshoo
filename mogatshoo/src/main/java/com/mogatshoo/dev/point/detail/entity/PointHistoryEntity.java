@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.point.entity;
+package com.mogatshoo.dev.point.detail.entity;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "point_history")
+@Entity
 @Table(name = "point_history")
 @Setter
 @Getter

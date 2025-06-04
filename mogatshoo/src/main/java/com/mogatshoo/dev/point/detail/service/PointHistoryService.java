@@ -1,9 +1,9 @@
-package com.mogatshoo.dev.point.service;
+package com.mogatshoo.dev.point.detail.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.mogatshoo.dev.point.entity.PointHistoryEntity;
+import com.mogatshoo.dev.point.detail.entity.PointHistoryEntity;
 
 public interface PointHistoryService {
 

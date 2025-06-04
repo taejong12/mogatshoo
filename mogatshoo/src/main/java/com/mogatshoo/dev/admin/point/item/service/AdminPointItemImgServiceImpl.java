@@ -1,5 +1,6 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -163,10 +164,11 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 
 			logger.info("이미지 카테고리 이동 및 DB 업데이트 완료. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName);
 
+			//imgEntity.setPointItemImgUpdate(LocalDateTime.now());
+
 		} catch (Exception e) {
 			logger.error("이미지 카테고리 이동 실패. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName, e);
 		}
-
 	}
 
 	@Override

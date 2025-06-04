@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name="member")
+@Entity
 @Table(name="member")
 @Setter
 @Getter

@@ -24,7 +24,7 @@ import com.mogatshoo.dev.member.entity.AgreeEntity;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.repository.AgreeRepository;
 import com.mogatshoo.dev.member.repository.MemberRepository;
-import com.mogatshoo.dev.point.service.PointService;
+import com.mogatshoo.dev.point.detail.service.PointService;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

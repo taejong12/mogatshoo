@@ -1,4 +1,6 @@
-package com.mogatshoo.dev.point.service;
+package com.mogatshoo.dev.point.detail.service;
+
+import com.mogatshoo.dev.point.detail.entity.PointEntity;
 
 public interface PointService {
 
@@ -11,4 +13,6 @@ public interface PointService {
 	void checkAttendancePoint(String memberId);
 
 	void memberDelete(String memberId);
+
+	PointEntity findById(String memberId);
 }

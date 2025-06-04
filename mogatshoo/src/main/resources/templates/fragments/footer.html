@@ -49,7 +49,7 @@
          <!-- 로그인 상태일 때 표시되는 내용 -->
          <div sec:authorize="isAuthenticated()" class="footer-auth">
             <div class="footer-folder" id="auth-data" th:data-member-id="${#authentication.name}">
-               <a th:href="@{/point/list(memberId=${#authentication.name})}" class="footer-link">
+               <a th:href="@{/point/detail/list(memberId=${#authentication.name})}" class="footer-link">
                   <img th:src="@{/img/footer/point.png}" alt="포인트" />
                   <span>포인트</span>
                </a>

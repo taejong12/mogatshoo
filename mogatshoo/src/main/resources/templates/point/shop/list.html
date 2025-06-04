@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트샵목록'">
+</head>
+<body>
+	<div layout:fragment="content">
+		<!-- 카테고리 필터 -->
+		<ul class="nav nav-pills my-4">
+			<li class="nav-item"><a class="nav-link"
+				th:href="@{/point/shop/list}"
+				th:classappend="${selectedCategoryId} == null ? 'active' : ''">전체</a>
+			</li>
+			<li class="nav-item" th:each="category : ${pointCategoryList}">
+				<a class="nav-link"
+				th:href="@{/point/shop/list(pointCategoryId=${category.pointCategoryId})}"
+				th:text="${category.pointCategoryName}"
+				th:classappend="${selectedCategoryId} == ${category.pointCategoryId} ? 'active' : ''"></a>
+			</li>
+		</ul>
+
+		<h1>포인트샵목록</h1>
+
+		<!-- 결과가 없을 경우 -->
+		<div th:if="${#lists.isEmpty(pointShopList)}">등록된 상품이 없습니다.</div>
+
+		<div class="row row-cols-1 row-cols-md-3 g-4"
+			th:each="pointShop : ${pointShopList}">
+			<div class="col">
+				<a
+					class="card h-100 text-white bg-dark border-secondary text-decoration-none"
+					th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
+					<img th:src="@{${pointShop.imgFile.pointItemImgPath}}"
+					class="card-img-top" alt="상품 이미지"
+					style="object-fit: cover; height: 200px;">
+					<div class="card-body">
+						<h5 class="card-title" th:text="${pointShop.pointItemName}">상품
+							이름</h5>
+						<p class="card-text"
+							th:text="'가격: ' + ${pointShop.pointItemPrice} + 'P'">가격</p>
+					</div>
+				</a>
+			</div>
+		</div>
+
+		<!-- 페이지네이션 -->
+		<nav th:if="${!#lists.isEmpty(pointShopList)}"
+			aria-label="Page navigation">
+			<ul class="pagination justify-content-center">
+
+				<!-- 이전 버튼: startPage가 10 이상일 때만 보임 -->
+				<li class="page-item" th:if="${startPage >= 10}"><a
+					class="page-link"
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${startPage - 10})}"
+					aria-label="Previous"> <span aria-hidden="true">&laquo;이전</span>
+				</a></li>
+
+				<!-- 페이지 번호 -->
+				<li class="page-item"
+					th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
+					th:classappend="${i} == ${currentPage} ? ' active' : ''"><a
+					class="page-link"
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
+					th:text="${i + 1}"> </a></li>
+
+				<!-- 다음 버튼: endPage가 totalPages보다 작을 때만 보임 -->
+				<li class="page-item" th:if="${endPage < totalPages}"><a
+					class="page-link"
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${endPage})}"
+					aria-label="Next"> <span aria-hidden="true">다음 &raquo;</span>
+				</a></li>
+			</ul>
+		</nav>
+	</div>
+</body>
+</html>

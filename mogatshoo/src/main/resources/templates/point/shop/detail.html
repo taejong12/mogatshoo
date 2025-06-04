@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트상품상세'">
+<body>
+	<div layout:fragment="content">
+
+		<div class="col-12 col-md-6">
+			<h1 class="my-4 text-center">포인트상품상세</h1>
+
+			<div class="card shadow-sm mb-5">
+				<div class="card-body">
+					<!-- 상품 이미지 -->
+					<div class="mb-4 text-center">
+						<label class="form-label fw-bold">이미지</label>
+						<div>
+							<img
+								th:src="${pointShop.imgFile != null} ? ${pointShop.imgFile.pointItemImgPath} : ''"
+								class="img-fluid border rounded"
+								style="max-width: 300px; object-fit: contain;" alt="상품 이미지">
+						</div>
+					</div>
+
+					<!-- 상품 정보 목록 -->
+					<div class="mb-3">
+						<label class="form-label fw-bold">상품이름</label>
+						<p class="form-control-plaintext"
+							th:text="${pointShop.pointItemName}">상품이름</p>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">상품가격</label>
+						<p class="form-control-plaintext"
+							th:text="${pointShop.pointItemPrice + 'P'}">가격</p>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">재고수량</label>
+						<p class="form-control-plaintext"
+							th:text="${pointShop.pointItemStock}">재고수량</p>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">유의사항</label>
+						<p class="form-control-plaintext"
+							th:text="${pointShop.pointItemDescription}">유의사항</p>
+					</div>
+
+					<!-- 버튼 -->
+					<div class="d-flex justify-content-center aling-items-center gap-2">
+						<form name="pointItemBuyForm">
+							<input type="hidden" name="pointItemId" id="pointItemId"
+								th:value="${pointShop.pointItemId}" />
+							<button type="button" class="btn btn-primary"
+								onclick="fu_pointItemBuy()">구매하기</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 구매하기 버튼클릭 -->
+		<script th:src="@{/js/point/shop/detail/fu_pointItemBuy.js}"></script>
+	</div>
+</body>
+</html>
