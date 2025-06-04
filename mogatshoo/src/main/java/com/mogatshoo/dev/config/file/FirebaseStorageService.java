@@ -148,7 +148,7 @@ public class FirebaseStorageService {
         }
 
         try {
-            String filePath = "users/" + memberId + "/" + fileName;
+            String filePath = "member/" + memberId + "/" + fileName;
             
             logger.info("Firebase Storage 업로드 시작: {}", filePath);
             
