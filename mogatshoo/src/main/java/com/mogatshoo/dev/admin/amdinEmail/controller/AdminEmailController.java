@@ -33,7 +33,7 @@ public class AdminEmailController {
     /**
      * 이메일 전송 페이지
      */
-    @GetMapping("/send/{serialNumber}")
+    @GetMapping("/emailSend/{serialNumber}")
     public String emailSendPage(@PathVariable String serialNumber, Model model, RedirectAttributes redirectAttributes) {
         try {
             // 해당 질문의 투표 통계 조회
@@ -77,7 +77,7 @@ public class AdminEmailController {
                                                questionStats.getTopVotedName(), questionStats.getVotingRate());
             model.addAttribute("emailSubject", emailSubject);
             
-            return "admin/email/emailSend";
+            return "redirect:/admin/email/emailSend/" + serialNumber;
             
         } catch (Exception e) {
             System.err.println("이메일 전송 페이지 로딩 중 오류 발생: " + e.getMessage());
