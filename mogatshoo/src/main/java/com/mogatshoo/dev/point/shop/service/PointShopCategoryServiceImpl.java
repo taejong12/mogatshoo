@@ -27,10 +27,31 @@ public class PointShopCategoryServiceImpl implements PointShopCategoryService {
 	public List<PointShopCategoryEntity> findAll() {
 		try {
 			Sort sort = Sort.by(Sort.Order.asc("pointCategorySortOrder"), Sort.Order.desc("pointCategoryUpdate"));
-			return pointShopCategoryRepository.findAll(sort);
+			List<PointShopCategoryEntity> categories = pointShopCategoryRepository.findAll(sort);
+			logger.info("포인트샵 카테고리 조회 성공 - 조회된 카테고리 수: {}", categories.size());
+			return categories;
 		} catch (Exception e) {
-			logger.error("포인트샵 카테고리 조회 중 오류 발생", e);
-			return Collections.emptyList(); // 예외 발생 시 빈 리스트 반환
+			logger.error("포인트샵 카테고리 조회 중 오류 발생: {}", e.getMessage(), e);
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public PointShopCategoryEntity findById(Integer pointCategoryId) {
+		try {
+			PointShopCategoryEntity category = pointShopCategoryRepository.findById(pointCategoryId).orElse(null);
+
+			if (category == null) {
+				logger.warn("카테고리를 찾을 수 없습니다. ID: {}", pointCategoryId);
+			} else {
+				logger.info("카테고리 조회 성공. ID: {}", pointCategoryId);
+			}
+
+			return category;
+
+		} catch (Exception e) {
+			logger.error("카테고리 조회 중 오류 발생. ID: {}", pointCategoryId, e);
+			throw e;
 		}
 	}
 

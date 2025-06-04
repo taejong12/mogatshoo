@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "admin_point_item")
+@Entity
 @Table(name = "point_item")
 @Getter
 @Setter

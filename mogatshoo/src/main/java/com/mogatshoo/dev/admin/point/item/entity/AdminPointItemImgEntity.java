@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "admin_point_item_img")
+@Entity
 @Table(name = "point_item_img")
 @Getter
 @Setter

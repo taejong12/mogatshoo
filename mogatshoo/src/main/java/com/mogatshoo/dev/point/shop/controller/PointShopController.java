@@ -1,6 +1,8 @@
 package com.mogatshoo.dev.point.shop.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,8 +12,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mogatshoo.dev.point.shop.entity.PointShopCategoryEntity;
 import com.mogatshoo.dev.point.shop.entity.PointShopEntity;
@@ -64,5 +70,32 @@ public class PointShopController {
 		model.addAttribute("endPage", endPage);
 		model.addAttribute("totalPages", totalPages);
 		return "point/shop/list";
+	}
+
+	@GetMapping("/detail/{pointItemId}")
+	public String pointShopDetailPage(@PathVariable("pointItemId") Long pointItemId, Model model) {
+		PointShopEntity pointShopEntity = pointShopService.findById(pointItemId);
+		model.addAttribute("pointShop", pointShopEntity);
+		return "point/shop/detail";
+	}
+
+	@PostMapping("/buyCheck")
+	@ResponseBody
+	public Map<String, Object> checkBuyPossiblePointItem(@RequestBody Map<String, Object> request) {
+		Map<String, Object> map = new HashMap<>();
+		Long pointItemId = Long.parseLong((String) request.get("pointItemId"));
+		map = pointShopService.checkBuyPossiblePointItem(pointItemId);
+		return map;
+	}
+
+	@PostMapping("/buy")
+	public String buyPointItem(@RequestParam("pointItemId") Long pointItemId) {
+		// 1. 상품조회 (상품아이디)
+		// 2. 사용자포인트조회 (회원아이디)
+		// 3. 포인트차감 (회원포인트 - 상품포인트)
+		// 4. 포인트내역저장 (상품구매, 상품포인트)
+		// 5. 포인상품구매내역저장 
+		pointShopService.buyPointItem(pointItemId);
+		return "redirect:/point/shop/complete";
 	}
 }

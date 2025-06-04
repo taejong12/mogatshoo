@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-@Entity(name = "admin_point_category")
+@Entity
 @Table(name = "point_category")
 @Getter
 @Setter

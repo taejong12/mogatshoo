@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "point_item")
+@Entity
 @Table(name = "point_item")
 @Getter
 @Setter
@@ -65,4 +65,8 @@ public class PointShopEntity {
 	// 이미지 파일
 	@Transient
 	private PointShopImgEntity imgFile;
+	
+	// 카테고리
+	@Transient
+	private PointShopCategoryEntity category;
 }

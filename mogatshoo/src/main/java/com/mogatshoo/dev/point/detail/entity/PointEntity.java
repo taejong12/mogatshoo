@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity(name = "point")
+@Entity
 @Table(name = "point")
 @Setter
 @Getter
@@ -26,4 +28,12 @@ public class PointEntity {
 	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp ON UPDATE current_timestamp")
 	private LocalDateTime pointUpdate;
 
+	// 수정일 자동 설정
+	@PreUpdate
+	protected void onUpdate() {
+		this.pointUpdate = LocalDateTime.now();
+	}
+
+	@Version
+	private Integer version;
 }

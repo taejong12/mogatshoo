@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name="fortune")
+@Entity
 @Table(name="fortune")
 @Getter
 @Setter

@@ -8,4 +8,6 @@ public interface PointShopCategoryService {
 
 	List<PointShopCategoryEntity> findAll();
 
+	PointShopCategoryEntity findById(Integer pointCategoryId);
+
 }
