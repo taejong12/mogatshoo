@@ -122,14 +122,14 @@ public class StatusRepository {
     }
 
     /**
-     * 전체 멤버 수 조회
+     * USER 권한 멤버 수만 조회
      */
     public Long getTotalMemberCount() {
         try {
-            String sql = "SELECT COUNT(*) FROM member";
+            String sql = "SELECT COUNT(*) FROM member WHERE role = 'USER'";
             return jdbcTemplate.queryForObject(sql, Long.class);
         } catch (Exception e) {
-            System.err.println("멤버 수 조회 오류: " + e.getMessage());
+            System.err.println("USER 멤버 수 조회 오류: " + e.getMessage());
             return 0L;
         }
     }

@@ -50,7 +50,7 @@
                                  th:data-member-id="${randomPictures[0].memberId}"
                                  onclick="selectPicture(this)">
                                 <div class="pic-container">
-                                    <img th:src="@{'/proxy/image/' + ${randomPictures[0].googleDriveFileId}}" 
+                                    <img th:src="${randomPictures[0].firebaseStorageUrl}" 
                                          th:alt="'투표 옵션 1'"
                                          class="option-image"
                                          onload="this.style.opacity='1';"
@@ -73,7 +73,7 @@
                                  th:data-member-id="${randomPictures[1].memberId}"
                                  onclick="selectPicture(this)">
                                 <div class="pic-container">
-                                    <img th:src="@{'/proxy/image/' + ${randomPictures[1].googleDriveFileId}}" 
+                                    <img th:src="${randomPictures[1].firebaseStorageUrl}" 
                                          th:alt="'투표 옵션 2'"
                                          class="option-image"
                                          onload="this.style.opacity='1';"
@@ -95,7 +95,7 @@
                                  th:data-member-id="${randomPictures[2].memberId}"
                                  onclick="selectPicture(this)">
                                 <div class="pic-container">
-                                    <img th:src="@{'/proxy/image/' + ${randomPictures[2].googleDriveFileId}}" 
+                                    <img th:src="${randomPictures[2].firebaseStorageUrl}" 
                                          th:alt="'투표 옵션 3'"
                                          class="option-image"
                                          onload="this.style.opacity='1';"
@@ -117,7 +117,7 @@
                                  th:data-member-id="${randomPictures[3].memberId}"
                                  onclick="selectPicture(this)">
                                 <div class="pic-container">
-                                    <img th:src="@{'/proxy/image/' + ${randomPictures[3].googleDriveFileId}}" 
+                                    <img th:src="${randomPictures[3].firebaseStorageUrl}" 
                                          th:alt="'투표 옵션 4'"
                                          class="option-image"
                                          onload="this.style.opacity='1';"
