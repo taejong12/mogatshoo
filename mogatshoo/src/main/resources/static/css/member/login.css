@@ -1,51 +1,175 @@
 @charset "UTF-8";
 
+body {
+    background-image: url('/img/background/95background.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+/* 기존 layout.css의 body::before 오버라이드 */
+body::before {
+    display: none !important;
+}
+
+.windows95-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.windows95-dialog {
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: 14px;
+    width: 400px;
+    position: relative;
+}
+
+.title-bar {
+    background: linear-gradient(90deg, #0000ff 0%, #000080 100%);
+    color: white;
+    padding: 2px 4px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.title-bar-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.title-bar-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.title-bar-control {
+    width: 16px;
+    height: 14px;
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    font-size: 9px;
+    text-align: center;
+    line-height: 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.title-bar-control:active {
+    border: 1px inset #c0c0c0;
+}
+
+.dialog-content {
+    padding: 15px;
+}
+
+.dialog-icon {
+    width: 32px;
+    height: 32px;
+    background: url('/img/logo/mogatshooLogo.png') no-repeat center;
+    background-size: contain;
+    float: left;
+    margin-right: 12px;
+    margin-top: 4px;
+}
+
+.dialog-text {
+    margin-left: 44px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.input-group {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.input-label {
+    width: 80px;
+    font-size: 14px;
+    text-align: right;
+    margin-right: 8px;
+}
+
+.windows95-input {
+    border: 2px inset #c0c0c0;
+    padding: 2px 4px;
+    font-size: 14px;
+    background: white;
+    flex: 1;
+    height: 22px;
+}
+
+.windows95-input:focus {
+    outline: none;
+    background: white;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.windows95-button {
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    padding: 4px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 80px;
+    height: 27px;
+}
+
+.windows95-button:hover {
+    background: #d4d4d4;
+}
+
+.windows95-button:active {
+    border: 2px inset #c0c0c0;
+}
+
+.windows95-button.primary {
+    border: 3px outset #c0c0c0;
+    font-weight: bold;
+}
+
+.social-login-group {
+    margin-top: 16px;
+    text-align: center;
+    border-top: 1px solid #808080;
+    padding-top: 12px;
+}
+
+.social-login-group img {
+    width: 30px;
+    height: 30px;
+    margin: 0 4px;
+    cursor: pointer;
+    border: 1px outset #c0c0c0;
+    padding: 2px;
+}
+
+.social-login-group img:hover {
+    background: #d4d4d4;
+}
+
 .warn-msg {
-    color: rgb(255, 107, 107);
-    font-size: 0.8em;
-    padding: .375rem .75rem;
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
     display: none;
-}
-
-.text-color{
-    color: rgb(255, 255, 255);
-}
-
-.title{
-    color: yellow;
-}
-
-.background-border-color {
-    background-color: #808080;
-    border: 10px solid #c0c0c0;
-}
-
-.loginFormBtn, .login-input {
-    background-color: #c0c0c0;
-    border: 10px solid #c0c0c0;
-}
-
-.loginFormBtn:hover{
-    background-color: rgb(102, 102, 102);
-    border-color: rgb(153, 153, 153);
-}
-
-.login-input::placeholder {
-    color: black;
-    opacity: 1;
-}
-
-.login-input:focus {
-    box-shadow: none; 
-    background-color: #ffffff; 
-    border: 10px solid #007bff; 
-    outline: none; 
-}
-
-.login-input {
-    transition: all 0.2s ease-in-out; 
-}
-
-.login-input:hover {
-    background-color: #d0d0d0;  
 }

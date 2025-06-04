@@ -1,59 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/noLoginLayout}">
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='비밀번호 찾기'">
-	<link rel="stylesheet" th:href="@{/css/member/findByPwd.css}">
+<link rel="stylesheet" th:href="@{/css/member/findByPwd.css}">
 </head>
 <body>
-	<div layout:fragment="content">
-		<form name="findByPwdForm" class="background-border-color p-4 rounded-3">
-			<h1 class="title text-center mb-5">비밀번호찾기</h1>
-	
-			<div class="row align-items-center mb-3">
-			    <label for="memberId" class="col-md-4 text-nowrap fs-3 text-color">아이디</label>
-			    <div class="col-md-8">
-			        <input type="text" class="form-control find-pwd-input" id="memberId" name="memberId" placeholder="아이디 입력">
-			        <div id="idWarnMsg" class="warn-msg"></div>
-			    </div>
-			</div>
-			
-			<div class="row align-items-center mb-3">
-			    <label for="memberEmail" class="col-md-4 text-nowrap fs-3 text-color">이메일</label>
-			    <div class="col-md-8">
-			        <input type="text" class="form-control find-pwd-input" id="memberEmail" name="memberEmail" placeholder="이메일 입력">
-			        <div id="emailWarnMsg" class="warn-msg"></div>
-			    </div>
-			</div>
-			
-			
-			<div id="emailAuthWrap" class="row align-items-center" style="display: none;">
-				<label for="emailAuth" class="col-md-4 text-nowrap fs-3 text-color">인증번호</label>
-				<div class="col-md-8">
-					<div class="input-group">
-			            <input type="text" class="form-control find-pwd-input" id="emailAuth" placeholder="인증번호입력" required>
-			            <button class="btn input-btn" type="button" id="emailAuthBtn">인증하기</button>
-			        </div>
-			        <div id="timer" class="warn-msg"></div>
-			        <div id="authWarnMsg" class="warn-msg"></div>
-			    </div>
-			</div>
-			
-			<div class="mb-3 text-center">
-		        <div id="findPwdError" class="warn-msg"></div>
-			</div>
-			
-			<div class="row text-center g-2">
-			    <div class="col-12">
-			    	<button type="button" class="btn w-100 findPwdBtn" id="sendEmailBtn" onclick="fu_findByPwd()">인증번호전송</button>
-			    </div>
-			    <div class="col-12">
-			        <a class="btn w-100 findPwdBtn" th:href="@{/member/login}">로그인</a>
-			    </div>
-			</div>
-		</form>
-		
-		<script th:src="@{/js/member/find/fu_findByPwd.js}"></script>
-	</div>
+<div layout:fragment="content">
+    <div class="windows95-container">
+        <div class="windows95-dialog">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <span>🔑</span>
+                    <span>Find Password</span>
+                </div>
+                <div class="title-bar-controls">
+                    <div class="title-bar-control">?</div>
+                    <div class="title-bar-control">✕</div>
+                </div>
+            </div>
+            
+            <div class="dialog-content">
+                <form name="findByPwdForm">
+                    <div class="dialog-icon">🔐</div>
+                    <div class="dialog-text">
+                       회원가입 시 사용한 아이디와 비밀번호를 입력하세요
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label" for="memberId">아이디:</label>
+                        <input type="text" class="windows95-input" id="memberId" name="memberId" placeholder="아이디 입력">
+                    </div>
+                    <div id="idWarnMsg" class="warn-msg"></div>
+                    
+                    <div class="input-group">
+                        <label class="input-label" for="memberEmail">이메일:</label>
+                        <input type="text" class="windows95-input" id="memberEmail" name="memberEmail" placeholder="이메일 입력">
+                    </div>
+                    <div id="emailWarnMsg" class="warn-msg"></div>
+                    
+                    <div id="emailAuthWrap" class="email-auth-section">
+                        <div class="input-group">
+                            <label class="input-label" for="emailAuth">인증번호:</label>
+                            <div class="input-group-auth">
+                                <input type="text" class="windows95-input auth-input" id="emailAuth" placeholder="인증번호입력" required>
+                                <button class="auth-button" type="button" id="emailAuthBtn">인증하기</button>
+                            </div>
+                        </div>
+                        <div id="timer" class="warn-msg"></div>
+                        <div id="authWarnMsg" class="warn-msg"></div>
+                    </div>
+                    
+                    <div id="findPwdError" class="warn-msg" style="text-align: center;"></div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="windows95-button primary" id="sendEmailBtn" onclick="fu_findByPwd()">인증번호전송</button>
+                        <a class="windows95-button" th:href="@{/member/login}">로그인</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/member/find/fu_findByPwd.js}"></script>
+</div>
 </body>
 </html>

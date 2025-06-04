@@ -1,24 +1,151 @@
 @charset "UTF-8";
 
-.title{
-	color: yellow;
+body {
+    background-image: url('/img/background/95background.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
 }
 
-.text-color{
-	color: rgb(255, 255, 255);
+/* 기존 layout.css의 body::before 오버라이드 */
+body::before {
+    display: none !important;
 }
 
-.background-border-color {
-	background-color: #808080;
-	border: 10px solid #c0c0c0;
+.windows95-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-.lostBtn{
-	background-color: #c0c0c0;
-	border: 10px solid #c0c0c0;
+.windows95-dialog {
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: 15px;
+    width: 380px;
+    position: relative;
 }
 
-.lostBtn:hover{
-	background-color: rgb(102, 102, 102);
-	border-color: rgb(153, 153, 153);
+.title-bar {
+    background: linear-gradient(90deg, #0000ff 0%, #000080 100%);
+    color: white;
+    padding: 2px 4px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+}
+
+.title-bar-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.title-bar-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.title-bar-control {
+    width: 16px;
+    height: 14px;
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    font-size: 9px;
+    text-align: center;
+    line-height: 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.title-bar-control:active {
+    border: 1px inset #c0c0c0;
+}
+
+.dialog-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.dialog-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 20px auto;
+    background: #c0c0c0;
+    border: 2px inset #c0c0c0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.dialog-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #000080;
+}
+
+.dialog-text {
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #000000;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.windows95-button {
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    padding: 8px 24px;
+    font-size: 15px;
+    cursor: pointer;
+    width: 200px;
+    height: 35px;
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    text-align: center;
+    line-height: 19px;
+}
+
+.windows95-button:hover {
+    background: #d4d4d4;
+    color: black;
+    text-decoration: none;
+}
+
+.windows95-button:active {
+    border: 2px inset #c0c0c0;
+}
+
+.windows95-button.primary {
+    border: 3px outset #c0c0c0;
+    font-weight: bold;
+}
+
+@media (max-width: 576px) {
+    .windows95-dialog {
+        width: 90%;
+        max-width: 350px;
+    }
+    
+    .windows95-button {
+        width: 100%;
+        max-width: 250px;
+    }
 }

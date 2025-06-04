@@ -1,6 +1,3 @@
-// 윈도우 95/98 스타일 사이드바 JavaScript
-// static/js/main/sidebar.js
-
 document.addEventListener('DOMContentLoaded', function() {
     // 사이드바 토글 버튼 이벤트 리스너
     const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');

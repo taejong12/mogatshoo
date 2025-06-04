@@ -105,14 +105,6 @@ body::before {
 
 /* 반응형 조정 (유지) */
 @media screen and (max-width: 768px) {
-	.content-wrapper {
-		display: flex !important;
-		flex-direction: column;
-		/* 모바일에서는 세로 배치 */
-		padding: 0 1rem;
-		/* 모바일에서는 패딩 줄이기 */
-		gap: 0.5rem;
-	}
 
 	.footer {
 		font-size: 1.2rem;

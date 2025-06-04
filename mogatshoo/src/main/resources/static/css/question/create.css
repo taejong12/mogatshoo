@@ -1,104 +1,96 @@
-/* 질문 생성 페이지 스타일 (create.css) */
-.question-form-container {
-    max-width: 800px;
-    margin: 0 auto;
+/* 질문 생성 페이지 - 관리자 디자인 */
+
+/* 전체 가로 스크롤 방지 및 뷰포트 설정 */
+* {
+    box-sizing: border-box;
 }
 
-.form-header {
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+}
+
+/* 모든 컨테이너 최대 너비 제한 */
+.page-header,
+.question-form-container,
+.form-header,
+.form-section,
+.options-section,
+.form-actions {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* 페이지 헤더 */
+.page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--gray-200);
-}
-/* 기존 CSS 아래에 추가 */
-
-/* 옵션 행 스타일 */
-.option-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background-color: white;
-    border-radius: var(--border-radius, 8px);
-    border: 1px solid var(--gray-200, #e5e7eb);
+    border-bottom: 2px solid #e9ecef;
 }
 
-.option-row .form-group {
-    flex: 1;
-}
-
-/* 이미지 미리보기 컨테이너 */
-.image-preview {
-    width: 150px;
-    height: 120px;
-    border: 2px solid var(--gray-300, #d1d5db);
-    border-radius: var(--border-radius, 8px);
-    overflow: hidden;
-    background-color: var(--gray-50, #f9fafb);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* 이미지 스타일 */
-.option-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* 이미지 없음 플레이스홀더 */
-.no-image-placeholder {
-    width: 150px;
-    height: 120px;
-    border: 2px dashed var(--gray-300, #d1d5db);
-    border-radius: var(--border-radius, 8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--gray-50, #f9fafb);
-}
-
-.no-image-placeholder span {
-    color: var(--gray-500, #6b7280);
-    font-size: 0.875rem;
-    text-align: center;
-}
-
-/* 회원 정보 표시 */
-.member-info {
-    font-size: 0.75rem;
-    color: var(--gray-600, #4b5563);
-    margin-top: 0.25rem;
-}
-
-.member-nickname {
+.page-header-left h2 {
+    margin: 35px;
+    color: #343a40;
     font-weight: 600;
-    color: var(--primary-color, #3b82f6);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.member-id {
-    color: var(--gray-500, #6b7280);
-    margin-left: 0.5rem;
+.page-header-left h2 i {
+    color: #28a745;
 }
 
-/* 반응형 스타일 */
-@media (max-width: 768px) {
-    .option-row {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .image-preview,
-    .no-image-placeholder {
-        width: 100%;
-        height: 200px;
-    }
+.btn-back {
+    background-color: rgb(255, 0, 0);
+    color: white;
+    border: 1px solid #6c757d;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
 }
+
+.btn-back:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+    color: white;
+    text-decoration: none;
+}
+
+/* 폼 컨테이너 */
+.question-form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.125);
+    overflow: hidden;
+}
+
+/* 폼 헤더 */
+.form-header {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.serial-number-section {
+    display: flex;
+    align-items: center;
+}
+
 .serial-number-display {
     display: flex;
     align-items: center;
@@ -106,100 +98,622 @@
 }
 
 .serial-number-display label {
-    font-weight: 500;
-    color: var(--gray-700);
-}
-
-.options-container {
-    background-color: var(--gray-100);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-}
-
-.options-container h3 {
-    margin-bottom: 1.25rem;
-    color: var(--gray-700);
-    font-size: 1.125rem;
     font-weight: 600;
+    color: #495057;
+    font-size: 0.875rem;
+}
+
+.serial-number {
+    background-color: #007bff;
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-section {
+    display: flex;
+    align-items: center;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge.private {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f1b0b7;
+}
+
+.status-text {
+    display: inline;
+}
+
+/* 폼 섹션 */
+.form-section {
+    padding: 2rem 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.form-label i {
+    color: #007bff;
+}
+
+.required {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+/* 텍스트영역 */
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+}
+
+textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: 0;
 }
 
 .character-counter {
     text-align: right;
-    font-size: 0.875rem;
-    color: var(--gray-600);
-    margin-top: 0.375rem;
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
 }
 
+/* 보기 항목 섹션 */
+.options-section {
+    background-color: #f8f9fa;
+    padding: 2rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+}
+
+.section-header h3 {
+    margin: 0 0 0.5rem 0;
+    color: #495057;
+    font-size: 1.125rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-header h3 i {
+    color: #007bff;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* 옵션 카드 */
+.option-card {
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+
+.option-card:last-child {
+    margin-bottom: 0;
+}
+
+.option-content {
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.option-number {
+    background-color: #007bff;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.option-content .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.option-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    display: block;
+}
+
+/* 입력 필드 */
+input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input[type="text"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: 0;
+}
+
+/* 회원 정보 */
+.member-info {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.member-badge {
+    background-color: #e7f3ff;
+    color: #0066cc;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.member-id {
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+/* 이미지 컨테이너 */
+.image-container {
+    flex-shrink: 0;
+}
+
+.image-preview {
+    width: 120px;
+    height: 120px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f8f9fa;
+}
+
+.option-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.no-image-placeholder {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.75rem;
+    gap: 0.5rem;
+}
+
+.no-image-placeholder i {
+    font-size: 1.5rem;
+    opacity: 0.5;
+}
+
+/* 액션 버튼 */
 .form-actions {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.actions-group {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-    margin-top: 2rem;
 }
 
-/* 폼 정보 메시지 스타일 */
-.form-info {
-    margin-top: 20px;
-    padding: 10px 15px;
-    background-color: var(--gray-100);
-    border-left: 4px solid var(--primary-color);
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+    border: 1px solid #6c757d;
+    padding: 0.75rem 1.5rem;
     border-radius: 4px;
-}
-
-.form-info p {
-    margin: 0;
-    color: var(--gray-700);
-    font-size: 0.9rem;
+    text-decoration: none;
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
-.form-info i {
-    color: var(--primary-color);
-    margin-right: 8px;
-    font-size: 1rem;
-}
-
-/* 취소 버튼을 링크로 사용하는 경우의 스타일 */
-.btn-outline {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.25rem;
-    border: 1px solid var(--gray-300);
-    background-color: white;
-    color: var(--gray-700);
-    font-weight: 600;
+.btn-cancel:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+    color: white;
     text-decoration: none;
-    border-radius: 0.25rem;
-    transition: all 0.3s;
+}
+
+.btn-save {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
-.btn-outline:hover {
-    background-color: var(--gray-100);
-    border-color: var(--gray-400);
+.btn-save:hover {
+    background-color: #218838;
+    border-color: #218838;
 }
 
-/* 에러 상태의 글자 수 카운터 */
-.character-counter .error {
-    color: var(--danger-color);
-    font-weight: 600;
+/* 안내 메시지 */
+.form-info {
+    background-color: #e7f3ff;
+    border-left: 4px solid #007bff;
+    margin: 0;
 }
 
-@media (max-width: 768px) {
-    .form-header {
-        flex-direction: column;
-        align-items: flex-start;
+.info-content {
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.info-content i {
+    color: #007bff;
+    font-size: 1.125rem;
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+}
+
+.info-text {
+    color: #004085;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 992px) {
+    .question-form-container {
+        margin: 0 1rem;
+    }
+    
+    .option-content {
         gap: 1rem;
     }
     
-    .form-actions {
+    .image-preview,
+    .no-image-placeholder {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .page-header-left,
+    .page-header-right {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn-back {
+        justify-content: center;
+    }
+    
+    .question-form-container {
+        margin: 0 0.5rem;
+    }
+    
+    .form-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .serial-number-section,
+    .status-section {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .form-section,
+    .options-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .option-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .image-preview,
+    .no-image-placeholder {
+        width: 100%;
+        height: 200px;
+        align-self: center;
+    }
+    
+    .actions-group {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .btn-cancel,
+    .btn-save {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem 1.5rem;
+    }
+    
+    .info-content {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    /* 전체 레이아웃 압축 */
+    .page-header {
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+        border-radius: 0;
+    }
+    
+    .page-header-left h2 {
+        font-size: 1.1rem;
+    }
+    
+    .btn-back {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    /* 폼 컨테이너 극도 압축 */
+    .question-form-container {
+        margin: 0;
+        border-radius: 0;
+        width: 100%;
+        max-width: 100vw;
+    }
+    
+    .form-header {
+        padding: 0.75rem 0.5rem;
+        gap: 0.75rem;
+    }
+    
+    .serial-number {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .status-badge {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+    }
+    
+    .status-text {
+        display: none;
+    }
+    
+    /* 폼 섹션 압축 */
+    .form-section,
+    .options-section {
+        padding: 0.75rem 0.5rem;
+        width: 100%;
+    }
+    
+    .section-header {
+        margin-bottom: 1rem;
+    }
+    
+    .section-header h3 {
+        font-size: 0.95rem;
+    }
+    
+    .section-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    /* 옵션 카드 극도 압축 */
+    .option-card {
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+    
+    .option-content {
+        padding: 0.75rem 0.5rem;
+        gap: 0.5rem;
         flex-direction: column;
     }
     
-    .form-actions .btn {
+    .option-number {
+        width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+        align-self: flex-start;
+    }
+    
+    .option-label {
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* 입력 필드 압축 */
+    input[type="text"], textarea {
+        padding: 0.5rem;
+        font-size: 0.8rem;
         width: 100%;
+        max-width: 100%;
+    }
+    
+    textarea {
+        min-height: 80px;
+        rows: 3;
+    }
+    
+    /* 회원 정보 압축 */
+    .member-info {
+        margin-top: 0.25rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .member-badge {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.65rem;
+    }
+    
+    .member-id {
+        font-size: 0.65rem;
+    }
+    
+    /* 이미지 영역 최적화 */
+    .image-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .image-preview,
+    .no-image-placeholder {
+        width: 100%;
+        max-width: 250px;
+        height: 120px;
+        margin: 0 auto;
+    }
+    
+    .no-image-placeholder i {
+        font-size: 1.2rem;
+    }
+    
+    .no-image-placeholder span {
+        font-size: 0.7rem;
+    }
+    
+    /* 액션 버튼 압축 */
+    .form-actions {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .actions-group {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .btn-cancel,
+    .btn-save {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        font-size: 0.75rem;
+        justify-content: center;
+        border-radius: 4px;
+    }
+    
+    /* 안내 메시지 압축 */
+    .form-info {
+        border-radius: 0;
+    }
+    
+    .info-content {
+        padding: 0.6rem 0.5rem;
+        gap: 0.5rem;
+    }
+    
+    .info-content i {
+        font-size: 1rem;
+    }
+    
+    .info-text {
+        font-size: 0.75rem;
+        line-height: 1.3;
+    }
+    
+    /* 글자 수 카운터 */
+    .character-counter {
+        font-size: 0.65rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* 폼 라벨 압축 */
+    .form-label {
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+        gap: 0.25rem;
+    }
+    
+    .form-label i {
+        font-size: 0.75rem;
     }
 }

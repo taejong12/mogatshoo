@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 public class PictureEntity {
-
+    
     @Id
     @Column(name = "PictureId")
     private String memberId;  // 회원 ID를 PK로 사용
-
+    
     @Column(nullable = false)
     private String hairPicture;  // 사진 경로 또는 데이터
     
@@ -29,11 +29,9 @@ public class PictureEntity {
     @Column(columnDefinition = "timestamp default current_timestamp on update current_timestamp")
     private LocalDateTime updatedAt;  // 마지막 업데이트 시간
     
-    @Column(name = "google_drive_url")
-    private String googleDriveUrl;
-
-    @Column(name = "google_drive_file_id") 
-    private String googleDriveFileId;
+    @Column(name = "firebase_storage_url")
+    private String firebaseStorageUrl;
     
-    
+    @Column(name = "firebase_storage_path") 
+    private String firebaseStoragePath;
 }

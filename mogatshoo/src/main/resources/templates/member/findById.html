@@ -1,34 +1,48 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/noLoginLayout}">
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/noLoginLayout}">
 <head th:with="layoutTitle='아이디 찾기'">
-	<link rel="stylesheet" th:href="@{/css/member/findById.css}">
+<link rel="stylesheet" th:href="@{/css/member/findById.css}">
 </head>
 <body>
-	<div layout:fragment="content">
-		<form name="findByIdForm" class="background-border-color p-4 rounded-3">
-			<h1 class="title text-center mb-5">아이디찾기</h1>
-	
-			<div class="row align-items-center mb-3">
-			    <label for="memberEmail" class="col-4 text-nowrap fs-3 text-color">이메일</label>
-			    <div class="col-8">
-			        <input type="text" class="form-control find-id-input" id="memberEmail" name="memberEmail" placeholder="이메일 입력">
-			        <div id="emailWarnMsg" class="warn-msg"></div>
-			    </div>
-			</div>
-			
-			<div class="row text-center mb-3 g-2">
-			    <div class="col-12">
-			    	<button type="button" class="btn w-100 findIdBtn" onclick="fu_findById()">아이디찾기</button>
-			    </div>
-			    <div class="col-12">
-			        <a class="btn w-100 findIdBtn" th:href="@{/member/login}">로그인</a>
-			    </div>
-			</div>
-		</form>
-	
-		<script th:src="@{/js/member/find/fu_findById.js}"></script>
-	</div>
+<div layout:fragment="content">
+    <div class="windows95-container">
+        <div class="windows95-dialog">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <span>🔍</span>
+                    <span>Find User ID</span>
+                </div>
+                <div class="title-bar-controls">
+                    <div class="title-bar-control">?</div>
+                    <div class="title-bar-control">✕</div>
+                </div>
+            </div>
+            
+            <div class="dialog-content">
+                <form name="findByIdForm">
+                    <div class="dialog-icon">📧</div>
+                    <div class="dialog-text">
+                        가입할 때 사용하신 이메일을 입력해 주세요.
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label" for="memberEmail">Email:</label>
+                        <input type="text" class="windows95-input" id="memberEmail" name="memberEmail" placeholder="이메일 입력">
+                    </div>
+                    <div id="emailWarnMsg" class="warn-msg"></div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="windows95-button primary" onclick="fu_findById()">아이디찾기</button>
+                        <a class="windows95-button" th:href="@{/member/login}">로그인</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/member/find/fu_findById.js}"></script>
+</div>
 </body>
 </html>
