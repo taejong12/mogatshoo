@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{admin/fragments/layout}">
+	layout:decorate="~{fragments/layout}">
 <head th:with="layoutTitle='포인트상품완료'">
 </head>
 <body>
@@ -38,7 +38,7 @@
 
 					<!-- 버튼 -->
 					<div class="d-flex justify-content-center aling-items-center gap-2">
-						<a class="btn btn-primary" th:href="@{/point/shop/buy/}"> 구매내역보기
+						<a class="btn btn-primary" th:href="@{/point/shop/buy}"> 구매내역보기
 						</a>
 					</div>
 				</div>

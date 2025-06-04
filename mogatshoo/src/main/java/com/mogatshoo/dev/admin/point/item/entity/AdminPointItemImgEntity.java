@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,5 +48,11 @@ public class AdminPointItemImgEntity {
 	// 실제 파일 저장 아이디
 	@Column(nullable = false)
 	private String pointItemImgFileId;
+	
+	// 수정일 자동 설정
+	@PreUpdate
+	protected void onUpdate() {
+		this.pointItemImgUpdate = LocalDateTime.now();
+	}
 
 }

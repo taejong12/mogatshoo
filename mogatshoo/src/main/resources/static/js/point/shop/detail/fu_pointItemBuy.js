@@ -1,7 +1,7 @@
 function fu_pointItemBuy() {
 	let pointItemBuyForm = document.pointItemBuyForm;
 
-	let pointItemId = document.getElementById('pointItemId');
+	let pointItemId = document.getElementById('pointItemId').value.trim();
 	// 구매하기 버튼 클릭 시 
 	// 1.보유하고 있는 포인트보다 높을 시 보유 포인트가 부족합니다.
 	// 2.재고가 없는 경우 -> 현재 재고가 없습니다.
@@ -12,7 +12,7 @@ function fu_pointItemBuy() {
 		headers: {
 			"Content-Type": "application/json"
 		},
-		body: JSON.stringify({ pointItemId: pointItemId })
+		body: JSON.stringify({ pointItemId })
 	})
 	.then(response => {
 		if (!response.ok) {

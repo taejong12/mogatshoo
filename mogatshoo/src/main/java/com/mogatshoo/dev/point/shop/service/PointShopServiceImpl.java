@@ -200,9 +200,9 @@ public class PointShopServiceImpl implements PointShopService {
 
 			// 5. 구매 내역 저장
 			PointOrderHistoryEntity pointOrderHistory = new PointOrderHistoryEntity();
-			pointOrderHistory.setQuantity(quantity);
-			pointOrderHistory.setTotalPoint((int) totalPrice);
-			pointOrderHistory.setStatus("구매");
+			pointOrderHistory.setPointOrderHistoryQuantity(quantity);
+			pointOrderHistory.setPointOrderHistoryTotalPrice((int) totalPrice);
+			pointOrderHistory.setPointOrderHistoryStatus("구매");
 			pointOrderHistory.setMemberId(memberId);
 			pointOrderHistory.setPointItemId(pointItemId);
 			pointOrderHistoryService.pointOrderHistorySave(pointOrderHistory);
@@ -211,7 +211,7 @@ public class PointShopServiceImpl implements PointShopService {
 			// 6. 재고 차감
 			pointItem.setPointItemStock(pointItem.getPointItemStock() - quantity);
 			logger.info("재고 차감 완료 - pointItemId: {}, 차감 수량: {}", pointItemId, quantity);
-
+			
 		} catch (Exception e) {
 			logger.error("포인트 상품 구매 처리 중 오류 발생 - pointItemId: {}", pointItemId, e);
 			throw e;

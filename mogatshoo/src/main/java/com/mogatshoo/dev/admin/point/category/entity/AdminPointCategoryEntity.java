@@ -35,4 +35,10 @@ public class AdminPointCategoryEntity {
 	// 회원아이디
 	@Column(nullable = false)
 	private String memberId;
+
+	// 수정일 자동 설정
+	@PreUpdate
+	protected void onUpdate() {
+		this.pointCategoryUpdate = LocalDateTime.now();
+	}
 }

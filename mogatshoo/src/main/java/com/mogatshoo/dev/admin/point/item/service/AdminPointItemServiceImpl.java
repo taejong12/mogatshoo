@@ -158,7 +158,7 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 				oldPointItemEntity.setPointItemStock(adminPointItemEntity.getPointItemStock());
 				oldPointItemEntity.setPointItemSaleStatus(adminPointItemEntity.getPointItemSaleStatus());
 				oldPointItemEntity.setPointCategoryId(adminPointItemEntity.getPointCategoryId());
-				oldPointItemEntity.setPointItemUpdate(LocalDateTime.now());
+				//oldPointItemEntity.setPointItemUpdate(LocalDateTime.now());
 
 				logger.info("포인트 상품이 성공적으로 수정되었습니다. ID: {}", pointItemId);
 			} else {

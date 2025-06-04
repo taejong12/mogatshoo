@@ -24,6 +24,8 @@ import com.mogatshoo.dev.point.shop.entity.PointShopEntity;
 import com.mogatshoo.dev.point.shop.service.PointShopCategoryService;
 import com.mogatshoo.dev.point.shop.service.PointShopService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/point/shop")
 public class PointShopController {
@@ -83,19 +85,38 @@ public class PointShopController {
 	@ResponseBody
 	public Map<String, Object> checkBuyPossiblePointItem(@RequestBody Map<String, Object> request) {
 		Map<String, Object> map = new HashMap<>();
-		Long pointItemId = Long.parseLong((String) request.get("pointItemId"));
+		Object idObj = request.get("pointItemId");
+		Long pointItemId = Long.valueOf(idObj.toString());
 		map = pointShopService.checkBuyPossiblePointItem(pointItemId);
 		return map;
 	}
 
 	@PostMapping("/buy")
-	public String buyPointItem(@RequestParam("pointItemId") Long pointItemId) {
+	public String buyPointItem(@RequestParam("pointItemId") Long pointItemId, HttpSession session) {
 		// 1. 상품조회 (상품아이디)
 		// 2. 사용자포인트조회 (회원아이디)
 		// 3. 포인트차감 (회원포인트 - 상품포인트)
 		// 4. 포인트내역저장 (상품구매, 상품포인트)
-		// 5. 포인상품구매내역저장 
+		// 5. 포인상품구매내역저장
 		pointShopService.buyPointItem(pointItemId);
+		session.setAttribute("pointItemId", pointItemId);
 		return "redirect:/point/shop/complete";
 	}
+
+	@GetMapping("/complete")
+	public String completeBuyPointItem(Model model, HttpSession session) {
+		Long pointItemId = (Long) session.getAttribute("pointItemId");
+
+		try {
+			if (pointItemId == null)
+				return "redirect:/";
+
+			PointShopEntity pointShopEntity = pointShopService.findById(pointItemId);
+			model.addAttribute("pointShop", pointShopEntity);
+			return "point/shop/complete";
+		} finally {
+			session.removeAttribute("pointItemId");
+		}
+	}
+
 }

@@ -144,7 +144,7 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 			updateCategory.setMemberId(memberId);
 			updateCategory.setPointCategoryName(newCategoryName);
 			updateCategory.setPointCategorySortOrder(adminPointCategoryEntity.getPointCategorySortOrder());
-			updateCategory.setPointCategoryUpdate(LocalDateTime.now());
+			//updateCategory.setPointCategoryUpdate(LocalDateTime.now());
 
 			logger.info("[DB 업데이트 완료] 카테고리 ID {} 정보가 성공적으로 업데이트되었습니다.", categoryId);
 

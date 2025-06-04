@@ -28,15 +28,15 @@ public class PointOrderHistoryEntity {
 
 	// 구매수량
 	@Column(nullable = false)
-	private int quantity;
+	private int pointOrderHistoryQuantity;
 
 	// 총사용포인트
 	@Column(nullable = false)
-	private int totalPoint;
+	private int pointOrderHistoryTotalPrice;
 
 	// 주문상태(구매/환불/교환/취소)
 	@Column(length = 20)
-	private String status;
+	private String pointOrderHistoryStatus;
 
 	// 생성일
 	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")

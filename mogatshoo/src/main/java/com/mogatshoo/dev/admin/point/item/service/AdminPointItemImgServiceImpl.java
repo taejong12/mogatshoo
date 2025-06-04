@@ -164,7 +164,7 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 
 			logger.info("이미지 카테고리 이동 및 DB 업데이트 완료. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName);
 
-			imgEntity.setPointItemImgUpdate(LocalDateTime.now());
+			//imgEntity.setPointItemImgUpdate(LocalDateTime.now());
 
 		} catch (Exception e) {
 			logger.error("이미지 카테고리 이동 실패. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName, e);
