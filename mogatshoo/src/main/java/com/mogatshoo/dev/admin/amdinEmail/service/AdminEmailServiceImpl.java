@@ -4,8 +4,8 @@ import com.mogatshoo.dev.admin.amdinEmail.entity.AdminEmailEntity;
 import com.mogatshoo.dev.admin.amdinEmail.repository.AdminEmailRepository;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
-import com.mogatshoo.dev.voting_status.entity.StatusEntity;
-import com.mogatshoo.dev.voting_status.service.StatusService;
+import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
+import com.mogatshoo.dev.admin.voting_status.service.StatusService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

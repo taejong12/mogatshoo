@@ -2,8 +2,8 @@ package com.mogatshoo.dev.admin.amdinEmail.controller;
 
 import com.mogatshoo.dev.admin.amdinEmail.entity.AdminEmailEntity;
 import com.mogatshoo.dev.admin.amdinEmail.service.AdminEmailService;
-import com.mogatshoo.dev.voting_status.entity.StatusEntity;
-import com.mogatshoo.dev.voting_status.service.StatusService;
+import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
+import com.mogatshoo.dev.admin.voting_status.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -41,32 +41,32 @@ public class AdminEmailController {
             
             if (questionStats == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "질문 정보를 찾을 수 없습니다.");
-                return "redirect:/voting-status";
+                return "redirect:/admin/voting-status";
             }
             
             // 투표가 종료되었는지 확인
             if (!"yes".equals(questionStats.getIsEnded())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "진행 중인 질문은 이메일을 전송할 수 없습니다.");
-                return "redirect:/voting-status";
+                return "redirect:/admin/voting-status";
             }
             
             // 투표율 40% 이상인지 확인
             if (questionStats.getVotingRate() == null || questionStats.getVotingRate() < 40.0) {
                 redirectAttributes.addFlashAttribute("errorMessage", "투표율이 40% 미만인 질문은 이메일을 전송할 수 없습니다.");
-                return "redirect:/voting-status";
+                return "redirect:/admin/voting-status";
             }
             
             // 당첨자 정보가 있는지 확인
             if (questionStats.getTopVotedId() == null || questionStats.getTopVotedName() == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "당첨자 정보를 찾을 수 없습니다.");
-                return "redirect:/voting-status";
+                return "redirect:/admin/voting-status";
             }
             
             // 이미 전송했는지 확인
             if (adminEmailService.isDuplicateEmail(serialNumber, questionStats.getTopVotedId())) {
                 redirectAttributes.addFlashAttribute("warningMessage", "이미 해당 당첨자에게 이메일을 전송했습니다.");
                 // 전송 이력 페이지로 리다이렉트
-                return "redirect:/admin/email/emailHistory/" + serialNumber;
+                return "redirectadmin/email/emailHistory/" + serialNumber;
             }
             
             model.addAttribute("questionStats", questionStats);
@@ -77,13 +77,13 @@ public class AdminEmailController {
                                                questionStats.getTopVotedName(), questionStats.getVotingRate());
             model.addAttribute("emailSubject", emailSubject);
             
-            return "redirect:/admin/email/emailSend/" + serialNumber;
+            return "admin/email/emailSend/";
             
         } catch (Exception e) {
             System.err.println("이메일 전송 페이지 로딩 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "이메일 전송 페이지로 이동하는 중 오류가 발생했습니다.");
-            return "redirect:/voting-status";
+            return "redirect:/admin/voting-status";
         }
     }
     
@@ -111,7 +111,7 @@ public class AdminEmailController {
             StatusEntity questionStats = statusService.getQuestionStatistics(serialNumber);
             if (questionStats == null || questionStats.getVotingRate() < 40.0) {
                 redirectAttributes.addFlashAttribute("errorMessage", "이메일 전송 조건을 만족하지 않습니다.");
-                return "redirect:/voting-status";
+                return "redirect:/admin/voting-status";
             }
             
             // 이메일 전송
@@ -126,7 +126,7 @@ public class AdminEmailController {
                 redirectAttributes.addFlashAttribute("errorMessage", "이메일 전송에 실패했습니다.");
             }
             
-            return "redirect:/voting-status";
+            return "redirect:/admin/voting-status";
             
         } catch (Exception e) {
             System.err.println("이메일 전송 중 오류 발생: " + e.getMessage());
@@ -258,7 +258,7 @@ public class AdminEmailController {
             System.err.println("이메일 재전송 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "이메일 재전송 중 오류가 발생했습니다.");
-            return "redirect:/voting-status";
+            return "redirect:/admin/voting-status";
         }
     }
     

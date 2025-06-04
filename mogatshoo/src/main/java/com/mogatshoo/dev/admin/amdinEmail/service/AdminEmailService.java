@@ -1,7 +1,7 @@
 package com.mogatshoo.dev.admin.amdinEmail.service;
 
 import com.mogatshoo.dev.admin.amdinEmail.entity.AdminEmailEntity;
-import com.mogatshoo.dev.voting_status.entity.StatusEntity;
+import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

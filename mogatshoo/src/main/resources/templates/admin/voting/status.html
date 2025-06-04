@@ -80,7 +80,7 @@
                         </div>
                     </div>
                     <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                        <form th:action="@{/voting-status/refresh}" method="post" style="display: inline;">
+                        <form th:action="@{/admin/voting-status/refresh}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-refresh">
                                 <i class="fas fa-sync-alt me-2"></i>새로고침
                             </button>
@@ -150,7 +150,7 @@
                                 </td>
 								<td class="actions-container">
 								    <a th:if="${stat.emailEligible}" 
-								       th:href="@{/admin/email/send/{serialNumber}(serialNumber=${stat.serialNumber})}"
+								       th:href="@{/admin/email/emailSend/{serialNumber}(serialNumber=${stat.serialNumber})}"
 								       class="btn btn-email">
 								        <i class="fas fa-envelope me-2"></i>이메일
 								    </a>
@@ -170,14 +170,14 @@
                         <ul class="pagination pagination-lg">
                             <!-- 처음 페이지 -->
                             <li th:class="'page-item ' + (${currentPage == 0} ? 'disabled' : '')">
-                                <a class="page-link" th:href="@{/voting-status(page=0, size=${pageSize})}" aria-label="처음">
+                                <a class="page-link" th:href="@{/admin/voting-status(page=0, size=${pageSize})}" aria-label="처음">
                                     <span aria-hidden="true">&laquo;&laquo;</span>
                                 </a>
                             </li>
                             
                             <!-- 이전 페이지 -->
                             <li th:class="'page-item ' + (${!hasPrevious} ? 'disabled' : '')">
-                                <a class="page-link" th:href="@{/voting-status(page=${currentPage - 1}, size=${pageSize})}" aria-label="이전">
+                                <a class="page-link" th:href="@{/admin/voting-status(page=${currentPage - 1}, size=${pageSize})}" aria-label="이전">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
@@ -185,20 +185,20 @@
                             <!-- 페이지 번호들 -->
                             <li th:each="pageNum : ${pageNumbers}" 
                                 th:class="'page-item ' + (${pageNum == currentPage} ? 'active' : '')">
-                                <a class="page-link" th:href="@{/voting-status(page=${pageNum}, size=${pageSize})}" 
+                                <a class="page-link" th:href="@{/admin/voting-status(page=${pageNum}, size=${pageSize})}" 
                                    th:text="${pageNum + 1}">1</a>
                             </li>
                             
                             <!-- 다음 페이지 -->
                             <li th:class="'page-item ' + (${!hasNext} ? 'disabled' : '')">
-                                <a class="page-link" th:href="@{/voting-status(page=${currentPage + 1}, size=${pageSize})}" aria-label="다음">
+                                <a class="page-link" th:href="@{/admin/voting-status(page=${currentPage + 1}, size=${pageSize})}" aria-label="다음">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
                             
                             <!-- 마지막 페이지 -->
                             <li th:class="'page-item ' + (${currentPage == totalPages - 1} ? 'disabled' : '')">
-                                <a class="page-link" th:href="@{/voting-status(page=${totalPages - 1}, size=${pageSize})}" aria-label="마지막">
+                                <a class="page-link" th:href="@{/admin/voting-status(page=${totalPages - 1}, size=${pageSize})}" aria-label="마지막">
                                     <span aria-hidden="true">&raquo;&raquo;</span>
                                 </a>
                             </li>

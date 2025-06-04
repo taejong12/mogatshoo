@@ -1,4 +1,4 @@
-package com.mogatshoo.dev.voting_status.entity;
+package com.mogatshoo.dev.admin.voting_status.entity;
 
 import lombok.Getter;
 import lombok.Setter;

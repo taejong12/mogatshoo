@@ -1,8 +1,8 @@
-package com.mogatshoo.dev.voting_status.controller;
+package com.mogatshoo.dev.admin.voting_status.controller;
 
 import com.mogatshoo.dev.admin.amdinEmail.service.AdminEmailService; // 추가
-import com.mogatshoo.dev.voting_status.entity.StatusEntity;
-import com.mogatshoo.dev.voting_status.service.StatusService;
+import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
+import com.mogatshoo.dev.admin.voting_status.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map; // 추가
 
 @Controller
-@RequestMapping("/voting-status")
+@RequestMapping("/admin/voting-status")
 public class StatusController {
 
     @Autowired
@@ -164,18 +164,18 @@ public class StatusController {
             
             if (questionStats == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "질문 정보를 찾을 수 없습니다.");
-                return "redirect:/voting-status";
+                return "redirect:/admin/voting-status";
             }
             
             // 투표율 40% 이상인지 확인 (종료된 질문만)
             if (!"yes".equals(questionStats.getIsEnded())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "진행 중인 질문은 이메일을 전송할 수 없습니다.");
-                return "redirect:/voting-status";
+                return "redirect:/admin/voting-status";
             }
             
             if (questionStats.getVotingRate() < 40.0) {
                 redirectAttributes.addFlashAttribute("errorMessage", "투표율이 40% 미만인 질문은 이메일을 전송할 수 없습니다.");
-                return "redirect:/voting-status";
+                return "redirect:/admin/voting-status";
             }
             
             // 이미 전송했는지 확인
@@ -192,7 +192,7 @@ public class StatusController {
             System.err.println("이메일 페이지 이동 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "이메일 페이지로 이동하는 중 오류가 발생했습니다.");
-            return "redirect:/voting-status";
+            return "redirect:/admin/voting-status";
         }
     }
 
@@ -210,7 +210,7 @@ public class StatusController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "통계 새로고침 중 오류가 발생했습니다.");
         }
-        return "redirect:/voting-status?page=" + page;
+        return "redirect:/admin/voting-status?page=" + page;
     }
     
     // 빠른 이메일 전송 API 추가
