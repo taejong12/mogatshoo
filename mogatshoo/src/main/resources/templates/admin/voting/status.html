@@ -148,17 +148,17 @@
                                              th:style="${'width: ' + stat.votingRate + '%; background: ' + (stat.votingRate >= 50 ? '#10b981' : stat.votingRate >= 40 ? '#f59e0b' : '#ef4444') + ';'}"></div>
                                     </div>
                                 </td>
-                                <td class="actions-container">
-                                    <a th:if="${stat.emailEligible}" 
-                                       th:href="@{/voting-status/email/{serialNumber}(serialNumber=${stat.serialNumber})}"
-                                       class="btn btn-email">
-                                        <i class="fas fa-envelope me-2"></i>이메일
-                                    </a>
-                                    <button th:if="${!stat.emailEligible}" 
-                                            class="btn btn-email" disabled>
-                                        <i class="fas fa-envelope me-2"></i>이메일
-                                    </button>
-                                </td>
+								<td class="actions-container">
+								    <a th:if="${stat.emailEligible}" 
+								       th:href="@{/admin/email/send/{serialNumber}(serialNumber=${stat.serialNumber})}"
+								       class="btn btn-email">
+								        <i class="fas fa-envelope me-2"></i>이메일
+								    </a>
+								    <button th:if="${!stat.emailEligible}" 
+								            class="btn btn-email" disabled>
+								        <i class="fas fa-envelope me-2"></i>이메일
+								    </button>
+								</td>
                             </tr>
                         </tbody>
                     </table>
