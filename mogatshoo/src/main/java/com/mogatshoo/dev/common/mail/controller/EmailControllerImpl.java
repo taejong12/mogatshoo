@@ -1,6 +1,8 @@
 package com.mogatshoo.dev.common.mail.controller;
 
 import java.util.HashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,7 +18,7 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class EmailControllerImpl implements EmailController{
-
+	private static final Logger logger = LoggerFactory.getLogger(EmailControllerImpl.class);
 	@Autowired
 	private EmailService mailService;
 	
@@ -58,7 +60,7 @@ public class EmailControllerImpl implements EmailController{
 		String authCode = (String) session.getAttribute("authCode");
 		String msg = null;
 		
-		System.out.println("authTryCount: "+authTryCount);
+		logger.info("authTryCount: {}",authTryCount);
 		
 		if (authTryCount == null) authTryCount = 0;
 		

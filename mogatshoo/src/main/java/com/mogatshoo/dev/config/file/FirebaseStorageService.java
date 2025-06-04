@@ -68,14 +68,14 @@ public class FirebaseStorageService {
     @PostConstruct
     public void init() {
         if (projectId.isEmpty() || privateKey.isEmpty() || clientEmail.isEmpty()) {
-            System.out.println("[FirebaseStorageService] 설정이 없습니다. 로컬 저장만 사용합니다.");
+            logger.info("[FirebaseStorageService] 설정이 없습니다. 로컬 저장만 사용합니다.");
             this.isEnabled = false;
             return;
         }
 
-        System.out.println("[DEBUG] 프로젝트 ID: " + projectId);
-        System.out.println("[DEBUG] 클라이언트 이메일: " + clientEmail);
-        System.out.println("[DEBUG] 스토리지 버킷: " + storageBucket);
+        logger.debug("[DEBUG] 프로젝트 ID: {}", projectId);
+        logger.debug("[DEBUG] 클라이언트 이메일: {}", clientEmail);
+        logger.debug("[DEBUG] 스토리지 버킷: {}", storageBucket);
 
         try {
             // Properties에서 읽은 정보로 JSON 생성
@@ -99,14 +99,12 @@ public class FirebaseStorageService {
                     .build()
                     .getService();
 
-            System.out.println("[DEBUG] Firebase Storage 서비스 생성 성공!");
+            logger.info("[DEBUG] Firebase Storage 서비스 생성 성공!");
 
-            // 연결 테스트 제거 (Guava 충돌 방지)
-            System.out.println("[DEBUG] Firebase Storage 초기화 완료!");
             this.isEnabled = true;
 
         } catch (Exception e) {
-            System.err.println("[DEBUG] 초기화 실패: " + e.getMessage());
+           logger.info("[DEBUG] 초기화 실패: {}", e.getMessage());
             this.isEnabled = false;
             this.storage = null;
         }
@@ -197,12 +195,12 @@ public class FirebaseStorageService {
             boolean deleted = storage.delete(blobId);
             
             if (deleted) {
-                System.out.println("[FirebaseStorageService] 파일 삭제 성공: " + filePath);
+                logger.info("[FirebaseStorageService] 파일 삭제 성공: {}", filePath);
             } else {
-                System.out.println("[FirebaseStorageService] 파일이 존재하지 않음: " + filePath);
+            	logger.info("[FirebaseStorageService] 파일이 존재하지 않음: {}", filePath);
             }
         } catch (Exception e) {
-            System.err.println("[FirebaseStorageService] 파일 삭제 실패: " + e.getMessage());
+        	logger.info("[FirebaseStorageService] 파일 삭제 실패: {}", e.getMessage());
         }
     }
 
@@ -223,16 +221,16 @@ public class FirebaseStorageService {
                     .forEach(blob -> {
                         try {
                             storage.delete(blob.getBlobId());
-                            System.out.println("[FirebaseStorageService] 파일 삭제: " + blob.getName());
+                            logger.info("[FirebaseStorageService] 파일 삭제: {}", blob.getName());
                         } catch (Exception e) {
-                            System.err.println("[FirebaseStorageService] 파일 삭제 실패: " + blob.getName() + " - " + e.getMessage());
+                           logger.info("[FirebaseStorageService] 파일 삭제 실패: {}", blob.getName() + " - " + e.getMessage());
                         }
                     });
 
-            System.out.println("[FirebaseStorageService] 사용자 폴더 삭제 완료: " + memberId);
+            logger.info("[FirebaseStorageService] 사용자 폴더 삭제 완료: {}", memberId);
 
         } catch (Exception e) {
-            System.err.println("[FirebaseStorageService] 사용자 폴더 삭제 실패: " + e.getMessage());
+            logger.info("[FirebaseStorageService] 사용자 폴더 삭제 실패: {}", e.getMessage());
             throw new IOException("사용자 폴더 삭제 실패: " + e.getMessage(), e);
         }
     }

@@ -106,7 +106,6 @@ public class HairLossTestController {
 	            return ".";  
 	            
 	        } catch (Exception e) {
-	            System.err.println("이거 안되면 집감: " + e.getMessage());
 	            return ".";
 	        }
 	    }
