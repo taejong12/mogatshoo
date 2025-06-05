@@ -25,10 +25,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Service
 public class AdminEmailServiceImpl implements AdminEmailService {
-    
+	private static final Logger logger = LoggerFactory.getLogger(AdminEmailServiceImpl.class);
     @Autowired
     private AdminEmailRepository adminEmailRepository;
     
@@ -52,10 +53,10 @@ public class AdminEmailServiceImpl implements AdminEmailService {
     public AdminEmailEntity sendWinnerEmail(String serialNumber, String winnerId, String senderId, 
                                            String customContent, MultipartFile attachmentFile) {
         try {
-            System.out.println("=== 이메일 전송 시작 ===");
-            System.out.println("질문번호: " + serialNumber);
-            System.out.println("당첨자: " + winnerId);
-            System.out.println("전송자: " + senderId);
+        	logger.info("=== 이메일 전송 시작 ===");
+            logger.info("질문번호: {}", serialNumber);
+            logger.info("당첨자: {}", winnerId);
+            logger.info("전송자: {}", senderId);
             
             // 중복 전송 체크
             if (isDuplicateEmail(serialNumber, winnerId)) {
@@ -91,7 +92,7 @@ public class AdminEmailServiceImpl implements AdminEmailService {
             
             // 데이터베이스에 먼저 저장
             AdminEmailEntity savedEntity = adminEmailRepository.save(emailEntity);
-            System.out.println("이메일 엔티티 저장 완료: " + savedEntity.getId());
+            logger.info("이메일 엔티티 저장 완료: {}", savedEntity.getId());
             
             // 이메일 전송
             boolean emailSent = sendEmail(savedEntity, attachmentFile);
@@ -100,17 +101,17 @@ public class AdminEmailServiceImpl implements AdminEmailService {
             if (emailSent) {
                 savedEntity.setEmailStatus("SENT");
                 savedEntity.setSentAt(LocalDateTime.now());
-                System.out.println("이메일 전송 성공: " + winner.getMemberEmail());
+                logger.info("이메일 전송 성공: {}", winner.getMemberEmail());
             } else {
                 savedEntity.setEmailStatus("FAILED");
                 savedEntity.setFailureReason("이메일 전송 실패");
-                System.err.println("이메일 전송 실패: " + winner.getMemberEmail());
+                logger.info("이메일 전송 실패: {}", winner.getMemberEmail());
             }
             
             return adminEmailRepository.save(savedEntity);
             
         } catch (Exception e) {
-            System.err.println("이메일 전송 프로세스 중 오류 발생: " + e.getMessage());
+        	logger.info("이메일 전송 프로세스 중 오류 발생: {}", e.getMessage());
             e.printStackTrace();
             
             // 실패한 경우에도 로그를 남기기 위해 엔티티 저장
@@ -128,7 +129,7 @@ public class AdminEmailServiceImpl implements AdminEmailService {
                     return adminEmailRepository.save(failedEntity);
                 }
             } catch (Exception saveException) {
-                System.err.println("실패 로그 저장 중 오류: " + saveException.getMessage());
+            	logger.info("실패 로그 저장 중 오류: {}", saveException.getMessage());
             }
             
             throw new RuntimeException("이메일 전송 실패: " + e.getMessage(), e);
@@ -253,11 +254,11 @@ public class AdminEmailServiceImpl implements AdminEmailService {
             }
             
             javaMailSender.send(message);
-            System.out.println("JavaMailSender를 통한 이메일 전송 완료");
+            logger.info("JavaMailSender를 통한 이메일 전송 완료");
             return true;
             
         } catch (Exception e) {
-            System.err.println("이메일 전송 실패: " + e.getMessage());
+        	logger.debug("이메일 전송 실패: {}", e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -376,11 +377,11 @@ public class AdminEmailServiceImpl implements AdminEmailService {
             Path filePath = uploadDir.resolve(newFilename);
             Files.copy(file.getInputStream(), filePath);
             
-            System.out.println("첨부파일 저장 완료: " + filePath.toString());
+            logger.info("첨부파일 저장 완료: {}", filePath.toString());
             return filePath.toString();
             
         } catch (IOException e) {
-            System.err.println("첨부파일 저장 실패: " + e.getMessage());
+        	logger.info("첨부파일 저장 실패: {}", e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("첨부파일 저장 실패", e);
         }

@@ -36,4 +36,13 @@ public class WebConfig implements WebMvcConfigurer {
 	            "/css/**", "/js/**", "/img/**", "/videos/**", "/favicon.ico", "/my_model/**", "/hairLossTest/**" // 무한 루프 방지
 	        );
     }
+	
+	 //Chrome DevTools .well-known 경고 제거
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // .well-known 경로 처리 (Chrome DevTools 경고 제거)
+        registry.addResourceHandler("/.well-known/**")
+                .addResourceLocations("classpath:/static/.well-known/");
+       
+    }
 }

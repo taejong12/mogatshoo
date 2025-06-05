@@ -216,26 +216,89 @@ h5 {
     max-height: 400px;
     overflow-y: auto;
 }
-
-/* 윈도우 95 스타일 스크롤바 (웹킷 기반 브라우저) */
-#hospital-list::-webkit-scrollbar {
+/* 윈도우 95 스타일 전역 스크롤바 */
+::-webkit-scrollbar {
     width: 16px;
-}
-
-#hospital-list::-webkit-scrollbar-track {
-    background-color: #c0c0c0;
-    border: 1px inset #c0c0c0;
-}
-
-#hospital-list::-webkit-scrollbar-thumb {
-    background-color: #c0c0c0;
-    border: 2px outset #c0c0c0;
-}
-
-#hospital-list::-webkit-scrollbar-button {
-    background-color: #c0c0c0;
-    border: 2px outset #c0c0c0;
     height: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #c0c0c0;
+    border: 1px solid #808080;
+    box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border: 1px solid #808080;
+    box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
+    min-height: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #d4d0c8;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: #a0a0a0;
+    box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #dfdfdf;
+}
+
+::-webkit-scrollbar-button {
+    background-color: #c0c0c0;
+    border: 1px solid #808080;
+    box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+::-webkit-scrollbar-button:hover {
+    background-color: #d4d0c8;
+}
+
+::-webkit-scrollbar-button:active {
+    background-color: #a0a0a0;
+    box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #dfdfdf;
+}
+
+/* 세로 스크롤바 화살표 */
+::-webkit-scrollbar-button:vertical:start:decrement {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M8 4l4 4H4z' fill='%23000'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+::-webkit-scrollbar-button:vertical:end:increment {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M8 12l-4-4h8z' fill='%23000'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* 가로 스크롤바 화살표 */
+::-webkit-scrollbar-button:horizontal:start:decrement {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4 8l4-4v8z' fill='%23000'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+::-webkit-scrollbar-button:horizontal:end:increment {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M12 8l-4-4v8z' fill='%23000'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* 스크롤바 코너 */
+::-webkit-scrollbar-corner {
+    background-color: #c0c0c0;
+    border: 1px solid #808080;
+    box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
+}
+
+/* Firefox용 스크롤바 스타일 (제한적) */
+html {
+    scrollbar-width: auto;
+    scrollbar-color: #c0c0c0 #c0c0c0;
 }
 
 /* 로딩 인디케이터 - 윈도우 95 스타일 */

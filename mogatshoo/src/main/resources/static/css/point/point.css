@@ -46,6 +46,7 @@ body {
     flex-direction: column;
     overflow: hidden;
     box-sizing: border-box;
+	background-color: #c0c0c0 !important;
 }
 
 /* Bootstrap 변수 오버라이드 */
@@ -247,6 +248,7 @@ h1.point-title {
 .pagination {
 	text-align: center;
 	padding-top: 20px;
+	display: block !important;
 }
 /* 반응형 */
 @media (max-width: 768px) {

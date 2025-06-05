@@ -4,13 +4,9 @@
       layout:decorate="~{fragments/layout}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="_csrf" th:content="${_csrf?.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
     <title>투표하기 - Mogatshoo</title>
     
     <th:block layout:fragment="additionalStyles">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link rel="stylesheet" th:href="@{/css/voting/voting.css}">
     </th:block>
 </head>
@@ -28,7 +24,7 @@
         <div class="vote-container">
             <!-- 투표 컨텐츠 영역 -->
             <div id="vote-content" th:if="${question != null and (noMoreQuestions == null or noMoreQuestions == false)}">
-                <div class="vote-header">
+                <div>
                     <h1>투표하기</h1>
                     <p class="vote-instructions">마음에 드는 사진을 클릭해서 투표해주세요</p>
                 </div>
