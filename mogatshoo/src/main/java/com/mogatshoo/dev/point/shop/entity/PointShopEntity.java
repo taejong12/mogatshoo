@@ -2,8 +2,6 @@ package com.mogatshoo.dev.point.shop.entity;
 
 import java.time.LocalDateTime;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -65,7 +63,7 @@ public class PointShopEntity {
 	// 이미지 파일
 	@Transient
 	private PointShopImgEntity imgFile;
-	
+
 	// 카테고리
 	@Transient
 	private PointShopCategoryEntity category;

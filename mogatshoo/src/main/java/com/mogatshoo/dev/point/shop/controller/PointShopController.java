@@ -1,5 +1,6 @@
 package com.mogatshoo.dev.point.shop.controller;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.mogatshoo.dev.point.shop.entity.PointOrderHistoryEntity;
 import com.mogatshoo.dev.point.shop.entity.PointShopCategoryEntity;
 import com.mogatshoo.dev.point.shop.entity.PointShopEntity;
+import com.mogatshoo.dev.point.shop.service.PointOrderHistoryService;
 import com.mogatshoo.dev.point.shop.service.PointShopCategoryService;
 import com.mogatshoo.dev.point.shop.service.PointShopService;
 
@@ -35,6 +38,9 @@ public class PointShopController {
 
 	@Autowired
 	private PointShopCategoryService pointShopCategoryService;
+
+	@Autowired
+	private PointOrderHistoryService pointOrderHistoryService;
 
 	@GetMapping("/list")
 	public String pointShopList(@RequestParam(value = "pointCategoryId", required = false) Integer pointCategoryId,
@@ -98,15 +104,19 @@ public class PointShopController {
 		// 3. 포인트차감 (회원포인트 - 상품포인트)
 		// 4. 포인트내역저장 (상품구매, 상품포인트)
 		// 5. 포인상품구매내역저장
+		System.out.println("buy() received pointItemId: " + pointItemId);
 		pointShopService.buyPointItem(pointItemId);
 		session.setAttribute("pointItemId", pointItemId);
+		session.setAttribute("pointItemSetTime", System.currentTimeMillis());
 		return "redirect:/point/shop/complete";
 	}
 
 	@GetMapping("/complete")
 	public String completeBuyPointItem(Model model, HttpSession session) {
 		Long pointItemId = (Long) session.getAttribute("pointItemId");
+		Long setTime = (Long) session.getAttribute("pointItemSetTime");
 
+		System.out.println("complete() session pointItemId: " + pointItemId);
 		try {
 			if (pointItemId == null)
 				return "redirect:/";
@@ -115,8 +125,42 @@ public class PointShopController {
 			model.addAttribute("pointShop", pointShopEntity);
 			return "point/shop/complete";
 		} finally {
-			session.removeAttribute("pointItemId");
+			// 1분 지나면 삭제
+			if (setTime != null && System.currentTimeMillis() - setTime > 60000) {
+				session.removeAttribute("pointItemId");
+				session.removeAttribute("pointItemSetTime");
+			}
 		}
 	}
 
+	@GetMapping("/buyList")
+	public String PointItemBuyListPage(@RequestParam(value = "page", defaultValue = "0") int page, Principal principal,
+			Model model) {
+
+		// 페이지당 데이터 수 및 페이지 설정
+		int size = 12;
+		Pageable pageable = PageRequest.of(page, size, Sort.by("pointOrderHistoryId").descending());
+
+		String memberId = principal.getName();
+
+		Page<PointOrderHistoryEntity> pointOrderHistoryPage = pointOrderHistoryService.findByMemberId(memberId,
+				pageable);
+
+		pointOrderHistoryPage = pointShopService.findPointItemName(pointOrderHistoryPage);
+
+		// 페이지네이션 계산
+		int currentPage = pointOrderHistoryPage.getNumber();
+		int totalPages = pointOrderHistoryPage.getTotalPages();
+
+		int pageBlockSize = 10;
+		int startPage = (currentPage / pageBlockSize) * pageBlockSize;
+		int endPage = Math.min(startPage + pageBlockSize, totalPages);
+
+		model.addAttribute("pointItemBuyList", pointOrderHistoryPage.getContent());
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
+		model.addAttribute("totalPages", totalPages);
+		return "point/shop/buyList";
+	}
 }
