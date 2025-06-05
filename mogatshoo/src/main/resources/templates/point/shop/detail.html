@@ -1,73 +1,408 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트상품상세'">
+
+<head>
+	<style>
+		body,
+		html {
+			font-family: 'dalmoori', sans-serif;
+
+		}
+
+		/* 🔥 아이프레임에 꽉 차도록 윈도우95 스타일 */
+		.win95-detail-container {
+			background-color: #c0c0c0;
+			border: 2px inset #c0c0c0;
+			padding: 10px;
+			margin: 0;
+			font-size: 15px;
+			height: 100vh !important;
+			/* 🔥 전체 높이 차지 */
+			max-height: 100vh !important;
+			overflow-y: auto !important;
+			/* 🔥 스크롤 강제 활성화 */
+			box-sizing: border-box;
+		}
+
+		.win95-detail-title {
+			background: linear-gradient(90deg, #008080 0%, #004040 100%);
+			color: white;
+			padding: 5px 10px;
+			font-size: 16px;
+			font-weight: bold;
+			border: 1px outset #c0c0c0;
+			margin-bottom: 15px;
+		}
+
+		.win95-detail-card {
+			background-color: #ffffff;
+			border: 2px inset #c0c0c0;
+			padding: 20px;
+			margin: 10px 0;
+			box-shadow: none;
+		}
+
+		.win95-image-section {
+			background-color: #f0f0f0;
+			border: 2px inset #c0c0c0;
+			padding: 15px;
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.win95-product-image {
+			max-width: 100%;
+			max-height: 350px;
+			object-fit: contain;
+			border: 1px solid #808080;
+			background-color: #ffffff;
+			/* 🔥 이미지 로딩 최적화 */
+			loading: lazy;
+			image-rendering: auto;
+			image-rendering: optimizeQuality;
+		}
+
+		/* 🔥 이미지 로딩 상태 스타일 */
+		.win95-product-image:not([src]) {
+			background-color: #f0f0f0;
+			background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ctext x='100' y='100' text-anchor='middle' dy='.3em' fill='%23999' font-size='16'%3E이미지 로딩중...%3C/svg%3E");
+			background-repeat: no-repeat;
+			background-position: center;
+			min-height: 200px;
+		}
+
+		.win95-info-section {
+			background-color: #ffffff;
+			border: 2px inset #c0c0c0;
+			padding: 15px;
+			margin: 10px 0;
+		}
+
+		.win95-label {
+			background-color: #c0c0c0;
+			border: 1px outset #c0c0c0;
+			padding: 5px 10px;
+			font-size: 15px;
+			font-weight: bold;
+			color: #000080;
+			margin-bottom: 8px;
+			display: inline-block;
+			min-width: 100px;
+		}
+
+		.win95-value {
+			background-color: #ffffff;
+			border: 1px inset #c0c0c0;
+			padding: 8px 12px;
+			font-size: 15px;
+			color: #000000;
+			margin-bottom: 15px;
+			word-wrap: break-word;
+			line-height: 1.4;
+		}
+
+		.win95-price {
+			color: #800000;
+			font-weight: bold;
+			font-size: 18px;
+		}
+
+		.win95-stock {
+			color: #008000;
+			font-weight: bold;
+		}
+
+		.win95-stock.sold-out {
+			color: #800000;
+		}
+
+		.win95-description {
+			min-height: 80px;
+			max-height: 200px;
+			overflow-y: auto;
+			white-space: pre-wrap;
+		}
+
+		.win95-button-section {
+			background-color: #c0c0c0;
+			border: 2px inset #c0c0c0;
+			padding: 20px;
+			text-align: center;
+			margin: 20px 0;
+		}
+
+		.win95-buy-button {
+			background-color: #c0c0c0;
+			border: 2px outset #c0c0c0;
+			border-radius: 0;
+			color: #000000;
+			font-size: 16px;
+			font-weight: bold;
+			padding: 12px 30px;
+			cursor: pointer;
+			box-shadow: none;
+			text-decoration: none;
+			display: inline-block;
+			margin: 5px;
+		}
+
+		.win95-buy-button:hover {
+			background-color: #d4d0c8;
+			border: 2px outset #d4d0c8;
+			color: #000000;
+			text-decoration: none;
+		}
+
+		.win95-buy-button:active {
+			border: 2px inset #c0c0c0;
+			background-color: #a0a0a0;
+		}
+
+		.win95-sold-out-badge {
+			background-color: #800000;
+			color: white;
+			padding: 12px 25px;
+			border: 2px inset #c0c0c0;
+			font-size: 18px;
+			font-weight: bold;
+			display: inline-block;
+		}
+
+		.win95-back-button {
+			background-color: #c0c0c0;
+			border: 2px outset #c0c0c0;
+			border-radius: 0;
+			color: #000000;
+			font-size: 15px;
+			padding: 8px 20px;
+			cursor: pointer;
+			box-shadow: none;
+			text-decoration: none;
+			display: inline-block;
+			margin: 5px;
+		}
+
+		.win95-back-button:hover {
+			background-color: #d4d0c8;
+			border: 2px outset #d4d0c8;
+			color: #000000;
+			text-decoration: none;
+		}
+
+		.win95-back-button:active {
+			border: 2px inset #c0c0c0;
+			background-color: #a0a0a0;
+		}
+
+		/* 🔥 반응형 디자인 */
+		@media (max-width: 768px) {
+			.win95-detail-container {
+				padding: 8px;
+				height: 100vh !important;
+				overflow-y: auto !important;
+			}
+
+			.win95-image-section {
+				padding: 10px;
+			}
+
+			.win95-product-image {
+				max-height: 250px;
+			}
+
+			.win95-label {
+				min-width: 80px;
+				font-size: 15px;
+			}
+
+			.win95-value {
+				font-size: 15px;
+			}
+
+			.win95-buy-button {
+				width: 100%;
+				margin: 5px 0;
+			}
+
+			.win95-back-button {
+				width: 100%;
+				margin: 5px 0;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.win95-detail-container {
+				padding: 5px;
+				height: 100vh !important;
+				overflow-y: auto !important;
+			}
+
+			.win95-product-image {
+				max-height: 200px;
+			}
+
+			.win95-label {
+				display: block;
+				width: 100%;
+				margin-bottom: 5px;
+			}
+		}
+
+		/* 🔥 윈도우95 스크롤바 스타일 강화 */
+		.win95-detail-container::-webkit-scrollbar {
+			width: 16px !important;
+			height: 16px !important;
+		}
+
+		.win95-detail-container::-webkit-scrollbar-track {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: inset 1px 1px 0 #dfdfdf,
+				inset -1px -1px 0 #808080 !important;
+		}
+
+		.win95-detail-container::-webkit-scrollbar-thumb {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf,
+				-1px -1px 0 #808080 !important;
+			min-height: 20px !important;
+		}
+
+		.win95-detail-container::-webkit-scrollbar-thumb:hover {
+			background-color: #d4d0c8 !important;
+		}
+
+		.win95-detail-container::-webkit-scrollbar-thumb:active {
+			background-color: #a0a0a0 !important;
+			box-shadow: inset 1px 1px 0 #808080,
+				inset -1px -1px 0 #dfdfdf !important;
+		}
+
+		.win95-detail-container::-webkit-scrollbar-button {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf,
+				-1px -1px 0 #808080 !important;
+			width: 16px !important;
+			height: 16px !important;
+			display: block !important;
+		}
+
+		.win95-description::-webkit-scrollbar {
+			width: 12px;
+		}
+
+		.win95-description::-webkit-scrollbar-track {
+			background-color: #f0f0f0;
+			border: 1px solid #c0c0c0;
+		}
+
+		.win95-description::-webkit-scrollbar-thumb {
+			background-color: #c0c0c0;
+			border: 1px solid #808080;
+		}
+	</style>
+</head>
+
 <body>
 	<div layout:fragment="content">
+		<div class="win95-detail-container">
 
-		<div class="col-12 col-md-6">
-			<h1 class="my-4 text-center">포인트상품상세</h1>
+			<!-- 윈도우95 타이틀 바 -->
+			<div class="win95-detail-title">🛍️ 포인트상품 상세정보</div>
 
-			<div class="card shadow-sm mb-5">
-				<div class="card-body">
+			<!-- 상품 정보 카드 -->
+			<div class="win95-detail-card">
 
-					<!-- 상품 이미지 -->
-					<div class="mb-4 text-center">
-						<label class="form-label fw-bold">이미지</label>
-						<div>
-							<img th:if="${pointShop.imgFile != null}"
-								th:src="@{${pointShop.imgFile.pointItemImgPath}}"
-								class="img-fluid border rounded"
-								style="max-width: 300px; object-fit: contain;" alt="상품 이미지">
+				<!-- 상품 이미지 섹션 -->
+				<div class="win95-image-section">
+					<div class="win95-label">📷 상품 이미지</div>
+					<div style="margin-top: 10px;">
+						<img th:if="${pointShop.imgFile != null}" th:src="@{${pointShop.imgFile.pointItemImgPath}}"
+							class="win95-product-image" alt="상품 이미지" loading="lazy" width="300" height="350">
+					</div>
+				</div>
+
+				<!-- 상품 정보 섹션 -->
+				<div class="win95-info-section">
+
+					<div style="margin-bottom: 15px;">
+						<div class="win95-label">📝 상품이름</div>
+						<div class="win95-value" th:text="${pointShop.pointItemName}">상품이름</div>
+					</div>
+
+					<div style="margin-bottom: 15px;">
+						<div class="win95-label">💰 상품가격</div>
+						<div class="win95-value win95-price" th:text="${pointShop.pointItemPrice + 'P'}">가격</div>
+					</div>
+
+					<div style="margin-bottom: 15px;">
+						<div class="win95-label">📦 재고수량</div>
+						<div class="win95-value"
+							th:classappend="${pointShop.pointItemStock > 0} ? 'win95-stock' : 'win95-stock sold-out'"
+							th:text="${pointShop.pointItemStock > 0} ? ${pointShop.pointItemStock + '개'} : '재고 없음'">재고수량
 						</div>
 					</div>
 
-					<!-- 상품 정보 목록 -->
-					<div class="mb-3">
-						<label class="form-label fw-bold">상품이름</label>
-						<p class="form-control-plaintext"
-							th:text="${pointShop.pointItemName}">상품이름</p>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label fw-bold">상품가격</label>
-						<p class="form-control-plaintext"
-							th:text="${pointShop.pointItemPrice + 'P'}">가격</p>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label fw-bold">재고수량</label>
-						<p class="form-control-plaintext"
-							th:text="${pointShop.pointItemStock}">재고수량</p>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label fw-bold">유의사항</label>
-						<p class="form-control-plaintext"
-							th:text="${pointShop.pointItemDescription}">유의사항</p>
-					</div>
-
-					<!-- 구매 버튼 or 매진 표시 -->
-					<div class="d-flex justify-content-center align-items-center gap-2">
-						<th:block th:if="${pointShop.pointItemStock > 0}">
-							<form name="pointItemBuyForm">
-								<input type="hidden" name="pointItemId" id="pointItemId"
-									th:value="${pointShop.pointItemId}" />
-								<button type="button" class="btn btn-primary"
-									onclick="fu_pointItemBuy()">구매하기</button>
-							</form>
-						</th:block>
-						<th:block th:unless="${pointShop.pointItemStock > 0}">
-							<span class="badge bg-danger fs-5">매진</span>
-						</th:block>
+					<div style="margin-bottom: 15px;">
+						<div class="win95-label">📋 유의사항</div>
+						<div class="win95-value win95-description"
+							th:text="${pointShop.pointItemDescription ?: '유의사항이 없습니다.'}">유의사항</div>
 					</div>
 
 				</div>
+
+				<!-- 구매 버튼 섹션 -->
+				<div class="win95-button-section">
+
+					<!-- 🔥 판매중지 상품 (pointItemSaleStatus == 'N') -->
+					<th:block th:if="${pointShop.pointItemSaleStatus == 'N'}">
+						<div class="win95-sold-out-badge" style="background-color: #800000;">
+							🚫 판매중지
+						</div>
+						<div style="margin-top: 10px; color: #800000; font-size: 15px;">
+							현재 판매가 중단된 상품입니다
+						</div>
+					</th:block>
+
+					<!-- 🔥 판매중 상품 (pointItemSaleStatus == 'Y') -->
+					<th:block th:if="${pointShop.pointItemSaleStatus == 'Y'}">
+
+						<!-- 재고 있을 때: 구매 버튼 -->
+						<th:block th:if="${pointShop.pointItemStock > 0}">
+							<form name="pointItemBuyForm" style="display: inline;">
+								<input type="hidden" name="pointItemId" id="pointItemId"
+									th:value="${pointShop.pointItemId}" />
+								<button type="button" class="win95-buy-button" onclick="fu_pointItemBuy()">
+									🛒 구매하기
+								</button>
+							</form>
+						</th:block>
+
+						<!-- 재고 없을 때: 매진 표시 -->
+						<th:block th:unless="${pointShop.pointItemStock > 0}">
+							<div class="win95-sold-out-badge">❌ 매진</div>
+						</th:block>
+
+					</th:block>
+
+					<!-- 뒤로가기 버튼 -->
+					<div style="margin-top: 15px;">
+						<button type="button" class="win95-back-button" onclick="history.back()">
+							◀ 뒤로가기
+						</button>
+					</div>
+				</div>
+
 			</div>
+
 		</div>
 
 		<!-- 구매하기 버튼 클릭 스크립트 -->
 		<script th:src="@{/js/point/shop/detail/fu_pointItemBuy.js}"></script>
 	</div>
 </body>
+
 </html>

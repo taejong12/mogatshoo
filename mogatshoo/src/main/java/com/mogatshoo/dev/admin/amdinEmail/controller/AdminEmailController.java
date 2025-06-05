@@ -13,7 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin/email")
 public class AdminEmailController {
-
+	private static final Logger logger = LoggerFactory.getLogger(AdminEmailController.class);
 	@Autowired
 	private AdminEmailService adminEmailService;
 
@@ -82,7 +83,7 @@ public class AdminEmailController {
 			return "admin/email/emailSend";
 
 		} catch (Exception e) {
-			System.err.println("이메일 전송 페이지 로딩 중 오류 발생: " + e.getMessage());
+			logger.debug("이메일 전송 페이지 로딩 중 오류 발생: {}", e.getMessage());
 			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("errorMessage", "이메일 전송 페이지로 이동하는 중 오류가 발생했습니다.");
 			return "redirect:/admin/voting-status";
@@ -129,7 +130,7 @@ public class AdminEmailController {
 			return "redirect:/admin/voting-status";
 
 		} catch (Exception e) {
-			System.err.println("이메일 전송 중 오류 발생: " + e.getMessage());
+			logger.debug("이메일 전송 중 오류 발생: {}", e.getMessage());
 			e.printStackTrace();
 
 			try {
@@ -203,7 +204,7 @@ public class AdminEmailController {
 			return ResponseEntity.ok(response);
 
 		} catch (Exception e) {
-			System.err.println("AJAX 이메일 전송 중 오류 발생: " + e.getMessage());
+			logger.debug("AJAX 이메일 전송 중 오류 발생: {}", e.getMessage());
 			e.printStackTrace();
 			response.put("success", false);
 			response.put("message", "이메일 전송 중 오류가 발생했습니다: " + e.getMessage());
@@ -227,7 +228,7 @@ public class AdminEmailController {
 			return "admin/email/emailHistory";
 
 		} catch (Exception e) {
-			System.err.println("이메일 이력 조회 중 오류 발생: " + e.getMessage());
+			logger.debug("이메일 이력 조회 중 오류 발생: {}", e.getMessage());
 			e.printStackTrace();
 			model.addAttribute("errorMessage", "이메일 이력을 불러오는 중 오류가 발생했습니다.");
 			return "admin/email/emailHistory";
@@ -254,7 +255,7 @@ public class AdminEmailController {
 			return "redirect:/admin/email/emailHistory/" + resendResult.getSerialNumber();
 
 		} catch (Exception e) {
-			System.err.println("이메일 재전송 중 오류 발생: " + e.getMessage());
+			logger.debug("이메일 재전송 중 오류 발생: {}", e.getMessage());
 			e.printStackTrace();
 			redirectAttributes.addFlashAttribute("errorMessage", "이메일 재전송 중 오류가 발생했습니다.");
 			return "redirect:/admin/voting-status";
@@ -271,7 +272,7 @@ public class AdminEmailController {
 			AdminEmailService.EmailStatistics statistics = adminEmailService.getEmailStatistics();
 			return ResponseEntity.ok(statistics);
 		} catch (Exception e) {
-			System.err.println("이메일 통계 조회 중 오류 발생: " + e.getMessage());
+			logger.debug("이메일 통계 조회 중 오류 발생: {}", e.getMessage());
 			e.printStackTrace();
 			return ResponseEntity.badRequest().build();
 		}

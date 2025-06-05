@@ -1,99 +1,400 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트샵목록'">
+
+<head>
+	<style>
+		body, html {
+					font-family: 'dalmoori', sans-serif;
+
+				}
+		/* 🔥 아이프레임에 꽉 차도록 윈도우95 스타일 */
+		.win95-container {
+			background-color: #c0c0c0;
+			border: 2px inset #c0c0c0;
+			padding: 10px;
+			margin: 0;
+			font-size: 15px;
+			height: 100vh !important; /* 🔥 전체 높이 차지 */
+			max-height: 100vh !important;
+			overflow-y: auto !important; /* 🔥 스크롤 강제 활성화 */
+			box-sizing: border-box;
+		}
+
+		.win95-title {
+			background: linear-gradient(90deg, #008080 0%, #004040 100%);
+			color: white;
+			padding: 5px 10px;
+			font-size: 16px;
+			font-weight: bold;
+			border: 1px outset #c0c0c0;
+			margin-bottom: 10px;
+		}
+
+		.win95-category-tabs {
+			background-color: #c0c0c0;
+			border: none;
+			margin-bottom: 10px;
+			display: flex;
+			gap: 2px;
+		}
+
+		.win95-tab {
+			background-color: #c0c0c0;
+			border: 2px outset #c0c0c0;
+			padding: 8px 15px;
+			text-decoration: none;
+			color: black;
+			font-size: 15px;
+			cursor: pointer;
+		}
+
+		.win95-tab:hover {
+			background-color: #e0e0e0;
+			color: black;
+			text-decoration: none;
+		}
+
+		.win95-tab.active {
+			border: 2px inset #c0c0c0;
+			background-color: #ffffff;
+		}
+
+		.win95-grid {
+			display: grid;
+			grid-template-columns: repeat(6, 1fr);
+			gap: 10px;
+			margin: 15px 0;
+			min-height: auto; /* 🔥 최소 높이 자동 */
+			overflow: visible; /* 🔥 내용 표시 보장 */
+		}
+
+		/* 🔥 반응형 미디어 쿼리에도 스크롤 설정 */
+		@media (max-width: 1400px) {
+			.win95-grid {
+				grid-template-columns: repeat(5, 1fr);
+			}
+			.win95-container {
+				overflow-y: auto !important;
+			}
+		}
+
+		@media (max-width: 1200px) {
+			.win95-grid {
+				grid-template-columns: repeat(4, 1fr);
+			}
+			.win95-container {
+				overflow-y: auto !important;
+			}
+		}
+
+		@media (max-width: 900px) {
+			.win95-grid {
+				grid-template-columns: repeat(3, 1fr);
+			}
+			.win95-container {
+				overflow-y: auto !important;
+				height: 100vh !important;
+			}
+		}
+
+		@media (max-width: 600px) {
+			.win95-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+			.win95-container {
+				overflow-y: auto !important;
+				height: 100vh !important;
+			}
+		}
+
+		.win95-product-card {
+			background-color: #ffffff;
+			border: 2px inset #c0c0c0;
+			padding: 8px;
+			text-decoration: none;
+			color: black;
+			display: block;
+			transition: none;
+		}
+
+		.win95-product-card:hover {
+			border: 2px outset #c0c0c0;
+			color: black;
+			text-decoration: none;
+		}
+
+		.win95-product-card:active {
+			border: 2px inset #c0c0c0;
+		}
+
+		.win95-product-image {
+			width: 100%;
+			height: 120px;
+			object-fit: cover;
+			border: 1px inset #c0c0c0;
+			margin-bottom: 8px;
+		}
+
+		.win95-product-name {
+			font-size: 15px;
+			font-weight: bold;
+			margin: 5px 0;
+			color: #000080;
+			line-height: 1.2;
+		}
+
+		.win95-product-price {
+			font-size: 15px;
+			margin: 3px 0;
+			color: #800000;
+		}
+
+		.win95-product-status {
+			font-size: 14px;
+			margin: 3px 0;
+		}
+
+		.win95-stock-badge {
+			background-color: #008000;
+			color: white;
+			padding: 1px 4px;
+			border: 1px outset #c0c0c0;
+			font-size: 12px;
+			display: block;
+			margin-top: 2px;
+		}
+
+		.win95-soldout-card {
+			background-color: #808080;
+			border: 2px inset #c0c0c0;
+			padding: 8px;
+			position: relative;
+			opacity: 0.8;
+		}
+
+		.win95-soldout-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(128, 128, 128, 0.8);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border: 2px inset #c0c0c0;
+		}
+
+		.win95-soldout-text {
+			background-color: #ff0000;
+			color: white;
+			padding: 10px 20px;
+			border: 2px outset #c0c0c0;
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		.win95-stop-card {
+			background-color: #404040;
+			border: 2px inset #c0c0c0;
+			padding: 8px;
+			position: relative;
+			opacity: 0.6;
+		}
+
+		.win95-stop-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(128, 0, 0, 0.8);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border: 2px inset #c0c0c0;
+		}
+
+		.win95-stop-text {
+			background-color: #800000;
+			color: white;
+			padding: 10px 20px;
+			border: 2px outset #c0c0c0;
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		.win95-pagination {
+			text-align: center;
+			margin: 20px 0;
+		}
+
+		.win95-page-btn {
+			background-color: #c0c0c0;
+			border: 2px outset #c0c0c0;
+			padding: 8px 15px;
+			margin: 0 2px;
+			text-decoration: none;
+			color: black;
+			font-size: 15px;
+		}
+
+		.win95-page-btn:hover {
+			background-color: #e0e0e0;
+			color: black;
+			text-decoration: none;
+		}
+
+		.win95-page-btn:active {
+			border: 2px inset #c0c0c0;
+		}
+
+		.win95-page-btn.active {
+			background-color: #000080;
+			color: white;
+			border: 2px inset #c0c0c0;
+		}
+
+		.win95-no-products {
+			text-align: center;
+			padding: 40px;
+			background-color: #ffffff;
+			border: 2px inset #c0c0c0;
+			font-size: 16px;
+			color: #800000;
+			margin: 20px 0;
+			min-height: 200px; /* 🔥 최소 높이 설정 */
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		/* 🔥 윈도우95 스크롤바 스타일 강화 */
+		.win95-container::-webkit-scrollbar {
+			width: 16px !important;
+			height: 16px !important;
+		}
+
+		.win95-container::-webkit-scrollbar-track {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: inset 1px 1px 0 #dfdfdf, 
+						inset -1px -1px 0 #808080 !important;
+		}
+
+		.win95-container::-webkit-scrollbar-thumb {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf, 
+						-1px -1px 0 #808080 !important;
+			min-height: 20px !important;
+		}
+
+		.win95-container::-webkit-scrollbar-thumb:hover {
+			background-color: #d4d0c8 !important;
+		}
+
+		.win95-container::-webkit-scrollbar-thumb:active {
+			background-color: #a0a0a0 !important;
+			box-shadow: inset 1px 1px 0 #808080, 
+						inset -1px -1px 0 #dfdfdf !important;
+		}
+
+		.win95-container::-webkit-scrollbar-button {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf, 
+						-1px -1px 0 #808080 !important;
+			width: 16px !important;
+			height: 16px !important;
+			display: block !important;
+		}
+	</style>
+</head>
+
 <body>
 	<div layout:fragment="content">
-		<!-- 카테고리 필터 -->
-		<ul class="nav nav-pills my-4">
-			<li class="nav-item"><a class="nav-link"
-				th:href="@{/point/shop/list}"
-				th:classappend="${selectedCategoryId} == null ? 'active' : ''">전체</a>
-			</li>
-			<li class="nav-item" th:each="category : ${pointCategoryList}">
-				<a class="nav-link"
-				th:href="@{/point/shop/list(pointCategoryId=${category.pointCategoryId})}"
-				th:text="${category.pointCategoryName}"
-				th:classappend="${selectedCategoryId} == ${category.pointCategoryId} ? 'active' : ''"></a>
-			</li>
-		</ul>
+		<div class="win95-container">
+			
+			<!-- 윈도우95 타이틀 바 -->
+			<div class="win95-title">📦 포인트샵 목록</div>
 
-		<h1>포인트샵목록</h1>
+			<!-- 카테고리 탭 -->
+			<div class="win95-category-tabs">
+				<a class="win95-tab" th:href="@{/point/shop/list}"
+					th:classappend="${selectedCategoryId} == null ? 'active' : ''">전체</a>
+				<a class="win95-tab" th:each="category : ${pointCategoryList}"
+					th:href="@{/point/shop/list(pointCategoryId=${category.pointCategoryId})}"
+					th:text="${category.pointCategoryName}"
+					th:classappend="${selectedCategoryId} == ${category.pointCategoryId} ? 'active' : ''"></a>
+			</div>
 
-		<!-- 결과가 없을 경우 -->
-		<div th:if="${#lists.isEmpty(pointShopList)}">등록된 상품이 없습니다.</div>
+			<!-- 상품이 없을 경우 -->
+			<div th:if="${#lists.isEmpty(pointShopList)}" class="win95-no-products">
+				💾 등록된 상품이 없습니다.
+			</div>
 
-		<div class="row row-cols-1 row-cols-md-3 g-4"
-			th:each="pointShop : ${pointShopList}">
-			<div class="col">
-				<div th:if="${pointShop.pointItemStock > 0}">
+			<!-- 상품 그리드 -->
+			<div class="win95-grid" th:if="${!#lists.isEmpty(pointShopList)}">
+				
+				<!-- 판매중 상품만 표시 -->
+				<div th:each="pointShop : ${pointShopList}" th:if="${pointShop.pointItemSaleStatus == 'Y'}">
+					
 					<!-- 재고 있음: 클릭 가능 -->
-					<a
-						class="card h-100 text-white bg-dark border-secondary text-decoration-none"
-						th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
-						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}"
-						class="card-img-top" alt="상품 이미지"
-						style="object-fit: cover; height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title" th:text="${pointShop.pointItemName}">상품
-								이름</h5>
-							<p class="card-text"
-								th:text="'가격: ' + ${pointShop.pointItemPrice} + 'P'">가격</p>
+					<a th:if="${pointShop.pointItemStock > 0}" 
+					   class="win95-product-card"
+					   th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
+						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}" 
+							 class="win95-product-image" alt="상품 이미지"
+							 loading="lazy" width="200" height="120">
+						<div class="win95-product-name" th:text="${pointShop.pointItemName}">상품 이름</div>
+						<div class="win95-product-price" th:text="'💰 ' + ${pointShop.pointItemPrice} + 'P'">가격</div>
+						<div class="win95-product-status">
+							✅ 판매중 
+							<span class="win95-stock-badge" th:text="'재고 ' + ${pointShop.pointItemStock} + '개'">재고</span>
 						</div>
 					</a>
-				</div>
 
-				<div th:if="${pointShop.pointItemStock <= 0}">
-					<!-- 재고 없음: 매진 표시 + 클릭 불가 -->
-					<div
-						class="card h-100 text-white bg-secondary border-secondary position-relative">
-						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}"
-							class="card-img-top" alt="상품 이미지"
-							style="object-fit: cover; height: 200px; opacity: 0.5;">
-						<div
-							class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-							style="background-color: rgba(0, 0, 0, 0.6);">
-							<span class="text-white fw-bold fs-4">매진</span>
-						</div>
-						<div class="card-body">
-							<h5 class="card-title" th:text="${pointShop.pointItemName}">상품
-								이름</h5>
-							<p class="card-text"
-								th:text="'가격: ' + ${pointShop.pointItemPrice} + 'P'">가격</p>
+					<!-- 재고 없음: 매진 표시 -->
+					<div th:if="${pointShop.pointItemStock <= 0}" class="win95-soldout-card">
+						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}" 
+							 class="win95-product-image" alt="상품 이미지" 
+							 style="opacity: 0.5;" loading="lazy" width="200" height="120">
+						<div class="win95-product-name" th:text="${pointShop.pointItemName}">상품 이름</div>
+						<div class="win95-product-price" th:text="'💰 ' + ${pointShop.pointItemPrice} + 'P'">가격</div>
+						<div class="win95-soldout-overlay">
+							<div class="win95-soldout-text">매진</div>
 						</div>
 					</div>
+
 				</div>
 			</div>
-		</div>
 
-		<!-- 페이지네이션 -->
-		<nav th:if="${!#lists.isEmpty(pointShopList)}"
-			aria-label="Page navigation">
-			<ul class="pagination justify-content-center">
-
-				<!-- 이전 버튼: startPage가 10 이상일 때만 보임 -->
-				<li class="page-item" th:if="${startPage >= 10}"><a
-					class="page-link"
-					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${startPage - 10})}"
-					aria-label="Previous"> <span aria-hidden="true">&laquo;이전</span>
-				</a></li>
+			<!-- 페이지네이션 -->
+			<div th:if="${!#lists.isEmpty(pointShopList)}" class="win95-pagination">
+				
+				<!-- 이전 버튼 -->
+				<a th:if="${startPage >= 10}" class="win95-page-btn"
+				   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${startPage - 10})}">
+					◀ 이전
+				</a>
 
 				<!-- 페이지 번호 -->
-				<li class="page-item"
-					th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
-					th:classappend="${i} == ${currentPage} ? ' active' : ''"><a
-					class="page-link"
-					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
-					th:text="${i + 1}"> </a></li>
+				<a class="win95-page-btn" 
+				   th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
+				   th:classappend="${i} == ${currentPage} ? 'active' : ''"
+				   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
+				   th:text="${i + 1}"></a>
 
-				<!-- 다음 버튼: endPage가 totalPages보다 작을 때만 보임 -->
-				<li class="page-item" th:if="${endPage < totalPages}"><a
-					class="page-link"
-					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${endPage})}"
-					aria-label="Next"> <span aria-hidden="true">다음 &raquo;</span>
-				</a></li>
-			</ul>
-		</nav>
+				<!-- 다음 버튼 -->
+				<a th:if="${endPage < totalPages}" class="win95-page-btn"
+				   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${endPage})}">
+					다음 ▶
+				</a>
+			</div>
+
+		</div>
 	</div>
 </body>
 </html>

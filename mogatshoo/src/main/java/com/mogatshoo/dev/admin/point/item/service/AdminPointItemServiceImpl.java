@@ -1,6 +1,5 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -116,7 +115,7 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 	public void updatePointItem(AdminPointItemEntity adminPointItemEntity) {
 
 		try {
-			// 1. 이미지 수정 (구글드라이브), DB 수정
+			// 1. 이미지 수정, DB 수정
 			MultipartFile imgFile = adminPointItemEntity.getImgFile();
 			if (imgFile != null && !imgFile.isEmpty()) {
 				Long pointItemId = adminPointItemEntity.getPointItemId();
@@ -155,10 +154,16 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 				oldPointItemEntity.setPointItemName(adminPointItemEntity.getPointItemName());
 				oldPointItemEntity.setPointItemDescription(adminPointItemEntity.getPointItemDescription());
 				oldPointItemEntity.setPointItemPrice(adminPointItemEntity.getPointItemPrice());
-				oldPointItemEntity.setPointItemStock(adminPointItemEntity.getPointItemStock());
-				oldPointItemEntity.setPointItemSaleStatus(adminPointItemEntity.getPointItemSaleStatus());
 				oldPointItemEntity.setPointCategoryId(adminPointItemEntity.getPointCategoryId());
-				//oldPointItemEntity.setPointItemUpdate(LocalDateTime.now());
+
+				// 입력한 재고 수량이 0 이하일 경우 → 기존 상태 유지
+				if (adminPointItemEntity.getPointItemStock() <= 0) {
+					logger.info("입력하신 재고수량이 0 이하입니다. 기존 상태를 유지합니다. (stock: {}, saleStatus: {})",
+							oldPointItemEntity.getPointItemStock(), oldPointItemEntity.getPointItemSaleStatus());
+				} else {
+					oldPointItemEntity.setPointItemStock(adminPointItemEntity.getPointItemStock());
+					oldPointItemEntity.setPointItemSaleStatus(adminPointItemEntity.getPointItemSaleStatus());
+				}
 
 				logger.info("포인트 상품이 성공적으로 수정되었습니다. ID: {}", pointItemId);
 			} else {
