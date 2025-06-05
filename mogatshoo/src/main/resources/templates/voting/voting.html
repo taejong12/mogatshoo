@@ -35,101 +35,32 @@
                 
                 <!-- 질문 내용 -->
                 <div class="question-container">
-                    <h2 th:text="${question.question}" class="question-text">질문 텍스트</h2>
-                    <p class="question-serial" th:text="'질문 번호: ' + ${question.serialNumber}">질문 번호: Q00001</p>
+                    <h2 th:text="${question.question}" class="question-text" id="question-text">질문 텍스트</h2>
+                    <p class="question-serial" th:text="'질문 번호: ' + ${question.serialNumber}" id="question-serial-display">질문 번호: Q00001</p>
                 </div>
                 
-                <!-- 투표 옵션 (사진) - memberName 사용 -->
+                <!-- 투표 옵션 (질문의 원본 이미지 사용) -->
                 <div class="options-container">
-                    <div class="options-grid">
-                        <!-- 옵션 1 -->
-                        <div class="option-item" th:if="${randomPictures != null and randomPictures.size() > 0}">
+                    <div class="options-grid" id="options-container">
+                        
+                        <!-- 옵션들 동적 생성 -->
+                        <div th:each="option, stat : ${questionOptions}" class="option-item">
                             <div class="picture-option" 
                                  th:data-serial-number="${question.serialNumber}"
-                                 th:data-option-index="0"
-                                 th:data-member-id="${randomPictures[0].memberId}"
-                                 onclick="selectPicture(this)">
+                                 th:data-option-id="${option.optionId}"
+                                 onclick="selectOption(this)">
                                 <div class="pic-container">
-                                    <img th:src="${randomPictures[0].firebaseStorageUrl}" 
-                                         th:alt="'투표 옵션 1'"
+                                    <img th:src="${option.imageUrl}" 
+                                         th:alt="'투표 옵션 ' + ${stat.count}"
                                          class="option-image"
                                          onload="this.style.opacity='1';"
                                          onerror="handleImageError(this);"
                                          style="opacity: 0; transition: opacity 0.3s ease;">
                                 </div>
-                                <!-- memberName 사용 (실제 이름) -->
-                                <div class="option-text" 
-                                     th:text="${memberNicknames != null ? memberNicknames.get(randomPictures[0].memberId) : '참가자 1'}">
-                                     참가자 1
-                                </div>
+                                <div class="option-text">옵션 [[${stat.count}]]</div>
                             </div>
                         </div>
                         
-                        <!-- 옵션 2 -->
-                        <div class="option-item" th:if="${randomPictures != null and randomPictures.size() > 1}">
-                            <div class="picture-option" 
-                                 th:data-serial-number="${question.serialNumber}"
-                                 th:data-option-index="1"
-                                 th:data-member-id="${randomPictures[1].memberId}"
-                                 onclick="selectPicture(this)">
-                                <div class="pic-container">
-                                    <img th:src="${randomPictures[1].firebaseStorageUrl}" 
-                                         th:alt="'투표 옵션 2'"
-                                         class="option-image"
-                                         onload="this.style.opacity='1';"
-                                         onerror="handleImageError(this);"
-                                         style="opacity: 0; transition: opacity 0.3s ease;">
-                                </div>
-                                <div class="option-text" 
-                                     th:text="${memberNicknames != null ? memberNicknames.get(randomPictures[1].memberId) : '참가자 2'}">
-                                     참가자 2
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 옵션 3 -->
-                        <div class="option-item" th:if="${randomPictures != null and randomPictures.size() > 2}">
-                            <div class="picture-option" 
-                                 th:data-serial-number="${question.serialNumber}"
-                                 th:data-option-index="2"
-                                 th:data-member-id="${randomPictures[2].memberId}"
-                                 onclick="selectPicture(this)">
-                                <div class="pic-container">
-                                    <img th:src="${randomPictures[2].firebaseStorageUrl}" 
-                                         th:alt="'투표 옵션 3'"
-                                         class="option-image"
-                                         onload="this.style.opacity='1';"
-                                         onerror="handleImageError(this);"
-                                         style="opacity: 0; transition: opacity 0.3s ease;">
-                                </div>
-                                <div class="option-text" 
-                                     th:text="${memberNicknames != null ? memberNicknames.get(randomPictures[2].memberId) : '참가자 3'}">
-                                     참가자 3
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 옵션 4 -->
-                        <div class="option-item" th:if="${randomPictures != null and randomPictures.size() > 3}">
-                            <div class="picture-option" 
-                                 th:data-serial-number="${question.serialNumber}"
-                                 th:data-option-index="3"
-                                 th:data-member-id="${randomPictures[3].memberId}"
-                                 onclick="selectPicture(this)">
-                                <div class="pic-container">
-                                    <img th:src="${randomPictures[3].firebaseStorageUrl}" 
-                                         th:alt="'투표 옵션 4'"
-                                         class="option-image"
-                                         onload="this.style.opacity='1';"
-                                         onerror="handleImageError(this);"
-                                         style="opacity: 0; transition: opacity 0.3s ease;">
-                                </div>
-                                <div class="option-text" 
-                                     th:text="${memberNicknames != null ? memberNicknames.get(randomPictures[3].memberId) : '참가자 4'}">
-                                     참가자 4
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -137,6 +68,9 @@
                 <div class="btn-group">
                     <a href="/" class="btn btn-secondary">홈으로 가기</a>
                 </div>
+                
+                <!-- 숨겨진 폼 데이터 -->
+                <input type="hidden" id="current-serial-number" th:value="${question.serialNumber}">
             </div>
             
             <!-- 투표 완료 메시지 -->

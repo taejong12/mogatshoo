@@ -1,7 +1,5 @@
 package com.mogatshoo.dev.voting.controller;
 
-import com.mogatshoo.dev.hair_loss_test.entity.PictureEntity;
-import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
 import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
@@ -18,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +33,6 @@ public class VotingController {
 
 	@Autowired
 	private MemberService memberService;
-
-	@Autowired
-	private HairLossTestService hairLossTestService;
 
 	// 투표 페이지 로드
 	@GetMapping({ "", "/voting" })
@@ -104,31 +100,52 @@ public class VotingController {
 	            return "voting/voting";
 	        }
 
-			// 랜덤 사진 4개 가져오기
-			List<PictureEntity> randomPictures = null;
-			try {
-				randomPictures = hairLossTestService.getRandomPictures(4);
-			} catch (Exception e) {
-				System.err.println("사진 조회 중 오류 발생: " + e.getMessage());
-				e.printStackTrace();
+			// 질문의 원본 옵션 이미지들을 가져와서 리스트로 구성
+			List<Map<String, String>> questionOptions = new ArrayList<>();
+			
+			// Option1
+			if (randomQuestion.getOption1() != null && !randomQuestion.getOption1().isEmpty()) {
+				Map<String, String> option1 = new HashMap<>();
+				option1.put("imageUrl", randomQuestion.getOption1());
+				option1.put("optionId", "option1");
+				questionOptions.add(option1);
+			}
+			
+			// Option2
+			if (randomQuestion.getOption2() != null && !randomQuestion.getOption2().isEmpty()) {
+				Map<String, String> option2 = new HashMap<>();
+				option2.put("imageUrl", randomQuestion.getOption2());
+				option2.put("optionId", "option2");
+				questionOptions.add(option2);
+			}
+			
+			// Option3
+			if (randomQuestion.getOption3() != null && !randomQuestion.getOption3().isEmpty()) {
+				Map<String, String> option3 = new HashMap<>();
+				option3.put("imageUrl", randomQuestion.getOption3());
+				option3.put("optionId", "option3");
+				questionOptions.add(option3);
+			}
+			
+			// Option4
+			if (randomQuestion.getOption4() != null && !randomQuestion.getOption4().isEmpty()) {
+				Map<String, String> option4 = new HashMap<>();
+				option4.put("imageUrl", randomQuestion.getOption4());
+				option4.put("optionId", "option4");
+				questionOptions.add(option4);
 			}
 
-			if (randomPictures == null || randomPictures.size() < 4) {
+			// 최소 2개 이상의 옵션이 있는지 확인
+			if (questionOptions.size() < 2) {
 				model.addAttribute("noMoreQuestions", true);
-				model.addAttribute("message", "현재 투표 가능한 사진이 부족합니다. (최소 4개 필요)");
+				model.addAttribute("message", "현재 질문의 옵션이 부족합니다. (최소 2개 필요)");
 				return "voting/voting";
 			}
 
-			// 이미지 경로 보정
-			for (PictureEntity picture : randomPictures) {
-				String imagePath = picture.getHairPicture();
-				if (imagePath != null && !imagePath.startsWith("http") && !imagePath.startsWith("/")) {
-					picture.setHairPicture("/images/" + imagePath);
-				}
-			}
-
 			model.addAttribute("question", randomQuestion);
-			model.addAttribute("randomPictures", randomPictures);
+			model.addAttribute("questionOptions", questionOptions);
+
+			System.out.println("투표 페이지 로드 완료 - 질문: " + randomQuestion.getSerialNumber() + ", 옵션 수: " + questionOptions.size());
 
 			return "voting/voting";
 		} catch (Exception e) {
@@ -137,6 +154,105 @@ public class VotingController {
 			model.addAttribute("errorMessage", "투표 시스템 접근 중 오류가 발생했습니다: " + e.getMessage());
 			model.addAttribute("noMoreQuestions", true);
 			return "voting/voting";
+		}
+	}
+
+	/**
+	 * 다음 질문을 AJAX로 가져오는 API
+	 */
+	@GetMapping("/next-question")
+	@ResponseBody
+	public ResponseEntity<?> getNextQuestion() {
+		Map<String, Object> response = new HashMap<>();
+		
+		try {
+			// 현재 로그인한 사용자 ID 가져오기
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String currentMemberId = authentication.getName();
+
+			// 로그인 체크
+			if (currentMemberId == null || currentMemberId.trim().isEmpty()
+					|| "anonymousUser".equals(currentMemberId)) {
+				response.put("success", false);
+				response.put("error", "로그인이 필요합니다.");
+				return ResponseEntity.status(401).body(response);
+			}
+
+			// 투표하지 않은 랜덤 질문 가져오기
+			QuestionEntity nextQuestion = votingService.getRandomUnansweredQuestion(currentMemberId);
+
+			if (nextQuestion == null) {
+				response.put("success", false);
+				response.put("noMoreQuestions", true);
+				response.put("message", "모든 질문에 투표를 완료했습니다!");
+				return ResponseEntity.ok(response);
+			}
+
+			// 투표 가능 여부 체크
+			if (!nextQuestion.isVotingAvailable()) {
+				String status = nextQuestion.getCurrentVotingStatus();
+				String message;
+				
+				switch (status) {
+					case "보류":
+						message = "아직 투표가 시작되지 않았습니다. " + nextQuestion.getVotingStatusSummary();
+						break;
+					case "종료":
+						message = "투표가 종료되었습니다. " + nextQuestion.getVotingStatusSummary();
+						break;
+					default:
+						message = "현재 투표할 수 없는 상태입니다.";
+				}
+				
+				response.put("success", false);
+				response.put("noMoreQuestions", true);
+				response.put("message", message);
+				return ResponseEntity.ok(response);
+			}
+
+			// 질문의 원본 옵션 이미지들을 가져와서 리스트로 구성
+			List<Map<String, String>> questionOptions = new ArrayList<>();
+			
+			// Option1~4 처리
+			String[] options = {nextQuestion.getOption1(), nextQuestion.getOption2(), 
+							   nextQuestion.getOption3(), nextQuestion.getOption4()};
+			String[] optionIds = {"option1", "option2", "option3", "option4"};
+			
+			for (int i = 0; i < options.length; i++) {
+				if (options[i] != null && !options[i].isEmpty()) {
+					Map<String, String> option = new HashMap<>();
+					option.put("imageUrl", options[i]);
+					option.put("optionId", optionIds[i]);
+					questionOptions.add(option);
+				}
+			}
+
+			// 최소 2개 이상의 옵션이 있는지 확인
+			if (questionOptions.size() < 2) {
+				response.put("success", false);
+				response.put("noMoreQuestions", true);
+				response.put("message", "현재 질문의 옵션이 부족합니다.");
+				return ResponseEntity.ok(response);
+			}
+
+			// 성공 응답
+			response.put("success", true);
+			response.put("question", Map.of(
+				"serialNumber", nextQuestion.getSerialNumber(),
+				"question", nextQuestion.getQuestion()
+			));
+			response.put("questionOptions", questionOptions);
+
+			System.out.println("다음 질문 로드 완료 - 질문: " + nextQuestion.getSerialNumber() + ", 옵션 수: " + questionOptions.size());
+
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			System.err.println("다음 질문 로드 중 오류 발생: " + e.getMessage());
+			e.printStackTrace();
+			response.put("success", false);
+			response.put("error", "다음 질문을 불러오는 중 오류가 발생했습니다: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
 		}
 	}
 
@@ -184,6 +300,9 @@ public class VotingController {
 				QuestionEntity nextQuestion = votingService.getRandomUnansweredQuestion(voterId);
 				if (nextQuestion == null) {
 					response.put("noMoreQuestions", true);
+					response.put("completionMessage", "모든 질문에 투표를 완료했습니다!");
+				} else {
+					response.put("hasNextQuestion", true);
 				}
 
 				return ResponseEntity.ok(response);
