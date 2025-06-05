@@ -10,12 +10,13 @@
 
 			<div class="card shadow-sm mb-5">
 				<div class="card-body">
+
 					<!-- 상품 이미지 -->
 					<div class="mb-4 text-center">
 						<label class="form-label fw-bold">이미지</label>
 						<div>
-							<img
-								th:src="${pointShop.imgFile != null} ? ${pointShop.imgFile.pointItemImgPath} : ''"
+							<img th:if="${pointShop.imgFile != null}"
+								th:src="@{${pointShop.imgFile.pointItemImgPath}}"
 								class="img-fluid border rounded"
 								style="max-width: 300px; object-fit: contain;" alt="상품 이미지">
 						</div>
@@ -46,20 +47,26 @@
 							th:text="${pointShop.pointItemDescription}">유의사항</p>
 					</div>
 
-					<!-- 버튼 -->
-					<div class="d-flex justify-content-center aling-items-center gap-2">
-						<form name="pointItemBuyForm">
-							<input type="hidden" name="pointItemId" id="pointItemId"
-								th:value="${pointShop.pointItemId}" />
-							<button type="button" class="btn btn-primary"
-								onclick="fu_pointItemBuy()">구매하기</button>
-						</form>
+					<!-- 구매 버튼 or 매진 표시 -->
+					<div class="d-flex justify-content-center align-items-center gap-2">
+						<th:block th:if="${pointShop.pointItemStock > 0}">
+							<form name="pointItemBuyForm">
+								<input type="hidden" name="pointItemId" id="pointItemId"
+									th:value="${pointShop.pointItemId}" />
+								<button type="button" class="btn btn-primary"
+									onclick="fu_pointItemBuy()">구매하기</button>
+							</form>
+						</th:block>
+						<th:block th:unless="${pointShop.pointItemStock > 0}">
+							<span class="badge bg-danger fs-5">매진</span>
+						</th:block>
 					</div>
+
 				</div>
 			</div>
 		</div>
 
-		<!-- 구매하기 버튼클릭 -->
+		<!-- 구매하기 버튼 클릭 스크립트 -->
 		<script th:src="@{/js/point/shop/detail/fu_pointItemBuy.js}"></script>
 	</div>
 </body>

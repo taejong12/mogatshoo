@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{fragments/layout}">
-<head th:with="layoutTitle='포인트상품완료'">
-</head>
+	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트상품완료'">
 <body>
 	<div layout:fragment="content">
 
@@ -16,8 +14,8 @@
 					<div class="mb-4 text-center">
 						<label class="form-label fw-bold">이미지</label>
 						<div>
-							<img
-								th:src="${pointShop.imgFile != null} ? ${pointShop.imgFile.pointItemImgPath} : ''"
+							<img th:if="${pointShop.imgFile != null}"
+								th:src="@{${pointShop.imgFile.pointItemImgPath}}"
 								class="img-fluid border rounded"
 								style="max-width: 300px; object-fit: contain;" alt="상품 이미지">
 						</div>
@@ -38,8 +36,8 @@
 
 					<!-- 버튼 -->
 					<div class="d-flex justify-content-center aling-items-center gap-2">
-						<a class="btn btn-primary" th:href="@{/point/shop/buy}"> 구매내역보기
-						</a>
+						<a class="btn btn-primary" th:href="@{/point/shop/buyList}">
+							구매내역보기 </a>
 					</div>
 				</div>
 			</div>

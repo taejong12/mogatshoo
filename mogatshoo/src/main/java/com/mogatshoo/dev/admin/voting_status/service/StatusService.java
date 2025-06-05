@@ -48,4 +48,6 @@ public interface StatusService {
      * @return 투표율 (%)
      */
     Double calculateVotingRate(Long totalVotes, Long totalMembers);
+    
+    Page<StatusEntity> searchVotingStatistics(String keyword, String publicStatus, String completionStatus, Pageable pageable);
 }
