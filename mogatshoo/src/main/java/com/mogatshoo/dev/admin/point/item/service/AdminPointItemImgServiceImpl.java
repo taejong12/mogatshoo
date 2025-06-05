@@ -157,14 +157,12 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 			String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
 			String newFilePath = "point-items/" + newCategoryName + "/" + fileName;
 			String newFileUrl = firebaseStorageService.getFileUrl(newFilePath);
-			
+
 			imgEntity.setPointItemImgFileId(newFilePath);
 			imgEntity.setPointItemImgPath(newFileUrl);
 			adminPointItemImgRepository.save(imgEntity);
 
 			logger.info("이미지 카테고리 이동 및 DB 업데이트 완료. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName);
-
-			//imgEntity.setPointItemImgUpdate(LocalDateTime.now());
 
 		} catch (Exception e) {
 			logger.error("이미지 카테고리 이동 실패. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName, e);
