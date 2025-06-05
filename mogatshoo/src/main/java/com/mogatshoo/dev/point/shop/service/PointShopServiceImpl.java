@@ -205,6 +205,7 @@ public class PointShopServiceImpl implements PointShopService {
 			pointOrderHistory.setPointOrderHistoryStatus("구매");
 			pointOrderHistory.setMemberId(memberId);
 			pointOrderHistory.setPointItemId(pointItemId);
+			pointOrderHistory.setPointItemSendCheck("N");
 			pointOrderHistoryService.pointOrderHistorySave(pointOrderHistory);
 			logger.info("구매 내역 저장 완료 - memberId: {}, pointItemId: {}", memberId, pointItemId);
 
@@ -224,10 +225,24 @@ public class PointShopServiceImpl implements PointShopService {
 				pointItem.setPointItemSaleStatus("N");
 				logger.info("재고 소진으로 판매 중단 - pointItemId: {}", pointItemId);
 			}
-
 		} catch (Exception e) {
 			logger.error("포인트 상품 구매 처리 중 오류 발생 - pointItemId: {}", pointItemId, e);
 			throw e;
 		}
+	}
+
+	@Override
+	public Page<PointOrderHistoryEntity> findPointItemName(Page<PointOrderHistoryEntity> pointOrderHistoryPage) {
+		pointOrderHistoryPage.forEach(history -> {
+			try {
+				PointShopEntity pointItem = pointShopRepository.findById(history.getPointItemId()).orElseThrow(
+						() -> new IllegalArgumentException("해당 포인트상품이 없습니다. ID: " + history.getPointItemId()));
+				history.setPointShop(pointItem);
+			} catch (Exception e) {
+				logger.error("포인트 상품 조회 중 오류 발생 - pointItemId: {}", history.getPointItemId(), e);
+			}
+		});
+
+		return pointOrderHistoryPage;
 	}
 }

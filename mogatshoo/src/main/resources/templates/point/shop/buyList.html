@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트구매내역'">
+<body>
+	<div layout:fragment="content" class="pixel-bg">
+		<h1>포인트구매내역</h1>
+		<table class="win95-table">
+			<thead>
+				<tr>
+					<th>상품이름</th>
+					<th>구매수량</th>
+					<th>총사용포인트</th>
+					<th>주문상태</th>
+					<th>상품발송확인</th>
+					<th>결제일</th>
+					<th>발송일</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="buyPoint : ${pointItemBuyList}">
+					<td th:text="${buyPoint.pointShop.pointItemName}">상품이름</td>
+					<td th:text="${buyPoint.pointOrderHistoryQuantity}">구매수량</td>
+					<td th:text="${buyPoint.pointOrderHistoryTotalPrice}">총사용포인트</td>
+					<td th:text="${buyPoint.pointOrderHistoryStatus}">주문상태</td>
+					<td th:text="${buyPoint.pointItemSendCheck}">상품발송확인</td>
+					<td
+						th:text="${#temporals.format(buyPoint.pointOrderHistoryCreate, 'yyyy-MM-dd HH:mm')}">결제일</td>
+					<td
+						th:text="${#temporals.format(buyPoint.pointOrderHistoryUpdate, 'yyyy-MM-dd HH:mm')}">발송일</td>
+				</tr>
+
+				<!-- 결과가 없을 경우 -->
+				<tr th:if="${#lists.isEmpty(pointItemBuyList)}">
+					<td colspan="7" class="text-center">포인트구매내역이 없습니다.</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<!-- 페이지네이션 -->
+		<nav th:if="${!#lists.isEmpty(pointItemBuyList)}"
+			aria-label="Page navigation">
+			<ul class="pagination justify-content-center">
+
+				<!-- 이전 버튼: startPage가 10 이상일 때만 보임 -->
+				<li class="page-item" th:if="${startPage >= 10}"><a
+					class="page-link"
+					th:href="@{/point/shop/buyList(page=${startPage - 10})}"
+					aria-label="Previous"> <span aria-hidden="true">&laquo;이전</span>
+				</a></li>
+
+				<!-- 페이지 번호 -->
+				<li class="page-item"
+					th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
+					th:classappend="${i} == ${currentPage} ? ' active' : ''"><a
+					class="page-link" th:href="@{/point/shop/buyList(page=${i})}"
+					th:text="${i + 1}"> </a></li>
+
+				<!-- 다음 버튼: endPage가 totalPages보다 작을 때만 보임 -->
+				<li class="page-item" th:if="${endPage < totalPages}"><a
+					class="page-link" th:href="@{/point/shop/buyList(page=${endPage})}"
+					aria-label="Next"> <span aria-hidden="true">다음 &raquo;</span>
+				</a></li>
+			</ul>
+		</nav>
+	</div>
+</body>
+</html>

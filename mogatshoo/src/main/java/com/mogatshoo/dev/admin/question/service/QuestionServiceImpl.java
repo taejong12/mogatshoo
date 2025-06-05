@@ -208,25 +208,31 @@ public class QuestionServiceImpl implements QuestionService {
     /**
      * 투표 기간이 만료된 질문들의 상태를 '종료'로 업데이트
      */
-    @Override
-    @Transactional
-    public void updateExpiredVotingStatus() {
-        try {
-            LocalDateTime currentTime = LocalDateTime.now();
-            List<QuestionEntity> expiredQuestions = questionRepository.findExpiredVotingQuestions(currentTime);
-            
-            System.out.println("만료된 투표 질문 수: " + expiredQuestions.size());
-            
-            for (QuestionEntity question : expiredQuestions) {
-                question.setVotingStatus("종료");
-                questionRepository.save(question);
-                System.out.println("질문 " + question.getSerialNumber() + " 투표 상태를 '종료'로 변경");
-            }
-        } catch (Exception e) {
-            System.err.println("투표 상태 업데이트 중 오류 발생: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+	@Override
+	@Transactional
+	public void updateExpiredVotingStatus() {
+	    try {
+	        // 모든 공개 질문들을 조회하여 상태 확인
+	        List<QuestionEntity> publicQuestions = questionRepository.findByIsPublic("yes");
+	        
+	        System.out.println("공개 질문 수: " + publicQuestions.size());
+	        
+	        for (QuestionEntity question : publicQuestions) {
+	            String currentStatus = question.getCurrentVotingStatus();
+	            
+	            // DB의 상태와 실제 상태가 다르면 업데이트
+	            if (!currentStatus.equals(question.getVotingStatus())) {
+	                question.setVotingStatus(currentStatus);
+	                questionRepository.save(question);
+	                System.out.println("질문 " + question.getSerialNumber() + 
+	                    " 상태 변경: " + question.getVotingStatus() + " → " + currentStatus);
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.err.println("투표 상태 업데이트 중 오류 발생: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
 	
 	/**
 	 * 종료된 지 하루가 지난 질문들을 완료 테이블로 이동

@@ -37,7 +37,7 @@ public class StatusEntity {
     // 총 투표수 (전체 투표 행위 횟수)
     private Long totalVotes;
     
-    // 고유 투표자 수 (실제 투표 참여한 회원 수) - 새로 추가
+    // 고유 투표자 수 (실제 투표 참여한 회원 수)
     private Long uniqueVoters;
     
     // 전체 멤버 수
@@ -46,44 +46,94 @@ public class StatusEntity {
     // 투표율 (%) - 총 투표수 기준
     private Double votingRate;
     
-    // 참여율 (%) - 고유 투표자 기준 - 새로 추가
+    // 참여율 (%) - 고유 투표자 기준
     private Double participationRate;
+    
+    // 투표 참여자 기준 투표율 (%) - 새로 추가
+    private Double voterBasedVotingRate;
     
     // 질문 생성일
     private LocalDateTime createdAt;
     
+    // 투표 기간 필드 추가
+    private LocalDateTime votingStartDate;
+    private LocalDateTime votingEndDate;
+    
     // 각 옵션별 투표 결과 (옵션ID : 투표수)
     private Map<String, Long> voteDetails;
     
-    // 이메일 전송 가능 여부 (참여율 1/3 이상)
+    // 이메일 전송 가능 여부
     private Boolean emailEligible;
+    
+    /**
+     * 현재 시간을 기준으로 실제 투표 상태를 동적으로 계산
+     * @return 투표 상태 ("보류", "진행중", "종료")
+     */
+    public String getCurrentVotingStatus() {
+        // 비공개 상태라면 상태 관계없이 보류
+        if (!"yes".equals(this.isEnded)) {
+            return "보류";
+        }
+        
+        // 투표 시간이 설정되지 않았다면 보류
+        if (this.votingStartDate == null || this.votingEndDate == null) {
+            return "보류";
+        }
+        
+        LocalDateTime now = LocalDateTime.now();
+        
+        // 투표 시작 시간 전이면 보류
+        if (now.isBefore(this.votingStartDate)) {
+            return "보류";
+        }
+        
+        // 투표 종료 시간 후면 종료
+        if (now.isAfter(this.votingEndDate)) {
+            return "종료";
+        }
+        
+        // 투표 기간 중이면 진행중
+        return "진행중";
+    }
     
     /**
      * 투표율과 참여율 계산 및 이메일 전송 가능 여부 설정
      */
     public void calculateRates() {
         if (totalMembers != null && totalMembers > 0) {
-            // 투표율: 총 투표수 / 전체 회원수 (중복 투표 포함)
+            // 기존 투표율: 총 투표수 / 전체 회원수 (중복 투표 포함)
             if (totalVotes != null) {
                 this.votingRate = (double) totalVotes / totalMembers * 100;
             } else {
                 this.votingRate = 0.0;
             }
-            
+
             // 참여율: 고유 투표자 수 / 전체 회원수 (실제 참여한 사람 기준)
             if (uniqueVoters != null) {
                 this.participationRate = (double) uniqueVoters / totalMembers * 100;
             } else {
                 this.participationRate = 0.0;
             }
-            
-            // 이메일 전송 가능 여부: 투표가 종료되고 투표율이 40% 이상인 경우
-            this.emailEligible = "yes".equals(this.isEnded) && this.votingRate >= 40.0;
         } else {
             this.votingRate = 0.0;
             this.participationRate = 0.0;
-            this.emailEligible = false;
         }
+        
+        // 새로 추가: 실제 투표 참여자 기준 투표율 계산
+        if (uniqueVoters != null && uniqueVoters > 0) {
+            // 투표 참여자 기준 투표율: 총 투표수 / 실제 투표 참여자 수
+            if (totalVotes != null) {
+                this.voterBasedVotingRate = (double) totalVotes / uniqueVoters * 100;
+            } else {
+                this.voterBasedVotingRate = 0.0;
+            }
+        } else {
+            this.voterBasedVotingRate = 0.0;
+        }
+        
+        // 이메일 전송 가능 여부: 투표가 종료되고 전체 회원 대비 참여율이 40% 이상인 경우
+        // 예: 10명 중 4명 이상 참여 시 이메일 전송 가능
+        this.emailEligible = "종료".equals(getCurrentVotingStatus()) && this.participationRate >= 40.0;
     }
     
     /**
@@ -96,10 +146,10 @@ public class StatusEntity {
     }
     
     /**
-     * 종료 여부를 한글로 반환
+     * 종료 여부를 한글로 반환 (기존 호환성)
      */
     public String getEndedStatusKorean() {
-        return "no".equals(isEnded) ? "진행중" : "종료";
+        return getCurrentVotingStatus();
     }
     
     /**
@@ -114,6 +164,13 @@ public class StatusEntity {
      */
     public String getFormattedParticipationRate() {
         return String.format("%.2f%%", participationRate != null ? participationRate : 0.0);
+    }
+    
+    /**
+     * 투표 참여자 기준 투표율을 소수점 2자리로 포맷
+     */
+    public String getFormattedVoterBasedVotingRate() {
+        return String.format("%.2f%%", voterBasedVotingRate != null ? voterBasedVotingRate : 0.0);
     }
     
     /**
@@ -137,8 +194,9 @@ public class StatusEntity {
      * 투표 상태 요약 정보
      */
     public String getVotingSummary() {
-        return String.format("참여율: %s, 총 투표: %d표, 참여자: %d명", 
-                getFormattedParticipationRate(), 
+        return String.format("참여율: %s, 참여자 기준 투표율: %s, 총 투표: %d표, 참여자: %d명", 
+                getFormattedParticipationRate(),
+                getFormattedVoterBasedVotingRate(),
                 totalVotes != null ? totalVotes : 0,
                 uniqueVoters != null ? uniqueVoters : 0);
     }
@@ -149,9 +207,10 @@ public class StatusEntity {
     public String getDetailedStats() {
         StringBuilder sb = new StringBuilder();
         sb.append("시리얼: ").append(serialNumber);
-        sb.append(", 상태: ").append(getEndedStatusKorean());
+        sb.append(", 상태: ").append(getCurrentVotingStatus());
         sb.append(", 투표율: ").append(getFormattedVotingRate());
         sb.append(", 참여율: ").append(getFormattedParticipationRate());
+        sb.append(", 참여자기준투표율: ").append(getFormattedVoterBasedVotingRate());
         sb.append(", 총투표: ").append(totalVotes != null ? totalVotes : 0);
         sb.append(", 참여자: ").append(uniqueVoters != null ? uniqueVoters : 0);
         sb.append(", 최다득표: ").append(topVotedName != null ? topVotedName : "없음");
@@ -164,5 +223,54 @@ public class StatusEntity {
      */
     public String getEmailEligibleStatus() {
         return emailEligible != null && emailEligible ? "전송 가능" : "전송 불가";
+    }
+    
+    /**
+     * 투표 가능 여부 확인
+     * @return 투표 가능하면 true, 불가능하면 false
+     */
+    public boolean isVotingAvailable() {
+        return "진행중".equals(getCurrentVotingStatus());
+    }
+    
+    /**
+     * 투표 상태 요약 정보
+     * @return 상태와 시간 정보를 포함한 문자열
+     */
+    public String getVotingStatusSummary() {
+        String status = getCurrentVotingStatus();
+        
+        if (votingStartDate == null || votingEndDate == null) {
+            return status + " (투표 시간 미설정)";
+        }
+        
+        LocalDateTime now = LocalDateTime.now();
+        
+        switch (status) {
+            case "보류":
+                if (now.isBefore(votingStartDate)) {
+                    return status + " (시작 예정: " + votingStartDate.toString().replace("T", " ") + ")";
+                }
+                return status;
+            case "진행중":
+                return status + " (종료 예정: " + votingEndDate.toString().replace("T", " ") + ")";
+            case "종료":
+                return status + " (종료: " + votingEndDate.toString().replace("T", " ") + ")";
+            default:
+                return status;
+        }
+    }
+    
+    /**
+     * 투표 기간 정보를 문자열로 반환
+     */
+    public String getVotingPeriodInfo() {
+        if (votingStartDate == null || votingEndDate == null) {
+            return "투표 기간 미설정";
+        }
+        
+        return String.format("%s ~ %s", 
+            votingStartDate.toString().replace("T", " "), 
+            votingEndDate.toString().replace("T", " "));
     }
 }

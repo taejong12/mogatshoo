@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Transient;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -43,7 +44,7 @@ public class PointOrderHistoryEntity {
 	private LocalDateTime pointOrderHistoryCreate;
 
 	// 수정일
-	@Column(insertable = false, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+	@Column
 	private LocalDateTime pointOrderHistoryUpdate;
 
 	// 회원아이디
@@ -53,6 +54,10 @@ public class PointOrderHistoryEntity {
 	// 상품아이디
 	@Column(nullable = false)
 	private Long pointItemId;
+
+	// 기프티콘 발송여부
+	@Column(nullable = false, columnDefinition = "char(1) default 'N'")
+	private String pointItemSendCheck;
 
 	// 생성일 자동 설정
 	@PrePersist
@@ -65,4 +70,7 @@ public class PointOrderHistoryEntity {
 	protected void onUpdate() {
 		this.pointOrderHistoryUpdate = LocalDateTime.now();
 	}
+
+	@Transient
+	private PointShopEntity pointShop;
 }
