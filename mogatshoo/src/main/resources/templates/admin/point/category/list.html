@@ -25,11 +25,12 @@
 					<td th:text="${category.pointCategoryName}">카테고리이름</td>
 					<td th:text="${category.pointCategorySortOrder}">정렬순서</td>
 					<td th:text="${category.memberId}">관리자아이디</td>
-					<td th:text="${#temporals.format(category.pointCategoryCreate, 'yyyy-MM-dd HH:mm')}">등록일</td>
-					<td th:text="${#temporals.format(category.pointCategoryUpdate, 'yyyy-MM-dd HH:mm')}">수정일</td>
-					<td  class="text-center">
-						<a class="btn btn-outline-secondary" 
-							th:href="@{/admin/point/category/detail/{id}(id=${category.pointCategoryId})}">상세보기</a>
+					<td
+						th:text="${#temporals.format(category.pointCategoryCreate, 'yyyy-MM-dd HH:mm')}">등록일</td>
+					<td
+						th:text="${#temporals.format(category.pointCategoryUpdate, 'yyyy-MM-dd HH:mm')}">수정일</td>
+					<td class="text-center"><a class="btn btn-outline-secondary"
+						th:href="@{/admin/point/category/detail/{id}(id=${category.pointCategoryId})}">상세보기</a>
 					</td>
 				</tr>
 				<tr th:if="${#lists.isEmpty(pointCategoryList)}">
@@ -39,40 +40,36 @@
 		</table>
 
 		<!-- 페이지네이션 -->
-		<nav th:if="${!#lists.isEmpty(pointCategoryList)}" aria-label="Page navigation">
+		<nav th:if="${!#lists.isEmpty(pointCategoryList)}"
+			aria-label="Page navigation">
 			<ul class="pagination justify-content-center">
 
 				<!-- 이전 버튼: startPage가 10 이상일 때만 보임 -->
-				<li class="page-item" th:if="${startPage >= 10}">
-					<a class="page-link"
-						th:href="@{/admin/point/category/list(page=${startPage - 1})}"
-						aria-label="Previous">
-						<span aria-hidden="true">&laquo;이전</span>
-					</a>
-				</li>
+				<li class="page-item" th:if="${startPage >= 10}"><a
+					class="page-link"
+					th:href="@{/admin/point/category/list(page=${startPage - 1})}"
+					aria-label="Previous"> <span aria-hidden="true">&laquo;이전</span>
+				</a></li>
 
 				<!-- 페이지 번호 -->
 				<li class="page-item"
 					th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
-					th:classappend="${i} == ${currentPage} ? ' active' : ''">
-					<a class="page-link"
-						th:href="@{/admin/point/category/list(page=${i})}"
-						th:text="${i + 1}">
-					</a>
-				</li>
+					th:classappend="${i} == ${currentPage} ? ' active' : ''"><a
+					class="page-link"
+					th:href="@{/admin/point/category/list(page=${i})}"
+					th:text="${i + 1}"> </a></li>
 
 				<!-- 다음 버튼: endPage가 totalPages보다 작을 때만 보임 -->
-				<li class="page-item" th:if="${endPage < totalPages}">
-					<a class="page-link"
-						th:href="@{/admin/point/category/list(page=${endPage})}"
-						aria-label="Next">
-						<span aria-hidden="true">다음 &raquo;</span>
-					</a>
-				</li>
+				<li class="page-item" th:if="${endPage < totalPages}"><a
+					class="page-link"
+					th:href="@{/admin/point/category/list(page=${endPage})}"
+					aria-label="Next"> <span aria-hidden="true">다음 &raquo;</span>
+				</a></li>
 			</ul>
 		</nav>
 
-		<a class="btn btn-outline-secondary" th:href="@{/admin/point/category/insert}">카테고리추가</a>
+		<a class="btn btn-outline-secondary"
+			th:href="@{/admin/point/category/insert}">카테고리추가</a>
 	</div>
 </body>
 </html>

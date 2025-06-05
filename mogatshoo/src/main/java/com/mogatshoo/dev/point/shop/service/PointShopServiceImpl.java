@@ -208,10 +208,23 @@ public class PointShopServiceImpl implements PointShopService {
 			pointOrderHistoryService.pointOrderHistorySave(pointOrderHistory);
 			logger.info("구매 내역 저장 완료 - memberId: {}, pointItemId: {}", memberId, pointItemId);
 
-			// 6. 재고 차감
-			pointItem.setPointItemStock(pointItem.getPointItemStock() - quantity);
+			int currentStock = pointItem.getPointItemStock();
+
+			// 6. 재고 차감 전에 재고 확인
+			if (currentStock < quantity) {
+				throw new IllegalStateException("재고 부족 - 요청 수량: " + quantity + ", 현재 재고: " + currentStock);
+			}
+
+			// 재고 차감
+			pointItem.setPointItemStock(currentStock - quantity);
 			logger.info("재고 차감 완료 - pointItemId: {}, 차감 수량: {}", pointItemId, quantity);
-			
+
+			// 7. 재고가 0이면 판매 중단
+			if (pointItem.getPointItemStock() == 0) {
+				pointItem.setPointItemSaleStatus("N");
+				logger.info("재고 소진으로 판매 중단 - pointItemId: {}", pointItemId);
+			}
+
 		} catch (Exception e) {
 			logger.error("포인트 상품 구매 처리 중 오류 발생 - pointItemId: {}", pointItemId, e);
 			throw e;

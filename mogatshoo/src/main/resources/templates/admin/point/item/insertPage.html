@@ -15,8 +15,9 @@
 					<form name="insertPointItemForm" enctype="multipart/form-data">
 						<!-- 이미지 업로드 -->
 						<div class="mb-3">
-							<label for="imgFile" class="form-label">이미지 파일</label>
-							<input type="file" class="form-control" id="imgFile" name="imgFile" accept="image/*">
+							<label for="imgFile" class="form-label">이미지 파일</label> <input
+								type="file" class="form-control" id="imgFile" name="imgFile"
+								accept="image/*">
 							<div id="thumbnailPreview" class="mt-2 text-center">
 								<img id="thumbnailImage" src="#" alt="미리보기"
 									class="img-thumbnail d-none"
@@ -26,29 +27,33 @@
 
 						<!-- 상품 이름 -->
 						<div class="mb-3">
-							<label for="pointItemName" class="form-label">이름</label>
-							<input type="text" class="form-control" id="pointItemName" name="pointItemName" placeholder="이름 입력">
+							<label for="pointItemName" class="form-label">이름</label> <input
+								type="text" class="form-control" id="pointItemName"
+								name="pointItemName" placeholder="이름 입력">
 							<div id="nameWarnMsg"></div>
 						</div>
 
 						<!-- 유의사항 -->
 						<div class="mb-3">
 							<label for="pointItemDescription" class="form-label">유의사항</label>
-							<textarea class="form-control" id="pointItemDescription" name="pointItemDescription" rows="4" placeholder="유의사항 입력"></textarea>
+							<textarea class="form-control" id="pointItemDescription"
+								name="pointItemDescription" rows="4" placeholder="유의사항 입력"></textarea>
 							<div id="descriptionWarnMsg"></div>
 						</div>
 
 						<!-- 상품 가격 -->
 						<div class="mb-3">
-							<label for="pointItemPrice" class="form-label">상품 가격</label>
-							<input type="number" class="form-control" id="pointItemPrice" name="pointItemPrice" placeholder="상품 가격 입력">
+							<label for="pointItemPrice" class="form-label">상품 가격</label> <input
+								type="number" class="form-control" id="pointItemPrice"
+								name="pointItemPrice" placeholder="상품 가격 입력">
 							<div id="priceWarnMsg"></div>
 						</div>
 
 						<!-- 재고 수량 -->
 						<div class="mb-3">
-							<label for="pointItemStock" class="form-label">재고 수량</label>
-							<input type="number" class="form-control" id="pointItemStock" name="pointItemStock" placeholder="재고 수량 입력">
+							<label for="pointItemStock" class="form-label">재고 수량</label> <input
+								type="number" class="form-control" id="pointItemStock"
+								name="pointItemStock" placeholder="재고 수량 입력">
 							<div id="stockWarnMsg"></div>
 						</div>
 
@@ -56,31 +61,33 @@
 						<div class="mb-3">
 							<label class="form-label">판매 여부</label>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="pointItemSaleStatus" id="yes" value="Y" checked>
+								<input class="form-check-input" type="radio"
+									name="pointItemSaleStatus" id="yes" value="Y" checked>
 								<label class="form-check-label" for="yes">예</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="pointItemSaleStatus" id="no" value="N">
-								<label class="form-check-label" for="no">아니오</label>
+								<input class="form-check-input" type="radio"
+									name="pointItemSaleStatus" id="no" value="N"> <label
+									class="form-check-label" for="no">아니오</label>
 							</div>
 						</div>
 
 						<!-- 카테고리 선택 -->
 						<div class="mb-4">
-							<label for="pointCategoryId" class="form-label">카테고리</label>
-							<select class="form-select" id="pointCategoryId" name="pointCategoryId">
+							<label for="pointCategoryId" class="form-label">카테고리</label> <select
+								class="form-select" id="pointCategoryId" name="pointCategoryId">
 								<option value="" selected>-- 카테고리를 선택하세요 --</option>
 								<option th:each="category : ${pointCategoryList}"
-										th:value="${category.pointCategoryId}"
-										th:text="${category.pointCategoryName}">
-								</option>
+									th:value="${category.pointCategoryId}"
+									th:text="${category.pointCategoryName}"></option>
 							</select>
 							<div id="categoryWarnMsg"></div>
 						</div>
 
 						<!-- 버튼 영역 -->
 						<div class="d-flex justify-content-center gap-2">
-							<button type="button" class="btn btn-primary" onclick="fu_insertPointItem()">등록하기</button>
+							<button type="button" class="btn btn-primary"
+								onclick="fu_insertPointItem()">등록하기</button>
 							<a class="btn btn-secondary" th:href="@{/admin/point/item/list}">취소하기</a>
 						</div>
 					</form>
@@ -92,9 +99,11 @@
 			let categoryCount = "[[${pointCategoryList.size()}]]";
 		</script>
 		<!-- 등록하기 버튼클릭 -->
-		<script th:src="@{/js/admin/point/item/insertPage/fu_insertPointItem.js}"></script>
+		<script
+			th:src="@{/js/admin/point/item/insertPage/fu_insertPointItem.js}"></script>
 		<!-- 파일 이미지보기 -->
-		<script th:src="@{/js/admin/point/item/insertPage/ev_thumbnailImage.js}"></script>
+		<script
+			th:src="@{/js/admin/point/item/insertPage/ev_thumbnailImage.js}"></script>
 		<!-- 경고문구 -->
 		<script th:src="@{/js/common/fu_showWarning.js}"></script>
 	</div>
