@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -212,22 +213,35 @@ public class QuestionServiceImpl implements QuestionService {
 	@Transactional
 	public void updateExpiredVotingStatus() {
 	    try {
+	        LocalDateTime now = LocalDateTime.now();
+	        System.out.println("=== 투표 상태 업데이트 시작 ===");
+	        System.out.println("현재 시간: " + now);
+	        
 	        // 모든 공개 질문들을 조회하여 상태 확인
 	        List<QuestionEntity> publicQuestions = questionRepository.findByIsPublic("yes");
 	        
 	        System.out.println("공개 질문 수: " + publicQuestions.size());
 	        
+	        int updatedCount = 0;
 	        for (QuestionEntity question : publicQuestions) {
-	            String currentStatus = question.getCurrentVotingStatus();
+	            String oldStatus = question.getVotingStatus();
+	            String newStatus = question.getCurrentVotingStatus();
 	            
 	            // DB의 상태와 실제 상태가 다르면 업데이트
-	            if (!currentStatus.equals(question.getVotingStatus())) {
-	                question.setVotingStatus(currentStatus);
+	            if (!newStatus.equals(oldStatus)) {
+	                question.setVotingStatus(newStatus);
 	                questionRepository.save(question);
+	                updatedCount++;
+	                
 	                System.out.println("질문 " + question.getSerialNumber() + 
-	                    " 상태 변경: " + question.getVotingStatus() + " → " + currentStatus);
+	                    " 상태 변경: " + oldStatus + " → " + newStatus +
+	                    " (시작: " + question.getVotingStartDate() + 
+	                    ", 종료: " + question.getVotingEndDate() + ")");
 	            }
 	        }
+	        
+	        System.out.println("=== 투표 상태 업데이트 완료: " + updatedCount + "개 질문 상태 변경 ===");
+	        
 	    } catch (Exception e) {
 	        System.err.println("투표 상태 업데이트 중 오류 발생: " + e.getMessage());
 	        e.printStackTrace();
@@ -237,30 +251,67 @@ public class QuestionServiceImpl implements QuestionService {
 	/**
 	 * 종료된 지 하루가 지난 질문들을 완료 테이블로 이동
 	 */
-    @Override
-    @Transactional
-    public void archiveCompletedQuestions() {
-        try {
-            LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
-            List<QuestionEntity> questionsToArchive = questionRepository.findQuestionsForArchiving(oneDayAgo);
-            
-            System.out.println("아카이빙 대상 질문 수: " + questionsToArchive.size());
-            
-            for (QuestionEntity question : questionsToArchive) {
-                // 완료 테이블에 저장
-                CompletedQuestionEntity completedQuestion = new CompletedQuestionEntity(question);
-                completedQuestionRepository.save(completedQuestion);
-                
-                // 기존 테이블에서 삭제
-                questionRepository.delete(question);
-                
-                System.out.println("질문 " + question.getSerialNumber() + " 아카이빙 완료");
-            }
-        } catch (Exception e) {
-            System.err.println("질문 아카이빙 중 오류 발생: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+	@Override
+	@Transactional
+	public void archiveCompletedQuestions() {
+	    try {
+	        LocalDateTime now = LocalDateTime.now();
+	        LocalDateTime oneHourAgo = now.minusHours(1); // 1시간 전으로 변경 (기존 1일에서)
+	        
+	        // 종료된 지 1시간이 지난 질문들 조회
+	        List<QuestionEntity> allQuestions = questionRepository.findAll();
+	        List<QuestionEntity> questionsToArchive = new ArrayList<>();
+	        
+	        System.out.println("=== 아카이빙 대상 질문 검색 ===");
+	        System.out.println("현재 시간: " + now);
+	        System.out.println("기준 시간(1시간 전): " + oneHourAgo);
+	        
+	        for (QuestionEntity question : allQuestions) {
+	            // 동적 상태 확인
+	            String currentStatus = question.getCurrentVotingStatus();
+	            
+	            // 종료 상태이고, 종료 시간이 1시간 이전인 질문들
+	            if ("종료".equals(currentStatus) && 
+	                question.getVotingEndDate() != null && 
+	                question.getVotingEndDate().isBefore(oneHourAgo)) {
+	                
+	                questionsToArchive.add(question);
+	                System.out.println("아카이빙 대상: " + question.getSerialNumber() + 
+	                    " (종료시간: " + question.getVotingEndDate() + ")");
+	            }
+	        }
+	        
+	        System.out.println("아카이빙 대상 질문 수: " + questionsToArchive.size());
+	        
+	        for (QuestionEntity question : questionsToArchive) {
+	            try {
+	                // 1. 완료 테이블에 저장
+	                CompletedQuestionEntity completedQuestion = new CompletedQuestionEntity(question);
+	                completedQuestionRepository.save(completedQuestion);
+	                System.out.println("완료 테이블에 저장 완료: " + question.getSerialNumber());
+	                
+	                // 2. 기존 테이블에서 삭제
+	                questionRepository.delete(question);
+	                System.out.println("질문 " + question.getSerialNumber() + " 아카이빙 완료 및 삭제");
+	                
+	            } catch (Exception e) {
+	                System.err.println("질문 " + question.getSerialNumber() + " 아카이빙 실패: " + e.getMessage());
+	                e.printStackTrace();
+	                // 개별 질문 아카이빙 실패해도 계속 진행
+	            }
+	        }
+	        
+	        if (questionsToArchive.size() > 0) {
+	            System.out.println("=== 아카이빙 완료: " + questionsToArchive.size() + "개 질문 이동 ===");
+	        } else {
+	            System.out.println("=== 아카이빙 대상 질문 없음 ===");
+	        }
+	        
+	    } catch (Exception e) {
+	        System.err.println("질문 아카이빙 중 오류 발생: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
     
     /**
 	 * 페이징된 질문 목록 조회 (최신순 정렬)
