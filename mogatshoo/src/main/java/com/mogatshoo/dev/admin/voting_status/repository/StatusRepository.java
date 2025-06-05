@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,19 +16,31 @@ public class StatusRepository {
     private JdbcTemplate jdbcTemplate;
 
     /**
-     * 모든 질문의 기본 정보 조회 (컬럼명 수정)
+     * 모든 질문의 기본 정보 조회 (active + completed 통합)
      */
     public List<Map<String, Object>> getAllQuestionInfo() {
         try {
-            // 실제 데이터베이스 컬럼명에 맞춰 수정
             String sql = """
-                SELECT 
+                (SELECT 
                     q.serial_number as serialNumber,
                     q.question as questionContent,
                     q.is_public as isEnded,
-                    q.created_at as createdAt
-                FROM question q
-                ORDER BY q.created_at DESC
+                    q.created_at as createdAt,
+                    q.voting_start_date as votingStartDate,
+                    q.voting_end_date as votingEndDate,
+                    'active' as tableSource
+                FROM question q)
+                UNION ALL
+                (SELECT 
+                    cq.serial_number as serialNumber,
+                    cq.question as questionContent,
+                    cq.is_public as isEnded,
+                    cq.created_at as createdAt,
+                    cq.voting_start_date as votingStartDate,
+                    cq.voting_end_date as votingEndDate,
+                    'completed' as tableSource
+                FROM completed_question cq)
+                ORDER BY createdAt DESC
             """;
             
             return jdbcTemplate.queryForList(sql);
@@ -40,7 +53,7 @@ public class StatusRepository {
     }
 
     /**
-     * 특정 질문의 투표 통계 조회 (컬럼명 수정)
+     * 특정 질문의 투표 통계 조회 (voting 테이블은 그대로)
      */
     public Map<String, Object> getQuestionVoteStatistics(String serialNumber) {
         Map<String, Object> statistics = new HashMap<>();
@@ -135,35 +148,47 @@ public class StatusRepository {
     }
 
     /**
-     * 특정 질문에 투표한 고유 회원 수 조회
-     */
-    public Long getUniqueVoterCount(String serialNumber) {
-        try {
-            String sql = "SELECT COUNT(DISTINCT voter_id) FROM voting WHERE serial_number = ?";
-            return jdbcTemplate.queryForObject(sql, Long.class, serialNumber);
-        } catch (Exception e) {
-            System.err.println("투표자 수 조회 오류: " + e.getMessage());
-            return 0L;
-        }
-    }
-
-    /**
-     * 특정 질문의 상세 정보 조회
+     * 특정 질문의 상세 정보 조회 (두 테이블 모두 확인)
      */
     public Map<String, Object> getQuestionDetail(String serialNumber) {
         try {
-            String sql = """
+            // 먼저 active 테이블에서 조회
+            String activeSql = """
                 SELECT 
                     serial_number as serialNumber,
                     question as questionContent,
                     is_public as isEnded,
-                    created_at as createdAt
+                    created_at as createdAt,
+                    voting_start_date as votingStartDate,
+                    voting_end_date as votingEndDate,
+                    'active' as tableSource
                 FROM question
                 WHERE serial_number = ?
             """;
             
-            List<Map<String, Object>> results = jdbcTemplate.queryForList(sql, serialNumber);
-            return results.isEmpty() ? null : results.get(0);
+            List<Map<String, Object>> activeResults = jdbcTemplate.queryForList(activeSql, serialNumber);
+            
+            if (!activeResults.isEmpty()) {
+                return activeResults.get(0);
+            }
+            
+            // active에 없으면 completed 테이블에서 조회
+            String completedSql = """
+                SELECT 
+                    serial_number as serialNumber,
+                    question as questionContent,
+                    is_public as isEnded,
+                    created_at as createdAt,
+                    voting_start_date as votingStartDate,
+                    voting_end_date as votingEndDate,
+                    'completed' as tableSource
+                FROM completed_question
+                WHERE serial_number = ?
+            """;
+            
+            List<Map<String, Object>> completedResults = jdbcTemplate.queryForList(completedSql, serialNumber);
+            return completedResults.isEmpty() ? null : completedResults.get(0);
+            
         } catch (Exception e) {
             System.err.println("질문 상세 정보 조회 오류: " + e.getMessage());
             return null;
@@ -171,32 +196,91 @@ public class StatusRepository {
     }
 
     /**
-     * 모든 활성 질문의 시리얼 넘버 목록 조회
+     * 검색 기능 - 두 테이블 통합
      */
-    public List<String> getAllQuestionSerialNumbers() {
+    public List<Map<String, Object>> searchQuestionInfo(String keyword, String publicStatus, String completionStatus) {
         try {
-            String sql = "SELECT serial_number FROM question ORDER BY created_at DESC";
-            return jdbcTemplate.queryForList(sql, String.class);
-        } catch (Exception e) {
-            System.err.println("질문 시리얼 넘버 조회 오류: " + e.getMessage());
-            return List.of();
-        }
-    }
-
-    /**
-     * 디버깅용: 테이블 레코드 수 확인
-     */
-    public void debugTableCounts() {
-        try {
-            Long questionCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM question", Long.class);
-            Long votingCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM voting", Long.class);
-            Long memberCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM member", Long.class);
+            StringBuilder sql = new StringBuilder();
             
-            System.out.println("=== 디버깅: question 테이블 레코드 수: " + questionCount);
-            System.out.println("=== 디버깅: voting 테이블 레코드 수: " + votingCount);
-            System.out.println("=== 디버깅: member 테이블 레코드 수: " + memberCount);
+            // Base query for active questions
+            sql.append("(SELECT ");
+            sql.append("q.serial_number as serialNumber, ");
+            sql.append("q.question as questionContent, ");
+            sql.append("q.is_public as isEnded, ");
+            sql.append("q.created_at as createdAt, ");
+            sql.append("q.voting_start_date as votingStartDate, ");
+            sql.append("q.voting_end_date as votingEndDate, ");
+            sql.append("'active' as tableSource ");
+            sql.append("FROM question q WHERE 1=1 ");
+            
+            // Add filters for active questions
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append("AND (LOWER(q.serial_number) LIKE LOWER(?) OR LOWER(q.question) LIKE LOWER(?)) ");
+            }
+            if (publicStatus != null && !publicStatus.trim().isEmpty()) {
+                sql.append("AND q.is_public = ? ");
+            }
+            if ("active".equals(completionStatus)) {
+                // Only include active questions
+            } else if ("completed".equals(completionStatus)) {
+                sql.append("AND 1=0 "); // Exclude active questions
+            }
+            
+            sql.append(") UNION ALL ");
+            
+            // Base query for completed questions
+            sql.append("(SELECT ");
+            sql.append("cq.serial_number as serialNumber, ");
+            sql.append("cq.question as questionContent, ");
+            sql.append("cq.is_public as isEnded, ");
+            sql.append("cq.created_at as createdAt, ");
+            sql.append("cq.voting_start_date as votingStartDate, ");
+            sql.append("cq.voting_end_date as votingEndDate, ");
+            sql.append("'completed' as tableSource ");
+            sql.append("FROM completed_question cq WHERE 1=1 ");
+            
+            // Add filters for completed questions
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append("AND (LOWER(cq.serial_number) LIKE LOWER(?) OR LOWER(cq.question) LIKE LOWER(?)) ");
+            }
+            if (publicStatus != null && !publicStatus.trim().isEmpty()) {
+                sql.append("AND cq.is_public = ? ");
+            }
+            if ("active".equals(completionStatus)) {
+                sql.append("AND 1=0 "); // Exclude completed questions
+            } else if ("completed".equals(completionStatus)) {
+                // Only include completed questions
+            }
+            
+            sql.append(") ORDER BY createdAt DESC");
+            
+            // Prepare parameters
+            List<Object> params = new ArrayList<>();
+            
+            // Parameters for active query
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                params.add("%" + keyword + "%");
+                params.add("%" + keyword + "%");
+            }
+            if (publicStatus != null && !publicStatus.trim().isEmpty()) {
+                params.add(publicStatus);
+            }
+            
+            // Parameters for completed query (same as active)
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                params.add("%" + keyword + "%");
+                params.add("%" + keyword + "%");
+            }
+            if (publicStatus != null && !publicStatus.trim().isEmpty()) {
+                params.add(publicStatus);
+            }
+            
+            return jdbcTemplate.queryForList(sql.toString(), params.toArray());
+            
         } catch (Exception e) {
-            System.err.println("디버깅 중 오류: " + e.getMessage());
+            System.err.println("질문 검색 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            return List.of();
         }
     }
 }
