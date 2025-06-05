@@ -5,6 +5,7 @@ import com.mogatshoo.dev.hair_loss_test.service.HairLossTestService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
 import com.mogatshoo.dev.admin.question.entity.QuestionEntity;
+import com.mogatshoo.dev.admin.question.scheduler.VotingStatusScheduler;
 import com.mogatshoo.dev.admin.question.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,9 @@ public class QuestionController {
 
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private VotingStatusScheduler votingStatusScheduler;
 
 	// 질문 목록 페이지 - 경로 수정
 	@GetMapping({ "", "/", "/list" })
@@ -591,5 +595,27 @@ public class QuestionController {
 				return "redirect:/error";
 			}
 		}
+	}
+	
+	@PostMapping("/archive")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> manualArchive() {
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    try {
+	        votingStatusScheduler.manualArchive();
+	        
+	        response.put("success", true);
+	        response.put("message", "질문 아카이빙이 완료되었습니다.");
+	        return ResponseEntity.ok(response);
+	        
+	    } catch (Exception e) {
+	        System.err.println("수동 아카이빙 실패: " + e.getMessage());
+	        e.printStackTrace();
+	        
+	        response.put("success", false);
+	        response.put("message", "아카이빙 중 오류가 발생했습니다: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 }

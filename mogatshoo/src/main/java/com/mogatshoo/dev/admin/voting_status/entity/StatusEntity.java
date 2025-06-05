@@ -62,6 +62,12 @@ public class StatusEntity {
     // 각 옵션별 투표 결과 (옵션ID : 투표수)
     private Map<String, Long> voteDetails;
     
+    // 테이블 소스 (active/completed)
+    private String tableSource;
+    
+    // 완료 여부
+    private Boolean isCompleted;
+    
     // 이메일 전송 가능 여부
     private Boolean emailEligible;
     
@@ -70,6 +76,11 @@ public class StatusEntity {
      * @return 투표 상태 ("보류", "진행중", "종료")
      */
     public String getCurrentVotingStatus() {
+        // 완료된 질문은 항상 종료 상태
+        if ("completed".equals(this.tableSource)) {
+            return "종료";
+        }
+        
         // 비공개 상태라면 상태 관계없이 보류
         if (!"yes".equals(this.isEnded)) {
             return "보류";

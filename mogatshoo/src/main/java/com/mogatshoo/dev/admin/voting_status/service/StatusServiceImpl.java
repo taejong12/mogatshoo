@@ -170,6 +170,7 @@ public class StatusServiceImpl implements StatusService {
     private StatusEntity createStatusEntity(Map<String, Object> questionInfo, Long totalMembers) {
         try {
             String serialNumber = (String) questionInfo.get("serialNumber");
+            String tableSource = (String) questionInfo.get("tableSource");
             
             // 투표 통계 조회
             Map<String, Object> voteStats = statusRepository.getQuestionVoteStatistics(serialNumber);
@@ -179,22 +180,63 @@ public class StatusServiceImpl implements StatusService {
             statusEntity.setSerialNumber(serialNumber);
             statusEntity.setQuestionContent((String) questionInfo.get("questionContent"));
             statusEntity.setIsEnded((String) questionInfo.get("isEnded"));
+            statusEntity.setTableSource(tableSource);
+            statusEntity.setIsCompleted("completed".equals(tableSource));
             
-            // **새로 추가: QuestionEntity에서 투표 기간 정보 가져오기**
-            try {
-                QuestionEntity questionEntity = questionService.getQuestionBySerialNumber(serialNumber);
-                if (questionEntity != null) {
-                    statusEntity.setVotingStartDate(questionEntity.getVotingStartDate());
-                    statusEntity.setVotingEndDate(questionEntity.getVotingEndDate());
-                }
-            } catch (Exception e) {
-                System.err.println("투표 기간 정보 조회 실패 [" + serialNumber + "]: " + e.getMessage());
-                // 오류가 발생해도 null로 설정하여 계속 진행
+            // 투표 기간 정보 설정 - 직접 DB에서 가져온 데이터 사용
+            Object votingStartDateObj = questionInfo.get("votingStartDate");
+            Object votingEndDateObj = questionInfo.get("votingEndDate");
+            
+            System.out.println("=== 투표 기간 정보 디버깅 ===");
+            System.out.println("질문: " + serialNumber);
+            System.out.println("시작일 객체: " + votingStartDateObj + " (타입: " + (votingStartDateObj != null ? votingStartDateObj.getClass().getName() : "null") + ")");
+            System.out.println("종료일 객체: " + votingEndDateObj + " (타입: " + (votingEndDateObj != null ? votingEndDateObj.getClass().getName() : "null") + ")");
+            
+            if (votingStartDateObj instanceof java.sql.Timestamp) {
+                statusEntity.setVotingStartDate(((java.sql.Timestamp) votingStartDateObj).toLocalDateTime());
+                System.out.println("시작일 설정됨: " + statusEntity.getVotingStartDate());
+            } else if (votingStartDateObj instanceof LocalDateTime) {
+                statusEntity.setVotingStartDate((LocalDateTime) votingStartDateObj);
+                System.out.println("시작일 설정됨 (LocalDateTime): " + statusEntity.getVotingStartDate());
+            } else {
+                System.out.println("시작일 null로 설정");
                 statusEntity.setVotingStartDate(null);
+            }
+            
+            if (votingEndDateObj instanceof java.sql.Timestamp) {
+                statusEntity.setVotingEndDate(((java.sql.Timestamp) votingEndDateObj).toLocalDateTime());
+                System.out.println("종료일 설정됨: " + statusEntity.getVotingEndDate());
+            } else if (votingEndDateObj instanceof LocalDateTime) {
+                statusEntity.setVotingEndDate((LocalDateTime) votingEndDateObj);
+                System.out.println("종료일 설정됨 (LocalDateTime): " + statusEntity.getVotingEndDate());
+            } else {
+                System.out.println("종료일 null로 설정");
                 statusEntity.setVotingEndDate(null);
             }
             
-            // createdAt 타입 변환 처리 (오류 수정 부분)
+            // 만약 DB에서 가져온 데이터가 null이면 QuestionService에서 다시 시도
+            if (statusEntity.getVotingStartDate() == null || statusEntity.getVotingEndDate() == null) {
+                System.out.println("DB 데이터가 null이므로 QuestionService에서 재시도");
+                try {
+                    if ("active".equals(tableSource)) {
+                        QuestionEntity questionEntity = questionService.getQuestionBySerialNumber(serialNumber);
+                        if (questionEntity != null) {
+                            if (statusEntity.getVotingStartDate() == null) {
+                                statusEntity.setVotingStartDate(questionEntity.getVotingStartDate());
+                                System.out.println("QuestionService에서 시작일 설정: " + statusEntity.getVotingStartDate());
+                            }
+                            if (statusEntity.getVotingEndDate() == null) {
+                                statusEntity.setVotingEndDate(questionEntity.getVotingEndDate());
+                                System.out.println("QuestionService에서 종료일 설정: " + statusEntity.getVotingEndDate());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("QuestionService에서 투표 기간 정보 조회 실패: " + e.getMessage());
+                }
+            }
+            
+            // createdAt 타입 변환 처리
             Object createdAtObj = questionInfo.get("createdAt");
             if (createdAtObj instanceof java.sql.Timestamp) {
                 statusEntity.setCreatedAt(((java.sql.Timestamp) createdAtObj).toLocalDateTime());
@@ -202,8 +244,6 @@ public class StatusServiceImpl implements StatusService {
                 statusEntity.setCreatedAt((LocalDateTime) createdAtObj);
             } else {
                 statusEntity.setCreatedAt(null);
-                System.out.println("createdAt 값이 예상되지 않은 타입입니다: " + 
-                    (createdAtObj != null ? createdAtObj.getClass().getName() : "null"));
             }
             
             // 투표 통계 설정
@@ -218,12 +258,54 @@ public class StatusServiceImpl implements StatusService {
             statusEntity.setTotalMembers(totalMembers);
             statusEntity.calculateRates();
             
+            System.out.println("=== 최종 StatusEntity 투표 기간 ===");
+            System.out.println("시작일: " + statusEntity.getVotingStartDate());
+            System.out.println("종료일: " + statusEntity.getVotingEndDate());
+            System.out.println("현재 상태: " + statusEntity.getCurrentVotingStatus());
+            
             return statusEntity;
             
         } catch (Exception e) {
             System.err.println("StatusEntity 생성 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
             return null;
+        }
+    }
+    
+    @Override
+    public Page<StatusEntity> searchVotingStatistics(String keyword, String publicStatus, 
+                                                    String completionStatus, Pageable pageable) {
+        try {
+            List<StatusEntity> statistics = new ArrayList<>();
+            Long totalMembers = statusRepository.getTotalMemberCount();
+            
+            // 검색된 질문 정보 조회
+            List<Map<String, Object>> questionInfos = statusRepository.searchQuestionInfo(keyword, publicStatus, completionStatus);
+            
+            for (Map<String, Object> questionInfo : questionInfos) {
+                StatusEntity statusEntity = createStatusEntity(questionInfo, totalMembers);
+                if (statusEntity != null) {
+                    statistics.add(statusEntity);
+                }
+            }
+            
+            // 페이지네이션 적용
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), statistics.size());
+            
+            List<StatusEntity> pagedStatistics;
+            if (start > statistics.size()) {
+                pagedStatistics = new ArrayList<>();
+            } else {
+                pagedStatistics = statistics.subList(start, end);
+            }
+            
+            return new PageImpl<>(pagedStatistics, pageable, statistics.size());
+            
+        } catch (Exception e) {
+            System.err.println("투표 통계 검색 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
         }
     }
 }
