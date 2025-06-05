@@ -2,6 +2,9 @@ package com.mogatshoo.dev.admin.voting_status.service;
 
 import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
 import com.mogatshoo.dev.admin.voting_status.repository.StatusRepository;
+import com.mogatshoo.dev.admin.question.service.QuestionService; // 추가
+import com.mogatshoo.dev.admin.question.entity.QuestionEntity; // 추가
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,12 +17,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 @Service
 public class StatusServiceImpl implements StatusService {
 
     @Autowired
     private StatusRepository statusRepository;
 
+    @Autowired
+    private QuestionService questionService;
+    
     @Override
     public List<StatusEntity> getAllVotingStatistics() {
         try {
@@ -173,6 +180,20 @@ public class StatusServiceImpl implements StatusService {
             statusEntity.setQuestionContent((String) questionInfo.get("questionContent"));
             statusEntity.setIsEnded((String) questionInfo.get("isEnded"));
             
+            // **새로 추가: QuestionEntity에서 투표 기간 정보 가져오기**
+            try {
+                QuestionEntity questionEntity = questionService.getQuestionBySerialNumber(serialNumber);
+                if (questionEntity != null) {
+                    statusEntity.setVotingStartDate(questionEntity.getVotingStartDate());
+                    statusEntity.setVotingEndDate(questionEntity.getVotingEndDate());
+                }
+            } catch (Exception e) {
+                System.err.println("투표 기간 정보 조회 실패 [" + serialNumber + "]: " + e.getMessage());
+                // 오류가 발생해도 null로 설정하여 계속 진행
+                statusEntity.setVotingStartDate(null);
+                statusEntity.setVotingEndDate(null);
+            }
+            
             // createdAt 타입 변환 처리 (오류 수정 부분)
             Object createdAtObj = questionInfo.get("createdAt");
             if (createdAtObj instanceof java.sql.Timestamp) {
@@ -190,12 +211,12 @@ public class StatusServiceImpl implements StatusService {
             statusEntity.setTopVotedName((String) voteStats.get("topVotedName"));
             statusEntity.setTopVoteCount((Long) voteStats.get("topVoteCount"));
             statusEntity.setTotalVotes((Long) voteStats.get("totalVotes"));
-            statusEntity.setUniqueVoters((Long) voteStats.get("uniqueVoters")); // 고유 투표자 수 추가
+            statusEntity.setUniqueVoters((Long) voteStats.get("uniqueVoters"));
             statusEntity.setVoteDetails((Map<String, Long>) voteStats.get("voteDetails"));
             
             // 멤버 정보 및 투표율 계산
             statusEntity.setTotalMembers(totalMembers);
-            statusEntity.calculateRates(); // calculateVotingRate() 대신 calculateRates() 사용
+            statusEntity.calculateRates();
             
             return statusEntity;
             

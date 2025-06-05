@@ -76,10 +76,68 @@ body {
     font-weight: 500;
 }
 
+/* 투표 상태별 스타일 */
+.status-pending {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
+}
+
+.status-active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.status-ended {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(107, 114, 128, 0.3);
+}
+
+/* 투표 기간 정보 표시 */
+.voting-period {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 2px;
+    display: block;
+}
+
+/* 통계 카드 개선 */
+.stat-card.pending {
+    border-left: 4px solid #f59e0b;
+}
+
+.stat-card.active {
+    border-left: 4px solid #10b981;
+}
+
+.stat-card.ended {
+    border-left: 4px solid #6b7280;
+}
+
+/* 필터 개선 */
 .controls-section {
-    padding: 20px 40px;
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
     border-bottom: 1px solid #e2e8f0;
-    background: white;
 }
 
 .btn-refresh {
@@ -152,16 +210,6 @@ body {
     text-align: center;
     display: inline-block;
     min-width: 80px;
-}
-
-.status-active {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.status-ended {
-    background: #fee2e2;
-    color: #991b1b;
 }
 
 .top-voter-info {

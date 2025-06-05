@@ -73,9 +73,9 @@ public class FirebaseStorageService {
             return;
         }
 
-        logger.debug("[DEBUG] 프로젝트 ID: {}", projectId);
-        logger.debug("[DEBUG] 클라이언트 이메일: {}", clientEmail);
-        logger.debug("[DEBUG] 스토리지 버킷: {}", storageBucket);
+        logger.debug("프로젝트 ID: {}", projectId);
+        logger.debug("클라이언트 이메일: {}", clientEmail);
+        logger.debug("스토리지 버킷: {}", storageBucket);
 
         try {
             // Properties에서 읽은 정보로 JSON 생성
@@ -99,7 +99,7 @@ public class FirebaseStorageService {
                     .build()
                     .getService();
 
-            logger.info("[DEBUG] Firebase Storage 서비스 생성 성공!");
+            logger.info("Firebase Storage 서비스 생성 성공!");
 
             this.isEnabled = true;
 
