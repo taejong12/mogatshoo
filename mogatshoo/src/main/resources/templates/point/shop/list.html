@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트샵목록'">
-</head>
 <body>
 	<div layout:fragment="content">
 		<!-- 카테고리 필터 -->
@@ -27,19 +26,43 @@
 		<div class="row row-cols-1 row-cols-md-3 g-4"
 			th:each="pointShop : ${pointShopList}">
 			<div class="col">
-				<a
-					class="card h-100 text-white bg-dark border-secondary text-decoration-none"
-					th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
-					<img th:src="@{${pointShop.imgFile.pointItemImgPath}}"
-					class="card-img-top" alt="상품 이미지"
-					style="object-fit: cover; height: 200px;">
-					<div class="card-body">
-						<h5 class="card-title" th:text="${pointShop.pointItemName}">상품
-							이름</h5>
-						<p class="card-text"
-							th:text="'가격: ' + ${pointShop.pointItemPrice} + 'P'">가격</p>
+				<div th:if="${pointShop.pointItemStock > 0}">
+					<!-- 재고 있음: 클릭 가능 -->
+					<a
+						class="card h-100 text-white bg-dark border-secondary text-decoration-none"
+						th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
+						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}"
+						class="card-img-top" alt="상품 이미지"
+						style="object-fit: cover; height: 200px;">
+						<div class="card-body">
+							<h5 class="card-title" th:text="${pointShop.pointItemName}">상품
+								이름</h5>
+							<p class="card-text"
+								th:text="'가격: ' + ${pointShop.pointItemPrice} + 'P'">가격</p>
+						</div>
+					</a>
+				</div>
+
+				<div th:if="${pointShop.pointItemStock <= 0}">
+					<!-- 재고 없음: 매진 표시 + 클릭 불가 -->
+					<div
+						class="card h-100 text-white bg-secondary border-secondary position-relative">
+						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}"
+							class="card-img-top" alt="상품 이미지"
+							style="object-fit: cover; height: 200px; opacity: 0.5;">
+						<div
+							class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+							style="background-color: rgba(0, 0, 0, 0.6);">
+							<span class="text-white fw-bold fs-4">매진</span>
+						</div>
+						<div class="card-body">
+							<h5 class="card-title" th:text="${pointShop.pointItemName}">상품
+								이름</h5>
+							<p class="card-text"
+								th:text="'가격: ' + ${pointShop.pointItemPrice} + 'P'">가격</p>
+						</div>
 					</div>
-				</a>
+				</div>
 			</div>
 		</div>
 

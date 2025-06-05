@@ -13,7 +13,8 @@
 			<div class="card shadow-sm mb-5">
 				<div class="card-body">
 					<form name="updatePointItemForm" enctype="multipart/form-data">
-						<input type="hidden" name="pointItemId" th:value="${pointItem.pointItemId}" />
+						<input type="hidden" name="pointItemId"
+							th:value="${pointItem.pointItemId}" />
 						<!-- 기존 이미지 및 미리보기 공통 -->
 						<div class="mb-4 text-center">
 							<label class="form-label fw-bold">이미지</label>
@@ -102,14 +103,16 @@
 
 						<div
 							class="d-flex justify-content-center aling-items-center gap-2">
-							<button type="button" class="btn btn-outline-secondary" onclick="fu_updatePointItem()">수정하기</button>
-							<a class="btn btn-outline-secondary" th:href="@{/admin/point/item/list}">취소하기</a>
+							<button type="button" class="btn btn-outline-secondary"
+								onclick="fu_updatePointItem()">수정하기</button>
+							<a class="btn btn-outline-secondary"
+								th:href="@{/admin/point/item/list}">취소하기</a>
 						</div>
 					</form>
 				</div>
 			</div>
 		</div>
-		
+
 		<script type="text/javascript">
 			let categoryCount = "[[${pointCategoryList.size()}]]";
 		</script>

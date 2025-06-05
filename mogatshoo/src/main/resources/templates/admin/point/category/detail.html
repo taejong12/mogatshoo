@@ -43,7 +43,8 @@
 						<form name="deletePointCategoryForm">
 							<input type="hidden" name="pointCategoryId"
 								th:value="${pointCategory.pointCategoryId}">
-							<button type="button" class="btn btn-outline-secondary" onclick="fu_deleteCategory()">삭제하기</button>
+							<button type="button" class="btn btn-outline-secondary"
+								onclick="fu_deleteCategory()">삭제하기</button>
 						</form>
 					</div>
 				</div>
@@ -51,7 +52,8 @@
 		</div>
 
 		<!-- 삭제하기 버튼클릭 -->
-		<script th:src="@{/js/admin/point/category/detail/fu_deleteCategory.js}"></script>
+		<script
+			th:src="@{/js/admin/point/category/detail/fu_deleteCategory.js}"></script>
 	</div>
 </body>
 </html>

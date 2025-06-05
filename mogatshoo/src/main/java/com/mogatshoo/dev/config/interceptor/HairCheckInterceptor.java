@@ -16,38 +16,38 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class HairCheckInterceptor implements HandlerInterceptor {
-	
+
 	@Autowired
 	private HairLossTestService hairLossTestService;
-	
+
 	@Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws IOException {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws IOException {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        // 로그인 안된 상태거나 익명 사용자라면 통과
-        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
-            return true;
-        }
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        String memberId = auth.getName();
-        
-        // 권한에 따라 리다이렉트
-        for (GrantedAuthority authority : auth.getAuthorities()) {
-            String role = authority.getAuthority();
+		// 로그인 안된 상태거나 익명 사용자라면 통과
+		if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+			return true;
+		}
 
-             if (role.equals("ROLE_USER")) {
-            	// 탈모 진단 여부 확인
-                boolean hairCheck = hairLossTestService.loginMemberHairCheck(memberId);
+		String memberId = auth.getName();
 
-                if (!hairCheck && !request.getRequestURI().startsWith("/hairLossTest")) {
-                    response.sendRedirect("/hairLossTest/testHair");
-                    return false;
-                }
-            }
-        }
+		// 권한에 따라 리다이렉트
+		for (GrantedAuthority authority : auth.getAuthorities()) {
+			String role = authority.getAuthority();
 
-        return true;
-    }
+			if (role.equals("ROLE_USER")) {
+				// 탈모 진단 여부 확인
+				boolean hairCheck = hairLossTestService.loginMemberHairCheck(memberId);
+
+				if (!hairCheck && !request.getRequestURI().startsWith("/hairLossTest")) {
+					response.sendRedirect("/hairLossTest/testHair");
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
 }
