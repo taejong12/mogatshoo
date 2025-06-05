@@ -1,68 +1,337 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트구매내역'">
-<body>
-	<div layout:fragment="content" class="pixel-bg">
-		<h1>포인트구매내역</h1>
-		<table class="win95-table">
-			<thead>
-				<tr>
-					<th>상품이름</th>
-					<th>구매수량</th>
-					<th>총사용포인트</th>
-					<th>주문상태</th>
-					<th>상품발송확인</th>
-					<th>결제일</th>
-					<th>발송일</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="buyPoint : ${pointItemBuyList}">
-					<td th:text="${buyPoint.pointShop.pointItemName}">상품이름</td>
-					<td th:text="${buyPoint.pointOrderHistoryQuantity}">구매수량</td>
-					<td th:text="${buyPoint.pointOrderHistoryTotalPrice}">총사용포인트</td>
-					<td th:text="${buyPoint.pointOrderHistoryStatus}">주문상태</td>
-					<td th:text="${buyPoint.pointItemSendCheck}">상품발송확인</td>
-					<td
-						th:text="${#temporals.format(buyPoint.pointOrderHistoryCreate, 'yyyy-MM-dd HH:mm')}">결제일</td>
-					<td
-						th:text="${#temporals.format(buyPoint.pointOrderHistoryUpdate, 'yyyy-MM-dd HH:mm')}">발송일</td>
-				</tr>
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트구매내역'">
 
-				<!-- 결과가 없을 경우 -->
-				<tr th:if="${#lists.isEmpty(pointItemBuyList)}">
-					<td colspan="7" class="text-center">포인트구매내역이 없습니다.</td>
-				</tr>
-			</tbody>
-		</table>
+<head>
+	<style>
+		body, html {
+			font-family: 'dalmoori', sans-serif;
+
+		}
+		/* 🔥 아이프레임에 꽉 차도록 윈도우95 스타일 */
+		.win95-buy-list-container {
+			background-color: #c0c0c0;
+			border: 2px inset #c0c0c0;
+			padding: 10px;
+			margin: 0;
+			font-size: 15px;
+			height: 100vh !important; /* 🔥 전체 높이 차지 */
+			max-height: 100vh !important;
+			overflow-y: auto !important; /* 🔥 스크롤 강제 활성화 */
+			box-sizing: border-box;
+		}
+
+		.win95-buy-list-title {
+			background: linear-gradient(90deg, #008080 0%, #004040 100%);
+			color: white;
+			padding: 5px 10px;
+			font-size: 16px;
+			font-weight: bold;
+			border: 1px outset #c0c0c0;
+			margin-bottom: 15px;
+		}
+
+		.win95-table-container {
+			background-color: #ffffff;
+			border: 2px inset #c0c0c0;
+			padding: 10px;
+			margin: 10px 0;
+			overflow-x: auto;
+		}
+
+		.win95-table {
+			width: 100%;
+			border-collapse: collapse;
+			background-color: #ffffff;
+			font-size: 15px;
+		}
+
+		.win95-table th {
+			background-color: #c0c0c0;
+			border: 1px outset #c0c0c0;
+			padding: 10px 8px;
+			text-align: center;
+			font-weight: bold;
+			color: #000080;
+			font-size: 15px;
+			white-space: nowrap;
+		}
+
+		.win95-table td {
+			background-color: #ffffff;
+			border: 1px inset #c0c0c0;
+			padding: 8px;
+			text-align: center;
+			font-size: 15px;
+			vertical-align: middle;
+		}
+
+		.win95-table tbody tr:nth-child(even) {
+			background-color: #f8f8f8;
+		}
+
+		.win95-table tbody tr:hover {
+			background-color: #e0e0e0;
+		}
+
+		/* 상태별 색상 */
+		.status-pending {
+			color: #ff8000;
+			font-weight: bold;
+		}
+
+		.status-shipped {
+			color: #008000;
+			font-weight: bold;
+		}
+
+		.status-delivered {
+			color: #000080;
+			font-weight: bold;
+		}
+
+		.status-cancelled {
+			color: #800000;
+			font-weight: bold;
+		}
+
+		.win95-no-data {
+			background-color: #ffffff;
+			border: 2px inset #c0c0c0;
+			padding: 40px;
+			text-align: center;
+			font-size: 16px;
+			color: #800000;
+			margin: 20px 0;
+		}
+
+		.win95-pagination {
+			background-color: #c0c0c0;
+			border: 2px inset #c0c0c0;
+			padding: 15px;
+			text-align: center;
+			margin: 20px 0;
+		}
+
+		.win95-page-btn {
+			background-color: #c0c0c0;
+			border: 2px outset #c0c0c0;
+			padding: 8px 15px;
+			margin: 0 2px;
+			text-decoration: none;
+			color: black;
+			font-size: 15px;
+			display: inline-block;
+		}
+
+		.win95-page-btn:hover {
+			background-color: #e0e0e0;
+			color: black;
+			text-decoration: none;
+		}
+
+		.win95-page-btn:active {
+			border: 2px inset #c0c0c0;
+		}
+
+		.win95-page-btn.active {
+			background-color: #000080;
+			color: white;
+			border: 2px inset #c0c0c0;
+		}
+
+		/* 🔥 반응형 테이블 */
+		@media (max-width: 1200px) {
+			.win95-table {
+				font-size: 14px;
+			}
+			
+			.win95-table th,
+			.win95-table td {
+				padding: 6px 4px;
+				font-size: 14px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.win95-buy-list-container {
+				padding: 5px;
+				height: 100vh !important;
+				overflow-y: auto !important;
+			}
+
+			.win95-table-container {
+				padding: 5px;
+				overflow-x: auto;
+			}
+
+			.win95-table {
+				min-width: 700px;
+				font-size: 13px;
+			}
+
+			.win95-table th,
+			.win95-table td {
+				padding: 5px 3px;
+				font-size: 13px;
+			}
+
+			.win95-page-btn {
+				padding: 6px 10px;
+				font-size: 14px;
+				margin: 0 1px;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.win95-table {
+				min-width: 600px;
+				font-size: 12px;
+			}
+
+			.win95-table th,
+			.win95-table td {
+				padding: 4px 2px;
+				font-size: 12px;
+			}
+
+			.win95-pagination {
+				padding: 10px 5px;
+			}
+
+			.win95-page-btn {
+				padding: 5px 8px;
+				font-size: 13px;
+			}
+		}
+
+		/* 🔥 윈도우95 스크롤바 스타일 강화 */
+		.win95-buy-list-container::-webkit-scrollbar {
+			width: 16px !important;
+			height: 16px !important;
+		}
+
+		.win95-buy-list-container::-webkit-scrollbar-track {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: inset 1px 1px 0 #dfdfdf, 
+						inset -1px -1px 0 #808080 !important;
+		}
+
+		.win95-buy-list-container::-webkit-scrollbar-thumb {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf, 
+						-1px -1px 0 #808080 !important;
+			min-height: 20px !important;
+		}
+
+		.win95-buy-list-container::-webkit-scrollbar-thumb:hover {
+			background-color: #d4d0c8 !important;
+		}
+
+		.win95-buy-list-container::-webkit-scrollbar-thumb:active {
+			background-color: #a0a0a0 !important;
+			box-shadow: inset 1px 1px 0 #808080, 
+						inset -1px -1px 0 #dfdfdf !important;
+		}
+
+		.win95-buy-list-container::-webkit-scrollbar-button {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf, 
+						-1px -1px 0 #808080 !important;
+			width: 16px !important;
+			height: 16px !important;
+			display: block !important;
+		}
+
+		/* 테이블 컨테이너 스크롤바 */
+		.win95-table-container::-webkit-scrollbar {
+			width: 12px;
+			height: 12px;
+		}
+
+		.win95-table-container::-webkit-scrollbar-track {
+			background-color: #f0f0f0;
+			border: 1px solid #c0c0c0;
+		}
+
+		.win95-table-container::-webkit-scrollbar-thumb {
+			background-color: #c0c0c0;
+			border: 1px solid #808080;
+		}
+	</style>
+</head>
+
+<body>
+<div layout:fragment="content">
+	<div class="win95-buy-list-container">
+		
+		<!-- 윈도우95 타이틀 바 -->
+		<div class="win95-buy-list-title">🛍️ 포인트 구매내역</div>
+
+		<!-- 데이터가 없을 경우 -->
+		<div th:if="${#lists.isEmpty(pointItemBuyList)}" class="win95-no-data">
+			💾 포인트 구매내역이 없습니다.
+		</div>
+
+		<!-- 테이블 섹션 -->
+		<div th:if="${!#lists.isEmpty(pointItemBuyList)}" class="win95-table-container">
+			<table class="win95-table">
+				<thead>
+					<tr>
+						<th>📦 상품이름</th>
+						<th>🔢 구매수량</th>
+						<th>💰 총사용포인트</th>
+						<th>📋 주문상태</th>
+						<th>🚚 상품발송확인</th>
+						<th>📅 결제일</th>
+						<th>📅 발송일</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="buyPoint : ${pointItemBuyList}">
+						<td th:text="${buyPoint.pointShop.pointItemName}" 
+							style="text-align: left; max-width: 200px; word-wrap: break-word;">상품이름</td>
+						<td th:text="${buyPoint.pointOrderHistoryQuantity + '개'}">구매수량</td>
+						<td th:text="${buyPoint.pointOrderHistoryTotalPrice + 'P'}" 
+							style="color: #800000; font-weight: bold;">총사용포인트</td>
+						<td th:text="${buyPoint.pointOrderHistoryStatus}"
+							th:class="'status-' + ${#strings.toLowerCase(buyPoint.pointOrderHistoryStatus)}">주문상태</td>
+						<td th:text="${buyPoint.pointItemSendCheck}">상품발송확인</td>
+						<td th:text="${#temporals.format(buyPoint.pointOrderHistoryCreate, 'yyyy-MM-dd HH:mm')}">결제일</td>
+						<td th:text="${buyPoint.pointOrderHistoryUpdate != null ? #temporals.format(buyPoint.pointOrderHistoryUpdate, 'yyyy-MM-dd HH:mm') : '-'}">발송일</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 
 		<!-- 페이지네이션 -->
-		<nav th:if="${!#lists.isEmpty(pointItemBuyList)}"
-			aria-label="Page navigation">
-			<ul class="pagination justify-content-center">
+		<div th:if="${!#lists.isEmpty(pointItemBuyList)}" class="win95-pagination">
+			
+			<!-- 이전 버튼 -->
+			<a th:if="${startPage >= 10}" class="win95-page-btn"
+			   th:href="@{/point/shop/buyList(page=${startPage - 10})}">
+				◀ 이전
+			</a>
 
-				<!-- 이전 버튼: startPage가 10 이상일 때만 보임 -->
-				<li class="page-item" th:if="${startPage >= 10}"><a
-					class="page-link"
-					th:href="@{/point/shop/buyList(page=${startPage - 10})}"
-					aria-label="Previous"> <span aria-hidden="true">&laquo;이전</span>
-				</a></li>
+			<!-- 페이지 번호 -->
+			<a class="win95-page-btn" 
+			   th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
+			   th:classappend="${i} == ${currentPage} ? 'active' : ''"
+			   th:href="@{/point/shop/buyList(page=${i})}"
+			   th:text="${i + 1}"></a>
 
-				<!-- 페이지 번호 -->
-				<li class="page-item"
-					th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
-					th:classappend="${i} == ${currentPage} ? ' active' : ''"><a
-					class="page-link" th:href="@{/point/shop/buyList(page=${i})}"
-					th:text="${i + 1}"> </a></li>
+			<!-- 다음 버튼 -->
+			<a th:if="${endPage < totalPages}" class="win95-page-btn"
+			   th:href="@{/point/shop/buyList(page=${endPage})}">
+				다음 ▶
+			</a>
+		</div>
 
-				<!-- 다음 버튼: endPage가 totalPages보다 작을 때만 보임 -->
-				<li class="page-item" th:if="${endPage < totalPages}"><a
-					class="page-link" th:href="@{/point/shop/buyList(page=${endPage})}"
-					aria-label="Next"> <span aria-hidden="true">다음 &raquo;</span>
-				</a></li>
-			</ul>
-		</nav>
 	</div>
+</div>
 </body>
 </html>
