@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}">
+
+<head th:with="layoutTitle='문의하기'">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+        @font-face {
+            font-family: 'dalmoori';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .chat-container {
+            width: 100%;
+            height: 100vh;
+            background-color: #c0c0c0;
+            border: 2px inset #c0c0c0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: 'MS Sans Serif', sans-serif;
+        }
+
+        .chat-header {
+            background-color: #008080;
+            color: #ffffff;
+            padding: 8px 12px;
+            text-align: left;
+            position: relative;
+            border-bottom: 1px solid #404040;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .chat-header h2 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .chat-header .status {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 8px;
+            overflow-y: auto;
+            background-color: #ffffff;
+            border: 2px inset #c0c0c0;
+            margin: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .message.mine {
+            flex-direction: row-reverse;
+        }
+
+        .message.system {
+            justify-content: center;
+            margin: 12px 0;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border: 2px outset #c0c0c0;
+            background-color: #c0c0c0;
+            word-wrap: break-word;
+            position: relative;
+            font-size: 15px;
+            color: #000000;
+        }
+
+        .message.mine .message-bubble {
+            background-color: #000080;
+            color: #ffffff;
+            border: 2px outset #000080;
+            margin-left: 8px;
+        }
+
+        .message.other .message-bubble {
+            background-color: #c0c0c0;
+            color: #000000;
+            border: 2px outset #c0c0c0;
+            margin-right: 8px;
+        }
+
+        .message.system .message-bubble {
+            background-color: #ffffcc;
+            border: 2px inset #c0c0c0;
+            color: #000080;
+            font-size: 13px;
+            text-align: center;
+            max-width: 90%;
+            padding: 6px 12px;
+            margin: 0;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #808080;
+            margin: 0 6px;
+            align-self: flex-end;
+        }
+
+        .chat-input-container {
+            padding: 8px;
+            background-color: #c0c0c0;
+            border-top: 1px solid #808080;
+        }
+
+        .connection-status {
+            text-align: center;
+            font-size: 13px;
+            color: #808080;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .connection-status.connected {
+            color: #008000;
+        }
+
+        .connection-status.disconnected {
+            color: #800000;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px inset #c0c0c0;
+            background-color: #ffffff;
+            color: #000000;
+            outline: none;
+            font-size: 15px;
+            resize: none;
+            min-height: 40px;
+            max-height: 100px;
+            font-family: 'MS Sans Serif', sans-serif;
+        }
+
+        .message-input:focus {
+            background-color: #ffffff;
+            border: 2px inset #c0c0c0;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            gap: 4px;
+        }
+
+        .send-button, .end-chat-button {
+            width: 50px;
+            height: 40px;
+            border: 2px outset #c0c0c0;
+            background-color: #c0c0c0;
+            color: #000000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .send-button:hover, .end-chat-button:hover {
+            background-color: #d4d0c8;
+            border: 2px outset #d4d0c8;
+        }
+
+        .send-button:active, .end-chat-button:active {
+            border: 2px inset #c0c0c0;
+            background-color: #a0a0a0;
+        }
+
+        .send-button:disabled, .end-chat-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #a0a0a0;
+            border: 2px inset #c0c0c0;
+        }
+
+        .end-chat-button {
+            background-color: #800000;
+            color: #ffffff;
+            border: 2px outset #800000;
+        }
+
+        .end-chat-button:hover {
+            background-color: #a00000;
+            border: 2px outset #a00000;
+        }
+
+        .end-chat-button:active {
+            border: 2px inset #800000;
+            background-color: #600000;
+        }
+
+        .chat-input-container.disabled {
+            opacity: 0.7;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #000080;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        /* 윈도우 95 스타일 스크롤바 */
+        .chat-messages::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background-color: #c0c0c0;
+            border: 1px solid #808080;
+            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: #c0c0c0;
+            border: 1px solid #808080;
+            box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
+            min-height: 20px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background-color: #d4d0c8;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:active {
+            background-color: #a0a0a0;
+            box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #dfdfdf;
+        }
+
+        .chat-messages::-webkit-scrollbar-button {
+            background-color: #c0c0c0;
+            border: 1px solid #808080;
+            box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+
+        .chat-messages::-webkit-scrollbar-button:hover {
+            background-color: #d4d0c8;
+        }
+
+        .chat-messages::-webkit-scrollbar-button:active {
+            background-color: #a0a0a0;
+            box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #dfdfdf;
+        }
+
+        /* 세로 스크롤바 화살표 */
+        .chat-messages::-webkit-scrollbar-button:vertical:start:decrement {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M8 4l4 4H4z' fill='%23000'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .chat-messages::-webkit-scrollbar-button:vertical:end:increment {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M8 12l-4-4h8z' fill='%23000'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+            }
+            
+            .message-bubble {
+                font-size: 15px;
+            }
+            
+            .message-input {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<div class="chat-container">
+			<div class="chat-header">
+				<div class="user-info" id="userInfo">사용자 정보 로딩중...</div>
+				<h2>모갓슈 문의하기</h2>
+				<div class="status" id="connectionStatus">연결 중...</div>
+			</div>
+			
+			<div class="chat-messages" id="messages">
+				<div class="message other">
+					<div class="message-bubble">
+						안녕하세요! 모갓슈 고객지원입니다.<br>
+						궁금한 점이 있으시면 언제든 문의해주세요.
+					</div>
+					<div class="message-time">지금</div>
+				</div>
+			</div>
+			
+			<div class="chat-input-container" id="inputContainer">
+				<div class="connection-status" id="statusInfo">연결 중...</div>
+				
+				<div class="chat-input">
+					<textarea class="message-input" id="messageInput" 
+							 placeholder="메시지를 입력하세요..." maxlength="500"
+							 rows="1"></textarea>
+					<div class="button-group">
+						<button class="send-button" id="sendButton" title="메시지 전송">
+							전송
+						</button>
+						<button class="end-chat-button" id="endChatButton" title="채팅 종료">
+							종료
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- SockJS와 STOMP 라이브러리 -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+		
+		<script>
+			let stompClient = null;
+			let username = null;
+			let roomId = null;
+			let connected = false;
+			let isSubscribed = false;
+			let messageIds = new Set();
+			let chatEnded = false; // 채팅 종료 상태
+
+			const connectionStatus = document.getElementById('connectionStatus');
+			const statusInfo = document.getElementById('statusInfo');
+			const messageInput = document.getElementById('messageInput');
+			const sendButton = document.getElementById('sendButton');
+			const endChatButton = document.getElementById('endChatButton');
+			const messagesDiv = document.getElementById('messages');
+			const userInfo = document.getElementById('userInfo');
+			const inputContainer = document.getElementById('inputContainer');
+
+			// 페이지 로드 시 초기화
+			window.addEventListener('load', async function() {
+				console.log('페이지 로드 시작');
+				
+				await loadUserInfo();
+				setupRoomId();
+				await loadChatHistory();
+				connect();
+				setupEventListeners();
+			});
+
+			// 사용자 정보 로드
+			async function loadUserInfo() {
+				try {
+					username = '[[${#authentication.name}]]' || null;
+					
+					if (!username || username === '[[${#authentication.name}]]') {
+						const response = await fetch('/qanda/api/user/info', {
+							credentials: 'same-origin'
+						});
+						if (response.ok) {
+							const userInfoData = await response.json();
+							username = userInfoData.memberId;
+						}
+					}
+					
+					if (!username) {
+						username = 'guest_' + Date.now();
+						userInfo.textContent = '게스트';
+					} else {
+						userInfo.textContent = `${username}님`;
+					}
+					
+					console.log('사용자 정보 로드 완료:', username);
+					
+				} catch (error) {
+					console.error('사용자 정보 로드 실패:', error);
+					username = 'guest_' + Date.now();
+					userInfo.textContent = '게스트';
+				}
+			}
+
+			// 방 ID 설정
+			function setupRoomId() {
+				roomId = username; // member ID를 방 ID로 사용
+				console.log('Room ID 설정:', roomId);
+			}
+
+			// 채팅 내역 로드 (🔥 수정된 버전)
+			async function loadChatHistory() {
+				try {
+					console.log('채팅 내역 로드 시작...');
+					
+					const response = await fetch(`/qanda/api/rooms/${roomId}/messages`, {
+						credentials: 'same-origin'
+					});
+					
+					if (response.ok) {
+						const messages = await response.json();
+						console.log('로드된 메시지 수:', messages.length);
+						
+						// 메시지가 있으면 기존 환영 메시지 제거하고 실제 메시지들 표시
+						if (messages.length > 0) {
+							messagesDiv.innerHTML = '';
+							
+							// 메시지들 표시
+							messages.forEach(message => {
+								displayMessage(message, false);
+							});
+							
+							// 🔥 마지막 메시지가 채팅 종료 메시지인지 확인
+							const lastMessage = messages[messages.length - 1];
+							if (lastMessage.type === 'END') {
+								console.log('마지막 메시지가 종료 메시지 - 종료 상태 유지');
+								chatEnded = true;
+								disableChatInput('채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.');
+							}
+						} else {
+							// 메시지가 없으면 환영 메시지 유지
+							console.log('기존 채팅 내역 없음 - 환영 메시지 유지');
+						}
+					} else {
+						console.log('기존 채팅 내역 없음');
+					}
+					
+				} catch (error) {
+					console.error('채팅 내역 로드 실패:', error);
+				}
+			}
+
+			// 웹소켓 연결
+			function connect() {
+				if (stompClient && connected) {
+					console.log('이미 연결되어 있음');
+					return;
+				}
+				
+				const socket = new SockJS('/ws');
+				stompClient = Stomp.over(socket);
+				
+				stompClient.connect({}, function(frame) {
+					console.log('Connected: ' + frame);
+					connected = true;
+					updateConnectionStatus('연결됨', 'connected');
+					
+					subscribeToRoom();
+					
+				}, function(error) {
+					console.log('Connection error: ' + error);
+					connected = false;
+					isSubscribed = false;
+					updateConnectionStatus('연결 실패', 'disconnected');
+					
+					setTimeout(() => {
+						if (!connected) {
+							console.log('재연결 시도...');
+							connect();
+						}
+					}, 5000);
+				});
+			}
+
+			// 방 구독
+			function subscribeToRoom() {
+				if (!stompClient || !connected || !roomId || isSubscribed) {
+					console.log('구독 조건 미충족');
+					return;
+				}
+				
+				console.log('방 구독 시작:', roomId);
+				
+				try {
+					stompClient.subscribe('/topic/room.' + roomId, function(message) {
+						console.log('WebSocket 메시지 받음:', message.body);
+						const chatMessage = JSON.parse(message.body);
+						
+						if (displayMessage(chatMessage, true)) {
+							// 관리자 메시지를 받으면 채팅 종료 상태 해제
+							if (chatMessage.sender === '관리자' && chatEnded) {
+								chatEnded = false;
+								enableChatInput();
+							}
+						}
+					});
+					
+					isSubscribed = true;
+					console.log('방 구독 완료');
+					
+				} catch (error) {
+					console.error('구독 중 오류:', error);
+					isSubscribed = false;
+				}
+			}
+
+			// 메시지 전송
+			function sendMessage() {
+				const content = messageInput.value.trim();
+				if (!content) return;
+				
+				console.log('메시지 전송 시도 - 채팅 종료 상태:', chatEnded);
+				
+				if (!connected || !roomId) {
+					alert('연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.');
+					return;
+				}
+
+				// 채팅이 종료된 상태에서 새 메시지를 보내면 재시작 메시지 먼저 전송
+				if (chatEnded) {
+					console.log('채팅 재시작!');
+					
+					// 재시작 메시지 생성
+					const now = new Date();
+					const timeString = now.toLocaleString('ko-KR', {
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric',
+						hour: '2-digit',
+						minute: '2-digit'
+					});
+
+					const restartMessage = {
+						type: 'RESTART',
+						content: `---- ${timeString} 새로운 문의가 시작되었습니다 ----`,
+						sender: username,
+						roomId: roomId,
+						timestamp: new Date().getTime()
+					};
+
+					// 재시작 메시지 로컬 표시 및 서버 전송
+					displayMessage(restartMessage, false);
+					stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(restartMessage));
+					
+					chatEnded = false;
+					enableChatInput();
+				}
+
+				sendButton.disabled = true;
+				
+				const chatMessage = {
+					type: 'CHAT',
+					content: content,
+					sender: username,
+					roomId: roomId,
+					timestamp: new Date().getTime()
+				};
+
+				console.log('전송할 메시지:', chatMessage);
+				
+				try {
+					stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
+					messageInput.value = '';
+					autoResizeTextarea();
+				} catch (error) {
+					console.error('메시지 전송 오류:', error);
+					alert('메시지 전송에 실패했습니다.');
+				} finally {
+					setTimeout(() => {
+						if (!chatEnded) { // 채팅이 종료되지 않은 상태에서만 버튼 활성화
+							sendButton.disabled = false;
+						}
+					}, 500);
+				}
+			}
+
+			// 채팅 종료
+			function endChat() {
+				if (!connected || !roomId || chatEnded) {
+					return;
+				}
+
+				if (confirm('채팅을 종료하시겠습니까?')) {
+					const now = new Date();
+					const timeString = now.toLocaleString('ko-KR', {
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric',
+						hour: '2-digit',
+						minute: '2-digit'
+					});
+
+					const endMessage = {
+						type: 'END',
+						content: `---- ${timeString} 채팅이 종료되었습니다. 오늘도 행복한 하루 보내세요! ----`,
+						sender: username,
+						roomId: roomId,
+						timestamp: new Date().getTime()
+					};
+
+					try {
+						// 로컬에 즉시 표시
+						displayMessage(endMessage, false);
+						
+						// 서버에 전송
+						stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(endMessage));
+						
+						// 채팅 종료 상태로 변경
+						chatEnded = true;
+						disableChatInput('채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.');
+						
+					} catch (error) {
+						console.error('채팅 종료 메시지 전송 오류:', error);
+					}
+				}
+			}
+
+			// 메시지 표시
+			function displayMessage(message, checkDuplicate = false) {
+				if (message.type === 'JOIN') return false;
+				
+				const messageId = message.timestamp || message.createdAt || (message.sender + message.content + Date.now());
+				
+				if (checkDuplicate && messageIds.has(messageId)) {
+					console.log('중복 메시지 무시:', messageId);
+					return false;
+				}
+				
+				if (checkDuplicate) {
+					messageIds.add(messageId);
+				}
+				
+				const messageDiv = document.createElement('div');
+				
+				if (message.type === 'END' || message.type === 'RESTART') {
+					messageDiv.className = 'message system';
+					messageDiv.innerHTML = `
+						<div class="message-bubble">${message.content}</div>
+					`;
+				} else {
+					messageDiv.className = 'message ' + (message.sender === username ? 'mine' : 'other');
+					
+					const bubble = document.createElement('div');
+					bubble.className = 'message-bubble';
+					bubble.textContent = message.content;
+
+					const time = document.createElement('div');
+					time.className = 'message-time';
+					
+					const messageTime = message.createdAt ? new Date(message.createdAt) : new Date();
+					time.textContent = messageTime.toLocaleTimeString('ko-KR', {
+						hour: '2-digit',
+						minute: '2-digit'
+					});
+
+					messageDiv.appendChild(bubble);
+					messageDiv.appendChild(time);
+				}
+				
+				messagesDiv.appendChild(messageDiv);
+				messagesDiv.scrollTop = messagesDiv.scrollHeight;
+				
+				return true;
+			}
+
+			// 채팅 입력 비활성화 (종료 상태용 - 입력은 가능하게)
+			function disableChatInput(message) {
+				// 전송 버튼과 종료 버튼만 비활성화, 입력창은 활성 상태 유지
+				sendButton.disabled = true;
+				endChatButton.disabled = true;
+				
+				statusInfo.textContent = message;
+				statusInfo.className = 'connection-status disconnected';
+			}
+
+			// 채팅 입력 활성화
+			function enableChatInput() {
+				messageInput.disabled = false;
+				sendButton.disabled = false;
+				endChatButton.disabled = false;
+				
+				if (connected) {
+					statusInfo.textContent = '연결됨';
+					statusInfo.className = 'connection-status connected';
+				} else {
+					statusInfo.textContent = '연결 중...';
+					statusInfo.className = 'connection-status';
+				}
+			}
+
+			// 연결 상태 업데이트
+			function updateConnectionStatus(text, className) {
+				connectionStatus.textContent = text;
+				
+				if (!chatEnded) {
+					statusInfo.textContent = text;
+					statusInfo.className = 'connection-status ' + className;
+				}
+			}
+
+			// 텍스트영역 자동 크기 조절
+			function autoResizeTextarea() {
+				messageInput.style.height = 'auto';
+				messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
+			}
+
+			// 이벤트 리스너 설정
+			function setupEventListeners() {
+				sendButton.addEventListener('click', sendMessage);
+				endChatButton.addEventListener('click', endChat);
+
+				messageInput.addEventListener('input', autoResizeTextarea);
+				
+				messageInput.addEventListener('keypress', function(e) {
+					if (e.key === 'Enter' && !e.shiftKey) {
+						e.preventDefault();
+						// 채팅 종료 상태에서도 엔터로 메시지 전송 가능
+						if (messageInput.value.trim()) {
+							sendMessage();
+						}
+					}
+				});
+
+				// 채팅이 종료된 상태에서 타이핑 시작하면 안내
+				messageInput.addEventListener('input', function() {
+					if (chatEnded && messageInput.value.trim()) {
+						statusInfo.textContent = 'Enter를 누르면 새로운 문의가 시작됩니다.';
+						statusInfo.className = 'connection-status';
+					} else if (chatEnded) {
+						statusInfo.textContent = '채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.';
+						statusInfo.className = 'connection-status disconnected';
+					}
+				});
+			}
+
+			// 페이지 언로드 시 연결 해제
+			window.addEventListener('beforeunload', function() {
+				if (stompClient) {
+					stompClient.disconnect();
+				}
+			});
+		</script>
+	</div>
+</body>
+</html>

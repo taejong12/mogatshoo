@@ -61,6 +61,14 @@
 						<span class="menu-text">포인트샵</span>
 					</a>
 				</div>
+				<div class="menu-item">
+					<a class="nav-link" th:href="@{/qanda/user}">
+						<div class="menu-icon">
+							<img src="/img/icons/computer.png" alt="Q&A">
+						</div>
+						<span class="menu-text">Q & A</span>
+					</a>
+				</div>
 			</div>
 
 			<!-- 토글 버튼 (모바일 뷰에서만 보임) -->
@@ -78,7 +86,7 @@
 				<div class="win95-close">×</div>
 			</div>
 			<div class="win95-content">
-				<iframe id="windowContentFrame" 
+				<iframe id="windowContentFrame"
 					style="width:1300px; height:580px; border:none; overflow:hidden !important; background-color:#c0c0c0;"
 					src="about:blank"></iframe>
 			</div>
@@ -151,7 +159,7 @@
 					// iframe 소스 설정 및 overflow 강제 적용
 					const iframe = $('#windowContentFrame');
 					iframe.attr('src', file);
-					
+
 					// overflow 강제 설정 (CSS보다 우선순위 높음)
 					iframe.css({
 						'overflow': 'hidden',
@@ -434,116 +442,116 @@
 					openInIframe(currentURL, title);
 				}
 			});
-			
+
 			// 윈도우 크기 조정 및 모바일 처리
 			function adjustWindowSize() {
-			    const windowWidth = window.innerWidth;
-			    const windowHeight = window.innerHeight;
-			    const win95Window = $('#win95Window');
-			    const iframe = $('#windowContentFrame');
-			    
-			    console.log('🔄 윈도우 크기 조정:', windowWidth, 'x', windowHeight);
-			    
-			    if (windowWidth < 768) {
-			        // 모바일: iframe 윈도우 완전히 숨김
-			        if (win95Window.is(':visible')) {
-			            console.log('📱 모바일 감지: iframe 윈도우 숨김');
-			            win95Window.hide();
-			            iframe.attr('src', 'about:blank');
-			            
-			            // 메인 윈도우로 리다이렉트
-			            const currentSrc = iframe.attr('src');
-			            if (currentSrc && currentSrc !== 'about:blank') {
-			                window.location.href = currentSrc;
-			            }
-			        }
-			    } else if (windowWidth < 1400) {
-			        // 태블릿/작은 데스크톱: 윈도우 크기 조정
-			        if (win95Window.is(':visible')) {
-			            console.log('📱 태블릿: 윈도우 크기 조정');
-			            
-			            // 더 안전한 여백 계산
-			            const safeWidth = Math.max(300, windowWidth - 200); // 최소 300px, 좌우 100px씩 여백
-			            const safeHeight = Math.max(200, windowHeight - 150); // 최소 200px, 상하 75px씩 여백
-			            
-			            // iframe 크기 (타이틀바 등 제외)
-			            const iframeWidth = safeWidth - 20; // 윈도우 테두리 여백
-			            const iframeHeight = safeHeight - 40; // 타이틀바 + 테두리 여백
-			            
-			            win95Window.css({
-			                'width': safeWidth + 'px',
-			                'height': safeHeight + 'px',
-			                'left': Math.max(10, (windowWidth - safeWidth) / 2) + 'px', // 중앙 정렬, 최소 10px 여백
-			                'top': Math.max(10, (windowHeight - safeHeight) / 2) + 'px'  // 중앙 정렬, 최소 10px 여백
-			            });
-			            
-			            // iframe 크기 조정 시에도 overflow 유지
-			            iframe.css({
-			                'width': iframeWidth + 'px',
-			                'height': iframeHeight + 'px',
-			                'overflow': 'hidden',
-			                'overflow-x': 'hidden',
-			                'overflow-y': 'hidden'
-			            });
-			        }
-			    } else {
-			        // 큰 데스크톱: 원래 크기 또는 화면에 맞게 조정
-			        if (win95Window.is(':visible')) {
-			            console.log('💻 데스크톱: 크기 조정');
-			            
-			            // 화면이 1300px보다 작으면 조정, 크면 원래 크기
-			            if (windowWidth < 1500 || windowHeight < 700) {
-			                const safeWidth = Math.min(1300, windowWidth - 100);
-			                const safeHeight = Math.min(580, windowHeight - 120);
-			                
-			                win95Window.css({
-			                    'width': (safeWidth + 20) + 'px',
-			                    'height': (safeHeight + 40) + 'px',
-			                    'left': Math.max(10, (windowWidth - safeWidth - 20) / 2) + 'px',
-			                    'top': Math.max(10, (windowHeight - safeHeight - 40) / 2) + 'px'
-			                });
-			                
-			                // iframe 크기 조정 시에도 overflow 유지
-			                iframe.css({
-			                    'width': safeWidth + 'px',
-			                    'height': safeHeight + 'px',
-			                    'overflow': 'hidden',
-			                    'overflow-x': 'hidden',
-			                    'overflow-y': 'hidden'
-			                });
-			            } else {
-			                // 충분히 큰 화면: 원래 크기
-			                win95Window.css({
-			                    'width': 'auto',
-			                    'height': 'auto',
-			                    'left': '150px',
-			                    'top': '50px'
-			                });
-			                
-			                // 원래 크기일 때도 overflow 유지
-			                iframe.css({
-			                    'width': '1300px',
-			                    'height': '580px',
-			                    'overflow': 'hidden',
-			                    'overflow-x': 'hidden',
-			                    'overflow-y': 'hidden'
-			                });
-			            }
-			        }
-			    }
+				const windowWidth = window.innerWidth;
+				const windowHeight = window.innerHeight;
+				const win95Window = $('#win95Window');
+				const iframe = $('#windowContentFrame');
+
+				console.log('🔄 윈도우 크기 조정:', windowWidth, 'x', windowHeight);
+
+				if (windowWidth < 768) {
+					// 모바일: iframe 윈도우 완전히 숨김
+					if (win95Window.is(':visible')) {
+						console.log('📱 모바일 감지: iframe 윈도우 숨김');
+						win95Window.hide();
+						iframe.attr('src', 'about:blank');
+
+						// 메인 윈도우로 리다이렉트
+						const currentSrc = iframe.attr('src');
+						if (currentSrc && currentSrc !== 'about:blank') {
+							window.location.href = currentSrc;
+						}
+					}
+				} else if (windowWidth < 1400) {
+					// 태블릿/작은 데스크톱: 윈도우 크기 조정
+					if (win95Window.is(':visible')) {
+						console.log('📱 태블릿: 윈도우 크기 조정');
+
+						// 더 안전한 여백 계산
+						const safeWidth = Math.max(300, windowWidth - 200); // 최소 300px, 좌우 100px씩 여백
+						const safeHeight = Math.max(200, windowHeight - 150); // 최소 200px, 상하 75px씩 여백
+
+						// iframe 크기 (타이틀바 등 제외)
+						const iframeWidth = safeWidth - 20; // 윈도우 테두리 여백
+						const iframeHeight = safeHeight - 40; // 타이틀바 + 테두리 여백
+
+						win95Window.css({
+							'width': safeWidth + 'px',
+							'height': safeHeight + 'px',
+							'left': Math.max(10, (windowWidth - safeWidth) / 2) + 'px', // 중앙 정렬, 최소 10px 여백
+							'top': Math.max(10, (windowHeight - safeHeight) / 2) + 'px'  // 중앙 정렬, 최소 10px 여백
+						});
+
+						// iframe 크기 조정 시에도 overflow 유지
+						iframe.css({
+							'width': iframeWidth + 'px',
+							'height': iframeHeight + 'px',
+							'overflow': 'hidden',
+							'overflow-x': 'hidden',
+							'overflow-y': 'hidden'
+						});
+					}
+				} else {
+					// 큰 데스크톱: 원래 크기 또는 화면에 맞게 조정
+					if (win95Window.is(':visible')) {
+						console.log('💻 데스크톱: 크기 조정');
+
+						// 화면이 1300px보다 작으면 조정, 크면 원래 크기
+						if (windowWidth < 1500 || windowHeight < 700) {
+							const safeWidth = Math.min(1300, windowWidth - 100);
+							const safeHeight = Math.min(580, windowHeight - 120);
+
+							win95Window.css({
+								'width': (safeWidth + 20) + 'px',
+								'height': (safeHeight + 40) + 'px',
+								'left': Math.max(10, (windowWidth - safeWidth - 20) / 2) + 'px',
+								'top': Math.max(10, (windowHeight - safeHeight - 40) / 2) + 'px'
+							});
+
+							// iframe 크기 조정 시에도 overflow 유지
+							iframe.css({
+								'width': safeWidth + 'px',
+								'height': safeHeight + 'px',
+								'overflow': 'hidden',
+								'overflow-x': 'hidden',
+								'overflow-y': 'hidden'
+							});
+						} else {
+							// 충분히 큰 화면: 원래 크기
+							win95Window.css({
+								'width': 'auto',
+								'height': 'auto',
+								'left': '150px',
+								'top': '50px'
+							});
+
+							// 원래 크기일 때도 overflow 유지
+							iframe.css({
+								'width': '1300px',
+								'height': '580px',
+								'overflow': 'hidden',
+								'overflow-x': 'hidden',
+								'overflow-y': 'hidden'
+							});
+						}
+					}
+				}
 			}
 
 			// 리사이즈 이벤트 등록
 			$(window).resize(adjustWindowSize);
 
 			// 페이지 로드 시 즉시 실행 (탭 새로고침 대응)
-			$(document).ready(function() {
-			    setTimeout(adjustWindowSize, 100);
+			$(document).ready(function () {
+				setTimeout(adjustWindowSize, 100);
 			});
 
 			// 윈도우 포커스 시에도 실행 (탭 전환 대응)
-			$(window).focus(function() {
-			    setTimeout(adjustWindowSize, 100);
+			$(window).focus(function () {
+				setTimeout(adjustWindowSize, 100);
 			});
 		</script>
 	</div>
