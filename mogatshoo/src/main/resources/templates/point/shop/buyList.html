@@ -19,7 +19,7 @@
 			</thead>
 			<tbody>
 				<tr th:each="buyPoint : ${pointItemBuyList}">
-					<td th:text="${buyPoint.pointShop.pointItemName}">상품이름</td>
+					<td th:text="${buyPoint.pointItemName}">상품이름</td>
 					<td th:text="${buyPoint.pointOrderHistoryQuantity}">구매수량</td>
 					<td th:text="${buyPoint.pointOrderHistoryTotalPrice}">총사용포인트</td>
 					<td th:text="${buyPoint.pointOrderHistoryStatus}">주문상태</td>

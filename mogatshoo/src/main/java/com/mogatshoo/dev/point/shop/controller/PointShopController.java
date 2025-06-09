@@ -146,8 +146,6 @@ public class PointShopController {
 		Page<PointOrderHistoryEntity> pointOrderHistoryPage = pointOrderHistoryService.findByMemberId(memberId,
 				pageable);
 
-		pointOrderHistoryPage = pointShopService.findPointItemName(pointOrderHistoryPage);
-
 		// 페이지네이션 계산
 		int currentPage = pointOrderHistoryPage.getNumber();
 		int totalPages = pointOrderHistoryPage.getTotalPages();

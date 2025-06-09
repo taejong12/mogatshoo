@@ -5,7 +5,6 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.mogatshoo.dev.point.shop.entity.PointOrderHistoryEntity;
 import com.mogatshoo.dev.point.shop.entity.PointShopEntity;
 
 public interface PointShopService {
@@ -19,7 +18,5 @@ public interface PointShopService {
 	Map<String, Object> checkBuyPossiblePointItem(Long pointItemId);
 
 	void buyPointItem(Long pointItemId);
-
-	Page<PointOrderHistoryEntity> findPointItemName(Page<PointOrderHistoryEntity> pointOrderHistoryPage);
 
 }

@@ -31,7 +31,7 @@
 					<a
 						class="card h-100 text-white bg-dark border-secondary text-decoration-none"
 						th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
-						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}"
+						<img th:src="@{${pointShop.imgFile.pointItemImgURL}}"
 						class="card-img-top" alt="상품 이미지"
 						style="object-fit: cover; height: 200px;">
 						<div class="card-body">
@@ -47,7 +47,7 @@
 					<!-- 재고 없음: 매진 표시 + 클릭 불가 -->
 					<div
 						class="card h-100 text-white bg-secondary border-secondary position-relative">
-						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}"
+						<img th:src="@{${pointShop.imgFile.pointItemImgURL}}"
 							class="card-img-top" alt="상품 이미지"
 							style="object-fit: cover; height: 200px; opacity: 0.5;">
 						<div

@@ -43,7 +43,7 @@ public class PointShopImgEntity {
 	@Column(nullable = false)
 	private Long pointItemId;
 
-	// 실제 파일 저장 아이디
-	@Column(nullable = false)
-	private String pointItemImgFileId;
+	// 이미지 URL
+	@Column(name="point_item_img_url", nullable = false)
+	private String pointItemImgURL;
 }

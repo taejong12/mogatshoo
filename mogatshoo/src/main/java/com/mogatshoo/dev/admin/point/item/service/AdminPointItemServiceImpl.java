@@ -1,9 +1,12 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
 import com.mogatshoo.dev.admin.point.category.service.AdminPointCategoryService;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
+import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 import com.mogatshoo.dev.admin.point.item.repository.AdminPointItemRepository;
 import com.mogatshoo.dev.common.authentication.CommonUserName;
 
@@ -42,12 +46,26 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 
 	@Override
 	public Page<AdminPointItemEntity> findAll(Pageable pageable) {
-		return adminPointItemRepository.findAll(pageable);
+		try {
+			Page<AdminPointItemEntity> page = adminPointItemRepository.findAll(pageable);
+			logger.info("포인트 아이템 전체 조회 성공: 총 {}건", page.getTotalElements());
+			return page;
+		} catch (Exception e) {
+			logger.error("포인트 아이템 전체 조회 중 오류 발생", e);
+			return Page.empty();
+		}
 	}
 
 	@Override
 	public Page<AdminPointItemEntity> findByPointCategoryId(Integer pointCategoryId, Pageable pageable) {
-		return adminPointItemRepository.findByPointCategoryId(pointCategoryId, pageable);
+		try {
+			Page<AdminPointItemEntity> page = adminPointItemRepository.findByPointCategoryId(pointCategoryId, pageable);
+			logger.info("카테고리 ID({})로 포인트 아이템 조회 성공: 총 {}건", pointCategoryId, page.getTotalElements());
+			return page;
+		} catch (Exception e) {
+			logger.error("카테고리 ID({})로 포인트 아이템 조회 중 오류 발생", pointCategoryId, e);
+			return Page.empty();
+		}
 	}
 
 	@Override
@@ -211,5 +229,22 @@ public class AdminPointItemServiceImpl implements AdminPointItemService {
 		}
 
 		return result;
+	}
+
+	@Override
+	public List<AdminPointItemEntity> findByPointCategoryId(Integer categoryId) {
+		try {
+			logger.debug("포인트 카테고리 ID로 항목 조회 시도 - categoryId: {}", categoryId);
+
+			List<AdminPointItemEntity> resultList = adminPointItemRepository.findByPointCategoryId(categoryId);
+
+			logger.debug("조회된 포인트 아이템 수: {}", resultList.size());
+
+			return resultList;
+		} catch (Exception e) {
+			logger.error("포인트 카테고리 항목 조회 중 오류 발생 - categoryId: {}", categoryId, e);
+			// 오류 시 빈 리스트 반환
+			return Collections.emptyList();
+		}
 	}
 }
