@@ -22,11 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
    }
 
-   // 다른 곳 클릭 시 시작 메뉴 닫기
+   // 다른 곳 클릭 시 모든 모달 닫기
    document.addEventListener("click", (e) => {
       const startMenu = document.getElementById("start-menu");
-      if (startMenu && !startMenu.contains(e.target) && !winButton?.contains(e.target)) {
-         hideStartMenu();
+      const footerModal = document.getElementById("modal");
+      
+      // 클릭한 곳이 어떤 모달이나 버튼도 아닐 때 모든 모달 닫기
+      if (startMenu && !startMenu.contains(e.target) && !winButton?.contains(e.target) &&
+          footerModal && !footerModal.contains(e.target) && 
+          !e.target.closest('.footer-folder') && !e.target.closest('[onclick*="openModal"]')) {
+         closeAllModals();
       }
    });
 
@@ -41,9 +46,20 @@ document.addEventListener("DOMContentLoaded", () => {
       content: !!footerModalContent
    });
 
-   // ⭐ 모달 함수들을 내부 함수로 정의
+   // ⭐ 통합 모달 관리 함수들
+   function closeAllModals() {
+      console.log("🔄 모든 모달 닫기");
+      hideStartMenu();
+      closeModal();
+      hideConfirmModal();
+   }
+
    function openModal(type) {
       console.log("🦶 openModal 호출:", type);
+      
+      // 다른 모달들 먼저 닫기
+      hideStartMenu();
+      hideConfirmModal();
 
       if (footerModal && footerModalTitle && footerModalContent) {
          if (type === "terms") {
@@ -65,6 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
    function openModal2(type) {
       console.log("🦶 openModal2 호출:", type);
+      
+      // 다른 모달들 먼저 닫기
+      hideStartMenu();
+      hideConfirmModal();
 
       if (footerModal && footerModalTitle && footerModalContent) {
          if (type === "company") {
@@ -95,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
    window.openModal = openModal;
    window.openModal2 = openModal2;
    window.closeModal = closeModal;
+   window.closeAllModals = closeAllModals;
 
    // 나머지 기존 함수들도 전역으로 노출
    window.navigateTo = navigateTo;
@@ -217,11 +238,18 @@ function toggleStartMenu() {
    if (startMenu.style.display === "block") {
       hideStartMenu();
    } else {
+      // 다른 모달들 먼저 닫기
+      window.closeModal && window.closeModal();
+      hideConfirmModal();
       showStartMenu();
    }
 }
 
 function showStartMenu() {
+   // 다른 모달들 먼저 닫기
+   window.closeModal && window.closeModal();
+   hideConfirmModal();
+   
    const startMenu = createStartMenu();
    const winButton = document.getElementById("win-button");
    startMenu.style.display = "block";
@@ -270,25 +298,26 @@ function navigateTo(url) {
    window.location.href = url;
 }
 
-
+// 🔥 마이페이지 네비게이션 함수 수정 (반응형 대응)
 // 🔥 마이페이지 네비게이션 함수 수정 (반응형 대응)
 function navigateToMypage() {
    hideStartMenu();
 
-   // 🔥 반응형일 때는 직접 페이지 이동
+   // 🔥 반응형일 때는 memberId 파라미터와 함께 이동
    if (isMobileView()) {
       console.log('📱 시작메뉴에서 반응형 마이페이지 직접 이동');
-      // 인증된 사용자의 마이페이지 URL 생성 시도
-      const authName = document.querySelector('[th\\:text*="authentication.principal"]');
-      if (authName) {
-         const memberId = authName.getAttribute('th:text')?.match(/authentication\.name/);
-         if (memberId) {
-            window.location.href = `/member/mypage?memberId=${encodeURIComponent(memberId)}`;
-            return;
-         }
+      
+      // memberId 가져오기
+      const authData = document.getElementById('auth-data');
+      const memberId = authData?.dataset?.memberId;
+      
+      if (memberId) {
+         console.log('✅ 멤버ID 찾음:', memberId);
+         window.location.href = `/member/mypage?memberId=${encodeURIComponent(memberId)}`;
+      } else {
+         console.log('❌ 멤버ID 없음, 로그인 페이지로 이동');
+         window.location.href = '/member/login';
       }
-      // 기본 마이페이지로 이동
-      window.location.href = '/member/mypage';
       return;
    }
 
@@ -320,6 +349,10 @@ function confirmLogout() {
 }
 
 function showConfirmModal() {
+   // 다른 모달들 먼저 닫기
+   hideStartMenu();
+   window.closeModal && window.closeModal();
+   
    let existingModal = document.getElementById("confirm-modal");
    if (existingModal) existingModal.remove();
 

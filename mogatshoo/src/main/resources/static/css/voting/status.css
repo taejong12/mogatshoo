@@ -257,6 +257,16 @@ body {
     transition: width 0.8s ease;
 }
 
+/* 득표율 관련 새로 추가된 스타일 */
+.email-condition-badge {
+    text-align: center;
+}
+
+.email-condition-badge .badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+}
+
 .btn-email {
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     border: none;

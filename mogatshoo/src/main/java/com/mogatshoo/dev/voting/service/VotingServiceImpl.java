@@ -50,13 +50,16 @@ public class VotingServiceImpl implements VotingService {
                 e.printStackTrace();
             }
 
-            // 공개(yes) 상태의 질문만 가져오기
+            // 공개(yes) 상태이면서 투표 가능한 질문만 가져오기
             try {
                 List<QuestionEntity> temp = questionService.getQuestionsByPublicStatus("yes");
                 if (temp != null) {
-                    publicQuestions.addAll(temp);
+                    // 투표 가능한 질문만 필터링 (진행중 상태인 것만)
+                    publicQuestions.addAll(temp.stream()
+                        .filter(q -> q.isVotingAvailable())
+                        .collect(Collectors.toList()));
                 }
-                System.out.println("공개 질문 총 개수: " + publicQuestions.size());
+                System.out.println("투표 가능한 공개 질문 총 개수: " + publicQuestions.size());
             } catch (Exception e) {
                 System.err.println("공개 질문 조회 중 오류 발생: " + e.getMessage());
                 e.printStackTrace();
@@ -64,8 +67,8 @@ public class VotingServiceImpl implements VotingService {
             }
 
             if (publicQuestions.isEmpty()) {
-                System.err.println("공개 질문이 없습니다.");
-                return null; // 공개 질문이 없음
+                System.err.println("투표 가능한 공개 질문이 없습니다.");
+                return null; // 투표 가능한 공개 질문이 없음
             }
 
             // 투표하지 않은 질문만 필터링
@@ -84,7 +87,16 @@ public class VotingServiceImpl implements VotingService {
             int randomIndex = new Random().nextInt(unansweredQuestions.size());
             QuestionEntity selectedQuestion = unansweredQuestions.get(randomIndex);
             
+            // 질문의 옵션 이미지 경로 검증 및 수정
+            selectedQuestion = validateAndFixQuestionOptions(selectedQuestion);
+            
             System.out.println("선택된 질문: " + selectedQuestion.getSerialNumber());
+            System.out.println("질문 옵션들: ");
+            System.out.println("- Option1: " + selectedQuestion.getOption1());
+            System.out.println("- Option2: " + selectedQuestion.getOption2());
+            System.out.println("- Option3: " + selectedQuestion.getOption3());
+            System.out.println("- Option4: " + selectedQuestion.getOption4());
+            
             return selectedQuestion;
             
         } catch (Exception e) {
@@ -93,6 +105,54 @@ public class VotingServiceImpl implements VotingService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * 질문의 옵션 이미지 경로 검증 및 수정
+     */
+    private QuestionEntity validateAndFixQuestionOptions(QuestionEntity question) {
+        if (question == null) return null;
+        
+        try {
+            // 각 옵션의 이미지 경로 검증 및 수정
+            question.setOption1(fixImagePath(question.getOption1()));
+            question.setOption2(fixImagePath(question.getOption2()));
+            question.setOption3(fixImagePath(question.getOption3()));
+            question.setOption4(fixImagePath(question.getOption4()));
+            
+            return question;
+        } catch (Exception e) {
+            System.err.println("질문 옵션 경로 수정 중 오류: " + e.getMessage());
+            return question;
+        }
+    }
+    
+    /**
+     * 이미지 경로 수정 헬퍼 메서드
+     */
+    private String fixImagePath(String imagePath) {
+        if (imagePath == null || imagePath.trim().isEmpty()) {
+            return imagePath;
+        }
+        
+        // Firebase Storage URL인 경우 그대로 반환
+        if (imagePath.startsWith("https://firebasestorage.googleapis.com") || 
+            imagePath.startsWith("http://") || 
+            imagePath.startsWith("https://")) {
+            return imagePath;
+        }
+        
+        // 상대 경로인 경우 절대 경로로 변환
+        if (!imagePath.startsWith("/")) {
+            imagePath = "/" + imagePath;
+        }
+        
+        // /uploads/ 경로 처리
+        if (imagePath.contains("/uploads/") && !imagePath.startsWith("/uploads/")) {
+            imagePath = imagePath.substring(imagePath.indexOf("/uploads/"));
+        }
+        
+        return imagePath;
     }
 
     @Override

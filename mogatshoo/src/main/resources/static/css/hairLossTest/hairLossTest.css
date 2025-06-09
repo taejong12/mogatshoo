@@ -1,12 +1,3 @@
-/* 윈도우 95 레트로 스타일 CSS */
-@font-face {
-	font-family: 'dalmoori';
-	src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
-	font-weight: normal;
-	font-style: normal;
-}
-
-
 :root {
 	/* 윈도우 95 컬러 팔레트 */
 	--win95-gray: #c0c0c0;
@@ -21,7 +12,6 @@
 	--win95-red: #ff0000;
 	--win95-button-shadow: #404040;
 	--win95-button-highlight: #ffffff;
-
 	/* 애니메이션 */
 	--hover-scale: 1.02;
 }
@@ -44,27 +34,26 @@ body {
 /* 윈도우 95 데스크톱 배경 */
 .pixel-bg {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-
-	/* 이 아래 줄들이 빠졌거나 잘못된 경우 */
-	width: 100vw;
-	height: 100vh;
+	    align-items: flex-start; /* center에서 flex-start로 변경 */
+	    justify-content: center;
+	    text-align: center;
+	    width: 100vw;
+	    min-height: 100vh; /* height: 100vh를 min-height로 변경 */
+	    padding: 20px 0; /* 상하 패딩 추가 */
 }
 
 
 /* 메인 윈도우 컨테이너 */
 .main-container {
-    background-color: var(--win95-gray);
-    border: 2px outset var(--win95-gray);
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    width: 100% !important;
-    max-width: 1300px;
-    min-height: 600px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+	background-color: var(--win95-gray);
+	    border: 2px outset var(--win95-gray);
+	    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+	    width: 100% !important;
+	    max-width: 1300px;
+	    min-height: 600px; /* 최소 높이만 유지 */
+	    display: flex;
+	    flex-direction: column;
+	    position: relative;
 }
 
 
@@ -327,27 +316,163 @@ input[type="radio"] {
 }
 
 /* 스크롤바 스타일링 */
+/* 윈도우 95 스타일 전역 스크롤바 */
 ::-webkit-scrollbar {
-	width: 16px;
-	height: 16px;
+    width: 16px;
+    height: 16px;
 }
 
 ::-webkit-scrollbar-track {
-	background-color: var(--win95-gray);
-	border: 1px inset var(--win95-gray);
+    background-color: var(--win95-gray);
+    border: 1px solid var(--win95-dark-gray);
+    box-shadow: inset 1px 1px 0 var(--win95-light-gray), 
+                inset -1px -1px 0 var(--win95-dark-gray);
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: var(--win95-gray);
-	border: 2px outset var(--win95-gray);
+    background-color: var(--win95-gray);
+    border: 1px solid var(--win95-dark-gray);
+    box-shadow: 1px 1px 0 var(--win95-light-gray), 
+                -1px -1px 0 var(--win95-dark-gray);
+    min-height: 20px;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 1px,
+        rgba(128, 128, 128, 0.1) 1px,
+        rgba(128, 128, 128, 0.1) 2px
+    );
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: var(--win95-light-gray);
+    background-color: var(--win95-light-gray);
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 1px,
+        rgba(128, 128, 128, 0.15) 1px,
+        rgba(128, 128, 128, 0.15) 2px
+    );
 }
 
+::-webkit-scrollbar-thumb:active {
+    background-color: #a0a0a0;
+    box-shadow: inset 1px 1px 0 var(--win95-dark-gray), 
+                inset -1px -1px 0 var(--win95-light-gray);
+    background-image: none;
+}
+
+::-webkit-scrollbar-button {
+    background-color: var(--win95-gray);
+    border: 1px solid var(--win95-dark-gray);
+    box-shadow: 1px 1px 0 var(--win95-light-gray), 
+                -1px -1px 0 var(--win95-dark-gray);
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+::-webkit-scrollbar-button:hover {
+    background-color: var(--win95-light-gray);
+}
+
+::-webkit-scrollbar-button:active {
+    background-color: #a0a0a0;
+    box-shadow: inset 1px 1px 0 var(--win95-dark-gray), 
+                inset -1px -1px 0 var(--win95-light-gray);
+}
+
+/* 세로 스크롤바 화살표 - 더 선명한 아이콘 */
+::-webkit-scrollbar-button:vertical:start:decrement {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 3l3 4H3z' fill='%23000000' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px 8px;
+}
+
+::-webkit-scrollbar-button:vertical:end:increment {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 9L3 5h6z' fill='%23000000' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px 8px;
+}
+
+/* 가로 스크롤바 화살표 - 더 선명한 아이콘 */
+::-webkit-scrollbar-button:horizontal:start:decrement {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 6l4-3v6z' fill='%23000000' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px 8px;
+}
+
+::-webkit-scrollbar-button:horizontal:end:increment {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M9 6l-4-3v6z' fill='%23000000' stroke='%23000000' stroke-width='0.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px 8px;
+}
+
+/* 스크롤바 코너 */
 ::-webkit-scrollbar-corner {
-	background-color: var(--win95-gray);
+    background-color: var(--win95-gray);
+    border: 1px solid var(--win95-dark-gray);
+    box-shadow: 1px 1px 0 var(--win95-light-gray), 
+                -1px -1px 0 var(--win95-dark-gray);
+}
+
+/* Firefox용 스크롤바 스타일 */
+html {
+    scrollbar-width: auto;
+    scrollbar-color: var(--win95-gray) var(--win95-light-gray);
+}
+
+/* 윈도우 95 스타일 텍스처 효과가 있는 스크롤바 (고급 버전) */
+::-webkit-scrollbar-thumb {
+    background: 
+        linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%),
+        linear-gradient(0deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%),
+        var(--win95-gray);
+    background-size: 100% 100%, 100% 100%, 100% 100%;
+}
+
+/* 반응형 스크롤바 - 모바일에서는 더 얇게 */
+@media screen and (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+    
+    ::-webkit-scrollbar-button {
+        width: 12px;
+        height: 12px;
+    }
+    
+    ::-webkit-scrollbar-button:vertical:start:decrement,
+    ::-webkit-scrollbar-button:vertical:end:increment,
+    ::-webkit-scrollbar-button:horizontal:start:decrement,
+    ::-webkit-scrollbar-button:horizontal:end:increment {
+        background-size: 6px 6px;
+    }
+}
+
+/* 작은 모바일에서는 더 얇게 */
+@media screen and (max-width: 480px) {
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-button {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-button:vertical:start:decrement,
+    ::-webkit-scrollbar-button:vertical:end:increment,
+    ::-webkit-scrollbar-button:horizontal:start:decrement,
+    ::-webkit-scrollbar-button:horizontal:end:increment {
+        background-size: 4px 4px;
+    }
 }
 
 /* 윈도우 95 진행률 표시줄 스타일 */

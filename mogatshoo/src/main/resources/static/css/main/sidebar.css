@@ -140,8 +140,6 @@
 	width: 100%;
 }
 
-
-
 /* 토글 버튼 (기본적으로 숨김) */
 .sidebar-toggle {
 	display: none;
@@ -191,7 +189,7 @@
 .content-with-sidebar {
 	margin-left: 120px;
 	transition: margin-left 0.3s ease;
-	background-color:#008080;
+	background-color:rgb(192, 192, 192);
 }
 
 /* 기본 윈도우95 창 스타일 */
@@ -199,7 +197,7 @@
 	position: fixed;
 	width: 1300px;
 	height: 580px;
-	background-color: rgb(128, 128, 128);
+	background-color: #c0c0c0; /* 윈도우 95 배경색으로 변경 */
 	border: 2px outset #ffffff;
 	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
 	display: none;
@@ -209,14 +207,13 @@
 	transform: translate(-50%, -50%);
 }
 
-/* iframe 스타일 (기존 CSS 파일에 추가) */
+/* iframe 스타일 - 윈도우 95 배경색으로 통일 */
 #windowContentFrame {
 	width: 1300px;
-	height: 580px;
-    border: none;
-    overflow-x: hidden;
-    background-color: white;
-	
+	    height: 580px;
+	    border: none;
+	    overflow: hidden !important; /* iframe 자체 스크롤 완전 차단 */
+	    background-color: #c0c0c0;
 }
 
 .win95-title-bar {
@@ -251,26 +248,8 @@
 }
 
 .win95-content {
-	background-color: #ffffff;
-	height: calc(100% - 40px);
-	overflow: auto;
-	border: 1px inset #a0a0a0;
-}
-
-/* 옛날 스타일 스크롤바 */
-.win95-content::-webkit-scrollbar {
-	width: 16px;
-	height: 16px;
-}
-
-.win95-content::-webkit-scrollbar-track {
-	background: #c0c0c0;
-}
-
-.win95-content::-webkit-scrollbar-thumb {
 	background-color: #c0c0c0;
-	border-left: 1px solid #808080;
-	border-top: 1px solid #808080;
-	border-right: 1px solid #ffffff;
-	border-bottom: 1px solid #ffffff;
+	    height: calc(100% - 40px);
+	    overflow: hidden !important; /* 컨테이너도 스크롤 차단 */
+	    border: 1px inset #a0a0a0;
 }

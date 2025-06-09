@@ -78,7 +78,8 @@
 				<div class="win95-close">×</div>
 			</div>
 			<div class="win95-content">
-				<iframe id="windowContentFrame" style="width:1300px; height:580px; border:none; overflow-x: hidden;"
+				<iframe id="windowContentFrame" 
+					style="width:1300px; height:580px; border:none; overflow:hidden !important; background-color:#c0c0c0;"
 					src="about:blank"></iframe>
 			</div>
 		</div>
@@ -147,8 +148,16 @@
 						'transform': 'none'
 					});
 
-					// iframe 소스 설정
-					$('#windowContentFrame').attr('src', file);
+					// iframe 소스 설정 및 overflow 강제 적용
+					const iframe = $('#windowContentFrame');
+					iframe.attr('src', file);
+					
+					// overflow 강제 설정 (CSS보다 우선순위 높음)
+					iframe.css({
+						'overflow': 'hidden',
+						'overflow-x': 'hidden',
+						'overflow-y': 'hidden'
+					});
 
 					// URL 동기화
 					updateBrowserURL(file);
@@ -216,6 +225,13 @@
 						console.log("⚠️ 이미 처리 중, 무시");
 						return;
 					}
+
+					// iframe overflow 재설정 (로드 후에도 유지)
+					$(this).css({
+						'overflow': 'hidden !important',
+						'overflow-x': 'hidden !important',
+						'overflow-y': 'hidden !important'
+					});
 
 					try {
 						// iframe의 현재 URL 가져오기
@@ -293,6 +309,13 @@
 						const iframe = document.getElementById('windowContentFrame');
 						const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
+						// iframe 내부 body에도 overflow 설정
+						if (iframeDoc && iframeDoc.body) {
+							iframeDoc.body.style.overflow = 'hidden';
+							iframeDoc.body.style.overflowX = 'hidden';
+							iframeDoc.body.style.overflowY = 'hidden';
+						}
+
 						// 사이드바 숨기기 (다양한 선택자 시도)
 						const sidebars = iframeDoc.querySelectorAll('.sidebar, .sidebar-component, .side-nav, #sidebar, nav[role="navigation"]');
 						sidebars.forEach(sidebar => {
@@ -311,6 +334,7 @@
 							if (content) {
 								content.style.marginLeft = '0';
 								content.style.width = '100%';
+								content.style.overflow = 'hidden'; // 메인 콘텐츠도 overflow 숨김
 							}
 						});
 
@@ -318,6 +342,7 @@
 						if (iframeDoc.body) {
 							iframeDoc.body.style.margin = '0';
 							iframeDoc.body.style.padding = '0';
+							iframeDoc.body.style.overflow = 'hidden'; // 중요: body overflow 숨김
 						}
 
 						// base 태그가 있는지 확인하고 target 설정
@@ -409,7 +434,7 @@
 					openInIframe(currentURL, title);
 				}
 			});
-			// 윈도우 크기 조정 및 모바일 처리
+			
 			// 윈도우 크기 조정 및 모바일 처리
 			function adjustWindowSize() {
 			    const windowWidth = window.innerWidth;
@@ -452,9 +477,13 @@
 			                'top': Math.max(10, (windowHeight - safeHeight) / 2) + 'px'  // 중앙 정렬, 최소 10px 여백
 			            });
 			            
+			            // iframe 크기 조정 시에도 overflow 유지
 			            iframe.css({
 			                'width': iframeWidth + 'px',
-			                'height': iframeHeight + 'px'
+			                'height': iframeHeight + 'px',
+			                'overflow': 'hidden',
+			                'overflow-x': 'hidden',
+			                'overflow-y': 'hidden'
 			            });
 			        }
 			    } else {
@@ -474,9 +503,13 @@
 			                    'top': Math.max(10, (windowHeight - safeHeight - 40) / 2) + 'px'
 			                });
 			                
+			                // iframe 크기 조정 시에도 overflow 유지
 			                iframe.css({
 			                    'width': safeWidth + 'px',
-			                    'height': safeHeight + 'px'
+			                    'height': safeHeight + 'px',
+			                    'overflow': 'hidden',
+			                    'overflow-x': 'hidden',
+			                    'overflow-y': 'hidden'
 			                });
 			            } else {
 			                // 충분히 큰 화면: 원래 크기
@@ -486,9 +519,14 @@
 			                    'left': '150px',
 			                    'top': '50px'
 			                });
+			                
+			                // 원래 크기일 때도 overflow 유지
 			                iframe.css({
 			                    'width': '1300px',
-			                    'height': '580px'
+			                    'height': '580px',
+			                    'overflow': 'hidden',
+			                    'overflow-x': 'hidden',
+			                    'overflow-y': 'hidden'
 			                });
 			            }
 			        }
@@ -501,8 +539,6 @@
 			// 페이지 로드 시 즉시 실행 (탭 새로고침 대응)
 			$(document).ready(function() {
 			    setTimeout(adjustWindowSize, 100);
-			    setTimeout(adjustWindowSize, 300); // 추가 지연 실행
-			    setTimeout(adjustWindowSize, 500); // 한 번 더 확인
 			});
 
 			// 윈도우 포커스 시에도 실행 (탭 전환 대응)

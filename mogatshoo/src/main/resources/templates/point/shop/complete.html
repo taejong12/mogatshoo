@@ -1,47 +1,347 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트상품완료'">
+
+<head>
+	<style>
+		body,
+		html {
+			font-family: 'dalmoori', sans-serif;
+
+		}
+
+		/* 🔥 아이프레임에 꽉 차도록 윈도우95 스타일 */
+		.win95-complete-container {
+			background-color: #c0c0c0;
+			border: 2px inset #c0c0c0;
+			padding: 10px;
+			margin: 0;
+			font-size: 15px;
+			height: 100vh !important;
+			/* 🔥 전체 높이 차지 */
+			max-height: 100vh !important;
+			overflow-y: auto !important;
+			/* 🔥 스크롤 강제 활성화 */
+			box-sizing: border-box;
+		}
+
+		.win95-complete-title {
+			background: linear-gradient(90deg, #008080 0%, #004040 100%);
+			color: white;
+			padding: 5px 10px;
+			font-size: 16px;
+			font-weight: bold;
+			border: 1px outset #c0c0c0;
+			margin-bottom: 15px;
+		}
+
+		.win95-complete-card {
+			background-color: #ffffff;
+			border: 2px inset #c0c0c0;
+			padding: 20px;
+			margin: 10px 0;
+			box-shadow: none;
+		}
+
+		.win95-success-section {
+			background-color: #f0f0f0;
+			border: 2px inset #c0c0c0;
+			padding: 20px;
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.win95-success-message {
+			color: #008000;
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+
+		.win95-success-desc {
+			color: #000080;
+			font-size: 15px;
+		}
+
+		.win95-image-section {
+			background-color: #f0f0f0;
+			border: 2px inset #c0c0c0;
+			padding: 15px;
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.win95-complete-image {
+			max-width: 100%;
+			max-height: 300px;
+			object-fit: contain;
+			border: 1px solid #808080;
+			background-color: #ffffff;
+			/* 🔥 이미지 로딩 최적화 */
+			loading: lazy;
+			image-rendering: auto;
+			image-rendering: optimizeQuality;
+		}
+
+		/* 🔥 이미지 로딩 상태 스타일 */
+		.win95-complete-image:not([src]) {
+			background-color: #f0f0f0;
+			background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ctext x='100' y='100' text-anchor='middle' dy='.3em' fill='%23999' font-size='12'%3E이미지 로딩중...%3C/svg%3E");
+			background-repeat: no-repeat;
+			background-position: center;
+			min-height: 200px;
+		}
+
+		.win95-info-section {
+			background-color: #ffffff;
+			border: 2px inset #c0c0c0;
+			padding: 15px;
+			margin: 10px 0;
+		}
+
+		.win95-label {
+			background-color: #c0c0c0;
+			border: 1px outset #c0c0c0;
+			padding: 5px 10px;
+			font-size: 15px;
+			font-weight: bold;
+			color: #000080;
+			margin-bottom: 8px;
+			display: inline-block;
+			min-width: 100px;
+		}
+
+		.win95-value {
+			background-color: #ffffff;
+			border: 1px inset #c0c0c0;
+			padding: 8px 12px;
+			font-size: 15px;
+			color: #000000;
+			margin-bottom: 15px;
+			word-wrap: break-word;
+			line-height: 1.4;
+		}
+
+		.win95-price {
+			color: #800000;
+			font-weight: bold;
+			font-size: 16px;
+		}
+
+		.win95-status {
+			color: #008000;
+			font-weight: bold;
+		}
+
+		.win95-button-section {
+			background-color: #c0c0c0;
+			border: 2px inset #c0c0c0;
+			padding: 20px;
+			text-align: center;
+			margin: 20px 0;
+		}
+
+		.win95-complete-button {
+			background-color: #c0c0c0;
+			border: 2px outset #c0c0c0;
+			border-radius: 0;
+			color: #000000;
+			font-size: 16px;
+			font-weight: bold;
+			padding: 12px 25px;
+			cursor: pointer;
+			box-shadow: none;
+			text-decoration: none;
+			display: inline-block;
+			margin: 0 10px;
+		}
+
+		.win95-complete-button:hover {
+			background-color: #d4d0c8;
+			border: 2px outset #d4d0c8;
+			color: #000000;
+			text-decoration: none;
+		}
+
+		.win95-complete-button:active {
+			border: 2px inset #c0c0c0;
+			background-color: #a0a0a0;
+		}
+
+		.win95-primary {
+			background-color: #000080;
+			color: white;
+			border: 2px outset #000080;
+		}
+
+		.win95-primary:hover {
+			background-color: #0000a0;
+			border: 2px outset #0000a0;
+			color: white;
+		}
+
+		/* 🔥 반응형 디자인 */
+		@media (max-width: 768px) {
+			.win95-complete-container {
+				padding: 8px;
+				height: 100vh !important;
+				overflow-y: auto !important;
+			}
+
+			.win95-complete-card {
+				padding: 15px;
+			}
+
+			.win95-image-section {
+				padding: 10px;
+			}
+
+			.win95-complete-image {
+				max-height: 250px;
+			}
+
+			.win95-label {
+				min-width: 80px;
+				font-size: 15px;
+			}
+
+			.win95-value {
+				font-size: 15px;
+			}
+
+			.win95-complete-button {
+				display: block;
+				width: 100%;
+				margin: 5px 0;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.win95-complete-container {
+				padding: 5px;
+				height: 100vh !important;
+				overflow-y: auto !important;
+			}
+
+			.win95-complete-image {
+				max-height: 200px;
+			}
+
+			.win95-label {
+				display: block;
+				width: 100%;
+				margin-bottom: 5px;
+			}
+		}
+
+		/* 🔥 윈도우95 스크롤바 스타일 강화 */
+		.win95-complete-container::-webkit-scrollbar {
+			width: 16px !important;
+			height: 16px !important;
+		}
+
+		.win95-complete-container::-webkit-scrollbar-track {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: inset 1px 1px 0 #dfdfdf,
+				inset -1px -1px 0 #808080 !important;
+		}
+
+		.win95-complete-container::-webkit-scrollbar-thumb {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf,
+				-1px -1px 0 #808080 !important;
+			min-height: 20px !important;
+		}
+
+		.win95-complete-container::-webkit-scrollbar-thumb:hover {
+			background-color: #d4d0c8 !important;
+		}
+
+		.win95-complete-container::-webkit-scrollbar-thumb:active {
+			background-color: #a0a0a0 !important;
+			box-shadow: inset 1px 1px 0 #808080,
+				inset -1px -1px 0 #dfdfdf !important;
+		}
+
+		.win95-complete-container::-webkit-scrollbar-button {
+			background-color: #c0c0c0 !important;
+			border: 1px solid #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf,
+				-1px -1px 0 #808080 !important;
+			width: 16px !important;
+			height: 16px !important;
+			display: block !important;
+		}
+	</style>
+</head>
+
 <body>
 	<div layout:fragment="content">
+		<div class="win95-complete-container">
 
-		<div class="col-12 col-md-6">
-			<h1 class="my-4 text-center">포인트상품구매완료</h1>
+			<!-- 윈도우95 타이틀 바 -->
+			<div class="win95-complete-title">✅ 포인트상품 구매완료</div>
 
-			<div class="card shadow-sm mb-5">
-				<div class="card-body">
-					<!-- 상품 이미지 -->
-					<div class="mb-4 text-center">
-						<label class="form-label fw-bold">이미지</label>
-						<div>
-							<img th:if="${pointShop.imgFile != null}"
-								th:src="@{${pointShop.imgFile.pointItemImgURL}}"
-								class="img-fluid border rounded"
-								style="max-width: 300px; object-fit: contain;" alt="상품 이미지">
-						</div>
-					</div>
+			<!-- 메인 카드 -->
+			<div class="win95-complete-card">
 
-					<!-- 상품 정보 목록 -->
-					<div class="mb-3">
-						<label class="form-label fw-bold">상품 이름</label>
-						<p class="form-control-plaintext"
-							th:text="${pointShop.pointItemName}">상품 이름</p>
-					</div>
+				<!-- 성공 메시지 섹션 -->
+				<div class="win95-success-section">
+					<div class="win95-success-message">🎉 구매가 완료되었습니다!</div>
+					<div class="win95-success-desc">주문이 정상적으로 처리되었습니다.</div>
+				</div>
 
-					<div class="mb-3">
-						<label class="form-label fw-bold">상품 가격</label>
-						<p class="form-control-plaintext"
-							th:text="${pointShop.pointItemPrice + 'P'}">가격</p>
-					</div>
-
-					<!-- 버튼 -->
-					<div class="d-flex justify-content-center aling-items-center gap-2">
-						<a class="btn btn-primary" th:href="@{/point/shop/buyList}">
-							구매내역보기 </a>
+				<!-- 상품 이미지 섹션 -->
+				<div class="win95-image-section">
+					<div class="win95-label">📷 구매 상품 이미지</div>
+					<div style="margin-top: 10px;">
+						<img th:if="${pointShop.imgFile != null}" th:src="@{${pointShop.imgFile.pointItemImgURL}}"
+							class="win95-complete-image" alt="구매 상품 이미지" loading="lazy" width="300" height="300">
 					</div>
 				</div>
+
+				<!-- 상품 정보 섹션 -->
+				<div class="win95-info-section">
+
+					<div style="margin-bottom: 15px;">
+						<div class="win95-label">📝 상품명</div>
+						<div class="win95-value" th:text="${pointShop.pointItemName}">상품명</div>
+					</div>
+
+					<div style="margin-bottom: 15px;">
+						<div class="win95-label">💰 결제금액</div>
+						<div class="win95-value win95-price" th:text="${pointShop.pointItemPrice + 'P'}">결제금액</div>
+					</div>
+
+					<div style="margin-bottom: 15px;">
+						<div class="win95-label">📅 구매일시</div>
+						<div class="win95-value"
+							th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm')}">구매일시</div>
+					</div>
+
+					<div style="margin-bottom: 15px;">
+						<div class="win95-label">📋 주문상태</div>
+						<div class="win95-value win95-status">주문완료</div>
+					</div>
+
+				</div>
+
+				<!-- 버튼 섹션 -->
+				<div class="win95-button-section">
+					<a class="win95-complete-button win95-primary" th:href="@{/point/shop/buyList}">
+						📋 구매내역 보기
+					</a>
+					<a class="win95-complete-button" th:href="@{/point/shop/list}">
+						🛍️ 쇼핑 계속하기
+					</a>
+				</div>
+
 			</div>
+
 		</div>
 	</div>
 </body>
+
 </html>
