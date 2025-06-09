@@ -10,4 +10,9 @@ public class MainController {
 	public String mainPage() {
 		return "main/main";
 	}
+
+	@GetMapping("/intro")
+	public String introVideoPage() {
+		return "main/intro";
+	}
 }

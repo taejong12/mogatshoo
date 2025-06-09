@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모갓슈 인트로</title>
+	<style>
+	        /* 기본 스타일 초기화 */
+	        body, html {
+	            margin: 0;
+	            padding: 0;
+	            height: 100%;
+	            width: 100%;
+	            overflow: hidden; /* 스크롤바 제거 */
+	            background-color: #000; /* 비디오 로드 전/오류 시 검은색 배경 */
+	        }
+
+	        /* 폰트 정의 (여기서는 필요 없을 수 있지만, 혹시 몰라 포함) */
+	        @font-face {
+	            font-family: 'dalmoori';
+	            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+	            font-weight: normal;
+	            font-style: normal;
+	        }
+
+	        /* 비디오 컨테이너: 화면 전체를 덮음 */
+	        .video-container {
+	            position: fixed;
+	            top: 0;
+	            left: 0;
+	            width: 100vw;
+	            height: 100vh;
+	            z-index: 1; /* 다른 요소 위에 올 필요 없음 (영상만 있으므로) */
+	            overflow: hidden;
+	        }
+
+	        /* 비디오 자체 스타일 */
+	        .video-bg {
+	            position: absolute;
+	            top: 50%;
+	            left: 50%;
+	            min-width: 100%;
+	            min-height: 100%;
+	            width: auto;
+	            height: auto;
+	            transform: translate(-50%, -50%);
+	            object-fit: cover;
+	        }
+	    </style>
+	</head>
+	<body>
+	    <div class="video-container" id="videoContainer">
+	        <video class="video-bg" autoplay muted playsinline>
+	            <source src="/videos/main2.mp4" type="video/mp4">
+	            Your browser does not support the video tag.
+	        </video>
+	    </div>
+
+	    <script th:inline="javascript">
+	        // Thymeleaf를 사용하여 메인 페이지의 URL을 JavaScript 변수에 주입합니다.
+	        const redirectUrl = /*[[@{/}]]*/ '/';
+
+	        document.addEventListener('DOMContentLoaded', function () {
+	            const video = document.querySelector('.video-bg');
+	            const videoContainer = document.getElementById('videoContainer');
+
+	            // 비디오 로드 오류 처리
+	            video.addEventListener('error', function (e) {
+	                console.error('Video load error:', e);
+	                videoContainer.style.backgroundColor = '#2B2BD8';
+	                window.location.href = redirectUrl; // 오류 시에도 메인으로 리다이렉트
+	            });
+
+	            // 비디오 재생 완료 이벤트 처리
+	            video.addEventListener('ended', function() {
+	                console.log('Video playback ended. Redirecting to main page...');
+	                window.location.href = redirectUrl;
+	            });
+
+	            // 안전 장치: 3초 타이머
+	            setTimeout(function () {
+	                // 현재 경로가 리다이렉트 될 목적지 페이지가 아니면 리다이렉트
+	                if (window.location.pathname !== redirectUrl) {
+	                    console.log('3-second timer elapsed. Forcing redirect to main page...');
+	                    window.location.href = redirectUrl;
+	                }
+	            }, 3000); // 3초 영상에 맞춰 타이머를 3초로 설정
+
+	            // 비디오 최적화 함수
+	            function optimizeVideo() {
+	                const windowWidth = window.innerWidth;
+	                const windowHeight = window.innerHeight;
+	                const aspectRatio = 16 / 9;
+	                const windowRatio = windowWidth / windowHeight;
+
+	                if (windowRatio < aspectRatio) {
+	                    video.style.width = '100%';
+	                    video.style.height = 'auto';
+	                } else {
+	                    video.style.width = 'auto';
+	                    video.style.height = '100%';
+	                }
+	            }
+
+	            optimizeVideo();
+	            window.addEventListener('resize', optimizeVideo);
+
+	            // 비디오 자동 재생 시도
+	            const playPromise = video.play();
+	            if (playPromise !== undefined) {
+	                playPromise.then(_ => {
+	                    console.log('Video autoplay successful.');
+	                }).catch(error => {
+	                    console.log('Video autoplay failed, trying muted playback:', error);
+	                    video.muted = true;
+	                    video.play().catch(e => console.error('Muted autoplay also failed:', e));
+	                });
+	            }
+	        });
+	    </script>
+	</body>
+	</html>

@@ -78,5 +78,15 @@
     "name": "server.servlet.session.store-type",
     "type": "java.lang.String",
     "description": "A description for 'server.servlet.session.store-type'"
+  },
+  {
+    "name": "spring.websocket.sockjs.heartbeat.time",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.websocket.sockjs.heartbeat.time'"
+  },
+  {
+    "name": "spring.websocket.sockjs.disconnect.delay",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.websocket.sockjs.disconnect.delay'"
   }
 ]}
