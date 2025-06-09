@@ -52,6 +52,9 @@ public class StatusEntity {
     // 투표 참여자 기준 투표율 (%) - 새로 추가
     private Double voterBasedVotingRate;
     
+    // **신규 추가: 최다득표자 득표율 (%)**
+    private Double topVotedRate;
+    
     // 질문 생성일
     private LocalDateTime createdAt;
     
@@ -108,7 +111,7 @@ public class StatusEntity {
     }
     
     /**
-     * 투표율과 참여율 계산 및 이메일 전송 가능 여부 설정
+     * 투표율, 참여율, 득표율 계산 및 이메일 전송 가능 여부 설정
      */
     public void calculateRates() {
         if (totalMembers != null && totalMembers > 0) {
@@ -130,7 +133,7 @@ public class StatusEntity {
             this.participationRate = 0.0;
         }
         
-        // 새로 추가: 실제 투표 참여자 기준 투표율 계산
+        // 투표 참여자 기준 투표율 계산
         if (uniqueVoters != null && uniqueVoters > 0) {
             // 투표 참여자 기준 투표율: 총 투표수 / 실제 투표 참여자 수
             if (totalVotes != null) {
@@ -142,9 +145,20 @@ public class StatusEntity {
             this.voterBasedVotingRate = 0.0;
         }
         
-        // 이메일 전송 가능 여부: 투표가 종료되고 전체 회원 대비 참여율이 40% 이상인 경우
-        // 예: 10명 중 4명 이상 참여 시 이메일 전송 가능
-        this.emailEligible = "종료".equals(getCurrentVotingStatus()) && this.participationRate >= 40.0;
+        // **신규 추가: 최다득표자 득표율 계산**
+        if (totalVotes != null && totalVotes > 0 && topVoteCount != null) {
+            this.topVotedRate = (double) topVoteCount / totalVotes * 100;
+        } else {
+            this.topVotedRate = 0.0;
+        }
+        
+        // **새로운 이메일 전송 가능 여부 조건:**
+        // 1. 투표가 종료되고
+        // 2. 전체 회원 대비 참여율이 50% 이상이고
+        // 3. 최다득표자의 득표율이 40% 이상인 경우
+        this.emailEligible = "종료".equals(getCurrentVotingStatus()) 
+                            && this.participationRate >= 50.0 
+                            && this.topVotedRate >= 40.0;
     }
     
     /**
@@ -185,6 +199,13 @@ public class StatusEntity {
     }
     
     /**
+     * **신규 추가: 최다득표자 득표율을 소수점 2자리로 포맷**
+     */
+    public String getFormattedTopVotedRate() {
+        return String.format("%.2f%%", topVotedRate != null ? topVotedRate : 0.0);
+    }
+    
+    /**
      * 투표 효율성 계산 (고유 투표자당 평균 투표수)
      */
     public Double getAverageVotesPerVoter() {
@@ -202,18 +223,18 @@ public class StatusEntity {
     }
     
     /**
-     * 투표 상태 요약 정보
+     * **업데이트된 투표 상태 요약 정보**
      */
     public String getVotingSummary() {
-        return String.format("참여율: %s, 참여자 기준 투표율: %s, 총 투표: %d표, 참여자: %d명", 
+        return String.format("참여율: %s, 최다득표율: %s, 총 투표: %d표, 참여자: %d명", 
                 getFormattedParticipationRate(),
-                getFormattedVoterBasedVotingRate(),
+                getFormattedTopVotedRate(),
                 totalVotes != null ? totalVotes : 0,
                 uniqueVoters != null ? uniqueVoters : 0);
     }
     
     /**
-     * 투표 통계 상세 정보
+     * **업데이트된 투표 통계 상세 정보**
      */
     public String getDetailedStats() {
         StringBuilder sb = new StringBuilder();
@@ -221,6 +242,7 @@ public class StatusEntity {
         sb.append(", 상태: ").append(getCurrentVotingStatus());
         sb.append(", 투표율: ").append(getFormattedVotingRate());
         sb.append(", 참여율: ").append(getFormattedParticipationRate());
+        sb.append(", 최다득표율: ").append(getFormattedTopVotedRate());
         sb.append(", 참여자기준투표율: ").append(getFormattedVoterBasedVotingRate());
         sb.append(", 총투표: ").append(totalVotes != null ? totalVotes : 0);
         sb.append(", 참여자: ").append(uniqueVoters != null ? uniqueVoters : 0);
@@ -230,10 +252,44 @@ public class StatusEntity {
     }
     
     /**
-     * 이메일 전송 가능 여부를 문자열로 반환
+     * **업데이트된 이메일 전송 가능 여부를 상세 문자열로 반환**
      */
     public String getEmailEligibleStatus() {
-        return emailEligible != null && emailEligible ? "전송 가능" : "전송 불가";
+        if (!"종료".equals(getCurrentVotingStatus())) {
+            return "전송 불가 (투표 미종료)";
+        }
+        
+        if (participationRate == null || participationRate < 50.0) {
+            return String.format("전송 불가 (참여율 부족: %.1f%% < 50%%)", 
+                                participationRate != null ? participationRate : 0.0);
+        }
+        
+        if (topVotedRate == null || topVotedRate < 40.0) {
+            return String.format("전송 불가 (득표율 부족: %.1f%% < 40%%)", 
+                                topVotedRate != null ? topVotedRate : 0.0);
+        }
+        
+        return String.format("전송 가능 (참여율: %.1f%%, 득표율: %.1f%%)", 
+                           participationRate, topVotedRate);
+    }
+    
+    /**
+     * **새로운 이메일 전송 조건 검사 메서드**
+     */
+    public boolean isEmailEligible() {
+        return emailEligible != null && emailEligible;
+    }
+    
+    /**
+     * **이메일 전송 조건별 상세 체크**
+     */
+    public Map<String, Boolean> getEmailEligibilityDetails() {
+        Map<String, Boolean> details = new java.util.HashMap<>();
+        details.put("isVotingEnded", "종료".equals(getCurrentVotingStatus()));
+        details.put("hasEnoughParticipation", participationRate != null && participationRate >= 50.0);
+        details.put("hasEnoughTopVotedRate", topVotedRate != null && topVotedRate >= 40.0);
+        details.put("isOverallEligible", isEmailEligible());
+        return details;
     }
     
     /**

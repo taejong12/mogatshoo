@@ -15,7 +15,7 @@
             <!-- 헤더 섹션 -->
             <div class="header-section">
                 <h1><i class="fas fa-poll me-3"></i>투표 관리 현황</h1>
-                <p>실시간 투표 통계 및 관리 시스템</p>
+                <p>실시간 투표 통계 및 관리 시스템 (참여율 50% + 득표율 40% 조건)</p>
             </div>
 
             <!-- 통계 요약 섹션 -->
@@ -49,6 +49,7 @@
                         <div class="stat-card">
                             <div class="stat-number" th:text="${eligibleQuestions ?: 0}">0</div>
                             <div class="stat-label">이메일 전송 가능</div>
+                            <small class="text-muted d-block mt-1">참여율≥50% & 득표율≥40%</small>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
@@ -86,7 +87,8 @@
                             <div class="col-md-3">
                                 <select class="form-select" id="rateFilter">
                                     <option value="all">전체 참여율</option>
-                                    <option value="high">40% 이상</option>
+                                    <option value="high">50% 이상</option>
+                                    <option value="medium">40-50%</option>
                                     <option value="low">40% 미만</option>
                                 </select>
                             </div>
@@ -144,6 +146,7 @@
                                 <th>투표 기간</th>
                                 <th>최다득표자</th>
                                 <th>참여율 (%)</th>
+                                <th>득표율 (%)</th>
                                 <th>작업</th>
                             </tr>
                         </thead>
@@ -151,6 +154,7 @@
                             <tr th:each="stat : ${votingStatistics}" 
                                 th:data-voting-status="${stat.currentVotingStatus}"
                                 th:data-participation-rate="${stat.participationRate}"
+                                th:data-top-voted-rate="${stat.topVotedRate}"
                                 th:data-email-eligible="${stat.emailEligible}"
                                 class="voting-row">
                                 
@@ -200,17 +204,41 @@
                                           th:text="${stat.topVoteCount + '표'}"></span>
                                 </td>
                                 
+                                <!-- 기존 참여율 컬럼 -->
                                 <td class="voting-rate-container">
                                     <span th:class="${'rate-number ' + (stat.participationRate >= 50 ? 'rate-high' : stat.participationRate >= 40 ? 'rate-medium' : 'rate-low')}"
                                           th:text="${stat.formattedParticipationRate}"></span>
                                     <div class="progress-bar-custom">
                                         <div class="progress-fill" 
-                                             th:style="${'width: ' + stat.participationRate + '%; background: ' + (stat.participationRate >= 50 ? '#10b981' : stat.participationRate >= 40 ? '#f59e0b' : '#ef4444') + ';'}"></div>
+                                             th:style="${'width: ' + (stat.participationRate > 100 ? 100 : stat.participationRate) + '%; background: ' + (stat.participationRate >= 50 ? '#10b981' : stat.participationRate >= 40 ? '#f59e0b' : '#ef4444') + ';'}"></div>
                                     </div>
                                     <small class="text-muted d-block mt-1">
                                         <span th:text="${stat.uniqueVoters ?: 0}">0</span>명 참여 / 
                                         <span th:text="${stat.totalVotes ?: 0}">0</span>표
                                     </small>
+                                </td>
+
+                                <!-- 새로 추가된 득표율 컬럼 -->
+                                <td class="voting-rate-container">
+                                    <span th:class="${'rate-number ' + (stat.topVotedRate >= 40 ? 'rate-high' : stat.topVotedRate >= 30 ? 'rate-medium' : 'rate-low')}"
+                                          th:text="${stat.formattedTopVotedRate}"></span>
+                                    <div class="progress-bar-custom">
+                                        <div class="progress-fill" 
+                                             th:style="${'width: ' + (stat.topVotedRate > 100 ? 100 : stat.topVotedRate) + '%; background: ' + (stat.topVotedRate >= 40 ? '#10b981' : stat.topVotedRate >= 30 ? '#f59e0b' : '#ef4444') + ';'}"></div>
+                                    </div>
+                                    <small class="text-muted d-block mt-1">
+                                        <span th:text="${stat.topVoteCount ?: 0}">0</span>표 / 
+                                        <span th:text="${stat.totalVotes ?: 0}">0</span>표
+                                    </small>
+                                    <!-- 이메일 발송 조건 표시 -->
+                                    <div th:if="${stat.currentVotingStatus == '종료'}" class="email-condition-badge mt-1">
+                                        <small th:if="${stat.emailEligible}" class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>발송가능
+                                        </small>
+                                        <small th:if="${!stat.emailEligible}" class="badge bg-danger">
+                                            <i class="fas fa-times me-1"></i>발송불가
+                                        </small>
+                                    </div>
                                 </td>
                                 
                                 <td class="actions-container">
@@ -223,7 +251,7 @@
                                         </a>
                                         <button th:if="${!stat.emailEligible or stat.currentVotingStatus != '종료'}" 
                                                 class="btn btn-email btn-sm" disabled
-                                                th:title="${stat.emailEligible ? '투표가 종료되지 않음' : '참여율 40% 미만'}">
+                                                th:title="${stat.emailEligibleStatus}">
                                             <i class="fas fa-envelope me-2"></i>이메일
                                         </button>
                                         

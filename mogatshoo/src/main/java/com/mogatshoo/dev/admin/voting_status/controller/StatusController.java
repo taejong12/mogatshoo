@@ -96,9 +96,13 @@ public class StatusController {
 			model.addAttribute("activeQuestions", activeQuestions);
 			model.addAttribute("endedQuestions", endedQuestions);
 
-			// 이메일 전송 가능한 질문 수 계산 (종료되고 참여율 40% 이상)
-			long eligibleQuestions = votingStatistics.stream().filter(stat -> "종료".equals(stat.getCurrentVotingStatus())
-					&& stat.getParticipationRate() != null && stat.getParticipationRate() >= 40.0).count();
+			// **업데이트된 이메일 전송 가능한 질문 수 계산**
+			// (종료되고 참여율 50% 이상이며 최다득표율 40% 이상)
+			long eligibleQuestions = votingStatistics.stream()
+					.filter(stat -> "종료".equals(stat.getCurrentVotingStatus())
+							&& stat.getParticipationRate() != null && stat.getParticipationRate() >= 50.0
+							&& stat.getTopVotedRate() != null && stat.getTopVotedRate() >= 40.0)
+					.count();
 			model.addAttribute("eligibleQuestions", eligibleQuestions);
 
 			// 전체 회원 수
@@ -159,7 +163,7 @@ public class StatusController {
 		}
 	}
 
-	// 이메일 전송 페이지로 이동 - 참여율 기준으로 수정
+	// **업데이트된 이메일 전송 페이지로 이동 - 새로운 조건 적용**
 	@GetMapping("/email/{serialNumber}")
 	public String emailPage(@PathVariable String serialNumber, Model model, RedirectAttributes redirectAttributes) {
 		try {
@@ -177,11 +181,22 @@ public class StatusController {
 				return "redirect:/admin/voting-status";
 			}
 
-			// 참여율 40% 이상인지 확인
-			if (questionStats.getParticipationRate() < 40.0) {
+			// **새로운 조건 1: 참여율 50% 이상인지 확인**
+			if (questionStats.getParticipationRate() < 50.0) {
 				redirectAttributes.addFlashAttribute("errorMessage",
-						String.format("참여율이 40%% 미만입니다. (현재: %.1f%%, 참여자: %d명)", questionStats.getParticipationRate(),
-								questionStats.getUniqueVoters()));
+						String.format("참여율이 50%% 미만입니다. (현재: %.1f%%, 참여자: %d명)", 
+						questionStats.getParticipationRate(),
+						questionStats.getUniqueVoters()));
+				return "redirect:/admin/voting-status";
+			}
+
+			// **새로운 조건 2: 최다득표자 득표율 40% 이상인지 확인**
+			if (questionStats.getTopVotedRate() < 40.0) {
+				redirectAttributes.addFlashAttribute("errorMessage",
+						String.format("최다득표자의 득표율이 40%% 미만입니다. (현재: %.1f%%, %s님 %d표)", 
+						questionStats.getTopVotedRate(),
+						questionStats.getTopVotedName() != null ? questionStats.getTopVotedName() : "없음",
+						questionStats.getTopVoteCount() != null ? questionStats.getTopVoteCount() : 0));
 				return "redirect:/admin/voting-status";
 			}
 
@@ -219,7 +234,7 @@ public class StatusController {
 		return "redirect:/admin/voting-status?page=" + page;
 	}
 
-	// 빠른 이메일 전송 API - 참여율 기준으로 수정
+	// **업데이트된 빠른 이메일 전송 API - 새로운 조건 적용**
 	@PostMapping("/quick-email/{serialNumber}")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> quickSendEmail(@PathVariable String serialNumber) {
@@ -242,11 +257,19 @@ public class StatusController {
 				return ResponseEntity.badRequest().body(response);
 			}
 
-			// 참여율 40% 이상인지 확인
-			if (questionStats.getParticipationRate() < 40.0) {
+			// **새로운 조건 1: 참여율 50% 이상인지 확인**
+			if (questionStats.getParticipationRate() < 50.0) {
 				response.put("success", false);
 				response.put("message",
-						String.format("참여율이 40%% 미만입니다. (현재: %.1f%%)", questionStats.getParticipationRate()));
+						String.format("참여율이 50%% 미만입니다. (현재: %.1f%%)", questionStats.getParticipationRate()));
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			// **새로운 조건 2: 최다득표자 득표율 40% 이상인지 확인**
+			if (questionStats.getTopVotedRate() < 40.0) {
+				response.put("success", false);
+				response.put("message",
+						String.format("최다득표자의 득표율이 40%% 미만입니다. (현재: %.1f%%)", questionStats.getTopVotedRate()));
 				return ResponseEntity.badRequest().body(response);
 			}
 
@@ -272,6 +295,9 @@ public class StatusController {
 		}
 	}
 
+	/**
+	 * **업데이트된 통계 계산 메서드 - 새로운 이메일 발송 조건 반영**
+	 */
 	private void calculateAndSetStatistics(List<StatusEntity> votingStatistics, Page<StatusEntity> votingStatisticsPage,
 			Model model) {
 		// 전체 통계
@@ -291,9 +317,13 @@ public class StatusController {
 		model.addAttribute("endedQuestions", endedQuestions);
 		model.addAttribute("completedQuestions", completedQuestions);
 
-		// 이메일 전송 가능한 질문 수
-		long eligibleQuestions = votingStatistics.stream().filter(stat -> "종료".equals(stat.getCurrentVotingStatus())
-				&& stat.getParticipationRate() != null && stat.getParticipationRate() >= 40.0).count();
+		// **새로운 이메일 전송 가능한 질문 수 - 업데이트된 조건**
+		// (종료되고 참여율 50% 이상이며 최다득표율 40% 이상)
+		long eligibleQuestions = votingStatistics.stream()
+				.filter(stat -> "종료".equals(stat.getCurrentVotingStatus())
+						&& stat.getParticipationRate() != null && stat.getParticipationRate() >= 50.0
+						&& stat.getTopVotedRate() != null && stat.getTopVotedRate() >= 40.0)
+				.count();
 		model.addAttribute("eligibleQuestions", eligibleQuestions);
 
 		// 전체 회원 수
@@ -301,6 +331,79 @@ public class StatusController {
 			model.addAttribute("totalMembers", votingStatistics.get(0).getTotalMembers());
 		} else {
 			model.addAttribute("totalMembers", 0);
+		}
+	}
+
+	/**
+	 * **신규 추가: 이메일 발송 조건 상세 확인 API**
+	 */
+	@GetMapping("/email-eligibility/{serialNumber}")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> checkEmailEligibility(@PathVariable String serialNumber) {
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			StatusEntity questionStats = statusService.getQuestionStatistics(serialNumber);
+
+			if (questionStats == null) {
+				response.put("success", false);
+				response.put("message", "질문 정보를 찾을 수 없습니다.");
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			// 조건별 상세 체크
+			Map<String, Object> eligibilityDetails = new HashMap<>();
+			eligibilityDetails.put("serialNumber", serialNumber);
+			eligibilityDetails.put("questionContent", questionStats.getQuestionContent());
+			eligibilityDetails.put("votingStatus", questionStats.getCurrentVotingStatus());
+			eligibilityDetails.put("isVotingEnded", "종료".equals(questionStats.getCurrentVotingStatus()));
+			
+			// 참여율 체크
+			eligibilityDetails.put("participationRate", questionStats.getParticipationRate());
+			eligibilityDetails.put("hasEnoughParticipation", questionStats.getParticipationRate() >= 50.0);
+			eligibilityDetails.put("participationThreshold", 50.0);
+			
+			// 득표율 체크
+			eligibilityDetails.put("topVotedRate", questionStats.getTopVotedRate());
+			eligibilityDetails.put("hasEnoughTopVotedRate", questionStats.getTopVotedRate() >= 40.0);
+			eligibilityDetails.put("topVotedThreshold", 40.0);
+			
+			// 최다득표자 정보
+			eligibilityDetails.put("topVotedName", questionStats.getTopVotedName());
+			eligibilityDetails.put("topVoteCount", questionStats.getTopVoteCount());
+			eligibilityDetails.put("totalVotes", questionStats.getTotalVotes());
+			
+			// 전체 자격 여부
+			boolean isEligible = questionStats.isEmailEligible();
+			eligibilityDetails.put("isOverallEligible", isEligible);
+			
+			// 상세 메시지
+			if (isEligible) {
+				eligibilityDetails.put("message", "이메일 전송 조건을 모두 만족합니다.");
+			} else {
+				List<String> failureReasons = new ArrayList<>();
+				if (!"종료".equals(questionStats.getCurrentVotingStatus())) {
+					failureReasons.add("투표가 아직 종료되지 않음");
+				}
+				if (questionStats.getParticipationRate() < 50.0) {
+					failureReasons.add(String.format("참여율 부족 (%.1f%% < 50%%)", questionStats.getParticipationRate()));
+				}
+				if (questionStats.getTopVotedRate() < 40.0) {
+					failureReasons.add(String.format("득표율 부족 (%.1f%% < 40%%)", questionStats.getTopVotedRate()));
+				}
+				eligibilityDetails.put("message", "조건 미충족: " + String.join(", ", failureReasons));
+			}
+
+			response.put("success", true);
+			response.put("data", eligibilityDetails);
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			System.err.println("이메일 발송 조건 확인 중 오류: " + e.getMessage());
+			e.printStackTrace();
+			response.put("success", false);
+			response.put("message", "시스템 오류가 발생했습니다.");
+			return ResponseEntity.badRequest().body(response);
 		}
 	}
 }
