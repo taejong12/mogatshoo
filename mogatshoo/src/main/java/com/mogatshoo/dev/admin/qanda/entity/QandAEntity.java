@@ -19,6 +19,7 @@ public class QandAEntity {
     private Long id;
     
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private MessageType type;
     
     @Column(columnDefinition = "TEXT")
