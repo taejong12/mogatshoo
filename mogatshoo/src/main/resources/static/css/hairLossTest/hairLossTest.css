@@ -34,28 +34,27 @@ body {
 /* 윈도우 95 데스크톱 배경 */
 .pixel-bg {
 	display: flex;
-	    align-items: flex-start; /* center에서 flex-start로 변경 */
-	    justify-content: center;
-	    text-align: center;
-	    width: 100vw;
-	    min-height: 100vh; /* height: 100vh를 min-height로 변경 */
-	    padding: 20px 0; /* 상하 패딩 추가 */
+	align-items: flex-start;
+	justify-content: center;
+	text-align: center;
+	width: 100vw;
+	min-height: 100vh;
+	padding: 20px 0;
+	box-sizing: border-box;
 }
-
 
 /* 메인 윈도우 컨테이너 */
 .main-container {
 	background-color: var(--win95-gray);
-	    border: 2px outset var(--win95-gray);
-	    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-	    width: 100% !important;
-	    max-width: 1300px;
-	    min-height: 600px; /* 최소 높이만 유지 */
-	    display: flex;
-	    flex-direction: column;
-	    position: relative;
+	border: 2px outset var(--win95-gray);
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+	width: 100% !important;
+	max-width: 1300px;
+	min-height: 620px;
+	display: flex;
+	flex-direction: column;
+	position: relative;
 }
-
 
 /* 컨테이너 내부 여백 조정 */
 .container {
@@ -288,13 +287,8 @@ body {
 
 .modal-backdrop {
 	pointer-events: none !important;
-
-}
-
-.modal-backdrop {
 	opacity: 0 !important;
 }
-
 
 /* 라벨 스타일 */
 .form-label {
@@ -315,7 +309,6 @@ input[type="radio"] {
 	cursor: pointer;
 }
 
-/* 스크롤바 스타일링 */
 /* 윈도우 95 스타일 전역 스크롤바 */
 ::-webkit-scrollbar {
     width: 16px;
@@ -435,46 +428,6 @@ html {
     background-size: 100% 100%, 100% 100%, 100% 100%;
 }
 
-/* 반응형 스크롤바 - 모바일에서는 더 얇게 */
-@media screen and (max-width: 768px) {
-    ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
-    }
-    
-    ::-webkit-scrollbar-button {
-        width: 12px;
-        height: 12px;
-    }
-    
-    ::-webkit-scrollbar-button:vertical:start:decrement,
-    ::-webkit-scrollbar-button:vertical:end:increment,
-    ::-webkit-scrollbar-button:horizontal:start:decrement,
-    ::-webkit-scrollbar-button:horizontal:end:increment {
-        background-size: 6px 6px;
-    }
-}
-
-/* 작은 모바일에서는 더 얇게 */
-@media screen and (max-width: 480px) {
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    
-    ::-webkit-scrollbar-button {
-        width: 8px;
-        height: 8px;
-    }
-    
-    ::-webkit-scrollbar-button:vertical:start:decrement,
-    ::-webkit-scrollbar-button:vertical:end:increment,
-    ::-webkit-scrollbar-button:horizontal:start:decrement,
-    ::-webkit-scrollbar-button:horizontal:end:increment {
-        background-size: 4px 4px;
-    }
-}
-
 /* 윈도우 95 진행률 표시줄 스타일 */
 .progress-bar {
 	width: 100%;
@@ -496,7 +449,7 @@ html {
 }
 
 /* =================
-   반응형 디자인
+   반응형 디자인 - 모바일 높이 문제 해결
    ================= */
 
 /* 태블릿 (768px ~ 1024px) */
@@ -524,43 +477,34 @@ html {
 	}
 }
 
-/* 모바일 (768px 이하) */
+/* 모바일 (768px 이하) - 높이 문제 해결 */
 @media screen and (max-width: 768px) {
-
-	html,
-	body {
+	html, body {
 		font-size: 14px;
+		min-height: 100vh;
 	}
 
 	.pixel-bg {
 		padding: 10px;
 		align-items: flex-start;
-		padding-top: 20px;
+		min-height: 100vh;
 	}
 
 	.main-container {
 		max-width: 100%;
-		min-height: auto;
+		min-height: calc(100vh - 20px);
+		height: auto;
 		margin: 0;
-	}
-
-	.main-container::before {
-		font-size: 14px;
-		height: 18px;
-	}
-
-	.main-container::after {
-		width: 36px;
-		height: 12px;
-		font-size: 11px;
-		top: 3px;
-		right: 3px;
+		width: calc(100% - 20px) !important;
 	}
 
 	.container {
 		padding-top: 25px !important;
 		padding-left: 8px !important;
 		padding-right: 8px !important;
+		padding-bottom: 8px !important;
+		min-height: calc(100vh - 60px);
+		height: auto;
 	}
 
 	.retro-panel {
@@ -639,30 +583,47 @@ html {
 	.modal-footer {
 		padding: 6px !important;
 	}
+
+	/* 모바일 스크롤바 */
+	::-webkit-scrollbar {
+		width: 12px;
+		height: 12px;
+	}
+	
+	::-webkit-scrollbar-button {
+		width: 12px;
+		height: 12px;
+	}
+	
+	::-webkit-scrollbar-button:vertical:start:decrement,
+	::-webkit-scrollbar-button:vertical:end:increment,
+	::-webkit-scrollbar-button:horizontal:start:decrement,
+	::-webkit-scrollbar-button:horizontal:end:increment {
+		background-size: 6px 6px;
+	}
 }
 
-/* 작은 모바일 (480px 이하) */
+/* 작은 모바일 (480px 이하) - 높이 문제 해결 */
 @media screen and (max-width: 480px) {
 	.pixel-bg {
 		padding: 5px;
+		min-height: 100vh;
+		align-items: flex-start;
 	}
 
-	.main-container::before {
-		content: "탈모진단";
-		font-size: 14px;
-		height: 16px;
-	}
-
-	.main-container::after {
-		width: 30px;
-		height: 10px;
-		font-size: 14px;
+	.main-container {
+		min-height: calc(100vh - 10px);
+		height: auto;
+		width: calc(100% - 10px) !important;
 	}
 
 	.container {
 		padding-top: 22px !important;
 		padding-left: 5px !important;
 		padding-right: 5px !important;
+		padding-bottom: 5px !important;
+		min-height: calc(100vh - 40px);
+		height: auto;
 	}
 
 	.retro-panel {
@@ -705,17 +666,37 @@ html {
 	#debug-info {
 		font-size: 14px;
 	}
+
+	/* 작은 모바일 스크롤바 */
+	::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+	
+	::-webkit-scrollbar-button {
+		width: 8px;
+		height: 8px;
+	}
+	
+	::-webkit-scrollbar-button:vertical:start:decrement,
+	::-webkit-scrollbar-button:vertical:end:increment,
+	::-webkit-scrollbar-button:horizontal:start:decrement,
+	::-webkit-scrollbar-button:horizontal:end:increment {
+		background-size: 4px 4px;
+	}
 }
 
-/* 가로 방향 모바일 (landscape) */
+/* 가로 모드에서도 스크롤 허용 */
 @media screen and (max-height: 500px) and (orientation: landscape) {
 	.pixel-bg {
 		align-items: flex-start;
-		padding-top: 10px;
+		padding-top: 5px;
+		min-height: 100vh;
 	}
 
 	.main-container {
-		min-height: auto;
+		min-height: calc(100vh - 10px);
+		height: auto;
 	}
 
 	#image-preview-container {
@@ -724,6 +705,25 @@ html {
 
 	#image-preview {
 		max-height: 100px;
+	}
+}
+
+/* iOS Safari를 위한 추가 설정 */
+@supports (-webkit-appearance: none) {
+	@media screen and (max-width: 768px) {
+		.pixel-bg {
+			min-height: -webkit-fill-available;
+		}
+		
+		.main-container {
+			min-height: calc(-webkit-fill-available - 20px);
+			height: auto;
+			margin-top: 15px;
+		}
+		
+		.container {
+			min-height: calc(-webkit-fill-available - 60px);
+		}
 	}
 }
 
@@ -740,7 +740,6 @@ html {
 
 /* 고해상도 디스플레이 최적화 */
 @media screen and (min-resolution: 192dpi) {
-
 	.main-container::before,
 	.main-container::after,
 	.retro-title,
