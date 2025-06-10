@@ -63,10 +63,8 @@ public class WebConfig implements WebMvcConfigurer {
             "/member/idAndEmailCheck", "/member/pwdUpdate",
             
             // 인증은 필요하지만 IntroInterceptor가 관여할 필요 없는 경로
-            "/qanda/**", // Q&A
             "/admin/**" // 관리자
         );
-   System.out.println("IntroInterceptor 등록됨."); // 등록 확인 로그
 
    // ========================================================================
    // 추가된 인터셉터는 이 코드 블록 아래에 있어야 합니다.
