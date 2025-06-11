@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
+layout:decorate="~{admin/fragments/layout}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
+<head th:with="layoutTitle='투표 관리 현황 - Mogatshoo'">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>투표 관리 현황 - Mogatshoo</title>
@@ -10,7 +11,7 @@
     <link rel="stylesheet" th:href="@{/css/voting/status.css}">
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid" layout:fragment="content">
         <div class="main-container">
             <!-- 헤더 섹션 -->
             <div class="header-section">
@@ -289,7 +290,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    
 
     <!-- 로딩 오버레이 -->
     <div class="loading-overlay" id="loadingOverlay">
@@ -300,8 +301,8 @@
         </div>
     </div>
 
-    <!-- Bootstrap & Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/voting/status.js}"></script>
+	</div>
 </body>
 </html>
