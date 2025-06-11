@@ -28,8 +28,6 @@ public class QandAEntity {
     @Column(nullable = false)
     private String sender;
     
-    private String receiver;
-    
     @Column(name = "room_id", nullable = false)
     private String roomId;
     
