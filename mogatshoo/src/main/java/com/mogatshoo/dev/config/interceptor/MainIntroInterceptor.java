@@ -24,12 +24,14 @@ public class MainIntroInterceptor implements HandlerInterceptor {
 	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	        boolean isAuthenticated = (authentication != null && authentication.isAuthenticated() &&
 	                                   !"anonymousUser".equals(authentication.getPrincipal())); // 익명 사용자가 아닌 경우
-
+	        
+	        
+	        
 	        // 2. 요청 URI가 루트("/")이고
 	        // 3. 사용자가 로그인된 상태이며
 	        // 4. 세션에 "introSeen" 플래그가 없는 경우 (인트로를 아직 안 봤음)
 	        if ("/".equals(requestUri) && isAuthenticated && session.getAttribute(INTRO_SEEN_SESSION_KEY) == null) {
-	            System.out.println("IntroInterceptor: Logged-in user has not seen intro in this session. Redirecting to /intro.");
+	            System.out.println(INTRO_SEEN_SESSION_KEY + "IntroInterceptor: Logged-in user has not seen intro in this session. Redirecting to /intro.");
 	            response.sendRedirect("/intro"); // /intro 페이지로 리다이렉트
 	            return false; // 더 이상 요청 처리를 진행하지 않음
 	        }
@@ -40,7 +42,7 @@ public class MainIntroInterceptor implements HandlerInterceptor {
 	        //    따라서 여기서 플래그를 설정하는 것이 안전합니다.
 	        if ("/intro".equals(requestUri)) {
 	             session.setAttribute(INTRO_SEEN_SESSION_KEY, true);
-	             System.out.println("IntroInterceptor: User is visiting intro page. Setting introSeen flag.");
+	             System.out.println(INTRO_SEEN_SESSION_KEY +"IntroInterceptor: User is visiting intro page. Setting introSeen flag.");
 	        }
 
 	        // 요청 처리를 계속 진행
