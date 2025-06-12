@@ -56,7 +56,8 @@ public class SecurityConfig {
 								new AntPathRequestMatcher("/favicon.ico"),
 								new AntPathRequestMatcher("/fragments/**"),
 								new AntPathRequestMatcher("/error/**"),
-								new AntPathRequestMatcher("/ws/**"))
+								new AntPathRequestMatcher("/ws/**"),
+								new AntPathRequestMatcher("/webApp/**"))
 						.permitAll()
 						
 						// 로그인하지 않은 사용자만 접근 가능한 경로

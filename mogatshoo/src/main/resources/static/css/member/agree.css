@@ -34,8 +34,8 @@ body::before {
     display: none !important;
 }
 
-/* 메인 컨테이너 */
-.windows95-container {
+/* Bootstrap Grid를 유지하면서 Windows 95 스타일 적용 */
+.col-12.col-lg-6 {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,191 +44,269 @@ body::before {
     width: 100%;
 }
 
-/* 약관동의 다이얼로그 */
-.windows95-dialog {
-    background: #c0c0c0;
-    border: 2px outset #c0c0c0;
-    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+/* Bootstrap form을 Windows 95 다이얼로그로 변환 */
+.background-border-color.align-items-center.p-4.rounded-3 {
+    background: #c0c0c0 !important;
+    border: 2px outset #c0c0c0 !important;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
     font-size: 15px;
     width: 100%;
     max-width: 500px;
     min-width: 300px;
     position: relative;
     box-sizing: border-box;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    display: block !important;
 }
 
-/* 제목 표시줄 */
-.title-bar {
+/* Windows 95 타이틀바 추가 */
+.background-border-color.align-items-center.p-4.rounded-3::before {
+    content: "이용약관 동의";
+    display: block;
     background: linear-gradient(90deg, #0000ff 0%, #000080 100%);
     color: white;
     padding: 4px 6px;
     font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     font-size: 15px;
-    box-sizing: border-box;
+    margin: -2px -2px 0 -2px;
+    position: relative;
 }
 
-.title-bar-text {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1;
-}
-
+/* 타이틀바 컨트롤 버튼 컨테이너 */
 .title-bar-controls {
-    display: flex;
-    gap: 2px;
+    position: absolute !important;
+    top: 2px !important;
+    right: 4px !important;
+    display: flex !important;
+    gap: 2px !important;
+    z-index: 10 !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
+/* 타이틀바 컨트롤 버튼 */
 .title-bar-control {
-    width: 18px;
-    height: 16px;
-    background: #c0c0c0;
-    border: 1px outset #c0c0c0;
-    font-size: 10px;
-    text-align: center;
-    line-height: 14px;
-    cursor: pointer;
-    font-weight: bold;
+    width: 18px !important;
+    height: 16px !important;
+    background: #c0c0c0 !important;
+    border: 1px outset #c0c0c0 !important;
+    font-size: 10px !important;
+    text-align: center !important;
+    line-height: 14px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
-/* 다이얼로그 내용 */
-.dialog-content {
-    padding: 20px;
-    box-sizing: border-box;
+.title-bar-control:hover {
+    background: #d4d4d4 !important;
+    border: 1px outset #c0c0c0 !important;
 }
 
-/* 제목 */
-.agree-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #000080;
+.title-bar-control:active {
+    border: 1px inset #c0c0c0 !important;
+    background: #b8b8b8 !important;
 }
 
-/* 약관 동의 항목 */
-.agree-item {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-    gap: 8px;
+.title-bar-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-.agree-item.total {
+/* 폼 내용 패딩 */
+.background-border-color.align-items-center.p-4.rounded-3 > * {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.background-border-color.align-items-center.p-4.rounded-3 > .title {
+    padding-top: 20px;
+}
+
+.background-border-color.align-items-center.p-4.rounded-3 > .row:last-child {
+    padding-bottom: 20px;
+}
+
+/* 제목 스타일 */
+.title.text-center.mb-5 {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    margin-bottom: 20px !important;
+    text-align: center !important;
+    color: #000080 !important;
+    margin-top: 0 !important;
+}
+
+/* Bootstrap row를 Windows 95 스타일로 */
+.row.mb-3.align-items-center,
+.row.align-items-center.mb-1 {
+    display: flex !important;
+    align-items: flex-start !important;
+    margin-bottom: 15px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* 전체동의 항목에 구분선 추가 */
+.row.mb-3.align-items-center:first-of-type {
     border-bottom: 1px solid #808080;
     padding-bottom: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 20px !important;
 }
 
-/* 체크박스 */
-.agree-checkbox {
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 2px inset #c0c0c0;
-    background-color: #c0c0c0;
-    position: relative;
-    cursor: pointer;
-    flex-shrink: 0;
-    margin: 0;
+/* Bootstrap 체크박스를 Windows 95 스타일로 변환 */
+.form-check-input {
+    appearance: none !important;
+    width: 16px !important;
+    height: 16px !important;
+    border: 2px inset #c0c0c0 !important;
+    background-color: #c0c0c0 !important;
+    position: relative !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
 }
 
-.agree-checkbox:checked {
-    background-color: #c0c0c0;
-    border: 2px inset #c0c0c0;
+.form-check-input:checked {
+    background-color: #c0c0c0 !important;
+    border: 2px inset #c0c0c0 !important;
 }
 
-.agree-checkbox:checked::before {
-    content: '✓';
-    display: block;
-    position: absolute;
-    top: -2px;
-    left: 1px;
-    font-size: 14px;
-    color: #000000;
-    font-weight: bold;
-    line-height: 1;
+.form-check-input:checked::before {
+    content: '✓' !important;
+    display: block !important;
+    position: absolute !important;
+    top: -2px !important;
+    left: 1px !important;
+    font-size: 14px !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+    line-height: 1 !important;
 }
 
-/* 라벨 */
-.agree-label {
-    color: #000000;
-    font-size: 15px;
-    cursor: pointer;
-    flex: 1;
-    min-width: 150px;
-    line-height: 1.3;
+.form-check-input:focus {
+    box-shadow: none !important;
+    border-color: #c0c0c0 !important;
 }
 
-/* 약관보기 버튼 */
-.agree-view-btn {
-    background: #c0c0c0;
-    border: 2px outset #c0c0c0;
-    padding: 4px 12px;
-    font-size: 15px;
-    cursor: pointer;
-    white-space: nowrap;
-    min-width: 80px;
-    height: 28px;
-    text-decoration: none;
-    color: black;
-    display: inline-block;
-    text-align: center;
-    line-height: 20px;
+/* Bootstrap 라벨을 Windows 95 스타일로 */
+.form-check-label.text-color {
+    color: #000000 !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    flex: 1 !important;
+    min-width: 150px !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0 !important;
 }
 
-.agree-view-btn:hover {
-    background: #d4d4d4;
-    color: black;
-    text-decoration: none;
+/* Bootstrap 버튼을 Windows 95 스타일로 변환 */
+.btn.btn-sm.modalBtn {
+    background: #c0c0c0 !important;
+    border: 2px outset #c0c0c0 !important;
+    padding: 4px 12px !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    min-width: 80px !important;
+    height: 28px !important;
+    text-decoration: none !important;
+    color: black !important;
+    display: inline-block !important;
+    text-align: center !important;
+    line-height: 20px !important;
+    border-radius: 0 !important;
 }
 
-.agree-view-btn:active {
-    border: 2px inset #c0c0c0;
+.btn.btn-sm.modalBtn:hover {
+    background: #d4d4d4 !important;
+    color: black !important;
+    text-decoration: none !important;
+    border: 2px outset #c0c0c0 !important;
+}
+
+.btn.btn-sm.modalBtn:active {
+    border: 2px inset #c0c0c0 !important;
+}
+
+.btn.btn-sm.modalBtn:focus {
+    box-shadow: none !important;
+}
+
+/* 다음 버튼 */
+.btn.agreeBtn.w-100 {
+    background: #c0c0c0 !important;
+    border: 3px outset #c0c0c0 !important;
+    padding: 8px 20px !important;
+    font-size: 15px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    max-width: 200px !important;
+    height: 35px !important;
+    text-decoration: none !important;
+    color: black !important;
+    display: block !important;
+    text-align: center !important;
+    line-height: 19px !important;
+    margin: 20px auto 0 auto !important;
+    border-radius: 0 !important;
+}
+
+.btn.agreeBtn.w-100:hover {
+    background: #d4d4d4 !important;
+    color: black !important;
+    text-decoration: none !important;
+    border: 3px outset #c0c0c0 !important;
+}
+
+.btn.agreeBtn.w-100:active {
+    border: 3px inset #c0c0c0 !important;
+}
+
+.btn.agreeBtn.w-100:focus {
+    box-shadow: none !important;
 }
 
 /* 경고 메시지 */
 .warn-msg {
-    color: red;
-    font-size: 15px;
-    margin-top: 4px;
-    display: none;
-    width: 100%;
+    color: red !important;
+    font-size: 15px !important;
+    margin-top: 4px !important;
+    display: none !important;
+    width: 100% !important;
 }
 
-/* 다음 버튼 */
-.agree-next-btn {
-    background: #c0c0c0;
-    border: 3px outset #c0c0c0;
-    padding: 8px 20px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-    max-width: 200px;
-    height: 35px;
-    text-decoration: none;
-    color: black;
-    display: block;
-    text-align: center;
-    line-height: 19px;
-    margin: 20px auto 0 auto;
+/* Bootstrap 컬럼 조정 */
+.col-md-1.col-2.text-end,
+.col-md-1.col-2 {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    text-align: left !important;
 }
 
-.agree-next-btn:hover {
-    background: #d4d4d4;
-    color: black;
-    text-decoration: none;
+.col-md-6.col-6,
+.col-md-7.col-6 {
+    flex: 1 !important;
+    width: auto !important;
+    min-width: 150px !important;
 }
 
-.agree-next-btn:active {
-    border: 3px inset #c0c0c0;
+.col-md-4.col-4 {
+    flex: 0 0 auto !important;
+    width: auto !important;
+}
+
+.col-12 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
 }
 
 /* ============================================ */
@@ -239,52 +317,54 @@ body::before {
         padding: 5px;
     }
     
-    .windows95-dialog {
+    .background-border-color.align-items-center.p-4.rounded-3 {
         max-width: 100%;
         min-width: 280px;
     }
     
-    .dialog-content {
-        padding: 15px;
+    .background-border-color.align-items-center.p-4.rounded-3 > * {
+        padding-left: 15px;
+        padding-right: 15px;
     }
     
-    .agree-title {
-        font-size: 16px;
+    .title.text-center.mb-5 {
+        font-size: 16px !important;
     }
     
-    .agree-item {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
+    .row.mb-3.align-items-center,
+    .row.align-items-center.mb-1 {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
     }
     
-    .agree-checkbox {
-        width: 18px;
-        height: 18px;
-        align-self: flex-start;
+    .form-check-input {
+        width: 18px !important;
+        height: 18px !important;
+        align-self: flex-start !important;
     }
     
-    .agree-checkbox:checked::before {
-        font-size: 15px;
-        top: -1px;
-        left: 2px;
+    .form-check-input:checked::before {
+        font-size: 15px !important;
+        top: -1px !important;
+        left: 2px !important;
     }
     
-    .agree-label {
-        min-width: auto;
-        margin-left: 26px;
-        margin-top: -18px;
+    .form-check-label.text-color {
+        min-width: auto !important;
+        margin-left: 26px !important;
+        margin-top: -18px !important;
     }
     
-    .agree-view-btn {
-        width: 100%;
-        max-width: 150px;
-        margin-left: 26px;
+    .btn.btn-sm.modalBtn {
+        width: 100% !important;
+        max-width: 150px !important;
+        margin-left: 26px !important;
     }
     
-    .agree-next-btn {
-        width: 100%;
-        max-width: 250px;
+    .btn.agreeBtn.w-100 {
+        width: 100% !important;
+        max-width: 250px !important;
     }
 }
 
@@ -296,55 +376,57 @@ body::before {
         padding: 3px;
     }
     
-    .windows95-dialog {
+    .background-border-color.align-items-center.p-4.rounded-3 {
         min-width: 260px;
     }
     
-    .dialog-content {
-        padding: 12px;
+    .background-border-color.align-items-center.p-4.rounded-3 > * {
+        padding-left: 12px;
+        padding-right: 12px;
     }
     
-    .title-bar {
+    .background-border-color.align-items-center.p-4.rounded-3::before {
         font-size: 15px;
         padding: 3px 5px;
     }
     
-    .agree-title {
-        font-size: 15px;
-        margin-bottom: 15px;
+    .title.text-center.mb-5 {
+        font-size: 15px !important;
+        margin-bottom: 15px !important;
     }
     
-    .agree-item {
-        margin-bottom: 12px;
+    .row.mb-3.align-items-center,
+    .row.align-items-center.mb-1 {
+        margin-bottom: 12px !important;
     }
     
-    .agree-checkbox {
-        width: 20px;
-        height: 20px;
+    .form-check-input {
+        width: 20px !important;
+        height: 20px !important;
     }
     
-    .agree-checkbox:checked::before {
-        font-size: 16px;
-        top: 0px;
-        left: 3px;
+    .form-check-input:checked::before {
+        font-size: 16px !important;
+        top: 0px !important;
+        left: 3px !important;
     }
     
-    .agree-label {
-        font-size: 15px;
-        margin-top: -20px;
-        margin-left: 28px;
+    .form-check-label.text-color {
+        font-size: 15px !important;
+        margin-top: -20px !important;
+        margin-left: 28px !important;
     }
     
-    .agree-view-btn {
-        font-size: 15px;
-        margin-left: 28px;
-        width: 100%;
-        max-width: 120px;
+    .btn.btn-sm.modalBtn {
+        font-size: 15px !important;
+        margin-left: 28px !important;
+        width: 100% !important;
+        max-width: 120px !important;
     }
     
-    .agree-next-btn {
-        font-size: 15px;
-        width: 100%;
+    .btn.agreeBtn.w-100 {
+        font-size: 15px !important;
+        width: 100% !important;
     }
 }
 
@@ -356,37 +438,38 @@ body::before {
         padding: 2px;
     }
     
-    .windows95-dialog {
+    .background-border-color.align-items-center.p-4.rounded-3 {
         min-width: 240px;
     }
     
-    .dialog-content {
-        padding: 10px;
+    .background-border-color.align-items-center.p-4.rounded-3 > * {
+        padding-left: 10px;
+        padding-right: 10px;
     }
     
-    .agree-title {
-        font-size: 15px;
+    .title.text-center.mb-5 {
+        font-size: 15px !important;
     }
     
-    .agree-checkbox {
-        width: 22px;
-        height: 22px;
+    .form-check-input {
+        width: 22px !important;
+        height: 22px !important;
     }
     
-    .agree-checkbox:checked::before {
-        font-size: 17px;
-        top: 1px;
-        left: 4px;
+    .form-check-input:checked::before {
+        font-size: 17px !important;
+        top: 1px !important;
+        left: 4px !important;
     }
     
-    .agree-label {
-        margin-top: -22px;
-        margin-left: 30px;
+    .form-check-label.text-color {
+        margin-top: -22px !important;
+        margin-left: 30px !important;
     }
     
-    .agree-view-btn {
-        margin-left: 30px;
-        max-width: 100px;
+    .btn.btn-sm.modalBtn {
+        margin-left: 30px !important;
+        max-width: 100px !important;
     }
 }
 
@@ -398,53 +481,55 @@ body::before {
         padding: 15px;
     }
     
-    .windows95-dialog {
+    .background-border-color.align-items-center.p-4.rounded-3 {
         max-width: 600px;
     }
     
-    .dialog-content {
-        padding: 25px;
+    .background-border-color.align-items-center.p-4.rounded-3 > * {
+        padding-left: 25px;
+        padding-right: 25px;
     }
     
-    .agree-title {
-        font-size: 20px;
-        margin-bottom: 25px;
+    .title.text-center.mb-5 {
+        font-size: 20px !important;
+        margin-bottom: 25px !important;
     }
     
-    .agree-item {
-        margin-bottom: 18px;
-        flex-direction: row;
-        align-items: center;
+    .row.mb-3.align-items-center,
+    .row.align-items-center.mb-1 {
+        margin-bottom: 18px !important;
+        flex-direction: row !important;
+        align-items: center !important;
     }
     
-    .agree-checkbox {
-        width: 16px;
-        height: 16px;
-        margin-right: 10px;
+    .form-check-input {
+        width: 16px !important;
+        height: 16px !important;
+        margin-right: 10px !important;
     }
     
-    .agree-checkbox:checked::before {
-        font-size: 14px;
-        top: -2px;
-        left: 1px;
+    .form-check-input:checked::before {
+        font-size: 14px !important;
+        top: -2px !important;
+        left: 1px !important;
     }
     
-    .agree-label {
-        font-size: 16px;
-        margin: 0;
-        margin-right: 15px;
+    .form-check-label.text-color {
+        font-size: 16px !important;
+        margin: 0 !important;
+        margin-right: 15px !important;
     }
     
-    .agree-view-btn {
-        font-size: 15px;
-        min-width: 90px;
-        margin: 0;
+    .btn.btn-sm.modalBtn {
+        font-size: 15px !important;
+        min-width: 90px !important;
+        margin: 0 !important;
     }
     
-    .agree-next-btn {
-        font-size: 16px;
-        max-width: 220px;
-        margin-top: 25px;
+    .btn.agreeBtn.w-100 {
+        font-size: 16px !important;
+        max-width: 220px !important;
+        margin-top: 25px !important;
     }
 }
 
@@ -452,18 +537,18 @@ body::before {
 /* 터치 디바이스 최적화 */
 /* ============================================ */
 @media (hover: none) and (pointer: coarse) {
-    .agree-checkbox {
-        min-width: 44px;
-        min-height: 44px;
+    .form-check-input {
+        min-width: 44px !important;
+        min-height: 44px !important;
     }
     
-    .agree-view-btn {
-        min-height: 44px;
-        min-width: 44px;
+    .btn.btn-sm.modalBtn {
+        min-height: 44px !important;
+        min-width: 44px !important;
     }
     
-    .agree-next-btn {
-        min-height: 44px;
+    .btn.agreeBtn.w-100 {
+        min-height: 44px !important;
     }
 }
 
@@ -471,12 +556,12 @@ body::before {
 /* 접근성 개선 */
 /* ============================================ */
 @media (prefers-contrast: high) {
-    .agree-checkbox {
-        border: 2px solid #000000;
+    .form-check-input {
+        border: 2px solid #000000 !important;
     }
     
-    .agree-label {
-        color: #000000;
-        font-weight: bold;
+    .form-check-label.text-color {
+        color: #000000 !important;
+        font-weight: bold !important;
     }
 }
