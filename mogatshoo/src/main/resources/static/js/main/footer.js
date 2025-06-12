@@ -1,6 +1,25 @@
 // ⭐ 모든 변수와 함수를 DOMContentLoaded 안으로 이동
 document.addEventListener("DOMContentLoaded", () => {
-	// 아이프레임에서는 푸터 숨기기
+	// 🔥 모바일 체크 함수
+	function isMobileView() {
+		return window.innerWidth <= 768;
+	}
+
+	// 🔥 모바일에서는 푸터 관련 기능 완전히 비활성화
+	if (isMobileView()) {
+		console.log('📱 모바일 환경 - 푸터 기능 비활성화');
+		
+		// 푸터 숨기기
+		const footers = document.querySelectorAll('.footer, .footer-area');
+		footers.forEach(footer => {
+			if (footer) footer.style.display = 'none';
+		});
+		
+		// 모바일에서는 푸터 관련 이벤트 리스너 등록하지 않음
+		return;
+	}
+
+	// 아이프레임에서는 푸터 숨기기 (기존 코드)
 	if (window.self !== window.top) {
 		const footers = document.querySelectorAll('.footer, .footer-area');
 		footers.forEach(footer => {
@@ -8,6 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 		return;
 	}
+
+	// 🔥 데스크톱에서만 푸터 기능 활성화
+	console.log('🖥️ 데스크톱 환경 - 푸터 기능 활성화');
 
 	updateClock();
 	setInterval(updateClock, 1000);
@@ -27,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		const startMenu = document.getElementById("start-menu");
 		const footerModal = document.getElementById("modal");
 
-		// 클릭한 곳이 어떤 모달이나 버튼도 아닐 때 모든 모달 닫기
 		if (startMenu && !startMenu.contains(e.target) && !winButton?.contains(e.target) &&
 			footerModal && !footerModal.contains(e.target) &&
 			!e.target.closest('.footer-folder') && !e.target.closest('[onclick*="openModal"]')) {
@@ -492,3 +513,19 @@ function showFooterLogoutModal() {
 function isMobileView() {
 	return window.innerWidth <= 768; // 768px 이하를 모바일로 간주
 }
+
+// 🔥 화면 크기 변경 시 푸터 표시/숨김 동적 처리
+window.addEventListener('resize', () => {
+	const footer = document.querySelector('.footer');
+	if (!footer) return;
+
+	if (window.innerWidth <= 768) {
+		// 모바일로 변경될 때 푸터 숨기기
+		footer.style.display = 'none';
+		console.log('📱 모바일 모드로 전환 - 푸터 숨김');
+	} else {
+		// 데스크톱으로 변경될 때 푸터 보이기
+		footer.style.display = 'flex';
+		console.log('🖥️ 데스크톱 모드로 전환 - 푸터 표시');
+	}
+});

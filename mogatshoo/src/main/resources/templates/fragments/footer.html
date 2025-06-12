@@ -11,18 +11,18 @@
       <div class="footer-left">
          <!-- Windows 시작 버튼 -->
          <div class="win-button" id="win-button">
-            <img th:src="@{/img/footer/startBtn.JPG}" alt="Windows" />
+            <img th:src="@{/img/footer/startBtn.png}" alt="Windows" />
             <span>시작</span>
          </div>
 
          <!-- 폴더 영역 -->
          <div class="footer-folders">
             <div class="footer-folder" onclick="openModal('terms')">
-               <img th:src="@{/img/footer/mogetshooLogo.PNG}" alt="Terms" />
+               <img th:src="@{/img/footer/question.png}" alt="Terms" />
                <span>문의 사항</span>
             </div>
             <div class="footer-folder" onclick="openModal2('company')">
-               <img th:src="@{/img/footer/mogetshooLogo.PNG}" alt="Company" />
+               <img th:src="@{/img/footer/phone.png}" alt="Company" />
                <span>이용 약관</span>
             </div>
          </div>
@@ -34,13 +34,13 @@
          <div sec:authorize="isAnonymous()" class="footer-auth">
             <div class="footer-folder">
                <a th:href="@{/member/login}" class="footer-link">
-                  <img th:src="@{/img/footer/mogetshooLogo.PNG}" alt="로그인" />
+                  <img th:src="@{/img/footer/myInfo.png}" alt="로그인" />
                   <span>로그인</span>
                </a>
             </div>
             <div class="footer-folder">
                <a th:href="@{/member/join}" class="footer-link">
-                  <img th:src="@{/img/footer/mogetshooLogo.PNG}" alt="회원가입" />
+                  <img th:src="@{/img/footer/myInfo.png}" alt="회원가입" />
                   <span>회원가입</span>
                </a>
             </div>
@@ -68,9 +68,8 @@
             </div>
             <div class="footer-folder">
                <button type="button" class="logout-btn" onclick="showFooterLogoutModal()">
-                  <img th:src="@{/img/footer/logout.jpg}" alt="로그아웃" />
+                  <img th:src="@{/img/footer/logout.png}" alt="로그아웃" />
                <span>로그아웃</span></button>
-                  
             </div>
          </div>
       </div>
