@@ -58,6 +58,10 @@ public class PointOrderHistoryEntity {
 	// 기프티콘 발송여부
 	@Column(nullable = false, columnDefinition = "char(1) default 'N'")
 	private String pointItemSendCheck;
+	
+	// 상품이름
+	@Column(nullable = false)
+	private String pointItemName;
 
 	// 생성일 자동 설정
 	@PrePersist
@@ -70,7 +74,4 @@ public class PointOrderHistoryEntity {
 	protected void onUpdate() {
 		this.pointOrderHistoryUpdate = LocalDateTime.now();
 	}
-
-	@Transient
-	private PointShopEntity pointShop;
 }

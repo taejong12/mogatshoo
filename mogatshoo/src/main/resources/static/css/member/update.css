@@ -8,9 +8,9 @@
 }
 
 /* 모든 내부 스크롤 제거 - 아이프레임 스크롤만 사용 */
-* {
+/* * {
 	overflow: visible !important;
-}
+} */ /* 이 규칙은 페이지 전체의 스크롤을 막을 수 있으므로 주석 처리하거나 신중하게 사용하세요. */
 
 /* 기본 설정 */
 html, body {
@@ -20,8 +20,10 @@ html, body {
     font-family: 'dalmoori', sans-serif !important;
     font-size: 14px !important;
     color: #000000 !important;
-    height: auto !important;
-    overflow: auto !important;
+    height: auto !important; /* 내용에 따라 높이 조절 */
+    overflow-x: hidden !important; /* 가로 스크롤 방지 */
+    overflow-y: auto !important; /* 세로 스크롤 허용 */
+    -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
 }
 
 /* Bootstrap 변수 오버라이드 */
@@ -85,8 +87,8 @@ body::before {
 
 /* 윈도우 프레임 */
 .update-container {
-    width: 100%;
-    max-width: 500px;
+    width: 100%; /* 부모에 꽉 차도록 */
+    max-width: 500px; /* 최대 너비 제한 */
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
@@ -96,7 +98,8 @@ body::before {
 .form-content {
     padding: 15px;
     background-color: #c0c0c0;
-	width: 1250px;
+	/* width: 1250px; */ /* 이 고정 너비는 제거해야 반응형이 됩니다. */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 /* 제목 */
@@ -134,6 +137,7 @@ h1 {
     font-family: 'dalmoori', sans-serif;
     color: #000000;
     box-sizing: border-box;
+    height: 28px; /* 기본 높이 설정 */
 }
 
 .form-control:focus {
@@ -151,7 +155,7 @@ h1 {
 .address-container {
     display: flex;
     gap: 8px;
-    align-items: end;
+    align-items: flex-end; /* 버튼과 인풋의 하단을 맞춤 */
 }
 
 .address-input {
@@ -169,6 +173,11 @@ h1 {
     cursor: pointer;
     font-family: 'dalmoori', sans-serif;
     white-space: nowrap;
+    height: 28px; /* 입력 필드 높이와 맞춤 */
+    display: inline-flex; /* 텍스트 중앙 정렬 */
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
 .win95-button:hover {
@@ -190,6 +199,11 @@ h1 {
     font-size: 14px;
     margin-top: 15px;
     width: 100%;
+    height: 40px; /* 높이 고정 */
+    box-sizing: border-box;
+    display: flex; /* 내부 텍스트 중앙 정렬 */
+    align-items: center;
+    justify-content: center;
 }
 
 .win95-button-primary:hover {
@@ -216,6 +230,7 @@ h1 {
     border-left: 3px solid #c00000;
     padding: 2px 6px;
     margin-top: 4px;
+    line-height: 1.3;
 }
 
 /* 안내 텍스트 */
@@ -224,6 +239,7 @@ h1 {
     font-size: 11px;
     margin-top: 2px;
     font-style: italic;
+    line-height: 1.3;
 }
 
 /* 반응형 */
@@ -233,19 +249,168 @@ h1 {
     }
     
     .update-container {
-        max-width: 100%;
+        max-width: 100%; /* 태블릿에서 최대 너비 */
+        margin: auto; /* 중앙 정렬 */
     }
     
     .form-content {
         padding: 10px;
     }
     
+    h1 {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+    
+    .form-label {
+        font-size: 13px;
+        margin-bottom: 2px;
+    }
+    
+    .form-control {
+        height: 40px; /* 높이 증가 */
+        font-size: 15px; /* 폰트 크기 증가 */
+        padding: 8px 10px; /* 패딩 조정 */
+    }
+    
     .address-container {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: column; /* 세로로 쌓기 */
+        align-items: stretch; /* 늘리기 */
+        gap: 4px; /* 간격 줄이기 */
     }
     
     .address-container .win95-button {
-        margin-top: 4px;
+        width: 100%; /* 버튼 너비 100% */
+        height: 40px; /* 입력 필드와 높이 맞춤 */
+        font-size: 15px; /* 폰트 크기 조정 */
+        margin-top: 0; /* 기존 마진 제거 */
+    }
+
+    .win95-button {
+        height: 40px; /* 일반 버튼 높이 증가 */
+        font-size: 15px; /* 폰트 크기 증가 */
+    }
+    
+    .win95-button-primary {
+        height: 48px; /* 메인 버튼 높이 증가 */
+        font-size: 16px; /* 폰트 크기 증가 */
+        padding: 10px 0; /* 패딩 조정 */
+        margin-top: 20px; /* 상단 마진 증가 */
+    }
+
+    #nickNameWarnMsg,
+    #nameWarnMsg,
+    #zipCodeWarnMsg,
+    #addr1WarnMsg,
+    #addr2WarnMsg,
+    #telWarnMsg,
+    .help-text {
+        font-size: 10px; /* 경고/도움말 텍스트 폰트 크기 조정 */
+        padding: 1px 4px; /* 패딩 조정 */
+        margin-top: 2px; /* 마진 조정 */
+    }
+}
+
+/* 스마트폰 (최대 480px) */
+@media (max-width: 480px) {
+    .pixel-bg {
+        padding: 2px;
+    }
+
+    .form-content {
+        padding: 8px;
+    }
+
+    h1 {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    .form-label {
+        font-size: 12px;
+        margin-bottom: 1px;
+    }
+
+    .form-control {
+        height: 44px; /* 높이 더 증가 */
+        font-size: 16px; /* 폰트 크기 유지 */
+        padding: 10px 12px; /* 패딩 조정 */
+    }
+
+    .address-container {
+        gap: 6px;
+    }
+
+    .address-container .win95-button {
+        height: 44px; /* 입력 필드와 높이 맞춤 */
+        font-size: 16px; /* 폰트 크기 유지 */
+        padding: 8px 10px;
+    }
+
+    .win95-button {
+        height: 44px;
+        font-size: 16px;
+        padding: 8px 10px;
+    }
+
+    .win95-button-primary {
+        height: 52px; /* 메인 버튼 높이 더 증가 */
+        font-size: 18px; /* 폰트 크기 더 증가 */
+        padding: 12px 0;
+        margin-top: 15px;
+    }
+
+    #nickNameWarnMsg,
+    #nameWarnMsg,
+    #zipCodeWarnMsg,
+    #addr1WarnMsg,
+    #addr2WarnMsg,
+    #telWarnMsg,
+    .help-text {
+        font-size: 9px; /* 폰트 크기 더 작게 */
+        padding: 1px 3px;
+        margin-top: 1px;
+    }
+}
+
+/* 매우 작은 스마트폰 (최대 320px) */
+@media (max-width: 320px) {
+    .form-content {
+        padding: 5px;
+    }
+    h1 {
+        font-size: 14px;
+    }
+    .form-label {
+        font-size: 11px;
+    }
+    .form-control {
+        height: 40px;
+        font-size: 14px;
+        padding: 6px 8px;
+    }
+    .address-container .win95-button {
+        height: 40px;
+        font-size: 14px;
+        padding: 6px 8px;
+    }
+    .win95-button {
+        height: 40px;
+        font-size: 14px;
+        padding: 6px 8px;
+    }
+    .win95-button-primary {
+        height: 48px;
+        font-size: 16px;
+        padding: 10px 0;
+    }
+    #nickNameWarnMsg,
+    #nameWarnMsg,
+    #zipCodeWarnMsg,
+    #addr1WarnMsg,
+    #addr2WarnMsg,
+    #telWarnMsg,
+    .help-text {
+        font-size: 8px;
     }
 }

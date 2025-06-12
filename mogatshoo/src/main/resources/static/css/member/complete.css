@@ -1,170 +1,303 @@
 @charset "UTF-8";
 
 body {
-background-image: url('/img/background/95background.jpg') !important;
-background-size: cover !important;
-background-position: center !important;
-background-repeat: no-repeat !important;
-margin: 0;
-padding: 0;
-height: 100vh;
+    background-image: url('/img/background/95background.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-y: auto; /* 모바일에서 스크롤 가능하도록 */
+    -webkit-overflow-scrolling: touch; /* 부드러운 스크롤 */
 }
 
 /* 기존 layout.css의 body::before 오버라이드 */
 body::before {
-display: none !important;
+    display: none !important;
 }
 
 .windows95-container {
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 .windows95-dialog {
-background: #c0c0c0;
-border: 2px outset #c0c0c0;
-box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-font-size: 15px;
-width: 480px;
-position: relative;
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: 15px;
+    width: 480px; /* 기본 너비 */
+    max-width: 95%; /* 화면 크기에 맞춰 최대 너비 제한 */
+    position: relative;
+    box-sizing: border-box;
+    margin: auto; /* 중앙 정렬 */
 }
 
 .title-bar {
-background: linear-gradient(90deg, #0000ff 0%, #000080 100%);
-color: white;
-padding: 4px 6px;
-font-weight: bold;
-display: flex;
-justify-content: space-between;
-align-items: center;
-font-size: 15px;
+    background: linear-gradient(90deg, #0000ff 0%, #000080 100%);
+    color: white;
+    padding: 4px 6px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
 }
 
 .title-bar-text {
-display: flex;
-align-items: center;
-gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .title-bar-controls {
-display: flex;
-gap: 2px;
+    display: flex;
+    gap: 2px;
 }
 
 .title-bar-control {
-width: 18px;
-height: 16px;
-background: #c0c0c0;
-border: 1px outset #c0c0c0;
-font-size: 10px;
-text-align: center;
-line-height: 14px;
-cursor: pointer;
-font-weight: bold;
+    width: 18px;
+    height: 16px;
+    background: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    font-size: 10px;
+    text-align: center;
+    line-height: 14px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 .title-bar-control:active {
-border: 1px inset #c0c0c0;
+    border: 1px inset #c0c0c0;
 }
 
 .dialog-content {
-padding: 25px;
-text-align: center;
+    padding: 25px;
+    text-align: center;
 }
 
 .dialog-icon {
-width: 56px;
-height: 56px;
-margin: 0 auto 20px auto;
-background: #c0c0c0;
-border: 2px inset #c0c0c0;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 38px;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 20px auto;
+    background: #c0c0c0;
+    border: 2px inset #c0c0c0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
 }
 
 .complete-title {
-font-size: 18px;
-font-weight: bold;
-margin-bottom: 20px;
-color: #000080;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #000080;
 }
 
 .complete-message {
-font-size: 15px;
-margin-bottom: 25px;
-line-height: 1.5;
-color: #000000;
+    font-size: 15px;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    color: #000000;
 }
 
 .button-group {
-display: flex;
-justify-content: center;
-gap: 15px;
-flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
 }
 
 .windows95-button {
-background: #c0c0c0;
-border: 2px outset #c0c0c0;
-padding: 8px 25px;
-font-size: 15px;
-cursor: pointer;
-min-width: 100px;
-height: 35px;
-text-decoration: none;
-color: black;
-display: inline-block;
-text-align: center;
-line-height: 19px;
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    padding: 8px 25px;
+    font-size: 15px;
+    cursor: pointer;
+    min-width: 100px;
+    height: 35px;
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    text-align: center;
+    line-height: 19px;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 .windows95-button:hover {
-background: #d4d4d4;
-color: black;
-text-decoration: none;
+    background: #d4d4d4;
+    color: black;
+    text-decoration: none;
 }
 
 .windows95-button:active {
-border: 2px inset #c0c0c0;
+    border: 2px inset #c0c0c0;
 }
 
 .windows95-button.primary {
-border: 3px outset #c0c0c0;
-font-weight: bold;
+    border: 3px outset #c0c0c0;
+    font-weight: bold;
 }
 
 /* 각 완료 타입별 아이콘 */
 .icon-join::before {
-content: "👤";
+    content: "👤";
 }
 
 .icon-find-id::before {
-content: "📧";
+    content: "📧";
 }
 
 .icon-find-pwd::before {
-content: "🔑";
+    content: "🔑";
 }
 
-/* 반응형 */
-@media (max-width: 576px) {
-.windows95-dialog {
-width: 90%;
-max-width: 420px;
+/* --- 모바일 반응형 --- */
+
+/* 태블릿 (최대 768px) */
+@media (max-width: 768px) {
+    .windows95-dialog {
+        width: 90%; /* 태블릿에서 너비를 90%로 조정 */
+        max-width: 480px; /* 최대 너비는 유지 */
+        font-size: 14px;
+        padding: 15px; /* 패딩 약간 줄임 */
+    }
+
+    .title-bar {
+        font-size: 14px;
+        padding: 3px 5px;
+    }
+
+    .title-bar-control {
+        width: 16px;
+        height: 14px;
+        line-height: 12px;
+        font-size: 9px;
+    }
+
+    .dialog-content {
+        padding: 20px; /* 패딩 약간 줄임 */
+    }
+
+    .dialog-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 34px;
+        margin-bottom: 15px;
+    }
+
+    .complete-title {
+        font-size: 17px;
+        margin-bottom: 15px;
+    }
+
+    .complete-message {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .windows95-button {
+        padding: 6px 20px;
+        font-size: 14px;
+        height: 32px;
+        line-height: normal; /* 줄 간격 초기화 */
+    }
 }
 
-.button-group {
-flex-direction: column;
-align-items: center;
+/* 스마트폰 (최대 480px) */
+@media (max-width: 480px) {
+    .windows95-container {
+        padding: 15px;
+        align-items: flex-start; /* 상단 정렬로 변경하여 작은 화면에서 잘림 방지 */
+        padding-top: 40px; /* 상단 패딩 */
+        padding-bottom: 40px; /* 하단 패딩 */
+    }
+
+    .windows95-dialog {
+        width: 100%; /* 스마트폰에서 거의 전체 너비 사용 */
+        max-width: none; /* 최대 너비 제한 해제 */
+        font-size: 13px;
+    }
+
+    .title-bar {
+        font-size: 13px;
+        padding: 2px 4px;
+    }
+
+    .dialog-content {
+        padding: 15px;
+    }
+
+    .dialog-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 30px;
+        margin-bottom: 15px;
+    }
+
+    .complete-title {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+
+    .complete-message {
+        font-size: 13px;
+        margin-bottom: 18px;
+        line-height: 1.4;
+    }
+
+    .button-group {
+        flex-direction: column; /* 버튼 세로로 쌓기 */
+        gap: 10px;
+    }
+
+    .windows95-button {
+        width: 100%; /* 버튼 너비 전체 */
+        max-width: 200px; /* 너무 넓어지지 않도록 제한 */
+        margin: 0 auto; /* 중앙 정렬 */
+        padding: 10px 0; /* 세로 패딩 증가 */
+        height: auto; /* 높이 자동 조정 */
+        font-size: 16px; /* 버튼 폰트 크기 증가 */
+    }
 }
 
-.windows95-button {
-width: 220px;
-margin-bottom: 10px;
-}
+/* 매우 작은 스마트폰 (최대 320px) */
+@media (max-width: 320px) {
+    .windows95-dialog {
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    .title-bar {
+        font-size: 12px;
+    }
+
+    .dialog-content {
+        padding: 10px;
+    }
+
+    .dialog-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 26px;
+    }
+
+    .complete-title {
+        font-size: 15px;
+    }
+
+    .complete-message {
+        font-size: 12px;
+    }
+
+    .windows95-button {
+        font-size: 14px;
+        padding: 8px 0;
+    }
 }

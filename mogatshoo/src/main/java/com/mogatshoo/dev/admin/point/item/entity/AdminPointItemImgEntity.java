@@ -45,9 +45,9 @@ public class AdminPointItemImgEntity {
 	@Column(nullable = false)
 	private Long pointItemId;
 
-	// 실제 파일 저장 아이디
-	@Column(nullable = false)
-	private String pointItemImgFileId;
+	// 이지미 URL
+	@Column(name="point_item_img_url", nullable = false)
+	private String pointItemImgURL;
 	
 	// 수정일 자동 설정
 	@PreUpdate

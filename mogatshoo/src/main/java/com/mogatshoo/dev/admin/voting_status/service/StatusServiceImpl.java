@@ -125,8 +125,10 @@ public class StatusServiceImpl implements StatusService {
             // 통계 엔티티 생성
             StatusEntity statusEntity = createStatusEntity(questionDetail, totalMembers);
             
-            logger.info("질문별 통계 조회 완료 - 질문번호: {}, 전체투표수: {}", 
-                       serialNumber, statusEntity != null ? statusEntity.getTotalVotes() : 0);
+            logger.info("질문별 통계 조회 완료 - 질문번호: {}, 전체투표수: {}, 최다득표율: {}%", 
+                       serialNumber, 
+                       statusEntity != null ? statusEntity.getTotalVotes() : 0,
+                       statusEntity != null ? statusEntity.getFormattedTopVotedRate() : "0.00%");
             return statusEntity;
             
         } catch (Exception e) {
@@ -149,16 +151,26 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public List<StatusEntity> getEmailEligibleQuestions() {
-        logger.info("이메일 전송 가능 질문 조회 시작");
+        logger.info("이메일 전송 가능 질문 조회 시작 (새로운 조건: 참여율 50% + 득표율 40%)");
         
         try {
             List<StatusEntity> allStatistics = getAllVotingStatistics();
             
+            // **업데이트된 필터링 조건**
             List<StatusEntity> eligibleQuestions = allStatistics.stream()
-                    .filter(stat -> stat.getEmailEligible() != null && stat.getEmailEligible())
+                    .filter(stat -> {
+                        boolean isEnded = "종료".equals(stat.getCurrentVotingStatus());
+                        boolean hasEnoughParticipation = stat.getParticipationRate() != null && stat.getParticipationRate() >= 50.0;
+                        boolean hasEnoughTopVotedRate = stat.getTopVotedRate() != null && stat.getTopVotedRate() >= 40.0;
+                        
+                        logger.debug("질문 {}: 종료={}, 참여율={}%(>=50%), 득표율={}%(>=40%)", 
+                                    stat.getSerialNumber(), isEnded, stat.getParticipationRate(), stat.getTopVotedRate());
+                        
+                        return isEnded && hasEnoughParticipation && hasEnoughTopVotedRate;
+                    })
                     .collect(Collectors.toList());
                     
-            logger.info("이메일 전송 가능 질문 {}개 조회 완료", eligibleQuestions.size());
+            logger.info("이메일 전송 가능 질문 {}개 조회 완료 (조건: 참여율≥50% AND 득표율≥40%)", eligibleQuestions.size());
             return eligibleQuestions;
                     
         } catch (Exception e) {
@@ -186,7 +198,8 @@ public class StatusServiceImpl implements StatusService {
     }
 
     /**
-     * 질문 정보를 바탕으로 StatusEntity 생성
+     * **업데이트된 질문 정보를 바탕으로 StatusEntity 생성**
+     * 최다득표율 계산 로직 추가
      */
     private StatusEntity createStatusEntity(Map<String, Object> questionInfo, Long totalMembers) {
         String serialNumber = (String) questionInfo.get("serialNumber");
@@ -275,12 +288,16 @@ public class StatusServiceImpl implements StatusService {
             statusEntity.setUniqueVoters((Long) voteStats.get("uniqueVoters"));
             statusEntity.setVoteDetails((Map<String, Long>) voteStats.get("voteDetails"));
             
-            // 멤버 정보 및 투표율 계산
+            // 멤버 정보 및 모든 비율 계산 (최다득표율 포함)
             statusEntity.setTotalMembers(totalMembers);
-            statusEntity.calculateRates();
+            statusEntity.calculateRates(); // 이 메서드에서 topVotedRate도 계산됨
             
-            logger.debug("StatusEntity 생성 완료 - 질문번호: {}, 투표상태: {}", 
-                        serialNumber, statusEntity.getCurrentVotingStatus());
+            logger.debug("StatusEntity 생성 완료 - 질문번호: {}, 투표상태: {}, 참여율: {}%, 득표율: {}%, 이메일발송가능: {}", 
+                        serialNumber, 
+                        statusEntity.getCurrentVotingStatus(),
+                        statusEntity.getFormattedParticipationRate(),
+                        statusEntity.getFormattedTopVotedRate(),
+                        statusEntity.isEmailEligible());
             
             return statusEntity;
             

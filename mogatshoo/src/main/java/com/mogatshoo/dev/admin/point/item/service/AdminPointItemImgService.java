@@ -23,4 +23,8 @@ public interface AdminPointItemImgService {
 
 	boolean pointCategoryImgCheck(String pointCategoryName);
 
+	void updatePointItemImgPathAndURL(List<AdminPointItemImgEntity> pointItemImgList);
+
+	List<AdminPointItemImgEntity> findByPointItemIdIn(List<AdminPointItemEntity> pointItemList);
+
 }

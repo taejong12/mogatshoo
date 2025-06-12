@@ -10,7 +10,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%);
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -255,6 +255,16 @@ body {
     height: 100%;
     border-radius: 4px;
     transition: width 0.8s ease;
+}
+
+/* 득표율 관련 새로 추가된 스타일 */
+.email-condition-badge {
+    text-align: center;
+}
+
+.email-condition-badge .badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
 }
 
 .btn-email {

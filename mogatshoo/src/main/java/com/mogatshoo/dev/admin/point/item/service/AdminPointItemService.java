@@ -1,11 +1,13 @@
 package com.mogatshoo.dev.admin.point.item.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
+import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 
 public interface AdminPointItemService {
 
@@ -22,5 +24,7 @@ public interface AdminPointItemService {
 	void updatePointItem(AdminPointItemEntity adminPointItemEntity);
 
 	Map<String, Object> deletePointCategoryCheck(Integer pointCategoryId);
+
+	List<AdminPointItemEntity> findByPointCategoryId(Integer categoryId);
 
 }

@@ -1,40 +1,40 @@
-HELP.md
-.gradle
+# 빌드 & 로그
+.gradle/
 build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 logs/
 
-### STS ###
-.metadata
-.apt_generated
+# 환경 설정 보호
+/src/main/resources/application.properties
+
+# IDE & 툴 관련
+.idea/
+.vscode/
+.metadata/
+.apt_generated/
 .classpath
 .factorypath
 .project
 .settings
 .springBeans
 .sts4-cache
-/src/main/resources/application.properties
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
+# STS, IntelliJ, NetBeans, VS Code 관련
 *.iws
 *.iml
 *.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
-.vscode/
+# bin & out
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# wrapper
+!gradle/wrapper/gradle-wrapper.jar

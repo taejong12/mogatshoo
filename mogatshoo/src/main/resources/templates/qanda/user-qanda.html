@@ -6,6 +6,36 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
+		/* 🔥 기존 <style> 태그 맨 위에 이것만 추가 */
+
+		/* Bootstrap 충돌 방지 - 최소한의 수정 */
+		html, body {
+		    height: 100vh !important;
+		    overflow: hidden !important;
+		    margin: 0 !important;
+		    padding: 0 !important;
+		}
+
+		/* Bootstrap 가상요소 제거 */
+		body::before, body::after {
+		    display: none !important;
+		    content: none !important;
+		}
+
+		/* Bootstrap 변수 무력화 */
+		:root {
+		    --bs-body-bg: #c0c0c0 !important;
+		    --bs-body-color: #000000 !important;
+		    --bs-body-font-family: 'MS Sans Serif', sans-serif !important;
+		}
+
+		/* 채팅 컨테이너 우선순위 높이기 */
+		.chat-container {
+		    position: relative !important;
+		    z-index: 1000 !important;
+		}
+
+		/* 기존 CSS는 그대로 두고... */
         @font-face {
             font-family: 'dalmoori';
             src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
@@ -297,7 +327,7 @@
         @media (max-width: 480px) {
             .chat-container {
                 width: 100%;
-                height: 100vh;
+                height: 91vh;
             }
             
             .message-bubble {
@@ -352,414 +382,420 @@
 		<!-- SockJS와 STOMP 라이브러리 -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-		
 		<script>
-			let stompClient = null;
-			let username = null;
-			let roomId = null;
-			let connected = false;
-			let isSubscribed = false;
-			let messageIds = new Set();
-			let chatEnded = false; // 채팅 종료 상태
+		    // 🔥 즉시 실행으로 DOM 준비 확인
+		    (function() {
+		        console.log('🚀 채팅 페이지 로딩 시작');
+		        
+		        let stompClient = null;
+		        let username = null;
+		        let roomId = null;
+		        let connected = false;
+		        let isSubscribed = false;
+		        let messageIds = new Set();
+		        let chatEnded = false;
+		        let initialized = false;
 
-			const connectionStatus = document.getElementById('connectionStatus');
-			const statusInfo = document.getElementById('statusInfo');
-			const messageInput = document.getElementById('messageInput');
-			const sendButton = document.getElementById('sendButton');
-			const endChatButton = document.getElementById('endChatButton');
-			const messagesDiv = document.getElementById('messages');
-			const userInfo = document.getElementById('userInfo');
-			const inputContainer = document.getElementById('inputContainer');
+		        // 🔥 DOM 요소 확인 함수
+		        function waitForElements() {
+		            return new Promise((resolve) => {
+		                function checkElements() {
+		                    const elements = [
+		                        document.getElementById('connectionStatus'),
+		                        document.getElementById('statusInfo'),
+		                        document.getElementById('messageInput'),
+		                        document.getElementById('sendButton'),
+		                        document.getElementById('endChatButton'),
+		                        document.getElementById('messages'),
+		                        document.getElementById('userInfo'),
+		                        document.getElementById('inputContainer')
+		                    ];
+		                    
+		                    const allReady = elements.every(el => el !== null);
+		                    console.log('DOM 요소 체크:', allReady ? '✅ 완료' : '❌ 대기중');
+		                    
+		                    if (allReady) {
+		                        resolve(elements);
+		                    } else {
+		                        setTimeout(checkElements, 50);
+		                    }
+		                }
+		                checkElements();
+		            });
+		        }
 
-			// 페이지 로드 시 초기화
-			window.addEventListener('load', async function() {
-				console.log('페이지 로드 시작');
-				
-				await loadUserInfo();
-				setupRoomId();
-				await loadChatHistory();
-				connect();
-				setupEventListeners();
-			});
+		        // 🔥 메인 초기화 함수
+		        async function initialize() {
+		            if (initialized) {
+		                console.log('이미 초기화됨, 중복 실행 방지');
+		                return;
+		            }
+		            
+		            try {
+		                console.log('📋 초기화 시작...');
+		                
+		                // 1. DOM 요소들이 준비될 때까지 대기
+		                const elements = await waitForElements();
+		                console.log('✅ DOM 요소들 준비 완료');
+		                
+		                // 2. 전역 변수로 DOM 요소들 설정
+		                window.chatElements = {
+		                    connectionStatus: elements[0],
+		                    statusInfo: elements[1],
+		                    messageInput: elements[2],
+		                    sendButton: elements[3],
+		                    endChatButton: elements[4],
+		                    messagesDiv: elements[5],
+		                    userInfo: elements[6],
+		                    inputContainer: elements[7]
+		                };
+		                
+		                // 3. 즉시 UI 활성화 (사용자가 바로 볼 수 있도록)
+		                elements[1].textContent = '연결됨';
+		                elements[1].className = 'connection-status connected';
+		                console.log('✅ UI 즉시 활성화');
+		                
+		                // 4. 이벤트 리스너 설정
+		                setupEventListeners();
+		                console.log('✅ 이벤트 리스너 설정 완료');
+		                
+		                // 5. 사용자 정보 로드 (백그라운드)
+		                setTimeout(async () => {
+		                    await loadUserInfo();
+		                    setupRoomId();
+		                    await loadChatHistory();
+		                    connect();
+		                }, 100);
+		                
+		                initialized = true;
+		                console.log('🎉 초기화 완료!');
+		                
+		            } catch (error) {
+		                console.error('❌ 초기화 실패:', error);
+		            }
+		        }
 
-			// 사용자 정보 로드
-			async function loadUserInfo() {
-				try {
-					username = '[[${#authentication.name}]]' || null;
-					
-					if (!username || username === '[[${#authentication.name}]]') {
-						const response = await fetch('/qanda/api/user/info', {
-							credentials: 'same-origin'
-						});
-						if (response.ok) {
-							const userInfoData = await response.json();
-							username = userInfoData.memberId;
-						}
-					}
-					
-					if (!username) {
-						username = 'guest_' + Date.now();
-						userInfo.textContent = '게스트';
-					} else {
-						userInfo.textContent = `${username}님`;
-					}
-					
-					console.log('사용자 정보 로드 완료:', username);
-					
-				} catch (error) {
-					console.error('사용자 정보 로드 실패:', error);
-					username = 'guest_' + Date.now();
-					userInfo.textContent = '게스트';
-				}
-			}
+		        // 🔥 이벤트 리스너 설정
+		        function setupEventListeners() {
+		            const { sendButton, endChatButton, messageInput } = window.chatElements;
+		            
+		            sendButton.addEventListener('click', sendMessage);
+		            endChatButton.addEventListener('click', endChat);
+		            
+		            messageInput.addEventListener('keypress', function(e) {
+		                if (e.key === 'Enter' && !e.shiftKey) {
+		                    e.preventDefault();
+		                    if (messageInput.value.trim()) {
+		                        sendMessage();
+		                    }
+		                }
+		            });
 
-			// 방 ID 설정
-			function setupRoomId() {
-				roomId = username; // member ID를 방 ID로 사용
-				console.log('Room ID 설정:', roomId);
-			}
+		            messageInput.addEventListener('input', function() {
+		                // 자동 크기 조절
+		                messageInput.style.height = 'auto';
+		                messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
+		                
+		                // 채팅 종료 상태 안내
+		                if (chatEnded && messageInput.value.trim()) {
+		                    window.chatElements.statusInfo.textContent = 'Enter를 누르면 새로운 문의가 시작됩니다.';
+		                    window.chatElements.statusInfo.className = 'connection-status';
+		                } else if (chatEnded) {
+		                    window.chatElements.statusInfo.textContent = '채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.';
+		                    window.chatElements.statusInfo.className = 'connection-status disconnected';
+		                }
+		            });
+		        }
 
-			// 채팅 내역 로드 (🔥 수정된 버전)
-			async function loadChatHistory() {
-				try {
-					console.log('채팅 내역 로드 시작...');
-					
-					const response = await fetch(`/qanda/api/rooms/${roomId}/messages`, {
-						credentials: 'same-origin'
-					});
-					
-					if (response.ok) {
-						const messages = await response.json();
-						console.log('로드된 메시지 수:', messages.length);
-						
-						// 메시지가 있으면 기존 환영 메시지 제거하고 실제 메시지들 표시
-						if (messages.length > 0) {
-							messagesDiv.innerHTML = '';
-							
-							// 메시지들 표시
-							messages.forEach(message => {
-								displayMessage(message, false);
-							});
-							
-							// 🔥 마지막 메시지가 채팅 종료 메시지인지 확인
-							const lastMessage = messages[messages.length - 1];
-							if (lastMessage.type === 'END') {
-								console.log('마지막 메시지가 종료 메시지 - 종료 상태 유지');
-								chatEnded = true;
-								disableChatInput('채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.');
-							}
-						} else {
-							// 메시지가 없으면 환영 메시지 유지
-							console.log('기존 채팅 내역 없음 - 환영 메시지 유지');
-						}
-					} else {
-						console.log('기존 채팅 내역 없음');
-					}
-					
-				} catch (error) {
-					console.error('채팅 내역 로드 실패:', error);
-				}
-			}
+		        // 사용자 정보 로드
+		        async function loadUserInfo() {
+		            try {
+		                console.log('👤 사용자 정보 로드 중...');
+		                
+		                // Thymeleaf 값 시도
+		                username = '[[${#authentication.name}]]' || null;
+		                
+		                if (!username || username === '[[${#authentication.name}]]' || username === 'anonymousUser') {
+		                    // API 호출
+		                    const response = await fetch('/qanda/api/user/info', {
+		                        credentials: 'same-origin'
+		                    });
+		                    if (response.ok) {
+		                        const userInfoData = await response.json();
+		                        username = userInfoData.memberId;
+		                    }
+		                }
+		                
+		                if (!username) {
+		                    username = 'guest_' + Date.now();
+		                    window.chatElements.userInfo.textContent = '게스트';
+		                } else {
+		                    window.chatElements.userInfo.textContent = `${username}님`;
+		                }
+		                
+		                console.log('✅ 사용자 정보:', username);
+		                
+		            } catch (error) {
+		                console.error('❌ 사용자 정보 로드 실패:', error);
+		                username = 'guest_' + Date.now();
+		                window.chatElements.userInfo.textContent = '게스트';
+		            }
+		        }
 
-			// 웹소켓 연결
-			function connect() {
-				if (stompClient && connected) {
-					console.log('이미 연결되어 있음');
-					return;
-				}
-				
-				const socket = new SockJS('/ws');
-				stompClient = Stomp.over(socket);
-				
-				stompClient.connect({}, function(frame) {
-					console.log('Connected: ' + frame);
-					connected = true;
-					updateConnectionStatus('연결됨', 'connected');
-					
-					subscribeToRoom();
-					
-				}, function(error) {
-					console.log('Connection error: ' + error);
-					connected = false;
-					isSubscribed = false;
-					updateConnectionStatus('연결 실패', 'disconnected');
-					
-					setTimeout(() => {
-						if (!connected) {
-							console.log('재연결 시도...');
-							connect();
-						}
-					}, 5000);
-				});
-			}
+		        function setupRoomId() {
+		            roomId = username;
+		            console.log('🏠 Room ID 설정:', roomId);
+		        }
 
-			// 방 구독
-			function subscribeToRoom() {
-				if (!stompClient || !connected || !roomId || isSubscribed) {
-					console.log('구독 조건 미충족');
-					return;
-				}
-				
-				console.log('방 구독 시작:', roomId);
-				
-				try {
-					stompClient.subscribe('/topic/room.' + roomId, function(message) {
-						console.log('WebSocket 메시지 받음:', message.body);
-						const chatMessage = JSON.parse(message.body);
-						
-						if (displayMessage(chatMessage, true)) {
-							// 관리자 메시지를 받으면 채팅 종료 상태 해제
-							if (chatMessage.sender === '관리자' && chatEnded) {
-								chatEnded = false;
-								enableChatInput();
-							}
-						}
-					});
-					
-					isSubscribed = true;
-					console.log('방 구독 완료');
-					
-				} catch (error) {
-					console.error('구독 중 오류:', error);
-					isSubscribed = false;
-				}
-			}
+		        async function loadChatHistory() {
+		            try {
+		                console.log('💬 채팅 내역 로드 중...');
+		                
+		                const response = await fetch(`/qanda/api/rooms/${roomId}/messages`, {
+		                    credentials: 'same-origin'
+		                });
+		                
+		                if (response.ok) {
+		                    const messages = await response.json();
+		                    
+		                    if (messages.length > 0) {
+		                        window.chatElements.messagesDiv.innerHTML = '';
+		                        
+		                        messages.forEach(message => {
+		                            displayMessage(message, false);
+		                        });
+		                        
+		                        const lastMessage = messages[messages.length - 1];
+		                        if (lastMessage.type === 'END') {
+		                            chatEnded = true;
+		                            disableChatInput('채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.');
+		                        }
+		                    }
+		                }
+		                
+		                console.log('✅ 채팅 내역 로드 완료');
+		                
+		            } catch (error) {
+		                console.error('❌ 채팅 내역 로드 실패:', error);
+		            }
+		        }
 
-			// 메시지 전송
-			function sendMessage() {
-				const content = messageInput.value.trim();
-				if (!content) return;
-				
-				console.log('메시지 전송 시도 - 채팅 종료 상태:', chatEnded);
-				
-				if (!connected || !roomId) {
-					alert('연결이 끊어졌습니다. 잠시 후 다시 시도해주세요.');
-					return;
-				}
+		        function connect() {
+		            if (stompClient && connected) {
+		                console.log('이미 연결되어 있음');
+		                return;
+		            }
+		            
+		            console.log('🔌 WebSocket 연결 중...');
+		            
+		            const socket = new SockJS('/ws');
+		            stompClient = Stomp.over(socket);
+		            
+		            stompClient.connect({}, function(frame) {
+		                console.log('✅ WebSocket 연결 성공');
+		                connected = true;
+		                updateConnectionStatus('연결됨', 'connected');
+		                subscribeToRoom();
+		            }, function(error) {
+		                console.error('❌ WebSocket 연결 실패:', error);
+		                connected = false;
+		                updateConnectionStatus('연결 실패', 'disconnected');
+		                
+		                setTimeout(() => {
+		                    if (!connected) {
+		                        console.log('🔄 재연결 시도...');
+		                        connect();
+		                    }
+		                }, 5000);
+		            });
+		        }
 
-				// 채팅이 종료된 상태에서 새 메시지를 보내면 재시작 메시지 먼저 전송
-				if (chatEnded) {
-					console.log('채팅 재시작!');
-					
-					// 재시작 메시지 생성
-					const now = new Date();
-					const timeString = now.toLocaleString('ko-KR', {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric',
-						hour: '2-digit',
-						minute: '2-digit'
-					});
+		        function subscribeToRoom() {
+		            if (!stompClient || !connected || !roomId || isSubscribed) return;
+		            
+		            try {
+		                stompClient.subscribe('/topic/room.' + roomId, function(message) {
+		                    const chatMessage = JSON.parse(message.body);
+		                    
+		                    if (displayMessage(chatMessage, true)) {
+		                        if (chatMessage.sender === '관리자' && chatEnded) {
+		                            chatEnded = false;
+		                            enableChatInput();
+		                        }
+		                    }
+		                });
+		                
+		                isSubscribed = true;
+		                console.log('✅ 방 구독 완료');
+		                
+		            } catch (error) {
+		                console.error('❌ 구독 실패:', error);
+		            }
+		        }
 
-					const restartMessage = {
-						type: 'RESTART',
-						content: `---- ${timeString} 새로운 문의가 시작되었습니다 ----`,
-						sender: username,
-						roomId: roomId,
-						timestamp: new Date().getTime()
-					};
+		        function sendMessage() {
+		            const content = window.chatElements.messageInput.value.trim();
+		            if (!content || !connected || !roomId) return;
 
-					// 재시작 메시지 로컬 표시 및 서버 전송
-					displayMessage(restartMessage, false);
-					stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(restartMessage));
-					
-					chatEnded = false;
-					enableChatInput();
-				}
+		            if (chatEnded) {
+		                const now = new Date();
+		                const timeString = now.toLocaleString('ko-KR', {
+		                    year: 'numeric', month: 'long', day: 'numeric',
+		                    hour: '2-digit', minute: '2-digit'
+		                });
 
-				sendButton.disabled = true;
-				
-				const chatMessage = {
-					type: 'CHAT',
-					content: content,
-					sender: username,
-					roomId: roomId,
-					timestamp: new Date().getTime()
-				};
+		                const restartMessage = {
+		                    type: 'RESTART',
+		                    content: `---- ${timeString} 새로운 문의가 시작되었습니다 ----`,
+		                    sender: username, roomId: roomId,
+		                    timestamp: new Date().getTime()
+		                };
 
-				console.log('전송할 메시지:', chatMessage);
-				
-				try {
-					stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
-					messageInput.value = '';
-					autoResizeTextarea();
-				} catch (error) {
-					console.error('메시지 전송 오류:', error);
-					alert('메시지 전송에 실패했습니다.');
-				} finally {
-					setTimeout(() => {
-						if (!chatEnded) { // 채팅이 종료되지 않은 상태에서만 버튼 활성화
-							sendButton.disabled = false;
-						}
-					}, 500);
-				}
-			}
+		                displayMessage(restartMessage, false);
+		                stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(restartMessage));
+		                
+		                chatEnded = false;
+		                enableChatInput();
+		            }
 
-			// 채팅 종료
-			function endChat() {
-				if (!connected || !roomId || chatEnded) {
-					return;
-				}
+		            window.chatElements.sendButton.disabled = true;
+		            
+		            const chatMessage = {
+		                type: 'CHAT', content: content, sender: username,
+		                roomId: roomId, timestamp: new Date().getTime()
+		            };
 
-				if (confirm('채팅을 종료하시겠습니까?')) {
-					const now = new Date();
-					const timeString = now.toLocaleString('ko-KR', {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric',
-						hour: '2-digit',
-						minute: '2-digit'
-					});
+		            try {
+		                stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
+		                window.chatElements.messageInput.value = '';
+		                window.chatElements.messageInput.style.height = 'auto';
+		            } catch (error) {
+		                console.error('메시지 전송 오류:', error);
+		            } finally {
+		                setTimeout(() => {
+		                    if (!chatEnded) {
+		                        window.chatElements.sendButton.disabled = false;
+		                    }
+		                }, 500);
+		            }
+		        }
 
-					const endMessage = {
-						type: 'END',
-						content: `---- ${timeString} 채팅이 종료되었습니다. 오늘도 행복한 하루 보내세요! ----`,
-						sender: username,
-						roomId: roomId,
-						timestamp: new Date().getTime()
-					};
+		        function endChat() {
+		            if (!connected || !roomId || chatEnded) return;
 
-					try {
-						// 로컬에 즉시 표시
-						displayMessage(endMessage, false);
-						
-						// 서버에 전송
-						stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(endMessage));
-						
-						// 채팅 종료 상태로 변경
-						chatEnded = true;
-						disableChatInput('채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.');
-						
-					} catch (error) {
-						console.error('채팅 종료 메시지 전송 오류:', error);
-					}
-				}
-			}
+		            if (confirm('채팅을 종료하시겠습니까?')) {
+		                const now = new Date();
+		                const timeString = now.toLocaleString('ko-KR', {
+		                    year: 'numeric', month: 'long', day: 'numeric',
+		                    hour: '2-digit', minute: '2-digit'
+		                });
 
-			// 메시지 표시
-			function displayMessage(message, checkDuplicate = false) {
-				if (message.type === 'JOIN') return false;
-				
-				const messageId = message.timestamp || message.createdAt || (message.sender + message.content + Date.now());
-				
-				if (checkDuplicate && messageIds.has(messageId)) {
-					console.log('중복 메시지 무시:', messageId);
-					return false;
-				}
-				
-				if (checkDuplicate) {
-					messageIds.add(messageId);
-				}
-				
-				const messageDiv = document.createElement('div');
-				
-				if (message.type === 'END' || message.type === 'RESTART') {
-					messageDiv.className = 'message system';
-					messageDiv.innerHTML = `
-						<div class="message-bubble">${message.content}</div>
-					`;
-				} else {
-					messageDiv.className = 'message ' + (message.sender === username ? 'mine' : 'other');
-					
-					const bubble = document.createElement('div');
-					bubble.className = 'message-bubble';
-					bubble.textContent = message.content;
+		                const endMessage = {
+		                    type: 'END',
+		                    content: `---- ${timeString} 채팅이 종료되었습니다. 오늘도 행복한 하루 보내세요! ----`,
+		                    sender: username, roomId: roomId,
+		                    timestamp: new Date().getTime()
+		                };
 
-					const time = document.createElement('div');
-					time.className = 'message-time';
-					
-					const messageTime = message.createdAt ? new Date(message.createdAt) : new Date();
-					time.textContent = messageTime.toLocaleTimeString('ko-KR', {
-						hour: '2-digit',
-						minute: '2-digit'
-					});
+		                displayMessage(endMessage, false);
+		                stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(endMessage));
+		                
+		                chatEnded = true;
+		                disableChatInput('채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.');
+		            }
+		        }
 
-					messageDiv.appendChild(bubble);
-					messageDiv.appendChild(time);
-				}
-				
-				messagesDiv.appendChild(messageDiv);
-				messagesDiv.scrollTop = messagesDiv.scrollHeight;
-				
-				return true;
-			}
+		        function displayMessage(message, checkDuplicate = false) {
+		            if (message.type === 'JOIN') return false;
+		            
+		            const messageId = message.timestamp || message.createdAt || (message.sender + message.content + Date.now());
+		            
+		            if (checkDuplicate && messageIds.has(messageId)) return false;
+		            if (checkDuplicate) messageIds.add(messageId);
+		            
+		            const messageDiv = document.createElement('div');
+		            
+		            if (message.type === 'END' || message.type === 'RESTART') {
+		                messageDiv.className = 'message system';
+		                messageDiv.innerHTML = `<div class="message-bubble">${message.content}</div>`;
+		            } else {
+		                messageDiv.className = 'message ' + (message.sender === username ? 'mine' : 'other');
+		                
+		                const bubble = document.createElement('div');
+		                bubble.className = 'message-bubble';
+		                bubble.textContent = message.content;
 
-			// 채팅 입력 비활성화 (종료 상태용 - 입력은 가능하게)
-			function disableChatInput(message) {
-				// 전송 버튼과 종료 버튼만 비활성화, 입력창은 활성 상태 유지
-				sendButton.disabled = true;
-				endChatButton.disabled = true;
-				
-				statusInfo.textContent = message;
-				statusInfo.className = 'connection-status disconnected';
-			}
+		                const time = document.createElement('div');
+		                time.className = 'message-time';
+		                const messageTime = message.createdAt ? new Date(message.createdAt) : new Date();
+		                time.textContent = messageTime.toLocaleTimeString('ko-KR', {
+		                    hour: '2-digit', minute: '2-digit'
+		                });
 
-			// 채팅 입력 활성화
-			function enableChatInput() {
-				messageInput.disabled = false;
-				sendButton.disabled = false;
-				endChatButton.disabled = false;
-				
-				if (connected) {
-					statusInfo.textContent = '연결됨';
-					statusInfo.className = 'connection-status connected';
-				} else {
-					statusInfo.textContent = '연결 중...';
-					statusInfo.className = 'connection-status';
-				}
-			}
+		                messageDiv.appendChild(bubble);
+		                messageDiv.appendChild(time);
+		            }
+		            
+		            window.chatElements.messagesDiv.appendChild(messageDiv);
+		            window.chatElements.messagesDiv.scrollTop = window.chatElements.messagesDiv.scrollHeight;
+		            
+		            return true;
+		        }
 
-			// 연결 상태 업데이트
-			function updateConnectionStatus(text, className) {
-				connectionStatus.textContent = text;
-				
-				if (!chatEnded) {
-					statusInfo.textContent = text;
-					statusInfo.className = 'connection-status ' + className;
-				}
-			}
+		        function disableChatInput(message) {
+		            window.chatElements.sendButton.disabled = true;
+		            window.chatElements.endChatButton.disabled = true;
+		            window.chatElements.statusInfo.textContent = message;
+		            window.chatElements.statusInfo.className = 'connection-status disconnected';
+		        }
 
-			// 텍스트영역 자동 크기 조절
-			function autoResizeTextarea() {
-				messageInput.style.height = 'auto';
-				messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
-			}
+		        function enableChatInput() {
+		            window.chatElements.messageInput.disabled = false;
+		            window.chatElements.sendButton.disabled = false;
+		            window.chatElements.endChatButton.disabled = false;
+		            
+		            if (connected) {
+		                window.chatElements.statusInfo.textContent = '연결됨';
+		                window.chatElements.statusInfo.className = 'connection-status connected';
+		            }
+		        }
 
-			// 이벤트 리스너 설정
-			function setupEventListeners() {
-				sendButton.addEventListener('click', sendMessage);
-				endChatButton.addEventListener('click', endChat);
+		        function updateConnectionStatus(text, className) {
+		            window.chatElements.connectionStatus.textContent = text;
+		            
+		            if (!chatEnded) {
+		                window.chatElements.statusInfo.textContent = text;
+		                window.chatElements.statusInfo.className = 'connection-status ' + className;
+		            }
+		        }
 
-				messageInput.addEventListener('input', autoResizeTextarea);
-				
-				messageInput.addEventListener('keypress', function(e) {
-					if (e.key === 'Enter' && !e.shiftKey) {
-						e.preventDefault();
-						// 채팅 종료 상태에서도 엔터로 메시지 전송 가능
-						if (messageInput.value.trim()) {
-							sendMessage();
-						}
-					}
-				});
+		        // 🔥 여러 시점에서 초기화 시도
+		        // 1. DOM이 준비되는 즉시
+		        if (document.readyState === 'loading') {
+		            document.addEventListener('DOMContentLoaded', initialize);
+		        } else {
+		            // 이미 DOM이 준비됨
+		            setTimeout(initialize, 50);
+		        }
+		        
+		        // 2. 완전 로드 후에도 시도 (백업)
+		        window.addEventListener('load', function() {
+		            setTimeout(function() {
+		                if (!initialized) {
+		                    console.log('🔄 백업 초기화 실행');
+		                    initialize();
+		                }
+		            }, 100);
+		        });
+		        
+		        // 3. 페이지 언로드 시 정리
+		        window.addEventListener('beforeunload', function() {
+		            if (stompClient) {
+		                stompClient.disconnect();
+		            }
+		        });
 
-				// 채팅이 종료된 상태에서 타이핑 시작하면 안내
-				messageInput.addEventListener('input', function() {
-					if (chatEnded && messageInput.value.trim()) {
-						statusInfo.textContent = 'Enter를 누르면 새로운 문의가 시작됩니다.';
-						statusInfo.className = 'connection-status';
-					} else if (chatEnded) {
-						statusInfo.textContent = '채팅이 종료되었습니다. 새 메시지를 입력하면 다시 시작됩니다.';
-						statusInfo.className = 'connection-status disconnected';
-					}
-				});
-			}
-
-			// 페이지 언로드 시 연결 해제
-			window.addEventListener('beforeunload', function() {
-				if (stompClient) {
-					stompClient.disconnect();
-				}
-			});
+		    })(); // 즉시 실행 함수 끝
 		</script>
 	</div>
 </body>

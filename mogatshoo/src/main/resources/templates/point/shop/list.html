@@ -345,7 +345,7 @@
 					<a th:if="${pointShop.pointItemStock > 0}" 
 					   class="win95-product-card"
 					   th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
-						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}" 
+						<img th:src="@{${pointShop.imgFile.pointItemImgURL}}" 
 							 class="win95-product-image" alt="상품 이미지"
 							 loading="lazy" width="200" height="120">
 						<div class="win95-product-name" th:text="${pointShop.pointItemName}">상품 이름</div>
@@ -358,7 +358,7 @@
 
 					<!-- 재고 없음: 매진 표시 -->
 					<div th:if="${pointShop.pointItemStock <= 0}" class="win95-soldout-card">
-						<img th:src="@{${pointShop.imgFile.pointItemImgPath}}" 
+						<img th:src="@{${pointShop.imgFile.pointItemImgURL}}" 
 							 class="win95-product-image" alt="상품 이미지" 
 							 style="opacity: 0.5;" loading="lazy" width="200" height="120">
 						<div class="win95-product-name" th:text="${pointShop.pointItemName}">상품 이름</div>

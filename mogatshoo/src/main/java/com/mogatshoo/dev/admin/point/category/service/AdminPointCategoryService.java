@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
+import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
 
 public interface AdminPointCategoryService {
 
@@ -19,6 +20,6 @@ public interface AdminPointCategoryService {
 
 	void deletePointCategory(Integer pointCategoryId);
 
-	void updatePointCategory(AdminPointCategoryEntity adminPointCategoryEntity);
+	void updatePointCategory(AdminPointCategoryEntity adminPointCategoryEntity, List<AdminPointItemEntity> pointItemList);
 
 }

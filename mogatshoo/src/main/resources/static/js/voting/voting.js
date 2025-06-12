@@ -1,5 +1,5 @@
 /**
- * 투표 시스템 JavaScript - MySQL 완전 연동 버전
+ * 투표 시스템 JavaScript - 질문 원본 이미지 사용 + 자동 다음 질문
  */
 
 // 전역 변수
@@ -12,10 +12,12 @@ $(document).ready(function() {
     
     // 현재 질문 정보 추출
     const questionElement = document.querySelector('[data-serial-number]');
-    if (questionElement) {
+    const serialNumberInput = document.querySelector('#current-serial-number');
+    
+    if (questionElement || serialNumberInput) {
         currentQuestion = {
-            serialNumber: questionElement.dataset.serialNumber,
-            questionText: document.querySelector('.question-text').textContent
+            serialNumber: questionElement ? questionElement.dataset.serialNumber : serialNumberInput.value,
+            questionText: document.querySelector('.question-text') ? document.querySelector('.question-text').textContent : ''
         };
         console.log('현재 질문:', currentQuestion);
     }
@@ -36,10 +38,10 @@ function startVoting() {
 }
 
 /**
- * 사진 선택 - 투표 확인 모달 표시
+ * 옵션 선택 - 투표 확인 모달 표시 (수정된 부분)
  */
-function selectPicture(element) {
-    console.log('=== 사진 선택 ===');
+function selectOption(element) {
+    console.log('=== 옵션 선택 ===');
     
     if (isVoting) {
         console.log('투표 처리 중 - 클릭 무시');
@@ -53,12 +55,11 @@ function selectPicture(element) {
         // 현재 선택 표시
         $(element).addClass('selected');
         
-        // 선택한 옵션 저장
+        // 선택한 옵션 저장 (수정된 부분: optionId 사용)
         selectedOption = {
             element: $(element),
-            memberId: $(element).data('member-id'),
+            optionId: $(element).data('option-id'), // option1, option2, option3, option4 형태
             serialNumber: $(element).data('serial-number'),
-            optionIndex: $(element).data('option-index'),
             optionText: $(element).find('.option-text').text().trim(),
             pictureUrl: $(element).find('.option-image').attr('src')
         };
@@ -66,7 +67,7 @@ function selectPicture(element) {
         console.log('선택된 옵션:', selectedOption);
         
         // 필수 데이터 검증
-        if (!selectedOption.memberId || !selectedOption.serialNumber || !currentQuestion) {
+        if (!selectedOption.optionId || !selectedOption.serialNumber || !currentQuestion) {
             alert('투표 데이터가 올바르지 않습니다. 페이지를 새로고침 해주세요.');
             return;
         }
@@ -81,8 +82,8 @@ function selectPicture(element) {
         $('#vote-modal').fadeIn(300);
         
     } catch (error) {
-        console.error('사진 선택 중 오류:', error);
-        alert('사진 선택 중 오류가 발생했습니다.');
+        console.error('옵션 선택 중 오류:', error);
+        alert('옵션 선택 중 오류가 발생했습니다.');
     }
 }
 
@@ -127,14 +128,14 @@ function cancelVote() {
 }
 
 /**
- * 투표 제출 - MySQL에 저장
+ * 투표 제출 - MySQL에 저장 (수정된 부분)
  */
 function submitVote() {
     console.log('=== 투표 제출 시작 ===');
     console.log('투표 데이터:', {
         질문번호: selectedOption.serialNumber,
-        선택된회원ID: selectedOption.memberId,
-        선택된옵션: selectedOption.optionText
+        선택된옵션ID: selectedOption.optionId, // option1, option2, option3, option4
+        선택된옵션텍스트: selectedOption.optionText
     });
     
     // CSRF 토큰 가져오기
@@ -146,7 +147,7 @@ function submitVote() {
         type: 'POST',
         data: {
             serialNumber: selectedOption.serialNumber,
-            votedId: selectedOption.memberId
+            votedId: selectedOption.optionId // optionId를 votedId로 전송
         },
         timeout: 15000
     };
@@ -177,7 +178,7 @@ function submitVote() {
 }
 
 /**
- * 투표 성공 처리
+ * 투표 성공 처리 (수정된 부분: 자동 다음 질문)
  */
 function handleVoteSuccess(response) {
     hideLoading();
@@ -197,19 +198,19 @@ function handleVoteSuccess(response) {
             // 선택된 옵션에 성공 애니메이션
             selectedOption.element.addClass('vote-success');
             
-            // 3초 후 다음 동작
+            // 2초 후 다음 질문 자동 로드
             setTimeout(function() {
-                if (response.noMoreQuestions) {
+                if (response.hasNextQuestion) {
+                    console.log('➡️ 다음 질문 로드 중...');
+                    loadNextQuestion();
+                } else if (response.noMoreQuestions) {
                     console.log('🏁 모든 투표 완료');
-                    showMessage('모든 투표를 완료하셨습니다! 감사합니다.', 'success');
-                    setTimeout(function() {
-                        window.location.href = '/voting';
-                    }, 2000);
+                    showCompletionMessage(response.completionMessage || '모든 투표를 완료하셨습니다! 감사합니다.');
                 } else {
-                    console.log('➡️ 다음 질문으로 이동');
-                    window.location.href = '/voting';
+                    // 일반적인 경우 다음 질문 시도
+                    loadNextQuestion();
                 }
-            }, 3000);
+            }, 2000);
             
         } else {
             throw new Error(response.error || '알 수 없는 서버 오류');
@@ -218,6 +219,102 @@ function handleVoteSuccess(response) {
     } catch (e) {
         console.error('응답 처리 중 오류:', e);
         handleVoteError({status: 500, responseText: e.message}, 'parsererror', e.message);
+    }
+}
+
+/**
+ * 다음 질문 자동 로드 (새로 추가된 기능)
+ */
+function loadNextQuestion() {
+    console.log('=== 다음 질문 로드 시작 ===');
+    
+    // 로딩 표시
+    showMessage('다음 질문을 불러오는 중...', 'info');
+    
+    $.ajax({
+        url: '/voting/next-question',
+        type: 'GET',
+        timeout: 10000
+    })
+    .done(function(response) {
+        console.log('다음 질문 로드 성공:', response);
+        
+        if (response.success) {
+            // 질문 화면 업데이트
+            updateQuestionDisplay(response.question, response.questionOptions);
+            hideMessage();
+            isVoting = false;
+            selectedOption = null;
+        } else if (response.noMoreQuestions) {
+            showCompletionMessage(response.message || '모든 질문에 투표를 완료했습니다!');
+        } else {
+            console.error('다음 질문 로드 실패:', response);
+            showMessage('다음 질문을 불러올 수 없습니다. 새로고침해주세요.', 'error');
+            setTimeout(() => window.location.reload(), 3000);
+        }
+    })
+    .fail(function(xhr, status, error) {
+        console.error('다음 질문 로드 실패:', error);
+        showMessage('네트워크 오류가 발생했습니다. 새로고침해주세요.', 'error');
+        setTimeout(() => window.location.reload(), 3000);
+    });
+}
+
+/**
+ * 질문 화면 업데이트 (새로 추가된 기능)
+ */
+function updateQuestionDisplay(question, questionOptions) {
+    console.log('=== 질문 화면 업데이트 ===');
+    console.log('새 질문:', question);
+    console.log('새 옵션들:', questionOptions);
+    
+    try {
+        // 질문 내용 업데이트
+        $('#question-text').text(question.question);
+        $('#question-serial-display').text('질문 번호: ' + question.serialNumber);
+        $('#current-serial-number').val(question.serialNumber);
+        
+        // 현재 질문 정보 업데이트
+        currentQuestion = {
+            serialNumber: question.serialNumber,
+            questionText: question.question
+        };
+        
+        // 옵션 컨테이너 업데이트
+        const optionsContainer = $('#options-container');
+        optionsContainer.empty();
+        
+        // 새 옵션들 생성
+        questionOptions.forEach((option, index) => {
+            const optionHtml = `
+                <div class="option-item">
+                    <div class="picture-option" 
+                         data-serial-number="${question.serialNumber}"
+                         data-option-id="${option.optionId}"
+                         onclick="selectOption(this)">
+                        <div class="pic-container">
+                            <img src="${option.imageUrl}" 
+                                 alt="투표 옵션 ${index + 1}"
+                                 class="option-image"
+                                 onload="this.style.opacity='1';"
+                                 onerror="handleImageError(this);"
+                                 style="opacity: 0; transition: opacity 0.3s ease;">
+                        </div>
+                        <div class="option-text">옵션 ${index + 1}</div>
+                    </div>
+                </div>
+            `;
+            optionsContainer.append(optionHtml);
+        });
+        
+        // 페이지 맨 위로 부드럽게 스크롤
+        $('html, body').animate({ scrollTop: 0 }, 500);
+        
+        console.log('질문 화면 업데이트 완료');
+        
+    } catch (error) {
+        console.error('질문 화면 업데이트 중 오류:', error);
+        showMessage('화면 업데이트 중 오류가 발생했습니다.', 'error');
     }
 }
 
@@ -262,6 +359,36 @@ function handleVoteError(xhr, status, error) {
 }
 
 /**
+ * 완료 메시지 표시 (수정된 부분)
+ */
+function showCompletionMessage(message) {
+    console.log('=== 완료 메시지 표시 ===');
+    
+    const completionHtml = `
+        <div class="vote-complete-container" style="display: none;">
+            <div class="complete-message">
+                <div class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>🎉 투표 완료!</h3>
+                <p>${message}</p>
+                <div class="btn-group">
+                    <a href="/" class="btn btn-primary">홈으로 가기</a>
+                    <button class="btn btn-secondary" onclick="window.location.reload()">새로고침</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 기존 투표 컨텐츠 숨기기
+    $('#vote-content').fadeOut(300, function() {
+        // 완료 메시지 추가 및 표시
+        $('.vote-container').append(completionHtml);
+        $('.vote-complete-container').fadeIn(500);
+    });
+}
+
+/**
  * 선택 옵션 스타일 원복
  */
 function resetOptionStyle() {
@@ -285,26 +412,37 @@ function hideLoading() {
 }
 
 /**
- * 메시지 표시
+ * 메시지 표시 (수정된 부분)
  */
 function showMessage(text, type = 'success') {
+    // 기존 메시지 제거
+    hideMessage();
+    
     const alertHtml = `
-        <div class="alert alert-${type}" style="display: none;">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'times-circle'}"></i>
+        <div class="alert alert-${type}" id="current-message" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px; text-align: center;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
             <span>${text}</span>
         </div>
     `;
     
-    $('#message-container').append(alertHtml);
-    $('#message-container .alert').last().slideDown(300);
+    $('body').append(alertHtml);
+    $('#current-message').slideDown(300);
     
-    // 자동 제거
-    const timeout = type === 'error' ? 8000 : 5000;
-    setTimeout(function() {
-        $('#message-container .alert').first().slideUp(300, function() {
-            $(this).remove();
-        });
-    }, timeout);
+    // 자동 제거 (success: 3초, error: 6초, info: 2초)
+    let timeout = 3000;
+    if (type === 'error') timeout = 6000;
+    else if (type === 'info') timeout = 2000;
+    
+    setTimeout(hideMessage, timeout);
+}
+
+/**
+ * 메시지 숨김
+ */
+function hideMessage() {
+    $('#current-message').slideUp(300, function() {
+        $(this).remove();
+    });
 }
 
 /**
@@ -352,9 +490,9 @@ $(document).on('keydown', function(e) {
 
 // 전역 함수 등록 (HTML onclick에서 접근 가능하도록)
 window.startVoting = startVoting;
-window.selectPicture = selectPicture;
+window.selectOption = selectOption;
 window.confirmVote = confirmVote;
 window.cancelVote = cancelVote;
 window.handleImageError = handleImageError;
 
-console.log('🚀 투표 시스템 JavaScript 로드 완료');
+console.log('투표 시스템 JavaScript 로드 완료 - 질문 원본 이미지 + 자동 다음 질문 버전');

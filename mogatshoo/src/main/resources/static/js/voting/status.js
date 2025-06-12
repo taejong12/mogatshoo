@@ -51,7 +51,7 @@ function resetFilters() {
     filterTable();
 }
 
-// 테이블 필터링 - 개선된 버전
+// 업데이트된 테이블 필터링 - 득표율 조건 추가
 function filterTable() {
     const statusFilter = document.getElementById('statusFilter').value;
     const rateFilter = document.getElementById('rateFilter').value;
@@ -90,24 +90,30 @@ function filterTable() {
             }
         }
         
-        // 참여율 필터
+        // 참여율 필터 (업데이트된 조건: 50% 기준)
         if (rateFilter !== 'all' && showRow) {
             const participationRate = parseFloat(row.getAttribute('data-participation-rate') || '0');
             console.log(`행 ${index}: 참여율 = ${participationRate}%`);
             
-            if (rateFilter === 'high' && participationRate < 40) {
+            if (rateFilter === 'high' && participationRate < 50) {
                 showRow = false;
-                console.log(`행 ${index}: 참여율 필터(high)로 숨김`);
+                console.log(`행 ${index}: 참여율 필터(high)로 숨김 - ${participationRate}% < 50%`);
+            } else if (rateFilter === 'medium' && (participationRate < 40 || participationRate >= 50)) {
+                showRow = false;
+                console.log(`행 ${index}: 참여율 필터(medium)로 숨김 - ${participationRate}% not in [40%, 50%)`);
             } else if (rateFilter === 'low' && participationRate >= 40) {
                 showRow = false;
-                console.log(`행 ${index}: 참여율 필터(low)로 숨김`);
+                console.log(`행 ${index}: 참여율 필터(low)로 숨김 - ${participationRate}% >= 40%`);
             }
         }
         
-        // 이메일 필터
+        // 이메일 필터 (참여율 50% + 득표율 40% 조건)
         if (emailFilter !== 'all' && showRow) {
             const emailEligible = row.getAttribute('data-email-eligible') === 'true';
-            console.log(`행 ${index}: 이메일 가능 = ${emailEligible}`);
+            const participationRate = parseFloat(row.getAttribute('data-participation-rate') || '0');
+            const topVotedRate = parseFloat(row.getAttribute('data-top-voted-rate') || '0');
+            
+            console.log(`행 ${index}: 이메일 가능 = ${emailEligible}, 참여율 = ${participationRate}%, 득표율 = ${topVotedRate}%`);
             
             if (emailFilter === 'eligible' && !emailEligible) {
                 showRow = false;
@@ -139,7 +145,7 @@ function filterTable() {
         if (!noResultsRow) {
             noResultsRow = document.createElement('tr');
             noResultsRow.id = 'no-results-row';
-            noResultsRow.innerHTML = '<td colspan="7" class="text-center text-muted py-4">필터 조건에 맞는 결과가 없습니다.</td>';
+            noResultsRow.innerHTML = '<td colspan="8" class="text-center text-muted py-4">필터 조건에 맞는 결과가 없습니다.</td>';
             tableBody.appendChild(noResultsRow);
         }
     } else {
@@ -147,6 +153,74 @@ function filterTable() {
             noResultsRow.remove();
         }
     }
+}
+
+// 득표율 정보를 툴팁으로 표시하는 함수
+function showTopVotedRateTooltip(element) {
+    const row = element.closest('.voting-row');
+    if (row) {
+        const topVotedRate = row.getAttribute('data-top-voted-rate');
+        const participationRate = row.getAttribute('data-participation-rate');
+        const emailEligible = row.getAttribute('data-email-eligible') === 'true';
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'custom-tooltip';
+        tooltip.innerHTML = `
+            <div><strong>이메일 발송 조건</strong></div>
+            <div>참여율: ${participationRate}% ${participationRate >= 50 ? '✅' : '❌'} (≥50%)</div>
+            <div>득표율: ${topVotedRate}% ${topVotedRate >= 40 ? '✅' : '❌'} (≥40%)</div>
+            <div class="mt-1"><strong>${emailEligible ? '✅ 발송 가능' : '❌ 발송 불가'}</strong></div>
+        `;
+        
+        // 툴팁 스타일 적용
+        tooltip.style.cssText = `
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 200px;
+            pointer-events: none;
+        `;
+        
+        document.body.appendChild(tooltip);
+        
+        // 마우스 위치에 따라 툴팁 위치 조정
+        element.addEventListener('mousemove', function(e) {
+            tooltip.style.left = (e.pageX + 10) + 'px';
+            tooltip.style.top = (e.pageY - 10) + 'px';
+        });
+        
+        // 마우스가 떠나면 툴팁 제거
+        element.addEventListener('mouseleave', function() {
+            if (tooltip && tooltip.parentNode) {
+                tooltip.parentNode.removeChild(tooltip);
+            }
+        });
+    }
+}
+
+// 통계 요약 정보 업데이트 함수
+function updateStatsSummary() {
+    const rows = document.querySelectorAll('.voting-row');
+    let totalEligible = 0;
+    let totalEnded = 0;
+    
+    rows.forEach(row => {
+        const status = row.getAttribute('data-voting-status');
+        const emailEligible = row.getAttribute('data-email-eligible') === 'true';
+        
+        if (status === '종료') {
+            totalEnded++;
+            if (emailEligible) {
+                totalEligible++;
+            }
+        }
+    });
+    
+    console.log(`통계 요약: 종료된 질문 ${totalEnded}개 중 ${totalEligible}개가 이메일 발송 가능`);
 }
 
 // 폼 제출시 로딩 표시
@@ -171,8 +245,11 @@ function hideLoading() {
     }
 }
 
-// 페이지 로드 완료시 로딩 숨김
-window.addEventListener('load', hideLoading);
+// 페이지 로드 완료시 로딩 숨김 및 통계 업데이트
+window.addEventListener('load', function() {
+    hideLoading();
+    updateStatsSummary();
+});
 
 // 에러 처리 및 사용자 경험 개선
 window.addEventListener('error', function(e) {
@@ -184,3 +261,35 @@ window.addEventListener('error', function(e) {
 window.addEventListener('popstate', function(e) {
     hideLoading();
 });
+
+// 득표율 관련 유틸리티 함수들
+const VotingRateUtils = {
+    // 이메일 발송 조건 체크
+    checkEmailEligibility: function(participationRate, topVotedRate) {
+        return participationRate >= 50.0 && topVotedRate >= 40.0;
+    },
+    
+    // 참여율 등급 반환
+    getParticipationGrade: function(rate) {
+        if (rate >= 50) return 'high';
+        if (rate >= 40) return 'medium';
+        return 'low';
+    },
+    
+    // 득표율 등급 반환
+    getTopVotedGrade: function(rate) {
+        if (rate >= 40) return 'high';
+        if (rate >= 30) return 'medium';
+        return 'low';
+    },
+    
+    // 색상 반환
+    getGradeColor: function(grade) {
+        switch(grade) {
+            case 'high': return '#10b981'; // 초록색
+            case 'medium': return '#f59e0b'; // 주황색
+            case 'low': return '#ef4444'; // 빨간색
+            default: return '#6b7280'; // 회색
+        }
+    }
+};

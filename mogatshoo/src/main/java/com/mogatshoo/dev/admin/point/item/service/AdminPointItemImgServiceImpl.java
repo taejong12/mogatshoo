@@ -2,8 +2,10 @@ package com.mogatshoo.dev.admin.point.item.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 			AdminPointItemImgEntity oldImgEntity = adminPointItemImgRepository.findByPointItemId(pointItemId);
 			if (oldImgEntity != null && oldImgEntity.getPointItemImgName() != null) {
 				// 기존 파일 삭제 (Firebase Storage Path 사용)
-				firebaseStorageService.deletePointItemImg(oldImgEntity.getPointItemImgFileId());
+				firebaseStorageService.deletePointItemImg(oldImgEntity.getPointItemImgPath());
 			}
 
 			// 이미지 업로드
@@ -63,9 +65,9 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 			// DB에 이미지 정보 저장
 			AdminPointItemImgEntity imgEntity = new AdminPointItemImgEntity();
 			imgEntity.setPointItemId(pointItemId);
-			imgEntity.setPointItemImgFileId(firebaseStoragePath); // Firebase Storage Path 저장
+			imgEntity.setPointItemImgURL(firebaseStorageUrl);
 			imgEntity.setPointItemImgName(newFileName);
-			imgEntity.setPointItemImgPath(firebaseStorageUrl); // Firebase Storage URL 저장
+			imgEntity.setPointItemImgPath(firebaseStoragePath);
 
 			adminPointItemImgRepository.save(imgEntity);
 			logger.info("DB 이미지 정보 저장 완료 - pointItemId: {}, 파일명: {}", pointItemId, newFileName);
@@ -100,9 +102,9 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 					.findByPointItemId(pointItemId);
 			if (adminPointItemImgEntity != null) {
 				// Firebase Storage 이미지 삭제
-				if (adminPointItemImgEntity != null && adminPointItemImgEntity.getPointItemImgFileId() != null
+				if (adminPointItemImgEntity != null && adminPointItemImgEntity.getPointItemImgPath() != null
 						&& firebaseStorageService.isEnabled()) {
-					firebaseStorageService.deletePointItemImg(adminPointItemImgEntity.getPointItemImgFileId());
+					firebaseStorageService.deletePointItemImg(adminPointItemImgEntity.getPointItemImgPath());
 				}
 				// DB 이미지 삭제
 				adminPointItemImgRepository.deleteById(adminPointItemImgEntity.getPointItemImgId());
@@ -143,7 +145,7 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 			}
 
 			// Firebase Storage 파일 경로
-			String filePath = imgEntity.getPointItemImgFileId();
+			String filePath = imgEntity.getPointItemImgPath();
 
 			if (filePath == null) {
 				logger.warn("moveImgToNewCategory: 이미지 파일 경로가 존재하지 않음. ID: {}", pointItemId);
@@ -158,8 +160,8 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 			String newFilePath = "point-items/" + newCategoryName + "/" + fileName;
 			String newFileUrl = firebaseStorageService.getFileUrl(newFilePath);
 
-			imgEntity.setPointItemImgFileId(newFilePath);
-			imgEntity.setPointItemImgPath(newFileUrl);
+			imgEntity.setPointItemImgPath(newFilePath);
+			imgEntity.setPointItemImgURL(newFileUrl);
 			adminPointItemImgRepository.save(imgEntity);
 
 			logger.info("이미지 카테고리 이동 및 DB 업데이트 완료. ID: {}, {} → {}", pointItemId, oldCategoryName, newCategoryName);
@@ -172,5 +174,47 @@ public class AdminPointItemImgServiceImpl implements AdminPointItemImgService {
 	@Override
 	public boolean pointCategoryImgCheck(String pointCategoryName) {
 		return firebaseStorageService.pointCategoryImgCheck(pointCategoryName);
+	}
+
+	@Override
+	public void updatePointItemImgPathAndURL(List<AdminPointItemImgEntity> pointItemImgList) {
+		for (AdminPointItemImgEntity newImgEntity : pointItemImgList) {
+			try {
+				Long imgId = newImgEntity.getPointItemImgId();
+				System.out.println("imgId: "+imgId);
+				adminPointItemImgRepository.findById(imgId).ifPresentOrElse(oldImgEntity -> {
+					oldImgEntity.setPointItemImgPath(newImgEntity.getPointItemImgPath());
+					oldImgEntity.setPointItemImgURL(newImgEntity.getPointItemImgURL());
+
+					logger.debug("이미지 정보 업데이트 완료 - ID: {}, Path: {}, URL: {}", imgId,
+							newImgEntity.getPointItemImgPath(), newImgEntity.getPointItemImgURL());
+				}, () -> {
+					logger.warn("이미지 ID [{}]에 해당하는 엔티티를 찾을 수 없습니다.", imgId);
+				});
+
+			} catch (Exception e) {
+				logger.error("이미지 정보 업데이트 중 예외 발생 - ID: {}", newImgEntity.getPointItemImgId(), e);
+			}
+		}
+	}
+
+	@Override
+	public List<AdminPointItemImgEntity> findByPointItemIdIn(List<AdminPointItemEntity> pointItemList) {
+		try {
+			List<Long> pointItemIdList = pointItemList.stream().map(AdminPointItemEntity::getPointItemId)
+					.collect(Collectors.toList());
+
+			logger.debug("조회할 포인트 아이템 ID 목록: {}", pointItemIdList);
+
+			List<AdminPointItemImgEntity> resultList = adminPointItemImgRepository.findByPointItemIdIn(pointItemIdList);
+
+			logger.debug("조회된 이미지 엔티티 수: {}", resultList.size());
+
+			return resultList;
+		} catch (Exception e) {
+			logger.error("포인트 아이템 이미지 조회 중 오류 발생", e);
+			// 에러 발생 시 빈 리스트 반환
+			return Collections.emptyList();
+		}
 	}
 }

@@ -57,13 +57,8 @@ public class SecurityConfig {
 								new AntPathRequestMatcher("/fragments/**"),
 								new AntPathRequestMatcher("/error/**"),
 								new AntPathRequestMatcher("/ws/**"),
-								new AntPathRequestMatcher("/intro")) 
+								new AntPathRequestMatcher("/webApp/**"))
 						.permitAll()
-						
-						// QandA 전체를 인증 필요로 유지 질문 쓰려고
-						.requestMatchers(new AntPathRequestMatcher("/qanda/**")).authenticated()
-						
-						.requestMatchers(new AntPathRequestMatcher("/")).authenticated()
 						
 						// 로그인하지 않은 사용자만 접근 가능한 경로
 						.requestMatchers(new AntPathRequestMatcher("/member/join"),

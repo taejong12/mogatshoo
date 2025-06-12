@@ -1,6 +1,7 @@
 package com.mogatshoo.dev.admin.point.category.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
 import com.mogatshoo.dev.admin.point.category.service.AdminPointCategoryService;
+import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
+import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
 import com.mogatshoo.dev.admin.point.item.service.AdminPointItemService;
 
 @Controller
@@ -102,7 +105,9 @@ public class AdminPointCategoryController {
 
 	@PostMapping("/update")
 	public String pointCategoryUpdate(@ModelAttribute AdminPointCategoryEntity adminPointCategoryEntity) {
-		adminPointCategoryService.updatePointCategory(adminPointCategoryEntity);
+		Integer categoryId = adminPointCategoryEntity.getPointCategoryId();
+		List<AdminPointItemEntity> pointItemList = adminPointItemService.findByPointCategoryId(categoryId);
+		adminPointCategoryService.updatePointCategory(adminPointCategoryEntity, pointItemList);
 		return "redirect:/admin/point/category/detail/" + adminPointCategoryEntity.getPointCategoryId();
 	}
 }

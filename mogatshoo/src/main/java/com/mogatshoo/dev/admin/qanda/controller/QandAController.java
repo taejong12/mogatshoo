@@ -66,11 +66,14 @@ public class QandAController {
     public void adminReply(@Payload QandAEntity qandAMessage) {
         qandAMessage.setType(QandAEntity.MessageType.CHAT);
         qandAMessage.setSender("관리자");
-        qandAMessage.setIsRead(true);  // 관리자 메시지는 바로 읽음 처리
+        qandAMessage.setIsRead(true);
         qandAMessage.setCreatedAt(LocalDateTime.now());
 
         chatMessageRepository.save(qandAMessage);
+        
+        // 🔥 수정: 사용자 + 모든 관리자에게 전달
         messagingTemplate.convertAndSend("/topic/room." + qandAMessage.getRoomId(), qandAMessage);
+        messagingTemplate.convertAndSend("/topic/admin", qandAMessage);  // 추가!
     }
 
     @MessageMapping("/chat.markAsRead")

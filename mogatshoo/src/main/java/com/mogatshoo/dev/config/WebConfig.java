@@ -44,9 +44,6 @@ public class WebConfig implements WebMvcConfigurer {
    	 registry.addInterceptor(introInterceptor) // @Autowired로 주입받은 introInterceptor 사용
         .addPathPatterns("/**") // 모든 경로에 인터셉터 적용
         .excludePathPatterns(
-            // 주의: '/'와 '/intro'는 여기서 제외하면 안 됩니다!
-            // Interceptor가 이 두 경로를 처리해야 합니다.
-
             // 기존 HairCheckInterceptor의 excludePathPatterns를 참고하여
             // 중복되거나, Interceptor가 관여할 필요가 없는 경로들을 제외합니다.
             "/videos/**", "/css/**", "/js/**", "/img/**", "/favicon.ico", // 정적 리소스
@@ -63,10 +60,8 @@ public class WebConfig implements WebMvcConfigurer {
             "/member/idAndEmailCheck", "/member/pwdUpdate",
             
             // 인증은 필요하지만 IntroInterceptor가 관여할 필요 없는 경로
-            "/qanda/**", // Q&A
             "/admin/**" // 관리자
         );
-   System.out.println("IntroInterceptor 등록됨."); // 등록 확인 로그
 
    // ========================================================================
    // 추가된 인터셉터는 이 코드 블록 아래에 있어야 합니다.

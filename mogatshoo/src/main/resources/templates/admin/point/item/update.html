@@ -20,7 +20,7 @@
 							<label class="form-label fw-bold">이미지</label>
 							<div>
 								<img th:if="${itemImg != null}"
-									th:src="@{${itemImg.pointItemImgPath}}" id="previewImage"
+									th:src="@{${itemImg.pointItemImgURL}}" id="previewImage"
 									class="img-fluid border rounded"
 									style="max-width: 300px; object-fit: contain;" alt="상품 이미지" />
 								<p th:if="${itemImg == null}">이미지가 없습니다</p>

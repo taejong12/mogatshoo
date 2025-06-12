@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트구매내역'">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트구매내역'">
 
 <head>
 	<style>
@@ -293,7 +293,7 @@ layout:decorate="~{fragments/layout}" th:with="layoutTitle='포인트구매내�
 				</thead>
 				<tbody>
 					<tr th:each="buyPoint : ${pointItemBuyList}">
-						<td th:text="${buyPoint.pointShop.pointItemName}" 
+						<td th:text="${buyPoint.pointItemName}" 
 							style="text-align: left; max-width: 200px; word-wrap: break-word;">상품이름</td>
 						<td th:text="${buyPoint.pointOrderHistoryQuantity + '개'}">구매수량</td>
 						<td th:text="${buyPoint.pointOrderHistoryTotalPrice + 'P'}" 

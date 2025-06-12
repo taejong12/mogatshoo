@@ -8,6 +8,8 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
+    overflow-y: auto; /* 모바일에서 스크롤 가능하도록 */
+    -webkit-overflow-scrolling: touch; /* 부드러운 스크롤 */
 }
 
 /* 기존 layout.css의 body::before 오버라이드 */
@@ -21,6 +23,7 @@ body::before {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 .windows95-dialog {
@@ -28,8 +31,11 @@ body::before {
     border: 2px outset #c0c0c0;
     box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     font-size: 15px;
-    width: 450px;
+    width: 450px; /* 기본 너비 */
+    max-width: 95%; /* 화면 크기에 맞춰 최대 너비 제한 */
     position: relative;
+    box-sizing: border-box;
+    margin: auto; /* 중앙 정렬 */
 }
 
 .title-bar {
@@ -89,22 +95,26 @@ body::before {
 }
 
 .dialog-text {
-    margin-left: 44px;
+    margin-left: 44px; /* 아이콘 너비 + 마진 */
     margin-bottom: 40px;
     font-size: 15px;
+    line-height: 1.4; /* 가독성을 위해 줄 간격 추가 */
 }
 
 .input-group {
     margin-bottom: 15px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
 }
 
 .input-label {
     width: 80px;
+    min-width: 60px; /* 최소 너비 설정 */
     font-size: 15px;
     text-align: right;
     margin-right: 8px;
+    box-sizing: border-box;
 }
 
 .windows95-input {
@@ -112,8 +122,10 @@ body::before {
     padding: 4px 6px;
     font-size: 15px;
     background: white;
-    flex: 1;
-    height: 25px;
+    flex: 1; /* 남은 공간을 모두 차지 */
+    height: 25px; /* 기본 높이 */
+    box-sizing: border-box;
+    min-width: 150px; /* 최소 너비 설정 */
 }
 
 .windows95-input:focus {
@@ -125,10 +137,13 @@ body::before {
     display: flex;
     gap: 4px;
     align-items: center;
+    flex: 1; /* 부모 .input-group에 맞춰 공간 차지 */
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
 }
 
 .auth-input {
-    flex: 1;
+    flex: 1; /* 남은 공간을 모두 차지 */
+    min-width: 100px; /* 최소 너비 설정 */
 }
 
 .auth-button {
@@ -137,8 +152,9 @@ body::before {
     padding: 4px 12px;
     font-size: 15px;
     cursor: pointer;
-    height: 25px;
+    height: 25px; /* 기본 높이 */
     white-space: nowrap;
+    box-sizing: border-box;
 }
 
 .auth-button:hover {
@@ -156,7 +172,7 @@ body::before {
 
 .button-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* 기본적으로 세로로 쌓기 */
     gap: 8px;
     margin-top: 20px;
 }
@@ -167,13 +183,16 @@ body::before {
     padding: 6px 16px;
     font-size: 15px;
     cursor: pointer;
-    width: 100%;
-    height: 30px;
+    width: 100%; /* 버튼 너비 전체 */
+    height: 30px; /* 기본 높이 */
     text-decoration: none;
     color: black;
-    display: inline-block;
+    display: inline-flex; /* 텍스트 중앙 정렬 유지 */
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    line-height: 18px;
+    line-height: normal; /* 줄 간격 초기화 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 .windows95-button:hover {
@@ -196,21 +215,238 @@ body::before {
     font-size: 15px;
     margin-top: 4px;
     display: none;
+    text-align: right; /* 경고 메시지 오른쪽 정렬 */
+    padding-right: 10px; /* 우측 패딩 추가 */
 }
 
-@media (max-width: 576px) {
+/* --- 모바일 반응형 --- */
+
+/* 태블릿 (최대 768px) */
+@media (max-width: 768px) {
     .windows95-dialog {
-        width: 90%;
-        max-width: 400px;
+        width: 90%; /* 태블릿에서 너비를 90%로 조정 */
+        max-width: 450px; /* 최대 너비는 유지 */
+        font-size: 14px;
+        padding: 15px; /* 패딩 약간 줄임 */
     }
-    
+
+    .title-bar {
+        font-size: 14px;
+        padding: 3px 5px;
+    }
+
+    .title-bar-control {
+        width: 16px;
+        height: 14px;
+        line-height: 12px;
+        font-size: 9px;
+    }
+
+    .dialog-content {
+        padding: 15px; /* 패딩 약간 줄임 */
+    }
+
+    .dialog-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+        margin-right: 10px;
+    }
+
+    .dialog-text {
+        margin-left: 40px;
+        margin-bottom: 25px; /* 마진 조정 */
+        font-size: 14px;
+    }
+
+    .input-group {
+        flex-direction: column; /* 세로로 쌓기 */
+        align-items: flex-start; /* 왼쪽 정렬 */
+        margin-bottom: 12px;
+    }
+
     .input-label {
-        width: 60px;
-        font-size: 15px;
+        width: 100%; /* 라벨 너비 전체 */
+        text-align: left; /* 왼쪽 정렬 */
+        margin-bottom: 5px; /* 라벨 아래 마진 */
+        margin-right: 0;
     }
-    
+
+    .windows95-input {
+        width: 100%; /* 입력 필드 너비 전체 */
+        height: 44px; /* 입력 필드 높이 크게 증가 */
+        font-size: 16px; /* 입력 필드 폰트 크기 증가 */
+        padding: 8px 10px; /* 패딩 조정 */
+    }
+
+    .input-group-auth {
+        flex-direction: column; /* 인증 번호 입력 그룹도 세로로 쌓기 */
+        width: 100%; /* 너비 전체 */
+        gap: 8px; /* 간격 조정 */
+        align-items: flex-start; /* 왼쪽 정렬 */
+    }
+
+    .auth-input {
+        width: 100%; /* 너비 전체 */
+        height: 44px; /* 입력 필드 높이 유지 */
+        font-size: 16px;
+        padding: 8px 10px;
+    }
+
     .auth-button {
-        font-size: 15px;
-        padding: 4px 8px;
+        width: 100%; /* 버튼 너비 전체 */
+        height: 44px; /* 버튼 높이 증가 */
+        font-size: 16px; /* 폰트 크기 증가 */
+        padding: 8px 10px;
+    }
+
+    .button-group {
+        gap: 10px; /* 버튼 그룹 간격 조정 */
+        margin-top: 30px; /* 상단 마진 증가 */
+    }
+
+    .windows95-button {
+        height: 48px; /* 버튼 높이 증가 */
+        font-size: 18px; /* 버튼 폰트 크기 증가 */
+        padding: 10px 0; /* 패딩 조정 */
+    }
+
+    .warn-msg {
+        font-size: 13px;
+        text-align: left;
+        padding-left: 0;
+    }
+}
+
+/* 스마트폰 (최대 480px) */
+@media (max-width: 480px) {
+    .windows95-container {
+        padding: 10px;
+        align-items: flex-start; /* 상단 정렬로 변경 */
+        padding-top: 30px; /* 상단 여백 */
+        padding-bottom: 30px; /* 하단 여백 */
+    }
+
+    .windows95-dialog {
+        width: 100%; /* 스마트폰에서 거의 전체 너비 사용 */
+        max-width: none;
+        font-size: 12px;
+    }
+
+    .title-bar {
+        font-size: 12px;
+        padding: 2px 3px;
+    }
+
+    .title-bar-control {
+        width: 14px;
+        height: 12px;
+        line-height: 10px;
+    }
+
+    .dialog-content {
+        padding: 12px;
+    }
+
+    .dialog-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    .dialog-text {
+        margin-left: 34px;
+        margin-bottom: 20px;
+        font-size: 12px;
+    }
+
+    .input-group {
+        margin-bottom: 8px;
+    }
+
+    .windows95-input {
+        height: 48px; /* 입력 필드 높이 더 크게 */
+        font-size: 17px; /* 입력 필드 폰트 크기 유지 */
+        padding: 10px 12px; /* 패딩 조정 */
+    }
+
+    .input-group-auth {
+        gap: 6px;
+    }
+
+    .auth-input {
+        height: 48px;
+        font-size: 17px;
+    }
+
+    .auth-button {
+        height: 48px;
+        font-size: 17px;
+        padding: 10px 12px;
+    }
+
+    .button-group {
+        gap: 8px;
+        margin-top: 25px;
+    }
+
+    .windows95-button {
+        height: 52px; /* 버튼 높이 더 크게 */
+        font-size: 19px; /* 버튼 폰트 크기 더 크게 */
+        padding: 12px 0;
+    }
+
+    .warn-msg {
+        font-size: 11px;
+    }
+}
+
+/* 매우 작은 스마트폰 (최대 320px) */
+@media (max-width: 320px) {
+    .windows95-dialog {
+        padding: 5px;
+    }
+    .dialog-content {
+        padding: 10px;
+    }
+    .dialog-icon {
+        width: 22px;
+        height: 22px;
+        font-size: 14px;
+        margin-right: 5px;
+    }
+    .dialog-text {
+        margin-left: 28px;
+        margin-bottom: 15px;
+        font-size: 11px;
+    }
+    .input-group {
+        margin-bottom: 5px;
+    }
+    .windows95-input {
+        height: 44px;
+        font-size: 16px;
+        padding: 8px 10px;
+    }
+    .auth-input {
+        height: 44px;
+        font-size: 16px;
+    }
+    .auth-button {
+        height: 44px;
+        font-size: 16px;
+        padding: 8px 10px;
+    }
+    .button-group {
+        margin-top: 20px;
+    }
+    .windows95-button {
+        height: 48px;
+        font-size: 17px;
+        padding: 10px 0;
+    }
+    .warn-msg {
+        font-size: 10px;
     }
 }

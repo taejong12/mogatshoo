@@ -1,6 +1,6 @@
 package com.mogatshoo.dev.admin.point.category.service;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 
 import com.mogatshoo.dev.admin.point.category.entity.AdminPointCategoryEntity;
 import com.mogatshoo.dev.admin.point.category.repository.AdminPointCategoryRepository;
+import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
+import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
+import com.mogatshoo.dev.admin.point.item.service.AdminPointItemImgService;
+import com.mogatshoo.dev.admin.point.item.service.AdminPointItemService;
 import com.mogatshoo.dev.common.authentication.CommonUserName;
 import com.mogatshoo.dev.config.file.FirebaseStorageService;
 
@@ -30,6 +34,9 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 	private AdminPointCategoryRepository adminPointCategoryRepository;
 
 	@Autowired
+	private AdminPointItemImgService adminPointItemImgService;
+
+	@Autowired
 	private CommonUserName commonUserName;
 
 	@Autowired
@@ -37,8 +44,16 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 
 	@Override
 	public List<AdminPointCategoryEntity> findAll() {
-		Sort sort = Sort.by(Sort.Order.asc("pointCategorySortOrder"), Sort.Order.desc("pointCategoryUpdate"));
-		return adminPointCategoryRepository.findAll(sort);
+		try {
+			Sort sort = Sort.by(Sort.Order.asc("pointCategorySortOrder"), Sort.Order.desc("pointCategoryUpdate"));
+			List<AdminPointCategoryEntity> categoryList = adminPointCategoryRepository.findAll(sort);
+			logger.info("카테고리 전체 조회 성공: {}건", categoryList.size());
+			return categoryList;
+		} catch (Exception e) {
+			logger.error("카테고리 전체 조회 중 오류 발생", e);
+			// 또는 return null;
+			return Collections.emptyList(); 
+		}
 	}
 
 	@Override
@@ -115,7 +130,8 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 	}
 
 	@Override
-	public void updatePointCategory(AdminPointCategoryEntity adminPointCategoryEntity) {
+	public void updatePointCategory(AdminPointCategoryEntity adminPointCategoryEntity,
+			List<AdminPointItemEntity> pointItemList) {
 		Integer categoryId = adminPointCategoryEntity.getPointCategoryId();
 
 		try {
@@ -135,8 +151,14 @@ public class AdminPointCategoryServiceImpl implements AdminPointCategoryService 
 			if (categoryNameChange) {
 				logger.info("[카테고리 이름 변경 감지] '{}' → '{}'", oldCategoryName, newCategoryName);
 
-				firebaseStorageService.updateCategoryName(newCategoryName, oldCategoryName);
+				// 해당하는 카테고리에 포함된 물품 리스트
+				List<AdminPointItemImgEntity> pointItemImgList = adminPointItemImgService
+						.findByPointItemIdIn(pointItemList);
+				pointItemImgList = firebaseStorageService.updateCategoryName(newCategoryName, oldCategoryName,
+						pointItemImgList);
 				logger.info("[Firebase Storage 업데이트 완료] 카테고리 파일 이동 완료");
+
+				adminPointItemImgService.updatePointItemImgPathAndURL(pointItemImgList);
 			}
 
 			// 3. DB 업데이트
