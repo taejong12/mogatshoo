@@ -3,4 +3,5 @@ services:
     name: mogatshoo
     env: docker
     plan: free
+    rootDir: .
     dockerfilePath: Dockerfile
