@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <!-- 모바일 사이드바 프래그먼트 -->
+    <div th:fragment="mobile-sidebar" class="mobile-sidebar-wrapper">
+        
+        <!-- 토글 버튼 -->
+        <button class="mobile-toggle-btn" id="mobileToggleBtn">
+            <span class="toggle-icon">☰</span>
+        </button>
+        
+        <!-- 사이드바 오버레이 -->
+        <div class="mobile-sidebar-overlay" id="mobileOverlay"></div>
+        
+        <!-- 사이드바 컨테이너 -->
+        <div class="mobile-sidebar-container" id="mobileSidebarContainer">
+            
+            <!-- 닫기 버튼 -->
+            <button class="mobile-close-btn" id="mobileCloseBtn">×</button>
+            
+            <!-- 로고 섹션 -->
+            <div class="mobile-logo-section">
+                <a th:href="@{/voting}" class="mobile-logo-link">
+                    <div class="mobile-logo-icon">
+                        <img src="/img/icons/computer.png" alt="모갓슈 로고">
+                    </div>
+                    <div class="mobile-logo-text">탈모왕중왕</div>
+                </a>
+            </div>
+            
+            <!-- 로그인된 사용자 메뉴 -->
+            <div class="mobile-menu-section" sec:authorize="isAuthenticated()">
+                
+                <!-- 메인 앱들 -->
+                <div class="mobile-apps-grid">
+                    <a th:href="@{/}" class="mobile-app-item" data-page="home">
+                        <div class="mobile-app-icon">
+                            <img src="/img/icons/computer.png" alt="홈">
+                        </div>
+                        <span class="mobile-app-text">홈</span>
+                    </a>
+                    
+                    <a th:href="@{/fortune/start}" class="mobile-app-item" data-page="fortune">
+                        <div class="mobile-app-icon">
+                            <img src="/img/icons/computer.png" alt="오늘운세">
+                        </div>
+                        <span class="mobile-app-text">오늘운세</span>
+                    </a>
+                    
+                    <a th:href="@{/hairLossTest/testHair}" class="mobile-app-item" data-page="test">
+                        <div class="mobile-app-icon">
+                            <img src="/img/icons/computer.png" alt="탈모진단">
+                        </div>
+                        <span class="mobile-app-text">탈모진단</span>
+                    </a>
+                    
+                    <a th:href="@{/hospitalMap/hospitals}" class="mobile-app-item" data-page="hospital">
+                        <div class="mobile-app-icon">
+                            <img src="/img/icons/computer.png" alt="병원지도">
+                        </div>
+                        <span class="mobile-app-text">병원지도</span>
+                    </a>
+                    
+                    <a th:href="@{/point/shop/list}" class="mobile-app-item" data-page="shop">
+                        <div class="mobile-app-icon">
+                            <img src="/img/icons/computer.png" alt="포인트샵">
+                        </div>
+                        <span class="mobile-app-text">포인트샵</span>
+                    </a>
+                    
+                    <a th:href="@{/qanda/user}" class="mobile-app-item" data-page="qanda">
+                        <div class="mobile-app-icon">
+                            <img src="/img/icons/computer.png" alt="Q&A">
+                        </div>
+                        <span class="mobile-app-text">Q & A</span>
+                    </a>
+                </div>
+                
+                <!-- 내 정보 섹션 -->
+                <div class="mobile-user-section">
+                    <h3 class="mobile-section-title">내 정보</h3>
+                    <div class="mobile-user-grid">
+                        <a th:href="@{/member/mypage(memberId=${session.memberId})}" class="mobile-user-item">
+                            <img src="/img/icons/computer.png" alt="내정보">
+                            <span>내정보</span>
+                        </a>
+                        
+                        <a th:href="@{/point/detail/list(memberId=${session.memberId})}" class="mobile-user-item">
+                            <img src="/img/icons/computer.png" alt="포인트내역">
+                            <span>포인트내역</span>
+                        </a>
+                        
+                        <a th:href="@{/point/shop/buyList}" class="mobile-user-item">
+                            <img src="/img/icons/computer.png" alt="결제내역">
+                            <span>결제내역</span>
+                        </a>
+                        
+                        <button class="mobile-user-item mobile-logout-btn" id="mobileLogoutBtn">
+                            <img src="/img/icons/computer.png" alt="로그아웃">
+                            <span>로그아웃</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 로그인되지 않은 사용자 메뉴 -->
+            <div class="mobile-guest-section" sec:authorize="!isAuthenticated()">
+                
+                <!-- 로그인 안내 -->
+                <div class="mobile-login-notice">
+                    <h3>로그인이 필요합니다</h3>
+                    <p>모든 서비스를 이용하려면<br>로그인해주세요</p>
+                    
+                    <div class="mobile-auth-buttons">
+                        <a th:href="@{/member/login}" class="mobile-auth-btn mobile-login-btn">로그인</a>
+                        <a th:href="@{/member/join}" class="mobile-auth-btn mobile-join-btn">회원가입</a>
+                    </div>
+                </div>
+                
+                <!-- 체험용 메뉴 -->
+                <div class="mobile-demo-section">
+                    <h4>체험해보기</h4>
+                    <div class="mobile-demo-grid">
+                        <a th:href="@{/}" class="mobile-demo-item">
+                            <div class="mobile-demo-icon">
+                                <img src="/img/icons/computer.png" alt="홈">
+                            </div>
+                            <span>홈</span>
+                        </a>
+                        
+                        <a th:href="@{/fortune/start}" class="mobile-demo-item">
+                            <div class="mobile-demo-icon">
+                                <img src="/img/icons/computer.png" alt="오늘운세">
+                            </div>
+                            <span>오늘운세</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

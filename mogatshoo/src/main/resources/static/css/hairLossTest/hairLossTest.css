@@ -39,7 +39,6 @@ body {
 	text-align: center;
 	width: 100vw;
 	min-height: 100vh;
-	padding: 20px 0;
 	box-sizing: border-box;
 }
 
@@ -606,7 +605,7 @@ html {
 /* 작은 모바일 (480px 이하) - 높이 문제 해결 */
 @media screen and (max-width: 480px) {
 	.pixel-bg {
-		padding: 5px;
+		padding: 0px;
 		min-height: 100vh;
 		align-items: flex-start;
 	}
@@ -614,7 +613,7 @@ html {
 	.main-container {
 		min-height: calc(100vh - 10px);
 		height: auto;
-		width: calc(100% - 10px) !important;
+		width: calc(100% - 0px) !important;
 	}
 
 	.container {
@@ -717,8 +716,8 @@ html {
 		
 		.main-container {
 			min-height: calc(-webkit-fill-available - 20px);
-			height: auto;
-			margin-top: 15px;
+			height: 100vh;
+			margin-top: 0px;
 		}
 		
 		.container {
