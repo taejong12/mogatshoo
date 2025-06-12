@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: mogatshoo
+    runtime: java
+    buildCommand: ./gradlew build
+    startCommand: java -jar build/libs/mogatshoo-0.0.1-SNAPSHOT.jar
+    rootDir: .
