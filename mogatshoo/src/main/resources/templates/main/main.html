@@ -250,14 +250,7 @@
             <div id="win98Container">
                 <!-- 기존 콘텐츠들을 여기에 추가할 수 있습니다 -->
                 
-                <!-- 로그인 상태별 환영 메시지 (선택사항) -->
-                <div sec:authorize="isAuthenticated()" style="position: absolute; top: 20px; left: 20px; color: white; font-size: 18px;">
-                    <h3>안녕하세요, <span th:text="${#authentication.principal.nickName}">사용자</span>님!</h3>
-                </div>
-                
-                <div sec:authorize="isAnonymous()" style="position: absolute; top: 20px; left: 20px; color: white; font-size: 18px;">
-                    <h3>탈모왕중왕에 오신 것을 환영합니다!</h3>
-                </div>
+               
                 
                 <!-- 기존 이메일 박스 -->
                 <div class="emailBox">

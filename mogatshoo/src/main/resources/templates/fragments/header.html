@@ -11,8 +11,8 @@
 		<div class="mobile-header-content">
 			<!-- 로고 영역 -->
 			<a th:href="@{/}" class="mobile-logo">
-				<img src="/img/icons/computer.png" alt="탈모왕중왕">
-				<span>탈모왕중왕</span>
+				<img src="/img/icons/computer.png" alt="홈">
+				<span>홈</span>
 			</a>
 			
 			<!-- 메뉴 드롭다운 -->
@@ -33,13 +33,17 @@
 							<img src="/img/icons/computer.png" alt="홈">
 							<span>홈</span>
 						</a>
-						<a th:href="@{/fortune/start}" class="dropdown-item">
-							<img src="/img/icons/computer.png" alt="운세">
-							<span>오늘운세</span>
+						<a th:href="@{/voting}" class="dropdown-item">
+							<img src="/img/icons/computer.png" alt="투표">
+							<span>탈모왕중왕</span>
 						</a>
 						<a th:href="@{/hairLossTest/testHair}" class="dropdown-item">
 							<img src="/img/icons/computer.png" alt="탈모진단">
 							<span>탈모진단</span>
+						</a>ㄴ
+						<a th:href="@{/fortune/start}" class="dropdown-item">
+							<img src="/img/icons/computer.png" alt="운세">
+							<span>오늘운세</span>
 						</a>
 						<a th:href="@{/hospitalMap/hospitals}" class="dropdown-item">
 							<img src="/img/icons/computer.png" alt="병원지도">
@@ -52,10 +56,6 @@
 						<a th:href="@{/qanda/user}" class="dropdown-item">
 							<img src="/img/icons/computer.png" alt="Q&A">
 							<span>Q & A</span>
-						</a>
-						<a th:href="@{/voting}" class="dropdown-item">
-							<img src="/img/icons/computer.png" alt="투표">
-							<span>투표</span>
 						</a>
 					</div>
 

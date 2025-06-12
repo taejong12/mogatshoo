@@ -1,91 +1,83 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{fragments/layout}" th:with="layoutTitle='hairLossMap'">
+      layout:decorate="~{fragments/layout}" th:with="layoutTitle='hairLossMap'">
 
 <head>
-	<title>주변 탈모 병원 찾기</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- 부트스트랩 CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<!-- 카카오맵 API - autoload=false 추가하고 콜백 방식으로 변경 -->
-	<script type="text/javascript"
-		src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b962d0ab211df404dd13c6c6f179415&libraries=services&autoload=false"></script>
-	<link th:href="@{/css/hospitalMap/hospitalMap.css}" rel="stylesheet">
+    <title>주변 탈모 병원 찾기</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2b962d0ab211df404dd13c6c6f179415&libraries=services&autoload=false"></script>
+    <link th:href="@{/css/hospitalMap/hospitalMap.css}" rel="stylesheet">
 </head>
 
 <body>
-	<div layout:fragment="content">
-		<div class="container mt-4">
-			<h1 class="mb-4">주변 탈모 병원 찾기</h1>
+<div layout:fragment="content">
+    <div class="hairloss-map-app">
+        <div class="map-app-header card">
+            <div class="card-header">
+                <h1>주변 탈모 병원 찾기</h1>
+            </div>
+            <div class="card-body">
+                <div class="controls-container">
+                    <div class="search-group">
+                        <div class="input-group">
+                            <input type="text" id="keyword" class="form-control" placeholder="검색어 입력 (예: 강남 탈모 병원)">
+                            <button class="btn btn-primary" type="button" onclick="searchByKeyword()">검색</button>
+                        </div>
+                        <div class="location-group">
+                            <button class="btn btn-success" onclick="getCurrentLocation()">내 위치에서 검색</button>
+                            <select id="radius" class="form-select">
+                                <option value="1000">1km 이내</option>
+                                <option value="2000" selected>2km 이내</option>
+                                <option value="5000">5km 이내</option>
+                                <option value="10000">10km 이내</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="category-buttons">
+                        <button class="btn btn-outline-secondary" onclick="searchByCategory('탈모 병원')">탈모 병원</button>
+                        <button class="btn btn-outline-secondary" onclick="searchByCategory('탈모 치료')">탈모 치료</button>
+                        <button class="btn btn-outline-secondary" onclick="searchByCategory('모발 이식')">모발 이식</button>
+                        <button class="btn btn-outline-secondary" onclick="searchByCategory('두피 클리닉')">두피 클리닉</button>
+                        <button class="btn btn-outline-secondary" onclick="searchByCategory('피부과')">피부과</button>
+                    </div>
+                </div>
+                 <div id="messageArea"></div>
+            </div>
+        </div>
 
-			<div class="card mb-4">
-				<div class="card-body">
-					<div class="row">
-						<div class="col-md-6">
-							<div class="input-group mb-3">
-								<input type="text" id="keyword" class="form-control" placeholder="검색어 입력 (예: 강남 탈모 병원)">
-								<button class="btn btn-primary" type="button" onclick="searchByKeyword()">검색</button>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="d-flex justify-content-end">
-								<button class="btn btn-success me-2" onclick="getCurrentLocation()">내 위치에서 검색</button>
-								<select id="radius" class="form-select" style="width: auto;">
-									<option value="1000">1km 이내</option>
-									<option value="2000" selected>2km 이내</option>
-									<option value="5000">5km 이내</option>
-									<option value="10000">10km 이내</option>
-								</select>
-							</div>
-						</div>
-					</div>
+        <div class="map-app-main-content">
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+            <div class="list-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">검색 결과</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="hospital-list">
+                            <div class="text-center p-4">
+                                <p class="text-muted">병원/의원을 검색해주세요.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-					<div class="category-buttons">
-						<button class="btn btn-outline-secondary" onclick="searchByCategory('탈모 병원')">탈모 병원</button>
-						<button class="btn btn-outline-secondary" onclick="searchByCategory('탈모 치료')">탈모 치료</button>
-						<button class="btn btn-outline-secondary" onclick="searchByCategory('모발 이식')">모발 이식</button>
-						<button class="btn btn-outline-secondary" onclick="searchByCategory('두피 클리닉')">두피 클리닉</button>
-						<button class="btn btn-outline-secondary" onclick="searchByCategory('피부과')">피부과</button>
-					</div>
-
-					<!-- 메시지 표시 영역 추가 -->
-					<div id="messageArea"></div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-8">
-					<div id="map"></div>
-				</div>
-				<div class="col-md-4">
-					<div class="card">
-						<div class="card-header">
-							<h5 class="mb-0">검색 결과</h5>
-						</div>
-						<div class="card-body p-0" style="max-height: 500px; overflow-y: auto;">
-							<div id="hospital-list">
-								<div class="text-center p-4">
-									<p class="text-muted">위치 정보를 불러오는 중입니다...</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- 로딩 인디케이터 -->
-		<div id="loading" class="loading">
-			<div class="spinner-border text-primary" role="status">
-				<span class="visually-hidden">Loading...</span>
-			</div>
-		</div>
-		<script th:src="@{/js/hospitalMap/kakaoMapLoad.js}"></script>
-		<!-- 부트스트랩 JS -->
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	</div>
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/hospitalMap/kakaoMapLoad.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
 </body>
-
 
 </html>

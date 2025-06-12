@@ -476,8 +476,8 @@
 	}
 
 	.container, .container-fluid {
-		padding-left: 15px !important;
-		padding-right: 15px !important;
+		padding-left: 0px !important;
+		padding-right: 0px !important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
 		max-width: 100% !important;
