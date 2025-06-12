@@ -1,0 +1,40 @@
+{
+  "name": "모갓슈",
+  "short_name": "모갓슈",
+  "description": "모갓슈 서비스",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#008080",
+  "theme_color": "#008080",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/img/logo/logo_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/logo/logo_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/img/screenshots/screenshotsWeb.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "메인 화면"
+    },
+    {
+      "src": "/img/screenshots/screenshotsPhone.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "모바일 메인 화면"
+    }
+  ]
+}

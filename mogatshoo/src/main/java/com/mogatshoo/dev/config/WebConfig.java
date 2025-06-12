@@ -44,9 +44,6 @@ public class WebConfig implements WebMvcConfigurer {
    	 registry.addInterceptor(introInterceptor) // @Autowired로 주입받은 introInterceptor 사용
         .addPathPatterns("/**") // 모든 경로에 인터셉터 적용
         .excludePathPatterns(
-            // 주의: '/'와 '/intro'는 여기서 제외하면 안 됩니다!
-            // Interceptor가 이 두 경로를 처리해야 합니다.
-
             // 기존 HairCheckInterceptor의 excludePathPatterns를 참고하여
             // 중복되거나, Interceptor가 관여할 필요가 없는 경로들을 제외합니다.
             "/videos/**", "/css/**", "/js/**", "/img/**", "/favicon.ico", // 정적 리소스
