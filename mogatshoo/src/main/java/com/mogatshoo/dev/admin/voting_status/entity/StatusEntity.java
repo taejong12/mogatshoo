@@ -157,7 +157,7 @@ public class StatusEntity {
         // 2. 전체 회원 대비 참여율이 50% 이상이고
         // 3. 최다득표자의 득표율이 40% 이상인 경우
         this.emailEligible = "종료".equals(getCurrentVotingStatus()) 
-                            && this.participationRate >= 30.0 
+                            && this.participationRate >= 50.0 
                             && this.topVotedRate >= 40.0;
     }
     
@@ -259,7 +259,7 @@ public class StatusEntity {
             return "전송 불가 (투표 미종료)";
         }
         
-        if (participationRate == null || participationRate < 30.0) {
+        if (participationRate == null || participationRate < 50.0) {
             return String.format("전송 불가 (참여율 부족: %.1f%% < 50%%)", 
                                 participationRate != null ? participationRate : 0.0);
         }
@@ -286,7 +286,7 @@ public class StatusEntity {
     public Map<String, Boolean> getEmailEligibilityDetails() {
         Map<String, Boolean> details = new java.util.HashMap<>();
         details.put("isVotingEnded", "종료".equals(getCurrentVotingStatus()));
-        details.put("hasEnoughParticipation", participationRate != null && participationRate >= 30.0);
+        details.put("hasEnoughParticipation", participationRate != null && participationRate >= 50.0);
         details.put("hasEnoughTopVotedRate", topVotedRate != null && topVotedRate >= 40.0);
         details.put("isOverallEligible", isEmailEligible());
         return details;

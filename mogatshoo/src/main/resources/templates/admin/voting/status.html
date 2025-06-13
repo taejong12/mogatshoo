@@ -242,19 +242,54 @@ layout:decorate="~{admin/fragments/layout}"
                                     </div>
                                 </td>
                                 
+                                <!-- 작업 컬럼 (페이지 이동 방식으로 수정) -->
                                 <td class="actions-container">
                                     <div class="btn-group-vertical btn-group-sm">
                                         <!-- 이메일 전송 버튼 -->
-                                        <a th:if="${stat.emailEligible and stat.currentVotingStatus == '종료'}" 
-                                           th:href="@{/admin/email/emailSend/{serialNumber}(serialNumber=${stat.serialNumber})}"
-                                           class="btn btn-email btn-sm">
-                                            <i class="fas fa-envelope me-2"></i>이메일
-                                        </a>
-                                        <button th:if="${!stat.emailEligible or stat.currentVotingStatus != '종료'}" 
-                                                class="btn btn-email btn-sm" disabled
-                                                th:title="${stat.emailEligibleStatus}">
-                                            <i class="fas fa-envelope me-2"></i>이메일
-                                        </button>
+                                        <div th:if="${stat.emailEligible and stat.currentVotingStatus == '종료'}">
+                                            <!-- 이메일 전송 완료 상태 확인 -->
+                                            <div th:if="${emailSentStatus[stat.serialNumber]}">
+                                                <button class="btn btn-email-completed btn-sm" disabled>
+                                                    <i class="fas fa-check-circle me-2"></i>전송완료
+                                                </button>
+                                                <small class="text-success d-block mt-1">
+                                                    <i class="fas fa-info-circle me-1"></i>이메일 전송 완료
+                                                </small>
+                                            </div>
+                                            
+                                            <!-- 이메일 전송 가능 상태 -->
+                                            <div th:if="${!emailSentStatus[stat.serialNumber]}">
+                                                <a th:href="@{/admin/email/emailSend/{serialNumber}(serialNumber=${stat.serialNumber})}"
+                                                   class="btn btn-email btn-sm">
+                                                    <i class="fas fa-envelope me-2"></i>이메일
+                                                </a>
+                                                <small class="text-info d-block mt-1">
+                                                    <i class="fas fa-paper-plane me-1"></i>전송 가능
+                                                </small>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 이메일 전송 불가능 상태 -->
+                                        <div th:if="${!stat.emailEligible or stat.currentVotingStatus != '종료'}">
+                                            <button class="btn btn-email btn-sm" disabled
+                                                    th:title="${stat.emailEligibleStatus}">
+                                                <i class="fas fa-envelope me-2"></i>이메일
+                                            </button>
+                                            <small class="text-muted d-block mt-1">
+                                                <i class="fas fa-times-circle me-1"></i>전송 불가
+                                            </small>
+                                        </div>
+                                        
+                                        <!-- 이메일 히스토리 버튼 -->
+                                        <div th:if="${stat.currentVotingStatus == '종료'}">
+                                            <a th:href="@{/admin/email/history/{serialNumber}(serialNumber=${stat.serialNumber})}"
+                                               class="btn btn-outline-info btn-sm">
+                                                <i class="fas fa-history me-2"></i>이력
+                                            </a>
+                                            <small class="text-muted d-block mt-1">
+                                                <i class="fas fa-list me-1"></i>전송 이력
+                                            </small>
+                                        </div>
                                         
                                         <!-- 상세 보기 버튼 -->
                                         <a th:href="@{/admin/questions/{serialNumber}(serialNumber=${stat.serialNumber})}"
@@ -318,19 +353,177 @@ layout:decorate="~{admin/fragments/layout}"
                 </div>
             </div>
         </div>
-    
 
-    <!-- 로딩 오버레이 -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <h5>데이터를 불러오는 중...</h5>
-            <p>잠시만 기다려주세요.</p>
+        <!-- 로딩 오버레이 -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <h5>데이터를 불러오는 중...</h5>
+                <p>잠시만 기다려주세요.</p>
+            </div>
         </div>
-    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/voting/status.js}"></script>
-	</div>
+        <!-- 간단한 필터링 스크립트 -->
+        <script>
+        // 필터링 관련 함수들
+        function resetFilters() {
+            const statusFilter = document.getElementById('statusFilter');
+            const rateFilter = document.getElementById('rateFilter');
+            const emailFilter = document.getElementById('emailFilter');
+            
+            if (statusFilter) statusFilter.value = 'all';
+            if (rateFilter) rateFilter.value = 'all';
+            if (emailFilter) emailFilter.value = 'all';
+            
+            filterTable();
+        }
+
+        function changePageSize(newSize) {
+            const url = new URL(window.location);
+            url.searchParams.set('size', newSize);
+            url.searchParams.set('page', '0'); // 첫 페이지로 이동
+            window.location.href = url.toString();
+        }
+
+        function filterTable() {
+            const statusFilter = document.getElementById('statusFilter');
+            const rateFilter = document.getElementById('rateFilter');
+            const emailFilter = document.getElementById('emailFilter');
+            
+            if (!statusFilter || !rateFilter || !emailFilter) {
+                console.error('필터 요소들을 찾을 수 없습니다');
+                return;
+            }
+            
+            const statusFilterValue = statusFilter.value;
+            const rateFilterValue = rateFilter.value;
+            const emailFilterValue = emailFilter.value;
+            const rows = document.querySelectorAll('.voting-row');
+            
+            let visibleCount = 0;
+            
+            rows.forEach((row) => {
+                let showRow = true;
+                
+                // 상태 필터
+                if (statusFilterValue !== 'all') {
+                    const rowStatus = row.getAttribute('data-voting-status');
+                    
+                    let statusMatch = false;
+                    switch (statusFilterValue) {
+                        case 'pending':
+                            statusMatch = rowStatus === '보류';
+                            break;
+                        case 'active':
+                            statusMatch = rowStatus === '진행중';
+                            break;
+                        case 'ended':
+                            statusMatch = rowStatus === '종료';
+                            break;
+                    }
+                    
+                    if (!statusMatch) {
+                        showRow = false;
+                    }
+                }
+                
+                // 참여율 필터
+                if (rateFilterValue !== 'all' && showRow) {
+                    const participationRate = parseFloat(row.getAttribute('data-participation-rate') || '0');
+                    
+                    if (rateFilterValue === 'high' && participationRate < 50) {
+                        showRow = false;
+                    } else if (rateFilterValue === 'medium' && (participationRate < 40 || participationRate >= 50)) {
+                        showRow = false;
+                    } else if (rateFilterValue === 'low' && participationRate >= 40) {
+                        showRow = false;
+                    }
+                }
+                
+                // 이메일 필터
+                if (emailFilterValue !== 'all' && showRow) {
+                    const emailEligible = row.getAttribute('data-email-eligible') === 'true';
+                    
+                    if (emailFilterValue === 'eligible' && !emailEligible) {
+                        showRow = false;
+                    } else if (emailFilterValue === 'not-eligible' && emailEligible) {
+                        showRow = false;
+                    }
+                }
+                
+                // 행 표시/숨김 처리
+                if (showRow) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // 결과가 없는 경우 메시지 표시
+            const tableBody = document.querySelector('.voting-table tbody');
+            let noResultsRow = document.getElementById('no-results-row');
+            
+            if (visibleCount === 0) {
+                if (!noResultsRow && tableBody) {
+                    noResultsRow = document.createElement('tr');
+                    noResultsRow.id = 'no-results-row';
+                    noResultsRow.innerHTML = '<td colspan="8" class="text-center text-muted py-4">필터 조건에 맞는 결과가 없습니다.</td>';
+                    tableBody.appendChild(noResultsRow);
+                }
+            } else {
+                if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+            }
+        }
+
+        // 페이지 로드 시 필터 이벤트 등록
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const rateFilter = document.getElementById('rateFilter');
+            const emailFilter = document.getElementById('emailFilter');
+
+            if (statusFilter) statusFilter.addEventListener('change', filterTable);
+            if (rateFilter) rateFilter.addEventListener('change', filterTable);
+            if (emailFilter) emailFilter.addEventListener('change', filterTable);
+
+            // 진행바 애니메이션
+            setTimeout(() => {
+                const progressFills = document.querySelectorAll('.progress-fill');
+                progressFills.forEach(fill => {
+                    const width = fill.style.width;
+                    fill.style.width = '0%';
+                    setTimeout(() => {
+                        fill.style.width = width;
+                    }, 100);
+                });
+            }, 500);
+        });
+
+        // 로딩 표시/숨김
+        function showLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'flex';
+            }
+        }
+
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        // 페이지 로드 완료시 로딩 숨김
+        window.addEventListener('load', function() {
+            hideLoading();
+        });
+        </script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/js/voting/status.js}"></script>
+    </div>
 </body>
 </html>
