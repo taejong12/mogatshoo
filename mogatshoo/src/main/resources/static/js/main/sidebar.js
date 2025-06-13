@@ -15,17 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(sidebarOverlay);
     }
     
-    // 모바일 홈 버튼 생성
-    let mobileHomeBtn = document.querySelector('.mobile-home-btn');
-    if (!mobileHomeBtn) {
-        mobileHomeBtn = document.createElement('a');
-        mobileHomeBtn.className = 'mobile-home-btn';
-        mobileHomeBtn.href = '/';
-        mobileHomeBtn.innerHTML = '🏠';
-        mobileHomeBtn.title = '홈으로';
-        document.body.appendChild(mobileHomeBtn);
-    }
-    
     // 모바일인지 확인하는 함수
     function isMobile() {
         return window.innerWidth <= 768;
