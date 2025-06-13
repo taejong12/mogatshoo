@@ -3,6 +3,8 @@ package com.mogatshoo.dev.admin.voting_status.controller;
 import com.mogatshoo.dev.admin.amdinEmail.service.AdminEmailService;
 import com.mogatshoo.dev.admin.voting_status.entity.StatusEntity;
 import com.mogatshoo.dev.admin.voting_status.service.StatusService;
+import com.mogatshoo.dev.member.entity.MemberEntity;
+import com.mogatshoo.dev.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +30,9 @@ public class StatusController {
 
 	@Autowired
 	private AdminEmailService adminEmailService;
+
+	@Autowired
+	private MemberService memberService;
 
 	// 기존 투표 관리 현황 페이지 (페이지네이션 추가) - 수정된 부분
 	@GetMapping("")
@@ -64,13 +69,16 @@ public class StatusController {
 
 			List<StatusEntity> votingStatistics = votingStatisticsPage.getContent();
 
-			// 각 질문별 이메일 전송 여부 확인
+			// 각 질문별 이메일 전송 여부 확인 및 최다득표자 정보 콘솔 출력
 			Map<String, Boolean> emailSentStatus = new HashMap<>();
 			for (StatusEntity status : votingStatistics) {
 				if (status.getTopVotedId() != null) {
 					boolean emailSent = adminEmailService.isDuplicateEmail(status.getSerialNumber(),
 							status.getTopVotedId());
 					emailSentStatus.put(status.getSerialNumber(), emailSent);
+
+					// 최다득표자 상세 정보 콘솔 출력
+					logTopVotedMemberInfo(status);
 				} else {
 					emailSentStatus.put(status.getSerialNumber(), false);
 				}
@@ -155,7 +163,14 @@ public class StatusController {
 	@ResponseBody
 	public StatusEntity getQuestionDetail(@PathVariable String serialNumber) {
 		try {
-			return statusService.getQuestionStatistics(serialNumber);
+			StatusEntity questionDetail = statusService.getQuestionStatistics(serialNumber);
+			
+			// 상세 조회 시에도 최다득표자 정보 콘솔 출력
+			if (questionDetail != null) {
+				logTopVotedMemberInfo(questionDetail);
+			}
+			
+			return questionDetail;
 		} catch (Exception e) {
 			System.err.println("질문 상세 통계 조회 중 오류 발생: " + e.getMessage());
 			e.printStackTrace();
@@ -174,6 +189,9 @@ public class StatusController {
 				redirectAttributes.addFlashAttribute("errorMessage", "질문 정보를 찾을 수 없습니다.");
 				return "redirect:/admin/voting-status";
 			}
+
+			// 이메일 페이지 이동 시 최다득표자 정보 콘솔 출력
+			logTopVotedMemberInfo(questionStats);
 
 			// 종료된 질문인지 확인 (동적 상태 확인)
 			if (!"종료".equals(questionStats.getCurrentVotingStatus())) {
@@ -249,6 +267,9 @@ public class StatusController {
 				response.put("message", "질문 정보를 찾을 수 없습니다.");
 				return ResponseEntity.badRequest().body(response);
 			}
+
+			// 빠른 이메일 전송 시에도 최다득표자 정보 콘솔 출력
+			logTopVotedMemberInfo(questionStats);
 
 			// 종료된 질문인지 확인 (동적 상태 확인)
 			if (!"종료".equals(questionStats.getCurrentVotingStatus())) {
@@ -351,6 +372,9 @@ public class StatusController {
 				return ResponseEntity.badRequest().body(response);
 			}
 
+			// 이메일 발송 조건 확인 시에도 최다득표자 정보 콘솔 출력
+			logTopVotedMemberInfo(questionStats);
+
 			// 조건별 상세 체크
 			Map<String, Object> eligibilityDetails = new HashMap<>();
 			eligibilityDetails.put("serialNumber", serialNumber);
@@ -404,6 +428,92 @@ public class StatusController {
 			response.put("success", false);
 			response.put("message", "시스템 오류가 발생했습니다.");
 			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
+	/**
+	 * **신규 추가: 최다득표자 정보 콘솔 출력 메서드**
+	 */
+	private void logTopVotedMemberInfo(StatusEntity questionStats) {
+		try {
+			if (questionStats == null || questionStats.getTopVotedId() == null) {
+				System.out.println("🏆 ===== 최다득표자 정보 없음 =====");
+				System.out.println("질문 번호: " + (questionStats != null ? questionStats.getSerialNumber() : "알 수 없음"));
+				System.out.println("상태: 최다득표자 없음");
+				System.out.println("=============================");
+				return;
+			}
+
+			// 최다득표자의 회원 정보 조회
+			MemberEntity topVotedMember = memberService.findByMemberId(questionStats.getTopVotedId());
+
+			System.out.println("🏆 ===== 최다득표자 정보 =====");
+			System.out.println("질문 번호: " + questionStats.getSerialNumber());
+			System.out.println("질문 내용: " + questionStats.getQuestionContent());
+			System.out.println("투표 상태: " + questionStats.getCurrentVotingStatus());
+			System.out.println("총 투표 수: " + questionStats.getTotalVotes());
+			System.out.println("참여자 수: " + questionStats.getUniqueVoters());
+			System.out.println("참여율: " + String.format("%.1f%%", questionStats.getParticipationRate()));
+			System.out.println("--- 최다득표자 ---");
+			System.out.println("회원 ID: " + questionStats.getTopVotedId());
+			System.out.println("득표 수: " + questionStats.getTopVoteCount());
+			System.out.println("득표율: " + String.format("%.1f%%", questionStats.getTopVotedRate()));
+			
+			if (topVotedMember != null) {
+				System.out.println("✅ 최다득표자 상세 정보:");
+				System.out.println("  실명: " + topVotedMember.getMemberName());
+				System.out.println("  닉네임: " + topVotedMember.getMemberNickName());
+				System.out.println("  이메일: " + topVotedMember.getMemberEmail());
+				System.out.println("  성별: " + topVotedMember.getMemberGender());
+				System.out.println("  전화번호: " + topVotedMember.getMemberTel());
+				System.out.println("  가입일: " + topVotedMember.getMemberCreate());
+				System.out.println("  제공업체: " + topVotedMember.getProvider());
+			} else {
+				System.out.println("❌ 회원 정보: 조회 실패 (탈퇴 또는 존재하지 않는 회원)");
+			}
+			
+			// 이메일 전송 가능 여부 상세 분석
+			boolean isEmailEligible = "종료".equals(questionStats.getCurrentVotingStatus()) 
+					&& questionStats.getParticipationRate() >= 50.0 
+					&& questionStats.getTopVotedRate() >= 40.0;
+			
+			System.out.println("--- 이메일 전송 조건 분석 ---");
+			System.out.println("투표 종료 여부: " + ("종료".equals(questionStats.getCurrentVotingStatus()) ? "✅ YES" : "❌ NO"));
+			System.out.println("참여율 50% 이상: " + (questionStats.getParticipationRate() >= 50.0 ? 
+					"✅ YES (" + String.format("%.1f%%", questionStats.getParticipationRate()) + ")" : 
+					"❌ NO (" + String.format("%.1f%%", questionStats.getParticipationRate()) + ")"));
+			System.out.println("득표율 40% 이상: " + (questionStats.getTopVotedRate() >= 40.0 ? 
+					"✅ YES (" + String.format("%.1f%%", questionStats.getTopVotedRate()) + ")" : 
+					"❌ NO (" + String.format("%.1f%%", questionStats.getTopVotedRate()) + ")"));
+			
+			if (isEmailEligible && topVotedMember != null) {
+				System.out.println("🎉 이메일 전송 가능: YES");
+				System.out.println("🏅 우승자 확정: " + topVotedMember.getMemberName() + " (" + topVotedMember.getMemberEmail() + ")");
+			} else {
+				System.out.println("⚠️ 이메일 전송 가능: NO");
+				if (!isEmailEligible) {
+					List<String> reasons = new ArrayList<>();
+					if (!"종료".equals(questionStats.getCurrentVotingStatus())) {
+						reasons.add("투표 미종료");
+					}
+					if (questionStats.getParticipationRate() < 50.0) {
+						reasons.add("참여율 부족");
+					}
+					if (questionStats.getTopVotedRate() < 40.0) {
+						reasons.add("득표율 부족");
+					}
+					System.out.println("전송 불가 사유: " + String.join(", ", reasons));
+				}
+			}
+			
+			System.out.println("=============================");
+
+		} catch (Exception e) {
+			System.err.println("최다득표자 정보 출력 중 오류: " + e.getMessage());
+			System.out.println("🏆 ===== 최다득표자 정보 =====");
+			System.out.println("질문 번호: " + (questionStats != null ? questionStats.getSerialNumber() : "알 수 없음"));
+			System.out.println("오류 발생: " + e.getMessage());
+			System.out.println("=============================");
 		}
 	}
 }

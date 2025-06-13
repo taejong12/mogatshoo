@@ -35,6 +35,18 @@ public class QuestionEntity {
     @Column(nullable = false)
     private String option4;
     
+    @Column(name = "option1_member_id")
+    private String option1MemberId;
+
+    @Column(name = "option2_member_id")  
+    private String option2MemberId;
+
+    @Column(name = "option3_member_id")
+    private String option3MemberId;
+
+    @Column(name = "option4_member_id")
+    private String option4MemberId;
+    
     @Column(nullable = false, columnDefinition = "VARCHAR(3) DEFAULT 'no'")
     private String isPublic = "no";
     

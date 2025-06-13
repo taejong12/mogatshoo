@@ -47,7 +47,7 @@ public class AdminEmailServiceImpl implements AdminEmailService {
     
     @Value("${spring.mail.username}")
     private String fromEmail;
-
+    
     @Override
     @Transactional
     public AdminEmailEntity sendWinnerEmail(String serialNumber, String winnerId, String senderId, 

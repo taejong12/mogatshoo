@@ -108,6 +108,26 @@ public class VotingController {
 				Map<String, String> option1 = new HashMap<>();
 				option1.put("imageUrl", randomQuestion.getOption1());
 				option1.put("optionId", "option1");
+				
+				// 회원 정보가 있다면 추가 (새 QuestionEntity 구조인 경우)
+				try {
+					if (randomQuestion.getOption1MemberId() != null) {
+						option1.put("memberId", randomQuestion.getOption1MemberId());
+						MemberEntity optionMember = memberService.findByMemberId(randomQuestion.getOption1MemberId());
+						if (optionMember != null) {
+							option1.put("memberName", optionMember.getMemberName());
+							option1.put("memberNickName", optionMember.getMemberNickName());
+							System.out.println("=== Option1 회원 정보 ===");
+							System.out.println("회원 ID: " + optionMember.getMemberId());
+							System.out.println("실명: " + optionMember.getMemberName());
+							System.out.println("닉네임: " + optionMember.getMemberNickName());
+							System.out.println("======================");
+						}
+					}
+				} catch (Exception e) {
+					System.out.println("Option1 회원 정보 조회 실패 (QuestionEntity 구조가 아직 업데이트 안됨): " + e.getMessage());
+				}
+				
 				questionOptions.add(option1);
 			}
 			
@@ -116,6 +136,25 @@ public class VotingController {
 				Map<String, String> option2 = new HashMap<>();
 				option2.put("imageUrl", randomQuestion.getOption2());
 				option2.put("optionId", "option2");
+				
+				try {
+					if (randomQuestion.getOption2MemberId() != null) {
+						option2.put("memberId", randomQuestion.getOption2MemberId());
+						MemberEntity optionMember = memberService.findByMemberId(randomQuestion.getOption2MemberId());
+						if (optionMember != null) {
+							option2.put("memberName", optionMember.getMemberName());
+							option2.put("memberNickName", optionMember.getMemberNickName());
+							System.out.println("=== Option2 회원 정보 ===");
+							System.out.println("회원 ID: " + optionMember.getMemberId());
+							System.out.println("실명: " + optionMember.getMemberName());
+							System.out.println("닉네임: " + optionMember.getMemberNickName());
+							System.out.println("======================");
+						}
+					}
+				} catch (Exception e) {
+					System.out.println("Option2 회원 정보 조회 실패: " + e.getMessage());
+				}
+				
 				questionOptions.add(option2);
 			}
 			
@@ -124,6 +163,25 @@ public class VotingController {
 				Map<String, String> option3 = new HashMap<>();
 				option3.put("imageUrl", randomQuestion.getOption3());
 				option3.put("optionId", "option3");
+				
+				try {
+					if (randomQuestion.getOption3MemberId() != null) {
+						option3.put("memberId", randomQuestion.getOption3MemberId());
+						MemberEntity optionMember = memberService.findByMemberId(randomQuestion.getOption3MemberId());
+						if (optionMember != null) {
+							option3.put("memberName", optionMember.getMemberName());
+							option3.put("memberNickName", optionMember.getMemberNickName());
+							System.out.println("=== Option3 회원 정보 ===");
+							System.out.println("회원 ID: " + optionMember.getMemberId());
+							System.out.println("실명: " + optionMember.getMemberName());
+							System.out.println("닉네임: " + optionMember.getMemberNickName());
+							System.out.println("======================");
+						}
+					}
+				} catch (Exception e) {
+					System.out.println("Option3 회원 정보 조회 실패: " + e.getMessage());
+				}
+				
 				questionOptions.add(option3);
 			}
 			
@@ -132,6 +190,25 @@ public class VotingController {
 				Map<String, String> option4 = new HashMap<>();
 				option4.put("imageUrl", randomQuestion.getOption4());
 				option4.put("optionId", "option4");
+				
+				try {
+					if (randomQuestion.getOption4MemberId() != null) {
+						option4.put("memberId", randomQuestion.getOption4MemberId());
+						MemberEntity optionMember = memberService.findByMemberId(randomQuestion.getOption4MemberId());
+						if (optionMember != null) {
+							option4.put("memberName", optionMember.getMemberName());
+							option4.put("memberNickName", optionMember.getMemberNickName());
+							System.out.println("=== Option4 회원 정보 ===");
+							System.out.println("회원 ID: " + optionMember.getMemberId());
+							System.out.println("실명: " + optionMember.getMemberName());
+							System.out.println("닉네임: " + optionMember.getMemberNickName());
+							System.out.println("======================");
+						}
+					}
+				} catch (Exception e) {
+					System.out.println("Option4 회원 정보 조회 실패: " + e.getMessage());
+				}
+				
 				questionOptions.add(option4);
 			}
 
@@ -223,6 +300,34 @@ public class VotingController {
 					Map<String, String> option = new HashMap<>();
 					option.put("imageUrl", options[i]);
 					option.put("optionId", optionIds[i]);
+					
+					// 회원 정보 추가 시도 (새 구조인 경우)
+					try {
+						String memberId = null;
+						switch (i) {
+							case 0: memberId = nextQuestion.getOption1MemberId(); break;
+							case 1: memberId = nextQuestion.getOption2MemberId(); break;
+							case 2: memberId = nextQuestion.getOption3MemberId(); break;
+							case 3: memberId = nextQuestion.getOption4MemberId(); break;
+						}
+						
+						if (memberId != null) {
+							option.put("memberId", memberId);
+							MemberEntity optionMember = memberService.findByMemberId(memberId);
+							if (optionMember != null) {
+								option.put("memberName", optionMember.getMemberName());
+								option.put("memberNickName", optionMember.getMemberNickName());
+								System.out.println("=== " + optionIds[i] + " 회원 정보 ===");
+								System.out.println("회원 ID: " + optionMember.getMemberId());
+								System.out.println("실명: " + optionMember.getMemberName());
+								System.out.println("닉네임: " + optionMember.getMemberNickName());
+								System.out.println("================================");
+							}
+						}
+					} catch (Exception e) {
+						System.out.println(optionIds[i] + " 회원 정보 조회 실패: " + e.getMessage());
+					}
+					
 					questionOptions.add(option);
 				}
 			}
@@ -279,6 +384,109 @@ public class VotingController {
 			}
 
 			System.out.println("투표 처리 시작 - 질문: " + serialNumber + ", 투표자: " + voterId + ", 선택: " + votedId);
+
+			// 투표자 정보와 투표 당한 사람 정보 함께 출력
+			try {
+				// 투표자 정보 조회
+				MemberEntity voter = memberService.findByMemberId(voterId);
+				
+				// 질문 정보와 투표 당한 사람 정보 조회
+				QuestionEntity question = null;
+				MemberEntity votedMember = null;
+				String votedMemberId = null;
+				String votedImageUrl = null;
+				
+				try {
+					// VotingService를 통해 현재 진행중인 질문들 중에서 찾기
+					List<QuestionEntity> availableQuestions = questionService.getQuestionsByPublicStatus("yes");
+					for (QuestionEntity q : availableQuestions) {
+						if (serialNumber.equals(q.getSerialNumber())) {
+							question = q;
+							break;
+						}
+					}
+					
+					if (question != null) {
+						// 선택된 옵션에 따라 투표 당한 회원 ID 가져오기
+						switch (votedId) {
+							case "option1":
+								votedMemberId = question.getOption1MemberId();
+								votedImageUrl = question.getOption1();
+								break;
+							case "option2":
+								votedMemberId = question.getOption2MemberId();
+								votedImageUrl = question.getOption2();
+								break;
+							case "option3":
+								votedMemberId = question.getOption3MemberId();
+								votedImageUrl = question.getOption3();
+								break;
+							case "option4":
+								votedMemberId = question.getOption4MemberId();
+								votedImageUrl = question.getOption4();
+								break;
+						}
+						
+						// 투표 당한 회원 정보 조회
+						if (votedMemberId != null) {
+							votedMember = memberService.findByMemberId(votedMemberId);
+						}
+					}
+				} catch (Exception qe) {
+					System.out.println("질문 또는 투표 당한 회원 정보 조회 실패: " + qe.getMessage());
+				}
+				
+				System.out.println("🗳️ ===== 투표 결과 =====");
+				System.out.println("질문 번호: " + serialNumber);
+				if (question != null) {
+					System.out.println("질문 내용: " + question.getQuestion());
+				}
+				System.out.println("선택된 옵션: " + votedId);
+				
+				System.out.println("--- 투표자 정보 ---");
+				System.out.println("투표자 ID: " + voterId);
+				if (voter != null) {
+					System.out.println("투표자 실명: " + voter.getMemberName());
+					System.out.println("투표자 닉네임: " + voter.getMemberNickName());
+					System.out.println("투표자 이메일: " + voter.getMemberEmail());
+					System.out.println("투표자 성별: " + voter.getMemberGender());
+				} else {
+					System.out.println("투표자 정보: 조회 실패");
+				}
+				
+				System.out.println("--- 투표 당한 사람 정보 ---");
+				if (votedMember != null) {
+					System.out.println("당선자 ID: " + votedMember.getMemberId());
+					System.out.println("당선자 실명: " + votedMember.getMemberName());
+					System.out.println("당선자 닉네임: " + votedMember.getMemberNickName());
+					System.out.println("당선자 이메일: " + votedMember.getMemberEmail());
+					System.out.println("당선자 성별: " + votedMember.getMemberGender());
+					System.out.println("당선자 전화번호: " + votedMember.getMemberTel());
+					if (votedImageUrl != null) {
+						System.out.println("선택된 사진 URL: " + votedImageUrl);
+					}
+					
+					// 실제 회원 ID로 투표 저장하도록 votedId 변경
+					votedId = votedMemberId;
+					System.out.println("🔄 투표 저장용 ID 변경: " + votedId);
+					
+				} else if (votedMemberId != null) {
+					System.out.println("당선자 ID: " + votedMemberId + " (회원 정보 조회 실패)");
+					votedId = votedMemberId; // 실제 회원 ID로 변경
+				} else {
+					System.out.println("투표 당한 사람 정보: 옵션에 회원 ID가 연결되지 않음");
+					System.out.println("⚠️ 경고: 실제 회원 ID 없이 옵션 ID로만 저장됩니다!");
+				}
+				
+				System.out.println("========================");
+			} catch (Exception e) {
+				System.out.println("🗳️ ===== 투표 결과 =====");
+				System.out.println("질문 번호: " + serialNumber);
+				System.out.println("선택된 옵션: " + votedId);
+				System.out.println("투표자 ID: " + voterId);
+				System.out.println("정보 조회 실패: " + e.getMessage());
+				System.out.println("========================");
+			}
 
 			// 중복 투표 체크
 			if (votingService.hasVoted(serialNumber, voterId)) {
