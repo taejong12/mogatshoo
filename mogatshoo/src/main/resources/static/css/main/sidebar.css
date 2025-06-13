@@ -1,9 +1,97 @@
-/* ===========================================
-   📱 데스크톱 유지 + 모바일 전용 CSS
-   기존 데스크톱 스타일은 그대로 두고 모바일만 수정
-   =========================================== */
+/* 사이드바 기본 스타일 */
+.sidebar-component {
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 120px;
+	background-color: #008080;
+	/* 윈도우 95/98 테마 색상 */
+	color: white;
+	display: flex;
+	flex-direction: column;
+	z-index: 1000;
+	overflow-y: auto;
+	padding: 10px 0;
+}
 
-/* 🔥 폰트 설정 (기존 유지) */
+/* 로고 영역 */
+.sidebar-logo {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 10px 0;
+	margin-bottom: 15px;
+	text-align: center;
+	width: 100%;
+}
+
+.logo-img {
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
+	margin-bottom: 5px;
+}
+
+.logo-text {
+	font-family: 'dalmoori', sans-serif;
+	font-size: 11px;
+	color: white;
+	text-align: center;
+}
+
+/* 메뉴 스타일 */
+.sidebar-menu {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.menu-item {
+	width: 60px;
+	margin-bottom: 20px;
+	text-align: center;
+	transition: transform 0.1s;
+}
+
+.menu-item:hover {
+	transform: scale(1.05);
+}
+
+.menu-item a,
+.sidebar-logo a {
+	text-decoration: none;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.menu-icon {
+	width: 40px;
+	height: 40px;
+	margin-bottom: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* 선택된 메뉴 아이템에만 네모 박스 표시 */
+.active-menu-item .menu-icon {
+	background-color: #c0c0c0;
+	border: 2px outset #ffffff;
+	box-shadow: 1px 1px 0 #000000;
+}
+
+.menu-icon img {
+	width: 32px;
+	height: 32px;
+	display: block;
+	margin: 0 auto;
+}
+
 @font-face {
 	font-family: 'dalmoori';
 	src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
@@ -11,20 +99,157 @@
 	font-style: normal;
 }
 
-/* 사이드바 오버레이 */
-.sidebar-overlay {
-	display: none !important;
-	position: fixed !important;
-	top: 0 !important;
-	left: 0 !important;
-	width: 100vw !important;
-	height: 100vh !important;
-	background: rgba(0,0,0,0.7) !important;
-	z-index: 1000 !important;
-	backdrop-filter: blur(3px) !important;
+.menu-text {
+	font-family: 'dalmoori', sans-serif;
+	font-size: 11px;
+	text-align: center;
+	margin-top: 4px;
+	width: 100%;
+	word-wrap: break-word;
+	color: white;
 }
 
-.sidebar-overlay.active {
-	display: block !important;
+/* 인증 영역 스타일 */
+.sidebar-auth {
+	margin-top: auto;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 15px;
 }
 
+/* 인증 아이템 스타일 */
+.auth-item,
+.auth-profile {
+	width: 60px;
+	margin-bottom: 15px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.auth-item a,
+.auth-profile a {
+	text-decoration: none;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+/* 토글 버튼 (기본적으로 숨김) */
+.sidebar-toggle {
+	display: none;
+	position: absolute;
+	top: 10px;
+	right: -40px;
+}
+
+#sidebarToggleBtn {
+	background-color: #c0c0c0;
+	color: black;
+	border: 2px outset #ffffff;
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	box-shadow: 1px 1px 0 #000000;
+}
+
+.toggle-icon {
+	font-size: 20px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+	.sidebar-component {
+		transform: translateX(-100%);
+	}
+
+	.sidebar-component.active {
+		transform: translateX(0);
+	}
+
+	.sidebar-toggle {
+		display: block;
+	}
+
+	.content-with-sidebar {
+		margin-left: 0;
+	}
+
+	.content-with-sidebar.sidebar-active {
+		margin-left: 80px;
+	}
+}
+
+/* 사이드바가 있을 때 메인 콘텐츠 영역 조정 */
+.content-with-sidebar {
+	margin-left: 120px;
+	transition: margin-left 0.3s ease;
+	background-color:rgb(192, 192, 192);
+}
+
+/* 기본 윈도우95 창 스타일 */
+.win95-window {
+	position: fixed;
+	width: 1300px;
+	height: 580px;
+	background-color: #c0c0c0; /* 윈도우 95 배경색으로 변경 */
+	border: 2px outset #ffffff;
+	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+	display: none;
+	z-index: 1000;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/* iframe 스타일 - 윈도우 95 배경색으로 통일 */
+#windowContentFrame {
+	width: 1300px;
+	    height: 580px;
+	    border: none;
+	    overflow: hidden !important; /* iframe 자체 스크롤 완전 차단 */
+	    background-color: #c0c0c0;
+}
+
+.win95-title-bar {
+	background-color: #000080;
+	color: white;
+	padding: 3px 5px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	cursor: move;
+}
+
+.win95-title-text {
+	font-weight: bold;
+	font-size: 11px;
+}
+
+.win95-close {
+	width: 16px;
+	height: 14px;
+	background-color: #c0c0c0;
+	border: 1px outset #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 11px;
+	cursor: pointer;
+}
+
+.win95-close:active {
+	border: 1px inset #ffffff;
+}
+
+.win95-content {
+	background-color: #c0c0c0;
+	    height: calc(100% - 40px);
+	    overflow: hidden !important; /* 컨테이너도 스크롤 차단 */
+	    border: 1px inset #a0a0a0;
+}
