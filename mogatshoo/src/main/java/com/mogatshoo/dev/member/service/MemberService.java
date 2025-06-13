@@ -1,5 +1,7 @@
 package com.mogatshoo.dev.member.service;
 
+import java.util.List;
+
 import com.mogatshoo.dev.member.entity.AgreeEntity;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 
@@ -28,5 +30,6 @@ public interface MemberService {
 	void pwdUpdate(MemberEntity memberEntity);
 
 	Boolean memberNickNameCheck(String memberNickName);
-
+	
+	List<MemberEntity> getAllMembers();
 }

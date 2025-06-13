@@ -223,7 +223,7 @@ public class QuestionController {
 	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	        String memberId = authentication.getName();
 	        
-	        System.out.println("memberId : "+ memberId);
+	        System.out.println("memberId : " + memberId);
 	        member = memberService.findByMemberId(memberId);
 	        model.addAttribute("member", member);
 	        
@@ -234,7 +234,7 @@ public class QuestionController {
 	        // 사진과 연결된 회원 정보를 담을 맵
 	        Map<String, String> memberNicknames = new HashMap<>();
 	        
-	        System.out.println("📸 ===== 질문 생성 - 보기 회원 정보 =====");
+	        System.out.println("📸 ===== 질문 생성 - 보기 회원 정보 (개선된 버전) =====");
 	        System.out.println("질문 번호: " + nextSerialNumber);
 	        System.out.println("요청된 사진 수: 4개");
 	        
@@ -244,7 +244,7 @@ public class QuestionController {
 	            for (int i = 0; i < fetchedPictures.size(); i++) {
 	                PictureEntity pic = fetchedPictures.get(i);
 	                if (pic != null) {
-	                    System.out.println("--- Option" + (i+1) + " 정보 ---");
+	                    System.out.println("--- Option" + (i+1) + " 정보 (개선된 조회) ---");
 	                    System.out.println("회원 ID: " + pic.getMemberId());
 	                    System.out.println("Firebase Storage URL: " + pic.getFirebaseStorageUrl());
 
@@ -252,63 +252,147 @@ public class QuestionController {
 	                    if (pic.getFirebaseStorageUrl() != null && !pic.getFirebaseStorageUrl().isEmpty()) {
 	                        randomPictures.add(pic);
 	                        
-	                        // 회원 ID로 상세 정보 조회 및 저장
+	                        // ===== 개선된 회원 ID 조회 시작 =====
 	                        try {
-	                            MemberEntity picMember = memberService.findByMemberId(pic.getMemberId());
+	                            MemberEntity picMember = null;
+	                            String originalMemberId = pic.getMemberId();
+	                            
+	                            System.out.println("🔍 회원 조회 시작: " + originalMemberId);
+	                            
+	                            // 1. 기본 회원 조회
+	                            try {
+	                                picMember = memberService.findByMemberId(originalMemberId);
+	                                if (picMember != null) {
+	                                    System.out.println("✅ 기본 조회 성공: " + picMember.getMemberName());
+	                                } else {
+	                                    System.out.println("⚠️ 기본 조회 실패, 대안 조회 시도...");
+	                                }
+	                            } catch (Exception e) {
+	                                System.out.println("❌ 기본 조회 중 예외: " + e.getMessage());
+	                            }
+	                            
+	                            // 2. 기본 조회 실패 시 Provider별 조회 시도
+	                            if (picMember == null) {
+	                                System.out.println("🔄 Provider별 조회 시도...");
+	                                
+	                                // Google 패턴 체크
+	                                if (originalMemberId.startsWith("google_")) {
+	                                    try {
+	                                        String providerId = originalMemberId.substring(7); // "google_" 제거
+	                                        System.out.println("Google providerId 추출: " + providerId);
+	                                        
+	                                        picMember = memberService.findByProviderAndProviderId("google", providerId);
+	                                        if (picMember != null) {
+	                                            System.out.println("✅ Google Provider 조회 성공: " + picMember.getMemberName());
+	                                            System.out.println("실제 DB memberId: " + picMember.getMemberId());
+	                                        }
+	                                    } catch (Exception e) {
+	                                        System.out.println("❌ Google Provider 조회 실패: " + e.getMessage());
+	                                    }
+	                                }
+	                                
+	                                // Naver 패턴 체크
+	                                else if (originalMemberId.startsWith("naver_")) {
+	                                    try {
+	                                        String providerId = originalMemberId.substring(6); // "naver_" 제거
+	                                        System.out.println("Naver providerId 추출: " + providerId);
+	                                        
+	                                        picMember = memberService.findByProviderAndProviderId("naver", providerId);
+	                                        if (picMember != null) {
+	                                            System.out.println("✅ Naver Provider 조회 성공: " + picMember.getMemberName());
+	                                            System.out.println("실제 DB memberId: " + picMember.getMemberId());
+	                                        }
+	                                    } catch (Exception e) {
+	                                        System.out.println("❌ Naver Provider 조회 실패: " + e.getMessage());
+	                                    }
+	                                }
+	                                
+	                                // Kakao 패턴 체크
+	                                else if (originalMemberId.startsWith("kakao_")) {
+	                                    try {
+	                                        String providerId = originalMemberId.substring(6); // "kakao_" 제거
+	                                        System.out.println("Kakao providerId 추출: " + providerId);
+	                                        
+	                                        picMember = memberService.findByProviderAndProviderId("kakao", providerId);
+	                                        if (picMember != null) {
+	                                            System.out.println("✅ Kakao Provider 조회 성공: " + picMember.getMemberName());
+	                                            System.out.println("실제 DB memberId: " + picMember.getMemberId());
+	                                        }
+	                                    } catch (Exception e) {
+	                                        System.out.println("❌ Kakao Provider 조회 실패: " + e.getMessage());
+	                                    }
+	                                }
+	                            }
+	                            
+	                            // 3. 회원 정보 처리
 	                            if (picMember != null) {
-	                                memberNicknames.put(pic.getMemberId(), picMember.getMemberName());
+	                                // 닉네임 맵에 추가 (원래 PictureEntity의 memberId를 키로 사용)
+	                                memberNicknames.put(originalMemberId, picMember.getMemberName());
 	                                
 	                                // 상세 회원 정보 콘솔 출력
+	                                System.out.println("🎯 === 최종 회원 정보 ===");
+	                                System.out.println("Picture의 memberId: " + originalMemberId);
+	                                System.out.println("실제 DB memberId: " + picMember.getMemberId());
 	                                System.out.println("실명: " + picMember.getMemberName());
 	                                System.out.println("닉네임: " + picMember.getMemberNickName());
 	                                System.out.println("이메일: " + picMember.getMemberEmail());
 	                                System.out.println("성별: " + picMember.getMemberGender());
 	                                System.out.println("전화번호: " + picMember.getMemberTel());
 	                                System.out.println("가입일: " + picMember.getMemberCreate());
+	                                System.out.println("Provider: " + picMember.getProvider());
+	                                System.out.println("Provider ID: " + picMember.getProviderId());
 	                                
-	                                // QuestionEntity에 회원 ID 설정 (새로운 구조용)
+	                                // QuestionEntity에 회원 ID 설정 (원래 PictureEntity의 memberId 사용)
 	                                switch (i) {
 	                                    case 0:
-	                                        try {
-	                                            question.setOption1MemberId(pic.getMemberId());
-	                                            System.out.println("Option1MemberId 설정됨: " + pic.getMemberId());
-	                                        } catch (Exception e) {
-	                                            System.out.println("Option1MemberId 설정 실패 (메서드 없음): " + e.getMessage());
-	                                        }
+	                                        question.setOption1MemberId(originalMemberId);
+	                                        System.out.println("✅ Option1MemberId 설정됨: " + originalMemberId);
 	                                        break;
 	                                    case 1:
-	                                        try {
-	                                            question.setOption2MemberId(pic.getMemberId());
-	                                            System.out.println("Option2MemberId 설정됨: " + pic.getMemberId());
-	                                        } catch (Exception e) {
-	                                            System.out.println("Option2MemberId 설정 실패 (메서드 없음): " + e.getMessage());
-	                                        }
+	                                        question.setOption2MemberId(originalMemberId);
+	                                        System.out.println("✅ Option2MemberId 설정됨: " + originalMemberId);
 	                                        break;
 	                                    case 2:
-	                                        try {
-	                                            question.setOption3MemberId(pic.getMemberId());
-	                                            System.out.println("Option3MemberId 설정됨: " + pic.getMemberId());
-	                                        } catch (Exception e) {
-	                                            System.out.println("Option3MemberId 설정 실패 (메서드 없음): " + e.getMessage());
-	                                        }
+	                                        question.setOption3MemberId(originalMemberId);
+	                                        System.out.println("✅ Option3MemberId 설정됨: " + originalMemberId);
 	                                        break;
 	                                    case 3:
-	                                        try {
-	                                            question.setOption4MemberId(pic.getMemberId());
-	                                            System.out.println("Option4MemberId 설정됨: " + pic.getMemberId());
-	                                        } catch (Exception e) {
-	                                            System.out.println("Option4MemberId 설정 실패 (메서드 없음): " + e.getMessage());
-	                                        }
+	                                        question.setOption4MemberId(originalMemberId);
+	                                        System.out.println("✅ Option4MemberId 설정됨: " + originalMemberId);
 	                                        break;
 	                                }
 	                                
 	                            } else {
-	                                memberNicknames.put(pic.getMemberId(), "알 수 없음");
-	                                System.out.println("회원 정보: 조회 실패 (존재하지 않는 회원)");
+	                                // 회원 정보를 찾을 수 없는 경우
+	                                memberNicknames.put(originalMemberId, "❌ 알 수 없는 회원");
+	                                System.out.println("❌ 회원 정보 조회 완전 실패");
+	                                System.out.println("PictureEntity의 memberId: " + originalMemberId);
+	                                
+	                                // 디버깅을 위한 전체 회원 정보 출력
+	                                System.out.println("🔍 === 디버깅: 전체 SNS 회원 목록 ===");
+	                                try {
+	                                    // 모든 회원 조회해서 SNS 회원들만 출력
+	                                    List<MemberEntity> allMembers = memberService.getAllMembers();
+	                                    if (allMembers != null) {
+	                                        for (MemberEntity debugMember : allMembers) {
+	                                            if (!debugMember.getProvider().equals("local")) {
+	                                                System.out.println("- DB회원ID: " + debugMember.getMemberId() + 
+	                                                                 " | Provider: " + debugMember.getProvider() + 
+	                                                                 " | ProviderID: " + debugMember.getProviderId() + 
+	                                                                 " | 이름: " + debugMember.getMemberName());
+	                                            }
+	                                        }
+	                                    }
+	                                } catch (Exception debugE) {
+	                                    System.out.println("디버깅 정보 출력 실패: " + debugE.getMessage());
+	                                }
+	                                System.out.println("=================================");
 	                            }
+	                            
 	                        } catch (Exception e) {
-	                            System.err.println("회원 정보 조회 실패 [ID: " + pic.getMemberId() + "]: " + e.getMessage());
-	                            memberNicknames.put(pic.getMemberId(), "알 수 없음");
+	                            System.err.println("❌ 회원 정보 조회 중 예외 발생 [memberId: " + pic.getMemberId() + "]: " + e.getMessage());
+	                            e.printStackTrace();
+	                            memberNicknames.put(pic.getMemberId(), "❌ 조회 오류");
 	                            System.out.println("회원 정보: 조회 중 오류 발생");
 	                        }
 	                    } else {
@@ -355,6 +439,7 @@ public class QuestionController {
 	        System.out.println("모델에 추가된 닉네임 정보 크기: " + memberNicknames.size());
 
 	        return "admin/question/create";
+	        
 	    } catch (Exception e) {
 	        System.err.println("질문 생성 폼 로딩 중 오류 발생: " + e.getMessage());
 	        e.printStackTrace();
@@ -364,28 +449,105 @@ public class QuestionController {
 	}
 
 	/**
-	 * Firebase Storage URL에서 회원 ID 추출하는 메서드
+	 * Firebase Storage URL에서 회원 ID 추출하는 메서드 (개선된 버전)
 	 * URL 패턴: https://firebasestorage.googleapis.com/.../member%2F{memberId}%2F...
 	 */
 	private String extractMemberIdFromFirebaseUrl(String firebaseUrl) {
+	    System.out.println("🔍 === Firebase URL에서 회원 ID 추출 시작 ===");
+	    System.out.println("원본 URL: " + firebaseUrl);
+	    
 	    if (firebaseUrl == null || firebaseUrl.isEmpty()) {
+	        System.out.println("❌ URL이 null이거나 빈 문자열");
 	        return null;
 	    }
 	    
 	    try {
-	        // URL에서 member%2F 다음에 오는 회원 ID 추출
-	        String pattern = "member%2F([^%2F]+)%2F";
-	        Pattern p = Pattern.compile(pattern);
-	        Matcher m = p.matcher(firebaseUrl);
+	        // 방법 1: 개선된 정규식 사용 (더 유연한 패턴)
+	        String pattern1 = "member%2F([^%2F]+?)%2F";
+	        Pattern p1 = Pattern.compile(pattern1);
+	        Matcher m1 = p1.matcher(firebaseUrl);
 	        
-	        if (m.find()) {
-	            String memberId = URLDecoder.decode(m.group(1), "UTF-8");
+	        if (m1.find()) {
+	            String memberId = URLDecoder.decode(m1.group(1), StandardCharsets.UTF_8);
+	            System.out.println("✅ 방법1 성공 - 추출된 회원 ID: " + memberId);
 	            return memberId;
 	        }
+	        
+	        System.out.println("⚠️ 방법1 실패, 방법2 시도...");
+	        
+	        // 방법 2: 문자열 분할 방식 (더 안전한 방법)
+	        try {
+	            // URL을 디코딩
+	            String decodedUrl = URLDecoder.decode(firebaseUrl, StandardCharsets.UTF_8);
+	            System.out.println("디코딩된 URL: " + decodedUrl);
+	            
+	            // "member/" 문자열 찾기
+	            String memberPrefix = "member/";
+	            int memberIndex = decodedUrl.indexOf(memberPrefix);
+	            
+	            if (memberIndex != -1) {
+	                // "member/" 다음 위치부터 시작
+	                int startIndex = memberIndex + memberPrefix.length();
+	                
+	                // 다음 "/" 위치 찾기
+	                int endIndex = decodedUrl.indexOf("/", startIndex);
+	                
+	                if (endIndex != -1) {
+	                    String memberId = decodedUrl.substring(startIndex, endIndex);
+	                    System.out.println("✅ 방법2 성공 - 추출된 회원 ID: " + memberId);
+	                    return memberId;
+	                }
+	            }
+	            
+	            System.out.println("⚠️ 방법2 실패, 방법3 시도...");
+	            
+	        } catch (Exception e2) {
+	            System.out.println("❌ 방법2 중 예외: " + e2.getMessage());
+	        }
+	        
+	        // 방법 3: 가장 관대한 정규식 (모든 문자 허용)
+	        String pattern3 = "member%2F(.+?)%2F";
+	        Pattern p3 = Pattern.compile(pattern3);
+	        Matcher m3 = p3.matcher(firebaseUrl);
+	        
+	        if (m3.find()) {
+	            String memberId = URLDecoder.decode(m3.group(1), StandardCharsets.UTF_8);
+	            System.out.println("✅ 방법3 성공 - 추출된 회원 ID: " + memberId);
+	            return memberId;
+	        }
+	        
+	        System.out.println("❌ 모든 방법 실패");
+	        
+	        // 방법 4: 디버깅을 위한 URL 구조 분석
+	        System.out.println("🔍 === URL 구조 분석 (디버깅) ===");
+	        String[] parts = firebaseUrl.split("%2F");
+	        System.out.println("URL 분할 결과:");
+	        for (int i = 0; i < parts.length; i++) {
+	            System.out.println("  [" + i + "]: " + parts[i]);
+	        }
+	        
+	        // "member" 다음에 오는 부분 찾기
+	        for (int i = 0; i < parts.length - 1; i++) {
+	            if (parts[i].endsWith("member")) {
+	                String potentialMemberId = parts[i + 1];
+	                if (potentialMemberId != null && !potentialMemberId.isEmpty()) {
+	                    try {
+	                        String decodedMemberId = URLDecoder.decode(potentialMemberId, StandardCharsets.UTF_8);
+	                        System.out.println("✅ 방법4 성공 - 추출된 회원 ID: " + decodedMemberId);
+	                        return decodedMemberId;
+	                    } catch (Exception e4) {
+	                        System.out.println("❌ 방법4 디코딩 실패: " + e4.getMessage());
+	                    }
+	                }
+	            }
+	        }
+	        
 	    } catch (Exception e) {
-	        System.err.println("❌ 회원 ID 추출 실패: " + e.getMessage());
+	        System.err.println("❌ 회원 ID 추출 중 전체 오류: " + e.getMessage());
+	        e.printStackTrace();
 	    }
 	    
+	    System.out.println("❌ 회원 ID 추출 완전 실패");
 	    return null;
 	}
 

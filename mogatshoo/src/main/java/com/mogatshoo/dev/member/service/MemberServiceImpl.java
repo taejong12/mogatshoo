@@ -2,6 +2,7 @@ package com.mogatshoo.dev.member.service;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -227,5 +228,10 @@ public class MemberServiceImpl implements MemberService, UserDetailsService, OAu
 	@Override
 	public Boolean memberNickNameCheck(String memberNickName) {
 		return memberRepository.findByMemberNickName(memberNickName).isEmpty();
+	}
+	
+	@Override
+	public List<MemberEntity> getAllMembers() {
+	    return memberRepository.findAll();
 	}
 }
