@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/admin/questions")
@@ -231,41 +234,117 @@ public class QuestionController {
 	        // 사진과 연결된 회원 정보를 담을 맵
 	        Map<String, String> memberNicknames = new HashMap<>();
 	        
+	        System.out.println("📸 ===== 질문 생성 - 보기 회원 정보 =====");
+	        System.out.println("질문 번호: " + nextSerialNumber);
+	        System.out.println("요청된 사진 수: 4개");
+	        
 	        if (fetchedPictures != null) {
-	            System.out.println("가져온 사진 수: " + fetchedPictures.size());
+	            System.out.println("실제 가져온 사진 수: " + fetchedPictures.size());
 
 	            for (int i = 0; i < fetchedPictures.size(); i++) {
 	                PictureEntity pic = fetchedPictures.get(i);
 	                if (pic != null) {
-	                    System.out.println("사진 " + i + " - ID: " + pic.getMemberId() + ", Firebase Storage URL: " + pic.getFirebaseStorageUrl());
+	                    System.out.println("--- Option" + (i+1) + " 정보 ---");
+	                    System.out.println("회원 ID: " + pic.getMemberId());
+	                    System.out.println("Firebase Storage URL: " + pic.getFirebaseStorageUrl());
 
 	                    // Firebase Storage URL이 있는 사진만 추가
 	                    if (pic.getFirebaseStorageUrl() != null && !pic.getFirebaseStorageUrl().isEmpty()) {
 	                        randomPictures.add(pic);
 	                        
-	                        // 회원 ID로 닉네임 조회 및 저장
+	                        // 회원 ID로 상세 정보 조회 및 저장
 	                        try {
 	                            MemberEntity picMember = memberService.findByMemberId(pic.getMemberId());
-	                            if (picMember != null && picMember.getMemberName() != null) {
+	                            if (picMember != null) {
 	                                memberNicknames.put(pic.getMemberId(), picMember.getMemberName());
+	                                
+	                                // 상세 회원 정보 콘솔 출력
+	                                System.out.println("실명: " + picMember.getMemberName());
+	                                System.out.println("닉네임: " + picMember.getMemberNickName());
+	                                System.out.println("이메일: " + picMember.getMemberEmail());
+	                                System.out.println("성별: " + picMember.getMemberGender());
+	                                System.out.println("전화번호: " + picMember.getMemberTel());
+	                                System.out.println("가입일: " + picMember.getMemberCreate());
+	                                
+	                                // QuestionEntity에 회원 ID 설정 (새로운 구조용)
+	                                switch (i) {
+	                                    case 0:
+	                                        try {
+	                                            question.setOption1MemberId(pic.getMemberId());
+	                                            System.out.println("Option1MemberId 설정됨: " + pic.getMemberId());
+	                                        } catch (Exception e) {
+	                                            System.out.println("Option1MemberId 설정 실패 (메서드 없음): " + e.getMessage());
+	                                        }
+	                                        break;
+	                                    case 1:
+	                                        try {
+	                                            question.setOption2MemberId(pic.getMemberId());
+	                                            System.out.println("Option2MemberId 설정됨: " + pic.getMemberId());
+	                                        } catch (Exception e) {
+	                                            System.out.println("Option2MemberId 설정 실패 (메서드 없음): " + e.getMessage());
+	                                        }
+	                                        break;
+	                                    case 2:
+	                                        try {
+	                                            question.setOption3MemberId(pic.getMemberId());
+	                                            System.out.println("Option3MemberId 설정됨: " + pic.getMemberId());
+	                                        } catch (Exception e) {
+	                                            System.out.println("Option3MemberId 설정 실패 (메서드 없음): " + e.getMessage());
+	                                        }
+	                                        break;
+	                                    case 3:
+	                                        try {
+	                                            question.setOption4MemberId(pic.getMemberId());
+	                                            System.out.println("Option4MemberId 설정됨: " + pic.getMemberId());
+	                                        } catch (Exception e) {
+	                                            System.out.println("Option4MemberId 설정 실패 (메서드 없음): " + e.getMessage());
+	                                        }
+	                                        break;
+	                                }
+	                                
 	                            } else {
 	                                memberNicknames.put(pic.getMemberId(), "알 수 없음");
+	                                System.out.println("회원 정보: 조회 실패 (존재하지 않는 회원)");
 	                            }
 	                        } catch (Exception e) {
 	                            System.err.println("회원 정보 조회 실패 [ID: " + pic.getMemberId() + "]: " + e.getMessage());
 	                            memberNicknames.put(pic.getMemberId(), "알 수 없음");
+	                            System.out.println("회원 정보: 조회 중 오류 발생");
 	                        }
 	                    } else {
-	                        System.out.println("Firebase Storage URL 없음, 건너뜀: " + pic.getMemberId());
+	                        System.out.println("Firebase Storage URL 없음, 건너뜀");
 	                    }
+	                    System.out.println("--------------------------------");
 	                } else {
-	                    System.out.println("사진 " + i + "는 null입니다");
+	                    System.out.println("--- Option" + (i+1) + " 정보 ---");
+	                    System.out.println("사진 데이터: null");
+	                    System.out.println("--------------------------------");
 	                }
 	            }
 
-	            System.out.println("최종 유효한 사진 수: " + randomPictures.size());
+	            System.out.println("=== 최종 선정된 보기 정보 ===");
+	            System.out.println("유효한 사진 수: " + randomPictures.size());
+	            
+	            if (randomPictures.size() >= 2) {
+	                System.out.println("✅ 질문 생성 가능 (최소 2개 옵션 확보)");
+	                
+	                // 최종 선정된 보기들의 요약 정보
+	                for (int i = 0; i < randomPictures.size(); i++) {
+	                    PictureEntity pic = randomPictures.get(i);
+	                    String memberName = memberNicknames.get(pic.getMemberId());
+	                    System.out.println(String.format("Option%d: %s (%s)", 
+	                                                    i+1, 
+	                                                    memberName != null ? memberName : "알 수 없음", 
+	                                                    pic.getMemberId()));
+	                }
+	            } else {
+	                System.out.println("❌ 질문 생성 불가 (최소 2개 옵션 필요)");
+	            }
+	            System.out.println("========================================");
+	            
 	        } else {
 	            System.out.println("가져온 사진 목록이 null입니다");
+	            System.out.println("========================================");
 	        }
 
 	        model.addAttribute("question", question);
@@ -277,11 +356,37 @@ public class QuestionController {
 
 	        return "admin/question/create";
 	    } catch (Exception e) {
-	        System.err.println("오류 발생: " + e.getMessage());
+	        System.err.println("질문 생성 폼 로딩 중 오류 발생: " + e.getMessage());
 	        e.printStackTrace();
 	        model.addAttribute("errorMessage", "질문 생성 중 오류가 발생했습니다: " + e.getMessage());
 	        return "error";
 	    }
+	}
+
+	/**
+	 * Firebase Storage URL에서 회원 ID 추출하는 메서드
+	 * URL 패턴: https://firebasestorage.googleapis.com/.../member%2F{memberId}%2F...
+	 */
+	private String extractMemberIdFromFirebaseUrl(String firebaseUrl) {
+	    if (firebaseUrl == null || firebaseUrl.isEmpty()) {
+	        return null;
+	    }
+	    
+	    try {
+	        // URL에서 member%2F 다음에 오는 회원 ID 추출
+	        String pattern = "member%2F([^%2F]+)%2F";
+	        Pattern p = Pattern.compile(pattern);
+	        Matcher m = p.matcher(firebaseUrl);
+	        
+	        if (m.find()) {
+	            String memberId = URLDecoder.decode(m.group(1), "UTF-8");
+	            return memberId;
+	        }
+	    } catch (Exception e) {
+	        System.err.println("❌ 회원 ID 추출 실패: " + e.getMessage());
+	    }
+	    
+	    return null;
 	}
 
 	// 질문 저장
@@ -298,31 +403,67 @@ public class QuestionController {
 	        question.setIsPublic("no");
 	    }
 	    
-	    System.out.println("=== 컨트롤러 디버깅 ===");
-	    System.out.println("imageReference1: " + imageReference1);
-	    System.out.println("imageReference2: " + imageReference2);
-	    System.out.println("imageReference3: " + imageReference3);
-	    System.out.println("imageReference4: " + imageReference4);
-	    
-	    // Firebase Storage URL을 직접 저장
+	    System.out.println("=== 💾 질문 저장 시작 ===");
+	    System.out.println("일련번호: " + question.getSerialNumber());
+	    System.out.println("질문 내용: " + question.getQuestion());
+	    System.out.println("공개 상태: " + question.getIsPublic());
+
+	    // Firebase Storage URL 저장 및 회원 ID 자동 추출
 	    if (imageReference1 != null && !imageReference1.isEmpty()) {
-	        question.setOption1(imageReference1); // Firebase Storage URL 직접 저장
+	        question.setOption1(imageReference1);
+	        String memberId1 = extractMemberIdFromFirebaseUrl(imageReference1);
+	        question.setOption1MemberId(memberId1);
+	        System.out.println("✅ Option1 - 이미지: " + imageReference1.substring(0, Math.min(50, imageReference1.length())) + "...");
+	        System.out.println("✅ Option1 - 추출된 회원 ID: " + memberId1);
 	    }
+	    
 	    if (imageReference2 != null && !imageReference2.isEmpty()) {
-	        question.setOption2(imageReference2); // Firebase Storage URL 직접 저장
+	        question.setOption2(imageReference2);
+	        String memberId2 = extractMemberIdFromFirebaseUrl(imageReference2);
+	        question.setOption2MemberId(memberId2);
+	        System.out.println("✅ Option2 - 이미지: " + imageReference2.substring(0, Math.min(50, imageReference2.length())) + "...");
+	        System.out.println("✅ Option2 - 추출된 회원 ID: " + memberId2);
 	    }
+	    
 	    if (imageReference3 != null && !imageReference3.isEmpty()) {
-	        question.setOption3(imageReference3); // Firebase Storage URL 직접 저장
+	        question.setOption3(imageReference3);
+	        String memberId3 = extractMemberIdFromFirebaseUrl(imageReference3);
+	        question.setOption3MemberId(memberId3);
+	        System.out.println("✅ Option3 - 이미지: " + imageReference3.substring(0, Math.min(50, imageReference3.length())) + "...");
+	        System.out.println("✅ Option3 - 추출된 회원 ID: " + memberId3);
 	    }
+	    
 	    if (imageReference4 != null && !imageReference4.isEmpty()) {
-	        question.setOption4(imageReference4); // Firebase Storage URL 직접 저장
+	        question.setOption4(imageReference4);
+	        String memberId4 = extractMemberIdFromFirebaseUrl(imageReference4);
+	        question.setOption4MemberId(memberId4);
+	        System.out.println("✅ Option4 - 이미지: " + imageReference4.substring(0, Math.min(50, imageReference4.length())) + "...");
+	        System.out.println("✅ Option4 - 추출된 회원 ID: " + memberId4);
 	    }
 
-	    System.out.println("저장될 질문: " + question);
-	    questionService.createQuestion(question);
+	    // 추출된 회원 ID 요약
+	    System.out.println("\n🎯 === 추출된 회원 ID 요약 ===");
+	    System.out.println("Option1 회원 ID: " + question.getOption1MemberId());
+	    System.out.println("Option2 회원 ID: " + question.getOption2MemberId());
+	    System.out.println("Option3 회원 ID: " + question.getOption3MemberId());
+	    System.out.println("Option4 회원 ID: " + question.getOption4MemberId());
+
+	    // 질문 저장
+	    QuestionEntity savedQuestion = questionService.createQuestion(question);
+	    
+	    // 저장 후 검증 및 상세 회원 정보 출력
+	    System.out.println("\n🔍 === 저장 완료 후 회원 정보 검증 ===");
+	    QuestionEntity verificationQuestion = questionService.getQuestionBySerialNumber(savedQuestion.getSerialNumber());
+	    
+	    // 각 옵션별 회원 정보 상세 출력
+	    printDetailedMemberInfo(verificationQuestion);
+	    
+	    System.out.println("========================================");
+	    System.out.println("✅ 질문 생성 및 회원 정보 연결 완료!");
+	    System.out.println("========================================\n");
 
 	    try {
-	        String successMessage = URLEncoder.encode("새 질문이 성공적으로 생성되었습니다. (기본 상태: 비공개)",
+	        String successMessage = URLEncoder.encode("새 질문이 성공적으로 생성되었습니다. (회원 정보 연결 완료)",
 	                StandardCharsets.UTF_8.toString());
 	        return "redirect:/admin/questions?status=success&message=" + successMessage;
 	    } catch (Exception e) {
@@ -330,6 +471,62 @@ public class QuestionController {
 	    }
 	}
 
+	/**
+	 * 질문의 모든 옵션에 대한 상세 회원 정보 출력
+	 */
+	private void printDetailedMemberInfo(QuestionEntity question) {
+	    System.out.println("질문 번호: " + question.getSerialNumber());
+	    System.out.println("질문 내용: " + question.getQuestion());
+	    System.out.println("생성 시간: " + question.getCreatedAt());
+	    System.out.println("");
+	    
+	    // Option별 회원 정보 출력
+	    if (question.getOption1MemberId() != null) {
+	        printMemberDetailsForVoting("Option1", question.getOption1MemberId(), question.getOption1());
+	    }
+	    if (question.getOption2MemberId() != null) {
+	        printMemberDetailsForVoting("Option2", question.getOption2MemberId(), question.getOption2());
+	    }
+	    if (question.getOption3MemberId() != null) {
+	        printMemberDetailsForVoting("Option3", question.getOption3MemberId(), question.getOption3());
+	    }
+	    if (question.getOption4MemberId() != null) {
+	        printMemberDetailsForVoting("Option4", question.getOption4MemberId(), question.getOption4());
+	    }
+	}
+
+	/**
+	 * 투표 시스템용 회원 상세 정보 출력 (이메일 발송 준비)
+	 */
+	private void printMemberDetailsForVoting(String optionName, String memberId, String imageUrl) {
+	    try {
+	        System.out.println("🏆 === " + optionName + " 투표 대상 정보 ===");
+	        System.out.println("회원 ID: " + memberId);
+	        System.out.println("이미지 URL: " + imageUrl);
+	        
+	        // 회원 정보 조회
+	        MemberEntity member = memberService.findByMemberId(memberId);
+	        if (member != null) {
+	            System.out.println("📧 수상자 이메일: " + member.getMemberEmail());
+	            System.out.println("📛 실명: " + member.getMemberName());
+	            System.out.println("🏷️ 닉네임: " + member.getMemberNickName());
+	            System.out.println("⚧️ 성별: " + member.getMemberGender());
+	            System.out.println("📱 전화번호: " + member.getMemberTel());
+	            System.out.println("🎂 생년월일: " + member.getMemberBirth());
+	            System.out.println("📅 가입일: " + member.getMemberCreate());
+	            System.out.println("🌐 로그인 방식: " + member.getProvider());
+	            System.out.println("🔑 권한: " + member.getRole());
+	            System.out.println("📍 주소: " + member.getMemberZipcode() + " " + 
+	                             member.getMemberAddress1() + " " + member.getMemberAddress2());
+	        } else {
+	            System.out.println("❌ 회원 정보를 찾을 수 없습니다. (탈퇴한 회원일 수 있음)");
+	        }
+	        System.out.println("================================================");
+	    } catch (Exception e) {
+	        System.err.println("❌ " + optionName + " 회원 정보 조회 실패: " + e.getMessage());
+	        System.out.println("================================================");
+	    }
+	}
 	// 질문 수정 폼 페이지 - 기존 detail.html 사용
 	@GetMapping("/{serialNumber}/edit")
 	public String editQuestionForm(@PathVariable("serialNumber") String serialNumber, Model model) {
