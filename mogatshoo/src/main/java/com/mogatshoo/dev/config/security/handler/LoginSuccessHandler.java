@@ -37,12 +37,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		for (GrantedAuthority authority : authorities) {
 			String role = authority.getAuthority();
 
+			// 출석 포인트 처리
+			pointService.checkAttendancePoint(memberId);
+			
 			if (role.equals("ROLE_ADMIN")) {
 				response.sendRedirect("/admin/main");
 				return;
 			} else if (role.equals("ROLE_USER")) {
-				// 출석 포인트 처리
-				pointService.checkAttendancePoint(memberId);
 
 				// 탈모진단 확인
 				boolean hairCheck = hairLossTestService.loginMemberHairCheck(memberId);
