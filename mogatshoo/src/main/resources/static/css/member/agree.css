@@ -538,17 +538,17 @@ body::before {
 /* ============================================ */
 @media (hover: none) and (pointer: coarse) {
     .form-check-input {
-        min-width: 44px !important;
-        min-height: 44px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
     }
     
     .btn.btn-sm.modalBtn {
-        min-height: 44px !important;
-        min-width: 44px !important;
+        min-height: 30px !important;
+        min-width: 30px !important;
     }
     
     .btn.agreeBtn.w-100 {
-        min-height: 44px !important;
+        min-height: 30px !important;
     }
 }
 

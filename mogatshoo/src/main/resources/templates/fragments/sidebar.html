@@ -6,10 +6,8 @@
 </head>
 
 <body>
-	<!-- 다른 페이지에 포함될 사이드바 조각 -->
 	<div th:fragment="sidebar" class="sidebar-component">
 		<div class="sidebar">
-			<!-- 로고 영역 -->
 			<div class="sidebar-logo">
 				<a th:href="@{/voting}">
 					<div class="menu-icon">
@@ -19,7 +17,6 @@
 				</a>
 			</div>
 
-			<!-- 메뉴 아이템 -->
 			<div class="sidebar-menu">
 				<div class="menu-item">
 					<a class="nav-link" th:href="@{/}">
@@ -71,7 +68,6 @@
 				</div>
 			</div>
 
-			<!-- 토글 버튼 (모바일 뷰에서만 보임) -->
 			<div class="sidebar-toggle">
 				<button id="sidebarToggleBtn">
 					<span class="toggle-icon">☰</span>
@@ -79,7 +75,6 @@
 			</div>
 		</div>
 
-		<!-- 윈도우95 창 템플릿 -->
 		<div id="win95Window" class="win95-window">
 			<div class="win95-title-bar">
 				<div class="win95-title-text">문서</div>
@@ -92,365 +87,353 @@
 			</div>
 		</div>
 
-		<!-- jQuery 사용 (간편한 Ajax 처리를 위해) -->
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 		<script>
-			console.log("🚀 iframe 최대 크기 제한 사이드바 스크립트!");
+			console.log("🚀 사이드바 스크립트 로드됨 - 최종 버전!");
 
 			$(document).ready(function () {
-			    // 현재 모드 상태 관리
-			    let isIframeMode = true;
-			    let currentPath = '';
+				// 현재 모드 상태 관리
+				let isIframeMode = true;
+				let currentPath = '';
 
-			    // 🔥 iframe 최대 크기 설정 (더 이상 커지지 않음)
-			    const MAX_IFRAME_SIZE = {
-			        width: 1300,    // 최대 너비
-			        height: 580     // 최대 높이
-			    };
+				// URL 동기화 함수
+				function updateBrowserURL(path) {
+					if (path && path !== '/') {
+						// History API를 사용하여 브라우저 URL 업데이트 (페이지 새로고침 없이)
+						window.history.pushState({ path: path, mode: 'iframe' }, '', path);
+						currentPath = path;
+					}
+				}
 
-			    // 모바일 감지 함수
-			    function isMobileDevice() {
-			        return window.innerWidth <= 768;
-			    }
+				// 브라우저 뒤로가기/앞으로가기 처리
+				window.addEventListener('popstate', function (event) {
+					if (event.state) {
+						if (event.state.mode === 'iframe' && event.state.path) {
+							// iframe 모드로 해당 경로 로드
+							openInIframe(event.state.path, '문서');
+						} else {
+							// 일반 페이지 이동
+							window.location.href = event.state.path || '/';
+						}
+					}
+				});
 
-			    // URL 동기화 함수
-			    function updateBrowserURL(path) {
-			        if (path && path !== '/') {
-			            window.history.pushState({path: path, mode: 'iframe'}, '', path);
-			            currentPath = path;
-			        }
-			    }
+				// 로그인이 필요한 경로들 (메인 윈도우에서 처리)
+				const loginRequiredPaths = [
+					'/login',
+					'/member/login',
+					'/member/join',          // 회원가입
+					'/oauth2/authorization/',  // 소셜 로그인도 메인 윈도우에서
+					'/oauth2/join',
+					'/logout'
+				];
 
-			    // 브라우저 뒤로가기/앞으로가기 처리
-			    window.addEventListener('popstate', function (event) {
-			        if (event.state) {
-			            if (event.state.mode === 'iframe' && event.state.path) {
-			                if (isMobileDevice()) {
-			                    window.location.href = event.state.path;
-			                } else {
-			                    openInIframe(event.state.path, '문서');
-			                }
-			            } else {
-			                window.location.href = event.state.path || '/';
-			            }
-			        }
-			    });
+				// 로그인 경로 체크 (메인 윈도우에서 처리)
+				function requiresMainWindow(path) {
+					return loginRequiredPaths.some(loginPath => path.includes(loginPath));
+				}
 
-			    // 로그인이 필요한 경로들
-			    const loginRequiredPaths = [
-			        '/login',
-			        '/member/login',
-			        '/member/join',
-			        '/oauth2/authorization/',
-			        '/oauth2/join',
-			        '/logout'
-			    ];
+				// iframe에서 콘텐츠 로드 함수
+				function openInIframe(file, title) {
+					console.log('iframe에서 로드:', file);
 
-			    function requiresMainWindow(path) {
-			        return loginRequiredPaths.some(loginPath => path.includes(loginPath));
-			    }
+					// 윈도우 제목 설정
+					$('.win95-title-text').text(title);
 
-			    // iframe에서 콘텐츠 로드 함수
-			    function openInIframe(file, title) {
-			        if (isMobileDevice()) {
-			            console.log('📱 모바일에서 직접 페이지 이동:', file);
-			            window.location.href = file;
-			            return;
-			        }
+					// 윈도우 표시 및 위치 설정
+					$('#win95Window').css({
+						'display': 'block',
+						'position': 'fixed'
+					});
+					
+					// 창을 열 때 즉시 크기 조정
+					adjustWindowSize();
 
-			        console.log('💻 iframe에서 로드:', file);
+					// iframe 소스 설정 및 overflow 강제 적용
+					const iframe = $('#windowContentFrame');
+					iframe.attr('src', file).css({
+						'overflow': 'hidden',
+						'overflow-x': 'hidden',
+						'overflow-y': 'hidden'
+					});
 
-			        $('.win95-title-text').text(title);
+					// URL 동기화
+					updateBrowserURL(file);
+				}
 
-			        // 🔥 iframe 크기 결정 로직 (최대 크기 제한)
-			        const windowWidth = window.innerWidth;
-			        const windowHeight = window.innerHeight;
-			        
-			        // 화면 크기에 따라 iframe 크기 계산 (최대 크기를 넘지 않음)
-			        const availableWidth = windowWidth - 100;  // 좌우 여백 50px씩
-			        const availableHeight = windowHeight - 100; // 상하 여백 50px씩
-			        
-			        // 최대 크기를 넘지 않도록 제한
-			        const iframeWidth = Math.min(MAX_IFRAME_SIZE.width, availableWidth);
-			        const iframeHeight = Math.min(MAX_IFRAME_SIZE.height, availableHeight);
-			        
-			        // 윈도우 크기 (iframe + 테두리)
-			        const windowWidth95 = iframeWidth + 20;
-			        const windowHeight95 = iframeHeight + 40;
+				// 메인 윈도우에서 페이지 로드 함수 (로그인용)
+				function openInMainWindow(file) {
+					console.log('메인 윈도우에서 로드:', file);
+					isIframeMode = false;
 
-			        $('#win95Window').css({
-			            'display': 'block',
-			            'position': 'fixed',
-			            'width': windowWidth95 + 'px',
-			            'height': windowHeight95 + 'px',
-			            'left': '50%',
-			            'top': '50%',
-			            'transform': 'translate(-50%, -50%)',
-			            'z-index': '1000'
-			        });
+					// 현재 창에서 직접 이동
+					window.location.href = file;
+				}
 
-			        const iframe = $('#windowContentFrame');
-			        iframe.css({
-			            'width': iframeWidth + 'px',
-			            'height': iframeHeight + 'px',
-			            'overflow': 'hidden',
-			            'overflow-x': 'hidden',
-			            'overflow-y': 'hidden'
-			        });
+				// 사이드바 항목 클릭 시
+				$('.menu-item a, .auth-item a, .auth-profile a').click(function (e) {
+					// 🚨 푸터 링크는 제외 (푸터에서 별도 처리)
+					if ($(this).hasClass('footer-link')) {
+						return; // 푸터 링크는 사이드바에서 처리하지 않음
+					}
 
-			        iframe.attr('src', file);
-			        updateBrowserURL(file);
-			        
-			        console.log(`📐 iframe 크기: ${iframeWidth}x${iframeHeight} (최대: ${MAX_IFRAME_SIZE.width}x${MAX_IFRAME_SIZE.height})`);
-			    }
+					e.preventDefault(); // 기본 링크 동작 방지
 
-			    // 메인 윈도우에서 페이지 로드 함수
-			    function openInMainWindow(file) {
-			        console.log('🌐 메인 윈도우에서 로드:', file);
-			        isIframeMode = false;
-			        window.location.href = file;
-			    }
+					// 클릭된 링크의 href 속성에서 파일 경로를 가져옵니다.
+					const file = $(this).attr('href');
+					// 메뉴 텍스트에서 창의 제목을 가져오거나 기본값 '문서'를 사용합니다.
+					const title = $(this).find('.menu-text').text() || '문서';
 
-			    // 사이드바 항목 클릭 시
-			    $('.menu-item a, .auth-item a, .auth-profile a').click(function (e) {
-			        if ($(this).hasClass('footer-link')) {
-			            return;
-			        }
+					console.log('사이드바 링크 클릭:', file, title);
 
-			        e.preventDefault();
+					// '/' 링크는 일반적인 페이지 이동을 수행합니다.
+					if (file === '/') {
+						window.location.href = file;
+						return;
+					}
 
-			        const file = $(this).attr('href');
-			        const title = $(this).find('.menu-text').text() || '문서';
+					// 🚨 회원가입/로그인/소셜로그인 링크는 iframe에서 처리하지 않음
+					if (requiresMainWindow(file)) {
+						console.log('🔴 로그인/회원가입/소셜로그인은 메인 윈도우에서 처리:', file);
 
-			        console.log('🖱️ 사이드바 링크 클릭:', file, title);
+						// iframe 창이 열려있다면 닫기
+						$('#win95Window').hide();
+						$('#windowContentFrame').attr('src', 'about:blank');
 
-			        if (file === '/') {
-			            window.location.href = file;
-			            return;
-			        }
+						// 메인 윈도우에서 직접 이동
+						window.location.href = file;
+						return;
+					}
 
-			        if (requiresMainWindow(file)) {
-			            console.log('🔴 로그인/회원가입은 메인 윈도우에서 처리:', file);
-			            $('#win95Window').hide();
-			            $('#windowContentFrame').attr('src', 'about:blank');
-			            window.location.href = file;
-			            return;
-			        }
+					// 일반 페이지만 iframe에서 처리
+					console.log('🔵 iframe에서 처리:', file);
+					openInIframe(file, title);
+				});
 
-			        if (isMobileDevice()) {
-			            console.log('📱 모바일에서 직접 이동:', file);
-			            window.location.href = file;
-			            return;
-			        }
+				// iframe 로드 완료 후 처리 (중복 실행 방지)
+				let isProcessing = false;
+				$('#windowContentFrame').off('load').on('load', function () {
+					// 중복 처리 방지
+					if (isProcessing) {
+						console.log("⚠️ 이미 처리 중, 무시");
+						return;
+					}
 
-			        console.log('💻 데스크톱에서 iframe 처리:', file);
-			        openInIframe(file, title);
-			    });
+					// iframe overflow 재설정 (로드 후에도 유지)
+					$(this).css({
+						'overflow': 'hidden !important',
+						'overflow-x': 'hidden !important',
+						'overflow-y': 'hidden !important'
+					});
 
-			    // iframe 로드 완료 후 처리
-			    let isProcessing = false;
-			    $('#windowContentFrame').off('load').on('load', function () {
-			        if (isMobileDevice()) {
-			            return;
-			        }
+					try {
+						// iframe의 현재 URL 가져오기
+						const iframeURL = this.contentWindow.location.href;
+						const currentHost = window.location.host; // 현재 도메인
 
-			        if (isProcessing) {
-			            return;
-			        }
+						console.log("=== iframe load 이벤트 ===");
+						console.log("iframe 현재 URL:", iframeURL);
+						console.log("시간:", new Date().toLocaleTimeString());
 
-			        $(this).css({
-			            'overflow': 'hidden !important',
-			            'overflow-x': 'hidden !important',
-			            'overflow-y': 'hidden !important'
-			        });
+						// about:blank는 무시
+						if (iframeURL === 'about:blank' || iframeURL === '') {
+							console.log("about:blank 무시");
+							return;
+						}
 
-			        try {
-			            const iframeURL = this.contentWindow.location.href;
-			            const currentHost = window.location.host;
+						// 🚨 로그인 페이지인지 먼저 체크
+						if (iframeURL.indexOf('/member/login') !== -1) {
+							console.log("🔴 로그인 페이지 감지됨! 처리 시작");
+							isProcessing = true; // 중복 방지 플래그
 
-			            console.log("=== iframe load 이벤트 ===");
-			            console.log("iframe URL:", iframeURL);
+							// iframe 즉시 정리
+							$('#win95Window').hide();
+							$('#windowContentFrame').attr('src', 'about:blank');
 
-			            if (iframeURL === 'about:blank' || iframeURL === '') {
-			                return;
-			            }
+							// 메인 윈도우에서 즉시 로그인 페이지로 이동
+							console.log("🚀 메인 윈도우로 강제 이동");
+							window.top.location.href = '/member/login';
+							return; // 이후 모든 처리 중단
+						}
 
-			            if (iframeURL.indexOf('/member/login') !== -1) {
-			                console.log("🔴 로그인 페이지 감지됨!");
-			                isProcessing = true;
+						// URL 동기화 (iframe 내에서 내부 네비게이션이 발생한 경우)
+						if (iframeURL.includes(`//${currentHost}/`) && !iframeURL.endsWith('about:blank')) {
+							const path = new URL(iframeURL).pathname + new URL(iframeURL).search;
+							if (path !== currentPath && path !== '/') {
+								updateBrowserURL(path);
+							}
+						}
 
-			                $('#win95Window').hide();
-			                $('#windowContentFrame').attr('src', 'about:blank');
+						// 메인 페이지로 리다이렉트된 경우 (로그인 성공 후 등)
+						if (iframeURL.includes(`//${currentHost}/`) && (iframeURL.endsWith('/') || iframeURL.includes('?loginSuccess'))) {
+							console.log("메인 페이지로 이동 감지됨, 창 닫고 최상위 창 리다이렉트");
+							$('#win95Window').hide();
+							isIframeMode = true;
+							window.location.href = '/';
+							return; 
+						}
 
-			                try {
-			                    window.top.location.href = '/member/login';
-			                } catch (e) {
-			                    window.location.href = '/member/login';
-			                }
-			                return;
-			            }
+						// iframe 내부 문서에 접근
+						const iframe = document.getElementById('windowContentFrame');
+						const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-			            if (iframeURL.includes(`//${currentHost}/`) && !iframeURL.endsWith('about:blank')) {
-			                const path = new URL(iframeURL).pathname + new URL(iframeURL).search;
-			                if (path !== currentPath && path !== '/') {
-			                    updateBrowserURL(path);
-			                }
-			            }
+						// 내부 스타일 정리
+						if (iframeDoc && iframeDoc.body) {
+							iframeDoc.body.style.overflow = 'hidden';
+							iframeDoc.body.style.overflowX = 'hidden';
+							iframeDoc.body.style.overflowY = 'hidden';
+							iframeDoc.body.style.margin = '0';
+							iframeDoc.body.style.padding = '0';
 
-			            if (iframeURL.includes(`//${currentHost}/`) && 
-			                (iframeURL.endsWith('/') || iframeURL.includes('?success'))) {
-			                console.log("메인 페이지로 이동 감지됨");
-			                $('#win95Window').hide();
-			                isIframeMode = true;
-			                window.location.href = '/';
-			                return;
-			            }
+							const sidebars = iframeDoc.querySelectorAll('.sidebar, .sidebar-component');
+							sidebars.forEach(sidebar => sidebar.style.display = 'none');
 
-			            const iframe = document.getElementById('windowContentFrame');
-			            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+							const footers = iframeDoc.querySelectorAll('footer, .footer');
+							footers.forEach(footer => footer.style.display = 'none');
 
-			            if (iframeDoc && iframeDoc.body) {
-			                iframeDoc.body.style.overflow = 'hidden';
-			            }
+							const mainContents = iframeDoc.querySelectorAll('.content-with-sidebar, main, #main');
+							mainContents.forEach(content => {
+								content.style.marginLeft = '0';
+								content.style.width = '100%';
+							});
+						}
 
-			            const sidebars = iframeDoc.querySelectorAll('.sidebar, .sidebar-component, .side-nav, #sidebar');
-			            sidebars.forEach(sidebar => {
-			                if (sidebar) sidebar.style.display = 'none';
-			            });
+						// iframe 내 링크 타겟 설정
+						let baseElement = iframeDoc.querySelector('base');
+						if (!baseElement) {
+							baseElement = iframeDoc.createElement('base');
+							iframeDoc.head.appendChild(baseElement);
+						}
+						baseElement.setAttribute('target', '_self');
 
-			            const footers = iframeDoc.querySelectorAll('footer, .footer, .site-footer, #footer');
-			            footers.forEach(footer => {
-			                if (footer) footer.style.display = 'none';
-			            });
+						const links = iframeDoc.querySelectorAll('a');
+						links.forEach(link => {
+							if (!link.hasAttribute('data-processed')) {
+								link.addEventListener('click', function (e) {
+									const href = this.getAttribute('href');
+									if (href && requiresMainWindow(href)) {
+										e.preventDefault();
+										console.log('🔴 iframe 내부 링크를 메인 윈도우에서 처리:', href);
+										window.parent.location.href = href;
+									}
+								});
+								link.setAttribute('data-processed', 'true');
+							}
+						});
 
-			            const mainContents = iframeDoc.querySelectorAll('.content-with-sidebar, main, #main, .main-content');
-			            mainContents.forEach(content => {
-			                if (content) {
-			                    content.style.marginLeft = '0';
-			                    content.style.width = '100%';
-			                    content.style.overflow = 'hidden';
-			                }
-			            });
+						console.log("iframe 내부 요소 정리 완료");
 
-			            const links = iframeDoc.querySelectorAll('a');
-			            links.forEach(link => {
-			                if (!link.hasAttribute('data-processed')) {
-			                    link.addEventListener('click', function (e) {
-			                        const href = this.getAttribute('href');
-			                        if (href && requiresMainWindow(href)) {
-			                            e.preventDefault();
-			                            console.log('🔴 iframe 내부 링크를 메인 윈도우에서 처리:', href);
-			                            window.parent.location.href = href;
-			                        }
-			                    });
-			                    link.setAttribute('data-processed', 'true');
-			                }
-			            });
+						setTimeout(() => { isProcessing = false; }, 1000);
 
-			            setTimeout(() => {
-			                isProcessing = false;
-			            }, 1000);
+					} catch (e) {
+						console.error("iframe 내부 요소 접근 오류:", e);
+						isProcessing = false;
+					}
+				});
 
-			        } catch (e) {
-			            console.error("iframe 내부 요소 접근 오류:", e);
-			            isProcessing = false;
-			        }
-			    });
+				// 닫기 버튼 클릭 시
+				$('.win95-close').click(function () {
+					$('#win95Window').hide();
+					$('#windowContentFrame').attr('src', 'about:blank');
+					window.history.pushState({ path: '/', mode: 'normal' }, '', '/');
+					currentPath = '';
+				});
 
-			    // 닫기 버튼 클릭 시
-			    $('.win95-close').click(function () {
-			        $('#win95Window').hide();
-			        $('#windowContentFrame').attr('src', 'about:blank');
-			        window.history.pushState({path: '/', mode: 'normal'}, '', '/');
-			        currentPath = '';
-			    });
+				// 드래그 기능
+				let isDragging = false;
+				let offsetX, offsetY;
+				$('.win95-title-bar').mousedown(function (e) {
+					isDragging = true;
+					offsetX = e.clientX - $('#win95Window').position().left;
+					offsetY = e.clientY - $('#win95Window').position().top;
 
-			    // 드래그 기능
-			    let isDragging = false;
-			    let offsetX, offsetY;
+					$(document).mousemove(function (e) {
+						if (isDragging) {
+							$('#win95Window').css({
+								left: e.clientX - offsetX,
+								top: e.clientY - offsetY,
+								transform: 'none'
+							});
+						}
+					});
 
-			    $('.win95-title-bar').mousedown(function (e) {
-			        if (isMobileDevice()) return;
-			        
-			        isDragging = true;
-			        offsetX = e.clientX - $('#win95Window').position().left;
-			        offsetY = e.clientY - $('#win95Window').position().top;
+					$(document).mouseup(function () {
+						isDragging = false;
+						$(document).off('mousemove');
+						$(document).off('mouseup');
+					});
+				});
 
-			        $(document).mousemove(function (e) {
-			            if (isDragging) {
-			                $('#win95Window').css({
-			                    left: e.clientX - offsetX,
-			                    top: e.clientY - offsetY,
-			                    transform: 'none'
-			                });
-			            }
-			        });
-
-			        $(document).mouseup(function () {
-			            isDragging = false;
-			            $(document).off('mousemove');
-			            $(document).off('mouseup');
-			        });
-			    });
-
-			    // 페이지 로드 시 URL 기반으로 초기 상태 설정
-			    const currentURL = window.location.pathname + window.location.search;
-			    if (currentURL !== '/' && !requiresMainWindow(currentURL)) {
-			        if (!isMobileDevice()) {
-			            const title = '문서';
-			            openInIframe(currentURL, title);
-			        }
-			    }
-
-			    // 🔥 윈도우 리사이즈 시 iframe 크기 재조정 (최대 크기 제한)
-			    function adjustWindowSizeOnResize() {
-			        if (isMobileDevice()) {
-			            const win95Window = $('#win95Window');
-			            if (win95Window.is(':visible')) {
-			                console.log('📱 모바일 감지: iframe 윈도우 숨김');
-			                win95Window.hide();
-			                $('#windowContentFrame').attr('src', 'about:blank');
-			            }
-			            return;
-			        }
-
-			        const win95Window = $('#win95Window');
-			        if (!win95Window.is(':visible')) return;
-
-			        const windowWidth = window.innerWidth;
-			        const windowHeight = window.innerHeight;
-			        
-			        const availableWidth = windowWidth - 100;
-			        const availableHeight = windowHeight - 100;
-			        
-			        // 🔥 최대 크기를 넘지 않도록 제한
-			        const iframeWidth = Math.min(MAX_IFRAME_SIZE.width, availableWidth);
-			        const iframeHeight = Math.min(MAX_IFRAME_SIZE.height, availableHeight);
-			        
-			        const windowWidth95 = iframeWidth + 20;
-			        const windowHeight95 = iframeHeight + 40;
-
-			        win95Window.css({
-			            'width': windowWidth95 + 'px',
-			            'height': windowHeight95 + 'px',
-			            'left': '50%',
-			            'top': '50%',
-			            'transform': 'translate(-50%, -50%)'
-			        });
-
-			        $('#windowContentFrame').css({
-			            'width': iframeWidth + 'px',
-			            'height': iframeHeight + 'px',
-			            'overflow': 'hidden'
-			        });
-
-			        console.log(`🔄 리사이즈: iframe 크기 ${iframeWidth}x${iframeHeight} (최대: ${MAX_IFRAME_SIZE.width}x${MAX_IFRAME_SIZE.height})`);
-			    }
-
-			    // 리사이즈 이벤트
-			    $(window).resize(adjustWindowSizeOnResize);
+				// 페이지 로드 시 URL 기반으로 초기 상태 설정
+				const currentURL = window.location.pathname + window.location.search;
+				if (currentURL !== '/' && !requiresMainWindow(currentURL)) {
+					const title = '문서';
+					openInIframe(currentURL, title);
+				}
 			});
+
+			// --- 윈도우 크기 조정 함수 (최종 수정) ---
+			function adjustWindowSize() {
+				const windowWidth = window.innerWidth;
+				const windowHeight = window.innerHeight;
+				const win95Window = $('#win95Window');
+				const iframe = $('#windowContentFrame');
+
+				// --- 최대 크기 정의 (너비와 높이 모두 고정) ---
+				const maxIframeWidth = 1300;
+				const maxIframeHeight = 580;
+				const maxWindowWidth = maxIframeWidth + 20;   // 윈도우 테두리(좌/우 10px씩) 포함
+				const maxWindowHeight = maxIframeHeight + 40; // 윈도우 제목 표시줄 및 테두리 포함
+
+				// 모바일 뷰에서는 윈도우를 숨깁니다.
+				if (windowWidth < 768) {
+					if (win95Window.is(':visible')) {
+						win95Window.hide();
+					}
+					return;
+				}
+
+				// 윈도우가 화면에 보일 때만 크기를 조절합니다.
+				if (win95Window.is(':visible')) {
+					
+					// 화면에서 사용 가능한 공간을 계산합니다 (창 주변 여백 100px 확보).
+					const availableWidth = windowWidth - 100;
+					const availableHeight = windowHeight - 100;
+
+					// ★★★ 핵심 수정 사항 ★★★
+					// 목표 너비 = min(최대 너비, 현재 사용 가능한 너비)
+					// 목표 높이 = min(최대 높이, 현재 사용 가능한 높이)
+					// 이렇게 하면 창 크기와 관계없이 너비와 높이 모두 최대값을 절대 넘지 않습니다.
+					const targetWindowWidth = Math.min(maxWindowWidth, availableWidth);
+					const targetWindowHeight = Math.min(maxWindowHeight, availableHeight);
+
+					const targetIframeWidth = targetWindowWidth - 20;
+					const targetIframeHeight = targetWindowHeight - 40;
+
+					// 계산된 크기와 중앙 정렬 위치를 적용합니다.
+					win95Window.css({
+						'width': targetWindowWidth + 'px',
+						'height': targetWindowHeight + 'px',
+						'left': (windowWidth - targetWindowWidth) / 2 + 'px',
+						'top': (windowHeight - targetWindowHeight) / 2 + 'px',
+						'transform': 'none'
+					});
+
+					iframe.css({
+						'width': targetIframeWidth + 'px',
+						'height': targetIframeHeight + 'px',
+						'overflow': 'hidden',
+						'overflow-x': 'hidden',
+						'overflow-y': 'hidden'
+					});
+				}
+			}
+
+			// 이벤트 리스너 등록
+			$(window).on('resize', adjustWindowSize);
+			$(document).ready(adjustWindowSize);
+			$(window).on('focus', adjustWindowSize);
 		</script>
 	</div>
 </body>

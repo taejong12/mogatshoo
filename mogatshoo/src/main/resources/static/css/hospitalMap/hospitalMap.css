@@ -4,60 +4,93 @@
 	font-weight: normal;
 	font-style: normal;
 }
-html, body {
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-	background-color: #c0c0c0;
+
+/* =================================== */
+/* 기본 레이아웃 및 CSS 충돌 방지 (Scoping) */
+/* =================================== */
+.hairloss-map-app {
+    width: 100%;
+    height: 100vh; /* 화면 전체 높이 사용 */
+    padding: 8px;
+    background-color: #c0c0c0;
+    display: flex;
+    flex-direction: column; /* 헤더와 메인 콘텐츠를 세로로 배치 */
+    overflow: hidden; /* 전체 앱 스크롤 방지 */
+    font-family: 'dalmoori', sans-serif;
+}
+
+.hairloss-map-app .map-app-header {
+    flex-shrink: 0; /* 헤더는 줄어들지 않음 */
+}
+
+.hairloss-map-app .map-app-main-content {
+    flex-grow: 1; /* 메인 콘텐츠가 남은 공간을 모두 차지 */
+    display: flex;
+    gap: 8px;
+    min-height: 0; /* flex 자식 요소의 높이 계산 오류 방지 */
+}
+
+/* 데스크탑 (lg) 이상 화면에서 가로 배치 */
+@media (min-width: 992px) {
+    .hairloss-map-app .map-app-main-content {
+        flex-direction: row;
+    }
+}
+
+/* 모바일/태블릿 (lg) 미만 화면에서 세로 배치 */
+@media (max-width: 991.98px) {
+    .hairloss-map-app {
+        height: auto; /* 모바일에서는 콘텐츠 길이에 따라 높이 자동 조절 */
+        overflow-y: auto; /* 필요시 스크롤 */
+    }
+    .hairloss-map-app .map-app-main-content {
+        flex-direction: column;
+    }
+    .hairloss-map-app #map {
+        min-height: 300px; /* 모바일에서 최소 지도 높이 확보 */
+    }
 }
 
 
-.container {
-    height: 100vh !important;
-    width: 100vw !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 8px !important;
-    overflow: auto !important;
-	background-color: #c0c0c0;
-}
+/* =================================== */
+/* 윈도우 95 테마 (Scoped) */
+/* =================================== */
 
 /* 제목 스타일 */
-h1 {
+.hairloss-map-app h1 {
     font-size: 16px;
     font-weight: bold;
-    color: #000080;
-    margin-bottom: 12px;
+    color: rgb(255, 255, 255);
+    margin: 0;
     text-shadow: 1px 1px 0px #ffffff;
 }
 
-h5 {
+.hairloss-map-app h5 {
     font-size: 14px;
     font-weight: bold;
-    color: #000000;
+    color: #ffffff; /* 헤더 텍스트 색상 */
     margin: 4px 0;
 }
-.mb-0 {
-	color: rgb(255, 255, 255);
-}
 
-/* 윈도우 95 스타일 카드 (윈도우 프레임) */
-.card {
+/* 윈도우 95 스타일 카드 */
+.hairloss-map-app .card {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     border-radius: 0;
     box-shadow: none;
     margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
 }
 
-.card-body {
+.hairloss-map-app .card-body {
     padding: 8px;
     background-color: #c0c0c0;
+    flex-grow: 1; /* card-body가 남은 공간 채우도록 */
 }
 
-.card-header {
-    background-color: rgb(192, 192, 192);
+.hairloss-map-app .card-header {
+    background-color: rgb(64, 128, 128); /* 활성 창 스타일 */
     color: #ffffff;
     border: none;
     padding: 2px 8px;
@@ -66,59 +99,79 @@ h5 {
     border-bottom: 1px solid #808080;
 }
 
-/* 지도 영역 - 윈도우 95 inset 스타일 */
-#map {
+/* 지도 및 리스트 컨테이너 */
+.hairloss-map-app .map-container,
+.hairloss-map-app .list-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     width: 100%;
-    height: 400px;
+}
+
+@media (min-width: 992px) {
+    .hairloss-map-app .map-container {
+        width: 66.666%;
+    }
+    .hairloss-map-app .list-container {
+        width: 33.333%;
+    }
+}
+
+
+/* 지도 영역 */
+.hairloss-map-app #map {
+    width: 100%;
+    height: 100%; /* 부모 컨테이너에 꽉 차게 */
     border: 2px inset #c0c0c0;
     border-radius: 0;
     background-color: #ffffff;
 }
 
-/* 윈도우 95 스타일 버튼 */
-.btn {
+/* 검색 결과 리스트 컨테이너 */
+.hairloss-map-app #hospital-list {
+    background-color: #ffffff;
+    border: 2px inset #c0c0c0;
+    height: 100%; /* 부모에 꽉 차게 */
+    overflow-y: auto;
+}
+
+
+/* 컨트롤 (버튼, 입력창 등) */
+.hairloss-map-app .controls-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.hairloss-map-app .search-group {
+    display: flex;
+    flex-wrap: wrap; /* 창이 좁아지면 줄바꿈 */
+    gap: 8px;
+}
+.hairloss-map-app .search-group .input-group {
+    flex: 1 1 300px; /* 기본 너비 300px, 축소/확장 가능 */
+}
+.hairloss-map-app .location-group {
+    display: flex;
+    gap: 8px;
+}
+
+.hairloss-map-app .btn {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     border-radius: 0;
     color: #000000;
     font-size: 11px;
     font-family: 'dalmoori', sans-serif;
-    padding: 4px 12px;
-    margin: 2px;
+    padding: 6px 12px;
     cursor: pointer;
     box-shadow: none;
+    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
 }
 
-.btn:hover {
-    background-color: #d4d0c8;
-    border: 2px outset #d4d0c8;
-}
+.hairloss-map-app .btn:hover { background-color: #d4d0c8; }
+.hairloss-map-app .btn:active { border: 2px inset #c0c0c0; background-color: #a0a0a0; }
 
-.btn:active {
-    border: 2px inset #c0c0c0;
-    background-color: #a0a0a0;
-}
-
-.btn-primary {
-    background-color: #c0c0c0;
-    border: 2px outset #c0c0c0;
-    color: #000000;
-}
-
-.btn-success {
-    background-color: #c0c0c0;
-    border: 2px outset #c0c0c0;
-    color: #000000;
-}
-
-.btn-outline-secondary {
-    background-color: #c0c0c0;
-    border: 2px outset #c0c0c0;
-    color: #000000;
-}
-
-/* 윈도우 95 스타일 입력 필드 */
-.form-control {
+.hairloss-map-app .form-control, .hairloss-map-app .form-select {
     background-color: #ffffff;
     border: 2px inset #c0c0c0;
     border-radius: 0;
@@ -128,292 +181,64 @@ h5 {
     padding: 4px 6px;
     box-shadow: none;
 }
-
-.form-control:focus {
-    background-color: #ffffff;
-    border: 2px inset #c0c0c0;
+.hairloss-map-app .form-control:focus, .hairloss-map-app .form-select:focus {
     box-shadow: none;
     outline: none;
 }
 
-.form-select {
-    background-color: #ffffff;
-    border: 2px inset #c0c0c0;
-    border-radius: 0;
-    color: #000000;
-    font-size: 14px;
-    font-family: 'dalmoori', sans-serif;
-    padding: 4px 6px;
-    box-shadow: none;
-}
-
-/* 입력 그룹 스타일 */
-.input-group {
-    border: none;
-    border-radius: 0;
-}
-
-.input-group .form-control {
-    border-right: none;
-}
-
-.input-group .btn {
-    border-left: 2px outset #c0c0c0;
-}
-
-/* 병원 목록 스타일 - 윈도우 95 리스트박스 */
-.hospital-item {
+/* 병원 목록 아이템 */
+.hairloss-map-app .hospital-item {
     padding: 8px;
     border-bottom: 1px solid #808080;
     cursor: pointer;
     background-color: #ffffff;
     color: #000000;
-    font-size: 14px;
-    margin: 0;
+}
+.hairloss-map-app .hospital-item:hover { background-color: #000080; color: #ffffff; }
+.hairloss-map-app .hospital-item:last-child { border-bottom: none; }
+.hairloss-map-app .hospital-name { font-weight: bold; font-size: 14px; }
+.hairloss-map-app .hospital-address, .hairloss-map-app .hospital-phone { font-size: 12px; }
+.hairloss-map-app .hospital-distance { font-size: 10px; color: #008000; }
+.hairloss-map-app .hospital-item:hover .hospital-distance { color: #00ff00; }
+
+/* 카테고리 버튼 */
+.hairloss-map-app .category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
-.hospital-item:hover {
-    background-color: #000080;
-    color: #ffffff;
-}
-
-.hospital-item:last-child {
-    border-bottom: none;
-}
-
-.hospital-name {
-    font-weight: bold;
-    margin-bottom: 3px;
-    font-size: 14px;
-}
-
-.hospital-address,
-.hospital-phone {
-    color: inherit;
-    font-size: 12px;
-    margin-bottom: 2px;
-}
-
-.hospital-item:hover .hospital-address,
-.hospital-item:hover .hospital-phone {
-    color: #ffffff;
-}
-
-.hospital-distance {
-    font-size: 10px;
-    color: #008000;
-    font-weight: normal;
-}
-
-.hospital-item:hover .hospital-distance {
-    color: #00ff00;
-}
-
-/* 검색 결과 리스트 컨테이너 */
-#hospital-list {
-    background-color: #ffffff;
+/* 메시지 영역 */
+.hairloss-map-app #messageArea .info-message,
+.hairloss-map-app #messageArea .error-message {
+    padding: 8px;
+    margin: 8px 0;
     border: 2px inset #c0c0c0;
-    max-height: 400px;
-    overflow-y: auto;
+    font-size: 14px;
 }
-/* 윈도우 95 스타일 전역 스크롤바 */
-::-webkit-scrollbar {
-    width: 16px;
-    height: 16px;
-}
+.hairloss-map-app #messageArea .info-message { background-color: #ffffcc; color: #000000; }
+.hairloss-map-app #messageArea .error-message { background-color: #ffcccc; color: #800000; }
 
-::-webkit-scrollbar-track {
-    background-color: #c0c0c0;
-    border: 1px solid #808080;
-    box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #c0c0c0;
-    border: 1px solid #808080;
-    box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
-    min-height: 20px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #d4d0c8;
-}
-
-::-webkit-scrollbar-thumb:active {
-    background-color: #a0a0a0;
-    box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #dfdfdf;
-}
-
-::-webkit-scrollbar-button {
-    background-color: #c0c0c0;
-    border: 1px solid #808080;
-    box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
-    width: 16px;
-    height: 16px;
-    display: block;
-}
-
-::-webkit-scrollbar-button:hover {
-    background-color: #d4d0c8;
-}
-
-::-webkit-scrollbar-button:active {
-    background-color: #a0a0a0;
-    box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #dfdfdf;
-}
-
-/* 세로 스크롤바 화살표 */
-::-webkit-scrollbar-button:vertical:start:decrement {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M8 4l4 4H4z' fill='%23000'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-::-webkit-scrollbar-button:vertical:end:increment {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M8 12l-4-4h8z' fill='%23000'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-/* 가로 스크롤바 화살표 */
-::-webkit-scrollbar-button:horizontal:start:decrement {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M4 8l4-4v8z' fill='%23000'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-::-webkit-scrollbar-button:horizontal:end:increment {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M12 8l-4-4v8z' fill='%23000'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-/* 스크롤바 코너 */
-::-webkit-scrollbar-corner {
-    background-color: #c0c0c0;
-    border: 1px solid #808080;
-    box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
-}
-
-/* Firefox용 스크롤바 스타일 (제한적) */
-html {
-    scrollbar-width: auto;
-    scrollbar-color: #c0c0c0 #c0c0c0;
-}
-
-/* 로딩 인디케이터 - 윈도우 95 스타일 */
-.loading {
+/* 로딩 인디케이터 */
+.hairloss-map-app .loading {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: rgba(192, 192, 192, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 2000; /* 다른 요소들 위에 표시 */
 }
-
-.spinner-border {
+.hairloss-map-app .spinner-border {
     border: 4px solid #c0c0c0;
     border-top: 4px solid #000080;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
     animation: spin 1s linear infinite;
 }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* 카테고리 버튼 영역 */
-.category-buttons {
-    margin-top: 8px;
-    margin-bottom: 8px;
-    padding: 4px;
-    background-color: #c0c0c0;
-    border: 1px inset #c0c0c0;
-}
-
-.category-buttons .btn {
-    margin-right: 4px;
-    margin-bottom: 4px;
-    font-size: 12px;
-    padding: 3px 8px;
-}
-
-/* 메시지 스타일 - 윈도우 95 메시지박스 */
-.info-message {
-    padding: 8px;
-    margin: 8px 0;
-    background-color: #ffffcc;
-    border: 2px inset #c0c0c0;
-    border-radius: 0;
-    color: #000000;
-    font-size: 14px;
-}
-
-.error-message {
-    padding: 8px;
-    margin: 8px 0;
-    background-color: #ffcccc;
-    border: 2px inset #c0c0c0;
-    border-radius: 0;
-    color: #800000;
-    font-size: 14px;
-}
-
-/* 텍스트 스타일 */
-.text-muted {
-    color: #808080 !important;
-    font-size: 11px;
-}
-
-.text-center {
-    text-align: center;
-}
-
-/* 카카오맵 인포윈도우 z-index 설정 유지 */
-.overlay_info {
-    z-index: 1000 !important;
-}
-
-div[style*="z-index"] {
-    z-index: 1000 !important;
-}
-
-.info {
-    z-index: 1000 !important;
-}
-
-.info_window {
-    z-index: 1000 !important;
-}
-
-/* 부트스트랩 그리드 시스템 유지하면서 윈도우 95 스타일 적용 */
-.row {
-    margin: 0;
-}
-
-.col-md-4, .col-md-6, .col-md-8 {
-    padding: 4px;
-}
-
-/* 윈도우 95 타이틀바 효과 */
-.card-header::before {
-    content: "";
-    display: inline-block;
-    width: 16px;
-    height: 14px;
-    background: linear-gradient(45deg, #c0c0c0 25%, transparent 25%), 
-                linear-gradient(-45deg, #c0c0c0 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #c0c0c0 75%), 
-                linear-gradient(-45deg, transparent 75%, #c0c0c0 75%);
-    background-size: 4px 4px;
-    background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
-    margin-right: 6px;
-    vertical-align: top;
-}
+/* 윈도우 95 스타일 스크롤바 */
+.hairloss-map-app ::-webkit-scrollbar { width: 16px; height: 16px; }
+.hairloss-map-app ::-webkit-scrollbar-track { background-color: #dfdfdf; }
+.hairloss-map-app ::-webkit-scrollbar-thumb { background-color: #c0c0c0; border: 2px outset #c0c0c0; }
+.hairloss-map-app ::-webkit-scrollbar-button { background-color: #c0c0c0; border: 2px outset #c0c0c0; display: block; height: 16px; width: 16px; }

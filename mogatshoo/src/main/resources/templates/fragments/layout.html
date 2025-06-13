@@ -14,18 +14,20 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="${layoutTitle} ?: 'Mogatshoo'">Mogatshoo</title>
 
-	<!-- 🔥 기본 CSS는 그대로 유지 -->
+	<!-- 공통 스타일시트 -->
 	<link th:href="@{/css/main/layout.css}" rel="stylesheet">
 	<link th:href="@{/css/main/sidebar.css}" rel="stylesheet">
 	<link th:href="@{/css/main/footer.css}" rel="stylesheet">
-	
-	<!-- 🔥 모바일 전용 CSS 추가 (덮어쓰기용) -->
-	<link th:href="@{/css/mobile/mobile-override.css}" rel="stylesheet">
 
+	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	
+	<!-- 🔥 모바일 헤더 CSS -->
+	<link th:href="@{/css/main/mobileHeader.css}" rel="stylesheet">
+
 	<th:block layout:fragment="additionalStyles"></th:block>
 	
-	<!-- 🔥 기존 스크립트 유지 -->
+	<!-- 기존 스크립트 유지 -->
 	<script>
 		(function () {
 			'use strict';
@@ -33,8 +35,6 @@
 			const currentPath = window.location.pathname;
 			const isInIframe = window.self !== window.top;
 			const screenWidth = window.innerWidth;
-
-			// 🔥 모바일 감지 (기존 로직 유지)
 			const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || screenWidth <= 768;
 
 			console.log("🔍 페이지 체크:", {
@@ -45,31 +45,22 @@
 			});
 
 			const iframeOnlyPaths = [
-				'/hairLossTest/',
-				'/fortune/',
-				'/hospitalMap/',
-				'/point/',
-				'/member/mypage', '/member/complete', '/member/findById', '/member/findByPwd', '/member/lost', '/member/pwdUpdateForm', '/member/update',
-				'/voting/', '/voting',
-				'/qanda/'
+				'/hairLossTest/', '/fortune/', '/hospitalMap/', '/point/',
+				'/member/mypage', '/member/complete', '/member/findById', '/member/findByPwd', 
+				'/member/lost', '/member/pwdUpdateForm', '/member/update',
+				'/voting/', '/voting', '/qanda/'
 			];
 
 			const isIframeOnlyPath = iframeOnlyPaths.some(path => currentPath.startsWith(path));
 
-			// 🔥 모바일에서는 기존 로직 대신 새로운 처리
-			if (isMobileDevice) {
-				console.log("📱 모바일 환경 감지 - 모바일 전용 처리");
-				// 모바일에서는 아이프레임 제약 무시하고 모든 콘텐츠 표시
-				document.body.classList.add('mobile-mode');
-			} else {
-				// 데스크톱에서는 기존 로직 유지
-				if (isIframeOnlyPath && !isInIframe) {
-					console.log("🗑️ 데스크톱에서 직접 접근 감지 - 콘텐츠 숨김");
-					hideContent();
-				}
+			if (isIframeOnlyPath && !isInIframe && !isMobileDevice) {
+				console.log("🗑️ 데스크톱에서 직접 접근 감지 - 콘텐츠 숨김");
+				hideContent();
+			} else if (isIframeOnlyPath && !isInIframe && isMobileDevice) {
+				console.log("📱 모바일에서 직접 접근 - 콘텐츠 표시하고 레이아웃 조정");
+				adjustMobileLayout();
 			}
 
-			// 아이프레임에서는 기존 로직 유지
 			if (isInIframe) {
 				setTimeout(() => {
 					const sidebar = document.querySelector('.sidebar');
@@ -92,7 +83,31 @@
 				}, 100);
 			}
 
-			// 기존 hideContent 함수 유지
+			function adjustMobileLayout() {
+				setTimeout(() => {
+					console.log("📱 모바일: 레이아웃 조정 시작");
+					
+					const sidebar = document.querySelector('.sidebar');
+					if (sidebar) {
+						console.log("📱 모바일: 사이드바 유지 (모바일 모드)");
+					}
+
+					const contentWithSidebar = document.querySelector('.content-with-sidebar');
+					if (contentWithSidebar) {
+						contentWithSidebar.style.marginLeft = '0';
+						contentWithSidebar.style.width = '100%';
+						contentWithSidebar.style.padding = '0px';
+						console.log("📱 모바일: 콘텐츠 영역 조정");
+					}
+
+					const footer = document.querySelector('.footer-area, .footer');
+					if (footer) {
+						footer.style.display = 'block';
+						console.log("📱 모바일: 푸터 표시");
+					}
+				}, 100);
+			}
+
 			function hideContent() {
 				const contentSelectors = [
 					'[layout\\:fragment="content"]',
@@ -127,22 +142,22 @@
 					console.log("🔨 강제 콘텐츠 숨김");
 					const style = document.createElement('style');
 					style.textContent = `
-			                .retro-panel,
-			                .main-container > .container,
-			                .pixel-bg .main-container > .container,
-			                [layout\\:fragment="content"] > *,
-			                .content-with-sidebar > div:not(.empty-space) {
-			                    display: none !important;
-			                }
-			                
-			                .content-with-sidebar {
-			                    min-height: calc(100vh - 200px) !important;
-			                    background-color: #008080 !important;
-			                    display: flex !important;
-			                    align-items: center !important;
-			                    justify-content: center !important;
-			                }
-			            `;
+						.retro-panel,
+						.main-container > .container,
+						.pixel-bg .main-container > .container,
+						[layout\\:fragment="content"] > *,
+						.content-with-sidebar > div:not(.empty-space) {
+							display: none !important;
+						}
+						
+						.content-with-sidebar {
+							min-height: calc(100vh - 200px) !important;
+							background-color: #008080 !important;
+							display: flex !important;
+							align-items: center !important;
+							justify-content: center !important;
+						}
+					`;
 					document.head.appendChild(style);
 				}
 				console.log("✅ 콘텐츠 숨김 완료");
@@ -154,14 +169,19 @@
 <body th:classappend="${mainPage} ? 'main-page' : ''">
 	<div class="page-container d-flex flex-column min-vh-100">
 
+		<!-- 🔥 모바일 전용 헤더 Include -->
+		<th:block th:replace="~{fragments/header :: mobileHeader}"></th:block>
+
+		<!-- 🔥 모바일 사이드바 오버레이 Include -->
+		<th:block th:replace="~{fragments/header :: mobileOverlay}"></th:block>
+
 		<!-- 본문 및 사이드바 -->
 		<main class="flex-fill content-area">
 			<div class="content-wrapper container-fluid">
 				<div class="sidebar-content-container d-flex">
 
-					<!-- 🔥 조건부 사이드바: 모바일이면 모바일 사이드바, 데스크톱이면 기존 사이드바 -->
-					<aside class="sidebar desktop-sidebar" th:replace="~{fragments/sidebar :: sidebar}"></aside>
-					<aside class="sidebar mobile-sidebar" th:replace="~{fragments/mobile-sidebar :: mobile-sidebar}"></aside>
+					<!-- 사이드바 -->
+					<aside class="sidebar" th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
 					<!-- 콘텐츠 -->
 					<section class="content-with-sidebar flex-grow-1">
@@ -178,15 +198,17 @@
 		</footer>
 	</div>
 
-	<!-- 🔥 기존 스크립트 유지 -->
+	<!-- 공통 스크립트 -->
 	<script th:src="@{/js/main/sidebar.js}"></script>
 	<script th:src="@{/js/main/footer.js}"></script>
 	
-	<!-- 🔥 모바일 전용 스크립트 추가 -->
-	<script th:src="@{/js/mobile/mobile-sidebar.js}"></script>
+	<!-- 🔥 모바일 헤더 JavaScript -->
+	<script th:src="@{/js/main/mobileHeader.js}"></script>
 
+	<!-- 페이지별 추가 스크립트 -->
 	<th:block layout:fragment="additionalScripts"></th:block>
 
+	<!-- Bootstrap JS (Popper 포함) -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

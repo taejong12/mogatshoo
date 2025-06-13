@@ -1,5 +1,6 @@
 @charset "UTF-8";
 
+/* 기본 바디 스타일 (레이아웃의 body::before 오버라이드) */
 body {
     background-image: url('/img/background/95background.jpg') !important;
     background-size: cover !important;
@@ -8,30 +9,37 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
+    overflow-y: auto; /* 모바일에서 스크롤 가능하도록 */
+    -webkit-overflow-scrolling: touch; /* 부드러운 스크롤 */
 }
 
-/* 기존 layout.css의 body::before 오버라이드 */
 body::before {
-    display: none !important;
+    display: none !important; /* 레이아웃의 body::before 오버라이드 */
 }
 
+/* 윈도우 95 다이얼로그 컨테이너 */
 .windows95-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100vh; /* 뷰포트 높이 전체를 차지 */
     padding: 20px;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
+/* 윈도우 95 다이얼로그 박스 */
 .windows95-dialog {
     background: #c0c0c0;
     border: 2px outset #c0c0c0;
     box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     font-size: 14px;
-    width: 400px;
+    width: 400px; /* 기본 너비 */
+    max-width: 90%; /* 화면 크기에 맞춰 최대 너비 제한 */
     position: relative;
+    box-sizing: border-box;
 }
 
+/* 타이틀 바 */
 .title-bar {
     background: linear-gradient(90deg, #0000ff 0%, #000080 100%);
     color: white;
@@ -70,6 +78,7 @@ body::before {
     border: 1px inset #c0c0c0;
 }
 
+/* 다이얼로그 내용 */
 .dialog-content {
     padding: 15px;
 }
@@ -85,31 +94,39 @@ body::before {
 }
 
 .dialog-text {
-    margin-left: 44px;
+    margin-left: 44px; /* 아이콘 너비 + 마진 */
     margin-bottom: 16px;
     font-size: 14px;
+    line-height: 1.4; /* 텍스트 줄 간격 */
 }
 
+/* 입력 그룹 */
 .input-group {
     margin-bottom: 12px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
 }
 
 .input-label {
     width: 80px;
+    min-width: 60px; /* 최소 너비 설정 */
     font-size: 14px;
     text-align: right;
     margin-right: 8px;
+    box-sizing: border-box;
 }
 
+/* 윈도우 95 입력 필드 */
 .windows95-input {
     border: 2px inset #c0c0c0;
     padding: 2px 4px;
     font-size: 14px;
     background: white;
-    flex: 1;
-    height: 22px;
+    flex: 1; /* 남은 공간을 모두 차지 */
+    height: 28px; /* 기본 높이 */
+    box-sizing: border-box;
+    min-width: 150px; /* 최소 너비 설정 */
 }
 
 .windows95-input:focus {
@@ -117,13 +134,16 @@ body::before {
     background: white;
 }
 
+/* 버튼 그룹 */
 .button-group {
     display: flex;
     justify-content: center;
     gap: 8px;
     margin-top: 16px;
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
 }
 
+/* 윈도우 95 버튼 */
 .windows95-button {
     background: #c0c0c0;
     border: 2px outset #c0c0c0;
@@ -132,6 +152,7 @@ body::before {
     cursor: pointer;
     min-width: 80px;
     height: 27px;
+    box-sizing: border-box;
 }
 
 .windows95-button:hover {
@@ -147,29 +168,184 @@ body::before {
     font-weight: bold;
 }
 
+/* 소셜 로그인 그룹 */
 .social-login-group {
-    margin-top: 16px;
+    margin-top: 20px; /* 마진 증가 */
     text-align: center;
     border-top: 1px solid #808080;
     padding-top: 12px;
 }
 
 .social-login-group img {
-    width: 30px;
-    height: 30px;
-    margin: 0 4px;
+    width: 38px; /* 아이콘 크기 증가 */
+    height: 38px; /* 아이콘 크기 증가 */
+    margin: 0 6px; /* 마진 증가 */
     cursor: pointer;
     border: 1px outset #c0c0c0;
-    padding: 2px;
+    padding: 3px; /* 패딩 증가 */
+    box-sizing: border-box;
 }
 
 .social-login-group img:hover {
     background: #d4d4d4;
 }
 
+/* 경고 메시지 */
 .warn-msg {
     color: red;
     font-size: 12px;
     margin-top: 2px;
     display: none;
+    text-align: right; /* 경고 메시지 오른쪽 정렬 */
+    padding-right: 20px; /* 우측 패딩 추가 */
+}
+
+/* --- 모바일 반응형 --- */
+
+/* 태블릿 (최대 768px) */
+@media (max-width: 768px) {
+    .windows95-dialog {
+        width: 380px; /* 태블릿에서 약간 줄임 */
+        max-width: 95%; /* 더 넓은 범위 허용 */
+        margin-top: 30px; /* 상단 여백 추가 */
+        margin-bottom: 30px; /* 하단 여백 추가 */
+    }
+
+    .dialog-content {
+        padding: 12px; /* 패딩 약간 줄임 */
+    }
+
+    .input-label {
+        width: 70px; /* 라벨 너비 조정 */
+    }
+
+    .windows95-input {
+        height: 60px; /* 입력 필드 높이 더 크게 증가 */
+        font-size: 16px; /* 입력 필드 폰트 크기 증가 */
+    }
+
+    .windows95-button {
+        padding: 6px 18px; /* 버튼 패딩 조정 */
+        height: 38px; /* 버튼 높이 증가 */
+        font-size: 16px; /* 버튼 폰트 크기 증가 */
+    }
+
+    .social-login-group img {
+        width: 45px; /* 소셜 아이콘 더 크게 */
+        height: 45px;
+    }
+}
+
+/* 스마트폰 (최대 480px) */
+@media (max-width: 480px) {
+    .windows95-container {
+        align-items: flex-start; /* 상단 정렬로 변경하여 작은 화면에서 잘림 방지 */
+        padding-top: 40px; /* 상단 패딩 */
+        padding-bottom: 40px; /* 하단 패딩 */
+    }
+
+    .windows95-dialog {
+        width: 95%; /* 스마트폰에서 거의 전체 너비 사용 */
+        max-width: none; /* 최대 너비 제한 해제 */
+        margin: 0 auto; /* 중앙 정렬 */
+    }
+
+    .title-bar {
+        font-size: 13px; /* 타이틀 바 폰트 작게 */
+        padding: 3px;
+    }
+
+    .title-bar-control {
+        width: 14px;
+        height: 12px;
+        line-height: 10px;
+    }
+
+    .dialog-content {
+        padding: 10px;
+    }
+
+    .dialog-icon {
+        width: 28px;
+        height: 28px;
+        margin-right: 10px;
+    }
+
+    .dialog-text {
+        margin-left: 38px;
+        font-size: 13px;
+    }
+
+    .input-group {
+        flex-direction: column; /* 세로로 쌓기 */
+        align-items: flex-start; /* 왼쪽 정렬 */
+        margin-bottom: 10px;
+    }
+
+    .input-label {
+        width: 100%; /* 라벨 너비 전체 */
+        text-align: left; /* 왼쪽 정렬 */
+        margin-bottom: 4px; /* 라벨 아래 마진 */
+        margin-right: 0;
+    }
+
+    .windows95-input {
+        width: 100%; /* 입력 필드 너비 전체 */
+        min-width: unset; /* 최소 너비 해제 */
+        height: 0px; /* 입력 필드 높이 더 크게 증가 */
+        font-size: 18px; /* 입력 필드 폰트 크기 더 크게 증가 */
+    }
+
+    .button-group {
+        flex-direction: column; /* 버튼 세로로 쌓기 */
+        gap: 10px;
+    }
+
+    .windows95-button {
+        width: 100%; /* 버튼 너비 전체 */
+        max-width: 200px; /* 너무 넓어지지 않도록 제한 */
+        margin: 0 auto !important; /* 중앙 정렬 */
+        height: 40px; /* 버튼 높이 증가 */
+        font-size: 15px; /* 버튼 폰트 크기 증가 */
+        padding: 8px 0; /* 패딩 조정 */
+    }
+
+    .social-login-group {
+        margin-top: 25px; /* 마진 증가 */
+    }
+
+    .social-login-group img {
+        width: 50px; /* 소셜 아이콘 더 크게 */
+        height: 50px;
+        margin: 0 8px; /* 마진 증가 */
+    }
+
+    .warn-msg {
+        text-align: left; /* 경고 메시지 왼쪽 정렬 */
+        padding-left: 0; /* 패딩 제거 */
+    }
+}
+
+/* 매우 작은 스마트폰 (최대 320px) */
+@media (max-width: 320px) {
+    .windows95-dialog {
+        padding: 8px;
+    }
+    .dialog-content {
+        padding: 8px;
+    }
+    .dialog-text, .input-label, .windows95-button, .social-login-group, .warn-msg {
+        font-size: 12px; /* 전반적인 폰트 크기 더 작게 */
+    }
+    .windows95-input {
+        height: 50px; /* 입력 필드 높이 유지 */
+        font-size: 16px; /* 입력 필드 폰트 크기 유지 */
+    }
+    .windows95-button {
+        height: 40px;
+    }
+    .social-login-group img {
+        width: 40px;
+        height: 40px;
+    }
 }

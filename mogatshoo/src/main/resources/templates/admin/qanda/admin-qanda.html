@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/fragments/layout}">
-<head>
+<head th:with="layoutTitle='관리자 Q&A'">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 Q&A 대시보드 - 모갓슈</title>
 	<link rel="stylesheet" th:href="@{/css/qanda/adminQandA.css}">
 </head>
 <body>
-    <div class="admin-container" id="adminContainer" layout:fragment="content">
+    <div layout:fragment="content" class="admin-container" id="adminContainer">
         <!-- 사이드바 - 채팅방 목록 -->
         <div class="sidebar">
             <div class="sidebar-header">
