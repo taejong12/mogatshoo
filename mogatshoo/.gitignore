@@ -41,3 +41,4 @@ out/
 
 # 개발용 db공유 exe 설치 파일
 cloud-sql-proxy.exe
+gcp-credentials.json
