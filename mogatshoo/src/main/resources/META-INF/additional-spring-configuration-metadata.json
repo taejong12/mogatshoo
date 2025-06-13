@@ -88,5 +88,30 @@
     "name": "spring.websocket.sockjs.disconnect.delay",
     "type": "java.lang.String",
     "description": "A description for 'spring.websocket.sockjs.disconnect.delay'"
+  },
+  {
+    "name": "cloud.sql.instance.connection.name",
+    "type": "java.lang.String",
+    "description": "A description for 'cloud.sql.instance.connection.name'"
+  },
+  {
+    "name": "cloud.sql.database.name",
+    "type": "java.lang.String",
+    "description": "A description for 'cloud.sql.database.name'"
+  },
+  {
+    "name": "cloud.sql.database.password",
+    "type": "java.lang.String",
+    "description": "A description for 'cloud.sql.database.password'"
+  },
+  {
+    "name": "cloud.sql.database.username",
+    "type": "java.lang.String",
+    "description": "A description for 'cloud.sql.database.username'"
+  },
+  {
+    "name": "\nspring.datasource.ur",
+    "type": "java.lang.String",
+    "description": "A description for '\nspring.datasource.ur'"
   }
 ]}

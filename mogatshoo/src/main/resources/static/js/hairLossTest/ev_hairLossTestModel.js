@@ -257,10 +257,6 @@ async function loadModelWithRetry() {
 	const pathsToTry = [
 		MODEL_PATH,
 		"/my_model/",
-		"./my_model/",
-		"../my_model/",
-		"/static/my_model/",
-		"/resources/my_model/",
 		window.location.origin + "/my_model/"
 	];
 

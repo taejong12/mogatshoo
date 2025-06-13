@@ -38,3 +38,6 @@ out/
 
 # wrapper
 !gradle/wrapper/gradle-wrapper.jar
+
+# 개발용 db공유 exe 설치 파일
+cloud-sql-proxy.exe
