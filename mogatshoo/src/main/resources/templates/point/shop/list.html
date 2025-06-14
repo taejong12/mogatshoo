@@ -367,7 +367,6 @@
 			font-weight: bold;
 		}
 
-		/* 🔥 4페이지 페이지네이션 스타일 */
 		.win95-pagination {
 			text-align: center;
 			margin: 20px 0;
@@ -419,6 +418,7 @@
 		.win95-page-btn:last-child:hover {
 			background-color: #e8e8e8;
 		}
+
 
 		.win95-no-products {
 			text-align: center;
@@ -560,35 +560,31 @@
 				</div>
 			</div>
 
-			<!-- 🔥 4페이지씩 보여주는 페이지네이션 -->
 			<div th:if="${!#lists.isEmpty(pointShopList)}" class="win95-pagination">
 
-				<!-- 이전 화살표 -->
+				<!-- 이전 화살표 (첫 페이지가 아닐 때만) -->
 				<a th:if="${currentPage > 0}" class="win95-page-btn"
-				   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${currentPage - 1})}">
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${currentPage - 1})}">
 					◀
 				</a>
 
-				<!-- 🔥 기존 변수 사용해서 4개만 표시 -->
+				<!-- 페이지 번호들 (최대 4개) -->
 				<th:block th:with="
-					displayStart=${startPage},
-					displayEnd=${#numbers.min(startPage + 4, endPage)}
+					pageStart=${currentPage - (currentPage % 4)},
+					pageEnd=${#numbers.min(pageStart + 4, totalPages)}
 				">
-					<a class="win95-page-btn" 
-					   th:each="i : ${#numbers.sequence(displayStart, displayEnd - 1)}"
-					   th:classappend="${i} == ${currentPage} ? 'active' : ''"
-					   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
-					   th:text="${i + 1}"></a>
+					<a class="win95-page-btn" th:each="i : ${#numbers.sequence(pageStart, pageEnd - 1)}"
+						th:classappend="${i} == ${currentPage} ? 'active' : ''"
+						th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
+						th:text="${i + 1}"></a>
 				</th:block>
 
-				<!-- 다음 화살표 -->
+				<!-- 다음 화살표 (마지막 페이지가 아닐 때만) -->
 				<a th:if="${currentPage < totalPages - 1}" class="win95-page-btn"
-				   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${currentPage + 1})}">
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${currentPage + 1})}">
 					▶
 				</a>
-
 			</div>
-
 		</div>
 
 		<!-- 🔥 드롭다운 JavaScript -->
