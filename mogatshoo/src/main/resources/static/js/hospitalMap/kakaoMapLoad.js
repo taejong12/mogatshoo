@@ -483,3 +483,12 @@ function clearHospitalList() {
         hospitalList.innerHTML = '<div class="text-center p-4"><p class="text-muted">검색 결과가 없습니다.</p></div>';
     }
 }
+
+// 카카오맵 로드 후 강제 리사이즈
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        if (window.map) {
+            kakao.maps.event.trigger(map, 'resize');
+        }
+    }, 1000);
+});

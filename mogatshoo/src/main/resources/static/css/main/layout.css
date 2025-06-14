@@ -1,3 +1,5 @@
+/* 기존 CSS 코드들... (그대로 유지) */
+
 /* 폰트 설정 (유지) */
 @font-face {
     font-family: 'dalmoori';
@@ -95,7 +97,9 @@ body::before {
     padding-left: 0 !important;
 }
 
-/* 스크롤바 스타일 추가 */
+/* ========================================
+   🔥 데스크톱용 스크롤바 스타일 (기존 유지)
+   ======================================== */
 ::-webkit-scrollbar {
     width: 16px;
     height: 16px;
@@ -187,19 +191,130 @@ html {
     z-index: -2;
 }
 
-/* 반응형 조정 (유지) */
+/* ========================================
+   🔥 모바일에서 스크롤바 완전 제거
+   ======================================== */
 @media screen and (max-width: 768px) {
-    .footer {
-        font-size: 1.2rem;
+    /* 모바일에서 모든 스크롤바 숨기기 */
+    html,
+    body,
+    * {
+        /* Webkit 브라우저 (Chrome, Safari) */
+        -webkit-scrollbar: none !important;
+        scrollbar-width: none !important; /* Firefox */
+        -ms-overflow-style: none !important; /* IE/Edge */
     }
     
+    /* 개별 요소들도 스크롤바 제거 */
     ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
+        width: 0px !important;
+        height: 0px !important;
+        background: transparent !important;
+        display: none !important;
+    }
+    
+    ::-webkit-scrollbar-track {
+        display: none !important;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        display: none !important;
     }
     
     ::-webkit-scrollbar-button {
-        width: 12px;
-        height: 12px;
+        display: none !important;
+    }
+    
+    ::-webkit-scrollbar-corner {
+        display: none !important;
+    }
+    
+    /* 🔥 특정 컨텐츠 영역들 스크롤바 제거 */
+    .content-area,
+    .content-wrapper,
+    .content-with-sidebar,
+    .sidebar-content-container,
+    [layout\:fragment="content"],
+    .pixel-bg,
+    .explorer-container,
+    .content-panel,
+    .panalContent,
+    .analysis-result,
+    .hospital-list,
+    .mobile-dropdown-menu {
+        -webkit-scrollbar: none !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+    
+    /* 🔥 모바일 헤더 드롭다운 메뉴도 스크롤바 제거 */
+    .unique-dropdown-panel {
+        -webkit-scrollbar: none !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+    
+    /* 터치 스크롤은 유지하되 스크롤바만 숨김 */
+    .content-area {
+        overflow-y: auto !important; /* 스크롤 기능 유지 */
+        overflow-x: hidden !important;
+    }
+    
+    /* 푸터 영역 조정 */
+    .footer {
+        font-size: 1.2rem;
+    }
+}
+
+/* ========================================
+   🔥 터치 디바이스 전용 추가 설정
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+    /* 터치 디바이스에서 스크롤바 완전 제거 */
+    * {
+        -webkit-scrollbar: none !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+    
+    /* 스크롤 동작은 부드럽게 유지 */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ========================================
+   🔥 PWA 모드에서 추가 스크롤바 제거
+   ======================================== */
+@media (display-mode: standalone) {
+    /* PWA 모드에서도 스크롤바 제거 */
+    * {
+        -webkit-scrollbar: none !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+}
+
+/* ========================================
+   🔥 iOS Safari 전용 스크롤바 제거
+   ======================================== */
+@supports (-webkit-touch-callout: none) {
+    /* iOS Safari에서 스크롤바 완전 제거 */
+    @media screen and (max-width: 768px) {
+        * {
+            -webkit-scrollbar: none !important;
+            -webkit-scrollbar-track: none !important;
+            -webkit-scrollbar-thumb: none !important;
+        }
+        
+        /* iOS의 rubber band 효과는 유지 */
+        body {
+            -webkit-overflow-scrolling: touch;
+        }
     }
 }

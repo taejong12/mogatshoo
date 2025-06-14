@@ -129,10 +129,10 @@
 
 /* 검색 결과 리스트 컨테이너 */
 .hairloss-map-app #hospital-list {
-    background-color: #ffffff;
-    border: 2px inset #c0c0c0;
-    height: 100%; /* 부모에 꽉 차게 */
-    overflow-y: auto;
+	background-color: #ffffff;
+	border: 2px inset #c0c0c0;
+	height: 69vh !important;
+	overflow-y: auto;
 }
 
 

@@ -4,10 +4,11 @@
 
 <head>
 	<style>
-		body, html {
+		body,
+		html {
 			font-family: 'dalmoori', sans-serif;
 		}
-		
+
 		/* 🔥 아이프레임에 꽉 차도록 윈도우95 스타일 */
 		.win95-container {
 			background-color: #c0c0c0;
@@ -116,7 +117,7 @@
 			right: 0;
 			background-color: #c0c0c0;
 			border: 2px inset #c0c0c0;
-			box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+			box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 			z-index: 1000;
 			max-height: 300px;
 			overflow-y: auto;
@@ -203,18 +204,20 @@
 		/* 🔥 모바일에서 탭 → 드롭다운 전환 */
 		@media (max-width: 768px) {
 			.win95-category-tabs {
-				display: none; /* 탭 숨김 */
+				display: none;
+				/* 탭 숨김 */
 			}
-			
+
 			.win95-category-dropdown {
-				display: block; /* 드롭다운 표시 */
+				display: block;
+				/* 드롭다운 표시 */
 			}
-			
+
 			.win95-grid {
 				grid-template-columns: repeat(2, 1fr);
 				gap: 8px;
 			}
-			
+
 			.win95-container {
 				padding: 8px;
 			}
@@ -225,14 +228,24 @@
 				grid-template-columns: repeat(2, 1fr);
 				gap: 6px;
 			}
-			
+
 			.win95-container {
 				padding: 5px;
 			}
-			
+
 			.win95-title {
 				font-size: 14px;
 				padding: 4px 8px;
+			}
+
+			.win95-pagination {
+				gap: 2px;
+			}
+
+			.win95-page-btn {
+				padding: 6px 8px;
+				font-size: 14px;
+				min-width: 32px;
 			}
 		}
 
@@ -357,16 +370,23 @@
 		.win95-pagination {
 			text-align: center;
 			margin: 20px 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 4px;
 		}
 
 		.win95-page-btn {
 			background-color: #c0c0c0;
 			border: 2px outset #c0c0c0;
-			padding: 8px 15px;
-			margin: 0 2px;
+			padding: 8px 12px;
 			text-decoration: none;
 			color: black;
 			font-size: 15px;
+			min-width: 40px;
+			text-align: center;
+			font-family: 'dalmoori', sans-serif;
+			transition: none;
 		}
 
 		.win95-page-btn:hover {
@@ -379,11 +399,26 @@
 			border: 2px inset #c0c0c0;
 		}
 
+		/* 🔥 현재 페이지 (진한 색) */
 		.win95-page-btn.active {
-			background-color: #000080;
-			color: white;
-			border: 2px inset #c0c0c0;
+			background-color: #000080 !important;
+			color: white !important;
+			border: 2px inset #c0c0c0 !important;
+			font-weight: bold;
 		}
+
+		/* 🔥 화살표 버튼 스타일 */
+		.win95-page-btn:first-child,
+		.win95-page-btn:last-child {
+			font-weight: bold;
+			background-color: #d0d0d0;
+		}
+
+		.win95-page-btn:first-child:hover,
+		.win95-page-btn:last-child:hover {
+			background-color: #e8e8e8;
+		}
+
 
 		.win95-no-products {
 			text-align: center;
@@ -408,15 +443,15 @@
 		.win95-container::-webkit-scrollbar-track {
 			background-color: #c0c0c0 !important;
 			border: 1px solid #808080 !important;
-			box-shadow: inset 1px 1px 0 #dfdfdf, 
-						inset -1px -1px 0 #808080 !important;
+			box-shadow: inset 1px 1px 0 #dfdfdf,
+				inset -1px -1px 0 #808080 !important;
 		}
 
 		.win95-container::-webkit-scrollbar-thumb {
 			background-color: #c0c0c0 !important;
 			border: 1px solid #808080 !important;
-			box-shadow: 1px 1px 0 #dfdfdf, 
-						-1px -1px 0 #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf,
+				-1px -1px 0 #808080 !important;
 			min-height: 20px !important;
 		}
 
@@ -426,15 +461,15 @@
 
 		.win95-container::-webkit-scrollbar-thumb:active {
 			background-color: #a0a0a0 !important;
-			box-shadow: inset 1px 1px 0 #808080, 
-						inset -1px -1px 0 #dfdfdf !important;
+			box-shadow: inset 1px 1px 0 #808080,
+				inset -1px -1px 0 #dfdfdf !important;
 		}
 
 		.win95-container::-webkit-scrollbar-button {
 			background-color: #c0c0c0 !important;
 			border: 1px solid #808080 !important;
-			box-shadow: 1px 1px 0 #dfdfdf, 
-						-1px -1px 0 #808080 !important;
+			box-shadow: 1px 1px 0 #dfdfdf,
+				-1px -1px 0 #808080 !important;
 			width: 16px !important;
 			height: 16px !important;
 			display: block !important;
@@ -445,7 +480,7 @@
 <body>
 	<div layout:fragment="content">
 		<div class="win95-container">
-			
+
 			<!-- 윈도우95 타이틀 바 -->
 			<div class="win95-title">포인트샵 목록</div>
 
@@ -466,24 +501,22 @@
 						<span th:if="${selectedCategoryId == null}">📂 전체 카테고리</span>
 						<span th:unless="${selectedCategoryId == null}">
 							<span th:each="category : ${pointCategoryList}">
-								<span th:if="${category.pointCategoryId == selectedCategoryId}" 
-									  th:text="'📁 ' + ${category.pointCategoryName}"></span>
+								<span th:if="${category.pointCategoryId == selectedCategoryId}"
+									th:text="'📁 ' + ${category.pointCategoryName}"></span>
 							</span>
 						</span>
 					</span>
 					<div class="win95-dropdown-arrow"></div>
 				</button>
 				<div class="win95-dropdown-menu" id="categoryDropdown">
-					<a class="win95-dropdown-item" 
-					   th:href="@{/point/shop/list}"
-					   th:classappend="${selectedCategoryId == null ? 'active' : ''}">
+					<a class="win95-dropdown-item" th:href="@{/point/shop/list}"
+						th:classappend="${selectedCategoryId == null ? 'active' : ''}">
 						📂 전체 상품
 					</a>
-					<a class="win95-dropdown-item" 
-					   th:each="category : ${pointCategoryList}"
-					   th:href="@{/point/shop/list(pointCategoryId=${category.pointCategoryId})}"
-					   th:text="'📁 ' + ${category.pointCategoryName}"
-					   th:classappend="${selectedCategoryId == category.pointCategoryId ? 'active' : ''}">
+					<a class="win95-dropdown-item" th:each="category : ${pointCategoryList}"
+						th:href="@{/point/shop/list(pointCategoryId=${category.pointCategoryId})}"
+						th:text="'📁 ' + ${category.pointCategoryName}"
+						th:classappend="${selectedCategoryId == category.pointCategoryId ? 'active' : ''}">
 					</a>
 				</div>
 			</div>
@@ -495,30 +528,28 @@
 
 			<!-- 상품 그리드 -->
 			<div class="win95-grid" th:if="${!#lists.isEmpty(pointShopList)}">
-				
+
 				<!-- 판매중 상품만 표시 -->
 				<div th:each="pointShop : ${pointShopList}" th:if="${pointShop.pointItemSaleStatus == 'Y'}">
-					
+
 					<!-- 재고 있음: 클릭 가능 -->
-					<a th:if="${pointShop.pointItemStock > 0}" 
-					   class="win95-product-card"
-					   th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
-						<img th:src="@{${pointShop.imgFile.pointItemImgURL}}" 
-							 class="win95-product-image" alt="상품 이미지"
-							 loading="lazy" width="200" height="120">
+					<a th:if="${pointShop.pointItemStock > 0}" class="win95-product-card"
+						th:href="@{/point/shop/detail/{id}(id=${pointShop.pointItemId})}">
+						<img th:src="@{${pointShop.imgFile.pointItemImgURL}}" class="win95-product-image" alt="상품 이미지"
+							loading="lazy" width="200" height="120">
 						<div class="win95-product-name" th:text="${pointShop.pointItemName}">상품 이름</div>
 						<div class="win95-product-price" th:text="'💰 ' + ${pointShop.pointItemPrice} + 'P'">가격</div>
 						<div class="win95-product-status">
-							✅ 판매중 
-							<span class="win95-stock-badge" th:text="'재고 ' + ${pointShop.pointItemStock} + '개'">재고</span>
+							✅ 판매중
+							<span class="win95-stock-badge"
+								th:text="'재고 ' + ${pointShop.pointItemStock} + '개'">재고</span>
 						</div>
 					</a>
 
 					<!-- 재고 없음: 매진 표시 -->
 					<div th:if="${pointShop.pointItemStock <= 0}" class="win95-soldout-card">
-						<img th:src="@{${pointShop.imgFile.pointItemImgURL}}" 
-							 class="win95-product-image" alt="상품 이미지" 
-							 style="opacity: 0.5;" loading="lazy" width="200" height="120">
+						<img th:src="@{${pointShop.imgFile.pointItemImgURL}}" class="win95-product-image" alt="상품 이미지"
+							style="opacity: 0.5;" loading="lazy" width="200" height="120">
 						<div class="win95-product-name" th:text="${pointShop.pointItemName}">상품 이름</div>
 						<div class="win95-product-price" th:text="'💰 ' + ${pointShop.pointItemPrice} + 'P'">가격</div>
 						<div class="win95-soldout-overlay">
@@ -529,50 +560,52 @@
 				</div>
 			</div>
 
-			<!-- 페이지네이션 -->
 			<div th:if="${!#lists.isEmpty(pointShopList)}" class="win95-pagination">
-				
-				<!-- 이전 버튼 -->
-				<a th:if="${startPage >= 10}" class="win95-page-btn"
-				   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${startPage - 10})}">
-					◀ 이전
+
+				<!-- 이전 화살표 (첫 페이지가 아닐 때만) -->
+				<a th:if="${currentPage > 0}" class="win95-page-btn"
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${currentPage - 1})}">
+					◀
 				</a>
 
-				<!-- 페이지 번호 -->
-				<a class="win95-page-btn" 
-				   th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
-				   th:classappend="${i} == ${currentPage} ? 'active' : ''"
-				   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
-				   th:text="${i + 1}"></a>
+				<!-- 페이지 번호들 (최대 4개) -->
+				<th:block th:with="
+					pageStart=${currentPage - (currentPage % 4)},
+					pageEnd=${#numbers.min(pageStart + 4, totalPages)}
+				">
+					<a class="win95-page-btn" th:each="i : ${#numbers.sequence(pageStart, pageEnd - 1)}"
+						th:classappend="${i} == ${currentPage} ? 'active' : ''"
+						th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
+						th:text="${i + 1}"></a>
+				</th:block>
 
-				<!-- 다음 버튼 -->
-				<a th:if="${endPage < totalPages}" class="win95-page-btn"
-				   th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${endPage})}">
-					다음 ▶
+				<!-- 다음 화살표 (마지막 페이지가 아닐 때만) -->
+				<a th:if="${currentPage < totalPages - 1}" class="win95-page-btn"
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${currentPage + 1})}">
+					▶
 				</a>
 			</div>
-
 		</div>
-		
+
 		<!-- 🔥 드롭다운 JavaScript -->
 		<script>
 			// 🔥 DOM이 로드된 후 실행
-			document.addEventListener('DOMContentLoaded', function() {
+			document.addEventListener('DOMContentLoaded', function () {
 				const dropdownButton = document.getElementById('dropdownButton');
 				const dropdown = document.getElementById('categoryDropdown');
 
 				// 드롭다운 버튼 클릭 이벤트
 				if (dropdownButton && dropdown) {
-					dropdownButton.addEventListener('click', function(e) {
+					dropdownButton.addEventListener('click', function (e) {
 						e.preventDefault();
 						e.stopPropagation();
-						
+
 						dropdown.classList.toggle('show');
 						dropdownButton.classList.toggle('active');
 					});
 
 					// 🔥 드롭다운 외부 클릭 시 닫기
-					document.addEventListener('click', function(event) {
+					document.addEventListener('click', function (event) {
 						if (!dropdownButton.contains(event.target) && !dropdown.contains(event.target)) {
 							dropdown.classList.remove('show');
 							dropdownButton.classList.remove('active');
@@ -580,13 +613,13 @@
 					});
 
 					// 🔥 화면 크기 변경 시 드롭다운 닫기
-					window.addEventListener('resize', function() {
+					window.addEventListener('resize', function () {
 						dropdown.classList.remove('show');
 						dropdownButton.classList.remove('active');
 					});
 
 					// 🔥 ESC 키로 드롭다운 닫기
-					document.addEventListener('keydown', function(event) {
+					document.addEventListener('keydown', function (event) {
 						if (event.key === 'Escape') {
 							dropdown.classList.remove('show');
 							dropdownButton.classList.remove('active');
@@ -597,4 +630,5 @@
 		</script>
 	</div>
 </body>
+
 </html>
