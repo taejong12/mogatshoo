@@ -6,99 +6,102 @@
 </head>
 
 <body>
-	<!-- 🔥 드롭다운 스타일 모바일 헤더 -->
-	<header th:fragment="mobileHeader" class="mobile-only-header">
-		<div class="mobile-header-content">
+	<!-- 🔥 완전히 새로운 이름의 모바일 헤더 -->
+	<header th:fragment="mobileHeader" class="unique-mobile-header">
+		<div class="unique-header-content">
 			<!-- 로고 영역 -->
-			<a th:href="@{/}" class="mobile-logo">
+			<a th:href="@{/}" class="unique-header-logo">
 				<img src="/img/icons/computer.png" alt="홈">
 				<span>홈</span>
 			</a>
-			
+
 			<!-- 메뉴 드롭다운 -->
-			<div class="mobile-menu-container">
-				<button class="mobile-dropdown-toggle" id="mobileDropdownToggle">
-					<span class="hamburger-icon">
-						<span class="line"></span>
-						<span class="line"></span>
-						<span class="line"></span>
+			<div class="unique-menu-wrapper">
+				<button class="unique-menu-btn" id="uniqueMenuBtn">
+					<span class="unique-hamburger">
+						<span class="unique-line"></span>
+						<span class="unique-line"></span>
+						<span class="unique-line"></span>
 					</span>
 				</button>
-				
-				<!-- 🔥 드롭다운 메뉴 -->
-				<div class="mobile-dropdown-menu" id="mobileDropdownMenu">
-					<div class="dropdown-section">
-						<div class="dropdown-section-title">메인 서비스</div>
-						<a th:href="@{/}" class="dropdown-item">
+
+				<!-- 🔥 고유한 이름의 드롭다운 메뉴 -->
+				<div class="unique-dropdown-panel" id="uniqueDropdownPanel">
+
+					<div class="unique-menu-section">
+						<div class="unique-section-title">메인 서비스</div>
+						<a th:href="@{/}" class="unique-menu-link">
 							<img src="/img/icons/computer.png" alt="홈">
 							<span>홈</span>
 						</a>
-						<a th:href="@{/voting}" class="dropdown-item">
+						<a th:href="@{/voting}" class="unique-menu-link">
 							<img src="/img/icons/computer.png" alt="투표">
 							<span>탈모왕중왕</span>
 						</a>
-						<a th:href="@{/hairLossTest/testHair}" class="dropdown-item">
+						<a th:href="@{/hairLossTest/testHair}" class="unique-menu-link">
 							<img src="/img/icons/computer.png" alt="탈모진단">
 							<span>탈모진단</span>
-						</a>ㄴ
-						<a th:href="@{/fortune/start}" class="dropdown-item">
+						</a>
+						<a th:href="@{/fortune/start}" class="unique-menu-link">
 							<img src="/img/icons/computer.png" alt="운세">
 							<span>오늘운세</span>
 						</a>
-						<a th:href="@{/hospitalMap/hospitals}" class="dropdown-item">
+						<a th:href="@{/hospitalMap/hospitals}" class="unique-menu-link">
 							<img src="/img/icons/computer.png" alt="병원지도">
 							<span>병원지도</span>
 						</a>
-						<a th:href="@{/point/shop/list}" class="dropdown-item">
+						<a th:href="@{/point/shop/list}" class="unique-menu-link">
 							<img src="/img/icons/computer.png" alt="포인트샵">
 							<span>포인트샵</span>
 						</a>
-						<a th:href="@{/qanda/user}" class="dropdown-item">
+						<a th:href="@{/qanda/user}" class="unique-menu-link">
 							<img src="/img/icons/computer.png" alt="Q&A">
 							<span>Q & A</span>
 						</a>
 					</div>
 
 					<!-- 🔥 비로그인 상태 메뉴 -->
-					<div sec:authorize="isAnonymous()" class="dropdown-section">
-						<div class="dropdown-section-title">계정</div>
-						<a th:href="@{/member/login}" class="dropdown-item">
+					<div sec:authorize="isAnonymous()" class="unique-menu-section">
+						<div class="unique-section-title">계정</div>
+						<a th:href="@{/member/login}" class="unique-menu-link">
 							<img src="/img/footer/myInfo.png" alt="로그인">
 							<span>로그인</span>
 						</a>
-						<a th:href="@{/member/join}" class="dropdown-item">
+						<a th:href="@{/member/join}" class="unique-menu-link">
 							<img src="/img/footer/myInfo.png" alt="회원가입">
 							<span>회원가입</span>
 						</a>
 					</div>
 
 					<!-- 🔥 로그인 상태 메뉴 -->
-					<div sec:authorize="isAuthenticated()" class="dropdown-section">
-						<div class="dropdown-section-title">내 정보</div>
-						<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="dropdown-item">
+					<div sec:authorize="isAuthenticated()" class="unique-menu-section">
+						<div class="unique-section-title">내 정보</div>
+						<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="unique-menu-link">
 							<img src="/img/footer/myInfo.png" alt="마이페이지">
 							<span th:text="${#authentication.principal.nickName} + '님'">마이페이지</span>
 						</a>
-						<a th:href="@{/point/detail/list(memberId=${#authentication.name})}" class="dropdown-item">
+						<a th:href="@{/point/detail/list(memberId=${#authentication.name})}" class="unique-menu-link">
 							<img src="/img/footer/point.png" alt="포인트">
 							<span>포인트</span>
 						</a>
-						<a th:href="@{/point/shop/buyList}" class="dropdown-item">
+						<a th:href="@{/point/shop/buyList}" class="unique-menu-link">
 							<img src="/img/footer/point.png" alt="결제 내역">
 							<span>결제 내역</span>
 						</a>
-						<div class="dropdown-item logout-item" onclick="showDropdownLogout()">
+						<div class="unique-menu-link unique-logout-link" onclick="showUniqueLogout()">
 							<img src="/img/footer/logout.png" alt="로그아웃">
 							<span>로그아웃</span>
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</div>
 	</header>
 
-	<!-- 🔥 드롭다운 오버레이 -->
-	<div th:fragment="mobileOverlay" class="mobile-dropdown-overlay" id="mobileDropdownOverlay"></div>
+	<!-- 🔥 고유한 이름의 오버레이 -->
+	<div th:fragment="mobileOverlay" class="unique-menu-overlay" id="uniqueMenuOverlay"></div>
+
 </body>
 
 </html>

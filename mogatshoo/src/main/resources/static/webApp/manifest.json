@@ -7,18 +7,22 @@
   "background_color": "#008080",
   "theme_color": "#008080",
   "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["health", "medical"],
+  "lang": "ko",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/img/logo/logo_192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "/img/logo/logo_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [
@@ -35,6 +39,37 @@
       "type": "image/png",
       "form_factor": "narrow",
       "label": "모바일 메인 화면"
+    }
+  ],
+  "permissions": [
+    "geolocation"
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "병원 찾기",
+      "short_name": "병원찾기",
+      "description": "주변 탈모 병원 찾기",
+      "url": "/hospitalMap/hospitals",
+      "icons": [
+        {
+          "src": "/img/logo/logo_192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "탈모 진단",
+      "short_name": "진단",
+      "description": "AI 탈모 진단",
+      "url": "/hairLossTest/testHair",
+      "icons": [
+        {
+          "src": "/img/logo/logo_192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
