@@ -4,8 +4,10 @@ let activeRooms = new Map();
 let currentRoomId = null;
 let currentMessages = new Map();
 let roomSubscriptions = new Map();
-let memberInfoCache = new Map(); // 회원 정보 캐시
-let adminSubscription = null; // 관리자 채널 구독 관리
+let memberInfoCache = new Map();
+let adminSubscription = null;
+let isUserScrolling = false; // 사용자가 스크롤 중인지 체크
+let scrollTimeout = null; // 스크롤 타이머
 
 const chatRooms = document.getElementById('chatRooms');
 const mainChat = document.getElementById('mainChat');
@@ -20,6 +22,93 @@ const quickReplies = [
 	"추가로 궁금한 점이 있으시면 언제든 문의해주세요.",
 	"감사합니다."
 ];
+
+// 채팅 스크롤 관리 함수들
+function scrollToBottom(force = false) {
+    const chatMessagesDiv = document.getElementById('chatMessages');
+    if (!chatMessagesDiv) {
+        console.log('chatMessagesDiv를 찾을 수 없음');
+        return;
+    }
+    
+    // 사용자가 스크롤 중이고 강제가 아니라면 스크롤하지 않음
+    if (isUserScrolling && !force) {
+        console.log('사용자 스크롤 중이므로 자동 스크롤 생략');
+        return;
+    }
+    
+    console.log('스크롤 시작 - scrollHeight:', chatMessagesDiv.scrollHeight, 'clientHeight:', chatMessagesDiv.clientHeight);
+    
+    // 여러 방법으로 강제 스크롤 시도
+    const scrollToBottomImmediate = () => {
+        const maxScroll = chatMessagesDiv.scrollHeight - chatMessagesDiv.clientHeight;
+        chatMessagesDiv.scrollTop = maxScroll;
+        console.log('스크롤 실행 - scrollTop:', chatMessagesDiv.scrollTop, 'maxScroll:', maxScroll);
+    };
+    
+    // 즉시 실행
+    scrollToBottomImmediate();
+    
+    // requestAnimationFrame으로 한번 더
+    requestAnimationFrame(() => {
+        scrollToBottomImmediate();
+    });
+    
+    // 추가 안전장치 - 조금 더 기다린 후 다시 시도
+    setTimeout(() => {
+        scrollToBottomImmediate();
+    }, 50);
+    
+    // 최종 안전장치
+    setTimeout(() => {
+        scrollToBottomImmediate();
+    }, 200);
+}
+
+function isScrolledToBottom() {
+    const chatMessagesDiv = document.getElementById('chatMessages');
+    if (!chatMessagesDiv) return true;
+    
+    const threshold = 50; // 50px 이내면 하단으로 간주
+    return chatMessagesDiv.scrollHeight - chatMessagesDiv.clientHeight <= chatMessagesDiv.scrollTop + threshold;
+}
+
+function setupScrollHandler() {
+    const chatMessagesDiv = document.getElementById('chatMessages');
+    if (!chatMessagesDiv) return;
+    
+    chatMessagesDiv.addEventListener('scroll', () => {
+        // 사용자가 스크롤 중임을 표시
+        isUserScrolling = true;
+        
+        // 스크롤이 하단에 가까우면 자동 스크롤 재활성화
+        if (isScrolledToBottom()) {
+            isUserScrolling = false;
+        }
+        
+        // 스크롤 타이머 리셋
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            // 3초 후 자동 스크롤 재활성화 (사용자가 더 이상 스크롤하지 않을 때)
+            if (isScrolledToBottom()) {
+                isUserScrolling = false;
+            }
+        }, 3000);
+    });
+    
+    // 터치 이벤트 추가 (모바일)
+    chatMessagesDiv.addEventListener('touchstart', () => {
+        isUserScrolling = true;
+    });
+    
+    chatMessagesDiv.addEventListener('touchend', () => {
+        setTimeout(() => {
+            if (isScrolledToBottom()) {
+                isUserScrolling = false;
+            }
+        }, 100);
+    });
+}
 
 // 페이지 로드 시 기존 문의 내역 불러오기
 async function loadExistingData() {
@@ -37,22 +126,18 @@ async function loadExistingData() {
 		const roomsSummary = await response.json();
 		console.log('로드된 방 정보:', roomsSummary);
 
-		// activeRooms 초기화
 		activeRooms.clear();
 		currentMessages.clear();
 
-		// 각 방의 정보와 메시지들 불러오기
 		for (const roomInfo of roomsSummary) {
-			const roomId = roomInfo.roomId; // 이제 roomId가 memberId
+			const roomId = roomInfo.roomId;
 
-			// 해당 방의 메시지들 가져오기
 			const messagesResponse = await fetch(`/qanda/api/rooms/${roomId}/messages`, {
 				credentials: 'same-origin'
 			});
 			const messages = await messagesResponse.json();
 			currentMessages.set(roomId, messages);
 
-			// 마지막 메시지로 채팅 상태 확인
 			let chatStatus = 'active';
 			if (messages.length > 0) {
 				const lastMessage = messages[messages.length - 1];
@@ -61,22 +146,20 @@ async function loadExistingData() {
 				}
 			}
 
-			// 방 정보 저장 (백엔드에서 이미 회원 정보 포함해서 보냄)
 			activeRooms.set(roomId, {
 				id: roomId,
 				memberId: roomInfo.memberId,
-				memberName: roomInfo.memberName, // 백엔드에서 조회한 실제 이름
-				memberNickName: roomInfo.memberNickName, // 백엔드에서 조회한 실제 닉네임
+				memberName: roomInfo.memberName,
+				memberNickName: roomInfo.memberNickName,
 				lastMessage: roomInfo.lastMessage,
 				lastTime: new Date(roomInfo.lastTime),
 				unreadCount: roomInfo.unreadCount,
-				chatStatus: chatStatus // 채팅 상태 추가
+				chatStatus: chatStatus
 			});
 		}
 
-		// 방 목록 렌더링
 		renderRoomList();
-		console.log('기존 데이터 로드 완료! activeRooms.size:', activeRoomes.size);
+		console.log('기존 데이터 로드 완료! activeRooms.size:', activeRooms.size);
 
 	} catch (error) {
 		console.error('기존 데이터 로드 실패:', error);
@@ -93,7 +176,6 @@ function connect() {
 		connected = true;
 		updateConnectionStatus('온라인', 'connected');
 
-		// 관리자 채널 구독 (새로운 방 알림용)
 		adminSubscription = stompClient.subscribe('/topic/admin', function(message) {
 			const chatMessage = JSON.parse(message.body);
 			handleNewRoomMessage(chatMessage);
@@ -114,17 +196,15 @@ function updateConnectionStatus(text, className) {
 	statusBar.className = 'connection-status ' + className;
 }
 
-// 새로운 방 메시지 처리 (관리자 채널에서 오는 메시지)
+// 새로운 방 메시지 처리
 async function handleNewRoomMessage(message) {
-	const roomId = message.roomId; // roomId = memberId
+	const roomId = message.roomId;
 
-	// 새로운 방이면 추가 (실시간으로 새 문의가 들어온 경우)
 	if (!activeRooms.has(roomId)) {
-		// 새로운 방의 경우 기본 정보로 임시 추가
 		const roomData = {
 			id: roomId,
 			memberId: roomId,
-			memberName: message.sender, // 일단 sender를 이름으로 사용
+			memberName: message.sender,
 			memberNickName: message.sender,
 			lastMessage: '',
 			lastTime: new Date(),
@@ -132,35 +212,26 @@ async function handleNewRoomMessage(message) {
 			chatStatus: 'active'
 		};
 		activeRooms.set(roomId, roomData);
-		
-		// 새로운 방의 메시지 배열 초기화
 		currentMessages.set(roomId, []);
 	}
 
-	// 현재 선택된 방이 아닌 경우에만 처리 (중복 방지)
 	if (currentRoomId !== roomId) {
-		// 메시지 저장
 		currentMessages.get(roomId).push(message);
-		
-		// 방 목록 업데이트
 		updateRoomInList(roomId, message);
 	}
 }
 
-// 방별 메시지 처리 (개별 방 구독에서 오는 메시지)
+// 방별 메시지 처리
 function handleRoomMessage(message) {
 	const roomId = message.roomId;
 	
-	// 메시지 저장
 	if (!currentMessages.has(roomId)) {
 		currentMessages.set(roomId, []);
 	}
 	currentMessages.get(roomId).push(message);
 
-	// 방 목록 업데이트
 	updateRoomInList(roomId, message);
 
-	// 현재 선택된 방이면 메시지 표시
 	if (currentRoomId === roomId) {
 		displayMessage(message);
 	}
@@ -173,7 +244,6 @@ function updateRoomInList(roomId, message) {
 		room.lastMessage = message.content;
 		room.lastTime = new Date(message.createdAt || new Date());
 
-		// 채팅 상태 업데이트
 		if (message.type === 'END') {
 			room.chatStatus = 'ended';
 		} else if (message.type === 'RESTART' || message.type === 'CHAT') {
@@ -233,29 +303,27 @@ function selectRoom(roomId) {
 		return;
 	}
 
-	// 읽음 처리
+	// 스크롤 상태 리셋
+	isUserScrolling = false;
+	clearTimeout(scrollTimeout);
+
 	room.unreadCount = 0;
 	renderRoomList();
 
-	// 서버에도 읽음 처리 요청
 	if (stompClient && connected) {
 		stompClient.send('/app/chat.markAsRead', {}, roomId);
 	}
 
-	// 메인 채팅 영역 업데이트
 	renderChatArea(room);
 
-	// 기존 방 구독 해제
 	if (roomSubscriptions.has(roomId)) {
 		roomSubscriptions.get(roomId).unsubscribe();
 		roomSubscriptions.delete(roomId);
 	}
 
-	// 해당 방 구독 (사용자 메시지만 받기 위해)
 	if (stompClient && connected) {
 		const subscription = stompClient.subscribe('/topic/room.' + roomId, function(message) {
 			const chatMessage = JSON.parse(message.body);
-			// 관리자가 보낸 메시지는 제외 (이미 로컬에서 표시됨)
 			if (chatMessage.sender !== '관리자') {
 				handleRoomMessage(chatMessage);
 			}
@@ -263,7 +331,6 @@ function selectRoom(roomId) {
 		roomSubscriptions.set(roomId, subscription);
 	}
 
-	// 모바일에서 채팅 열기
 	document.getElementById('adminContainer').classList.add('chat-open');
 
 	console.log('selectRoom 완료, currentRoomId:', currentRoomId);
@@ -301,25 +368,49 @@ function renderChatArea(room) {
 	const messages = currentMessages.get(room.id) || [];
 	const chatMessagesDiv = document.getElementById('chatMessages');
 	
-	// 메시지 컨테이너 초기화
 	chatMessagesDiv.innerHTML = '';
 	
-	messages.forEach(message => {
-		displayMessage(message);
+	// 메시지를 하나씩 순서대로 추가
+	messages.forEach((message, index) => {
+		displayMessage(message, false); // 초기 로드시에는 개별 스크롤하지 않음
 	});
 
+	// DOM이 완전히 렌더링된 후 스크롤
+	setTimeout(() => {
+		console.log('메시지 로드 완료, 스크롤 시작');
+		scrollToBottom(true);
+		setupScrollHandler();
+		addMobileBackButton();
+		setupMobileFocus();
+		setupMobileKeyboardHandler();
+	}, 100);
+
+	// 더 확실하게 하기 위한 추가 시도
+	setTimeout(() => {
+		scrollToBottom(true);
+	}, 200);
+
 	// 엔터키 이벤트
-	document.getElementById('adminMessageInput').addEventListener('keypress', function(e) {
-		if (e.key === 'Enter') {
+	const messageInput = document.getElementById('adminMessageInput');
+	messageInput.addEventListener('keypress', function(e) {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
 			sendAdminMessage();
 		}
 	});
+	
+	// 입력창에 포커스
+	setTimeout(() => {
+		messageInput.focus();
+	}, 150);
 }
 
-// 메시지 표시
-function displayMessage(message) {
+// 메시지 표시 (스크롤 최적화)
+function displayMessage(message, shouldScroll = true) {
 	const chatMessagesDiv = document.getElementById('chatMessages');
 	if (!chatMessagesDiv) return;
+
+	const wasScrolledToBottom = isScrolledToBottom();
 
 	const messageDiv = document.createElement('div');
 
@@ -347,7 +438,21 @@ function displayMessage(message) {
 	}
 
 	chatMessagesDiv.appendChild(messageDiv);
-	chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+
+	// 스크롤 조건: 
+	// 1. shouldScroll이 true이고
+	// 2. (사용자가 스크롤 중이 아니거나 하단에 있었거나 관리자 메시지인 경우)
+	if (shouldScroll && (!isUserScrolling || wasScrolledToBottom || message.sender === '관리자')) {
+		// 메시지 추가 후 즉시 스크롤
+		setTimeout(() => {
+			scrollToBottom(true);
+		}, 10);
+		
+		// 추가 안전장치
+		setTimeout(() => {
+			scrollToBottom(true);
+		}, 100);
+	}
 }
 
 // 관리자 메시지 전송
@@ -371,21 +476,23 @@ function sendAdminMessage() {
 	if (stompClient && connected) {
 		console.log('관리자 메시지 전송:', adminMessage);
 
-		// 로컬에서 즉시 표시
+		// 관리자 메시지는 항상 하단으로 스크롤
+		isUserScrolling = false;
+		
 		displayMessage(adminMessage);
 		
-		// 로컬 메시지 저장소에도 추가
 		if (!currentMessages.has(currentRoomId)) {
 			currentMessages.set(currentRoomId, []);
 		}
 		currentMessages.get(currentRoomId).push(adminMessage);
 
-		// 서버에 전송
 		stompClient.send('/app/chat.adminReply', {}, JSON.stringify(adminMessage));
 		input.value = '';
 
-		// 방 목록 업데이트
 		updateRoomInList(currentRoomId, adminMessage);
+		
+		// 입력창에 다시 포커스
+		input.focus();
 	}
 }
 
@@ -404,6 +511,160 @@ function formatTime(date) {
 	});
 }
 
+// 모바일에서 뒤로가기 버튼 추가
+function addMobileBackButton() {
+	if (window.innerWidth <= 768 && currentRoomId) {
+		const chatHeader = document.querySelector('.chat-header');
+		if (chatHeader && !chatHeader.querySelector('.mobile-back-btn')) {
+			const backButton = document.createElement('button');
+			backButton.className = 'mobile-back-btn';
+			backButton.innerHTML = '← 목록';
+			backButton.onclick = closeMobileChat;
+			backButton.style.cssText = `
+				position: absolute;
+				left: 10px;
+				top: 50%;
+				transform: translateY(-50%);
+				background: #667eea;
+				color: white;
+				border: none;
+				padding: 8px 12px;
+				border-radius: 6px;
+				font-size: 14px;
+				cursor: pointer;
+			`;
+			chatHeader.style.position = 'relative';
+			chatHeader.appendChild(backButton);
+		}
+	}
+}
+
+// 모바일 채팅 닫기
+function closeMobileChat() {
+	document.getElementById('adminContainer').classList.remove('chat-open');
+	currentRoomId = null;
+	isUserScrolling = false;
+	clearTimeout(scrollTimeout);
+}
+
+// 윈도우 리사이즈 처리
+function handleResize() {
+	if (window.innerWidth > 768) {
+		document.getElementById('adminContainer').classList.remove('chat-open');
+	}
+	
+	if (currentRoomId) {
+		addMobileBackButton();
+		// 리사이즈 후 스크롤 재조정
+		setTimeout(() => {
+			if (!isUserScrolling) {
+				scrollToBottom(true);
+			}
+		}, 100);
+	}
+}
+
+// 채팅 메시지 영역 클릭 시 입력창 포커스 (모바일)
+function setupMobileFocus() {
+	const chatMessagesDiv = document.getElementById('chatMessages');
+	const messageInput = document.getElementById('adminMessageInput');
+	
+	if (chatMessagesDiv && messageInput && window.innerWidth <= 768) {
+		chatMessagesDiv.addEventListener('click', (e) => {
+			// 메시지나 링크를 클릭한 게 아니라면 입력창에 포커스
+			if (e.target === chatMessagesDiv || e.target.classList.contains('message') || 
+				e.target.classList.contains('message-bubble')) {
+				messageInput.focus();
+			}
+		});
+	}
+}
+
+// 키보드 나타날 때 스크롤 조정 (모바일)
+function setupMobileKeyboardHandler() {
+	if (window.innerWidth <= 768) {
+		const messageInput = document.getElementById('adminMessageInput');
+		if (messageInput) {
+			messageInput.addEventListener('focus', () => {
+				// 키보드가 나타나면 잠시 후 스크롤 조정
+				setTimeout(() => {
+					if (!isUserScrolling) {
+						scrollToBottom(true);
+					}
+				}, 300);
+			});
+		}
+	}
+}
+
+// 페이지 가시성 변경 시 처리 (백그라운드에서 돌아왔을 때)
+function setupVisibilityHandler() {
+	document.addEventListener('visibilitychange', () => {
+		if (!document.hidden && currentRoomId && !isUserScrolling) {
+			// 페이지가 다시 보일 때 스크롤 위치 확인 후 조정
+			setTimeout(() => {
+				scrollToBottom(true);
+			}, 100);
+		}
+	});
+}
+
+// 새로고침 전 경고 (타이핑 중일 때)
+function setupBeforeUnloadHandler() {
+	let isTyping = false;
+	
+	window.addEventListener('beforeunload', (e) => {
+		if (isTyping && currentRoomId) {
+			e.preventDefault();
+			e.returnValue = '작성 중인 메시지가 있습니다. 페이지를 나가시겠습니까?';
+		}
+		
+		// 연결 해제
+		if (stompClient) {
+			if (adminSubscription) {
+				adminSubscription.unsubscribe();
+			}
+			roomSubscriptions.forEach(subscription => subscription.unsubscribe());
+			roomSubscriptions.clear();
+			stompClient.disconnect();
+		}
+	});
+	
+	// 타이핑 상태 감지
+	document.addEventListener('input', (e) => {
+		if (e.target && e.target.id === 'adminMessageInput') {
+			isTyping = e.target.value.trim().length > 0;
+		}
+	});
+}
+
+// 자동 재연결 처리
+function setupAutoReconnect() {
+	let reconnectAttempts = 0;
+	const maxReconnectAttempts = 5;
+	
+	function attemptReconnect() {
+		if (reconnectAttempts < maxReconnectAttempts) {
+			reconnectAttempts++;
+			console.log(`재연결 시도 ${reconnectAttempts}/${maxReconnectAttempts}`);
+			updateConnectionStatus(`재연결 중... (${reconnectAttempts}/${maxReconnectAttempts})`, 'disconnected');
+			
+			setTimeout(() => {
+				connect();
+			}, 2000 * reconnectAttempts); // 점진적 지연
+		} else {
+			updateConnectionStatus('연결 실패 - 새로고침해주세요', 'disconnected');
+		}
+	}
+	
+	// 연결 성공 시 재시도 횟수 리셋
+	window.addEventListener('websocket-connected', () => {
+		reconnectAttempts = 0;
+	});
+	
+	return attemptReconnect;
+}
+
 // 페이지 로드 시 실행
 window.addEventListener('load', async function() {
 	console.log('페이지 로드 시작');
@@ -413,18 +674,44 @@ window.addEventListener('load', async function() {
 
 	// 그 다음 웹소켓 연결
 	connect();
+
+	// 이벤트 핸들러 설정
+	window.addEventListener('resize', handleResize);
+	setupVisibilityHandler();
+	setupBeforeUnloadHandler();
+	
+	// 자동 재연결 설정
+	const attemptReconnect = setupAutoReconnect();
+	
+	// 웹소켓 연결 함수 수정하여 자동 재연결 포함
+	const originalConnect = connect;
+	connect = function() {
+		const socket = new SockJS('/ws');
+		stompClient = Stomp.over(socket);
+
+		stompClient.connect({}, function(frame) {
+			console.log('Connected: ' + frame);
+			connected = true;
+			updateConnectionStatus('온라인', 'connected');
+			
+			// 연결 성공 이벤트 발생
+			window.dispatchEvent(new CustomEvent('websocket-connected'));
+
+			adminSubscription = stompClient.subscribe('/topic/admin', function(message) {
+				const chatMessage = JSON.parse(message.body);
+				handleNewRoomMessage(chatMessage);
+			});
+
+		}, function(error) {
+			console.log('Connection error: ' + error);
+			connected = false;
+			attemptReconnect();
+		});
+	};
 });
 
-// 페이지 언로드 시 연결 해제
-window.addEventListener('beforeunload', function() {
-	if (stompClient) {
-		// 모든 구독 해제
-		if (adminSubscription) {
-			adminSubscription.unsubscribe();
-		}
-		roomSubscriptions.forEach(subscription => subscription.unsubscribe());
-		roomSubscriptions.clear();
-		
-		stompClient.disconnect();
-	}
-});
+// 전역 함수로 노출 (HTML에서 호출)
+window.selectRoom = selectRoom;
+window.sendAdminMessage = sendAdminMessage;
+window.sendQuickReply = sendQuickReply;
+window.closeMobileChat = closeMobileChat;

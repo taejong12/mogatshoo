@@ -516,7 +516,66 @@ form::-webkit-scrollbar-thumb:active {
     background-position: center;
 }
 
-/* --- 모바일 반응형 --- */
+/* =========================== */
+/* 다음 우편번호 서비스 모바일 최적화 */
+/* =========================== */
+
+/* 기본 다음 우편번호 팝업 오버라이드 */
+div[id*="postcode"],
+div[id^="layer_postcode"],
+div[class*="postcode"],
+.postcode-layer {
+    z-index: 99999 !important;
+}
+
+/* 모바일 환경에서 다음 우편번호 팝업 최적화 */
+@media (max-width: 768px) {
+    /* 다음 우편번호 서비스 팝업 컨테이너 */
+    div[id*="postcode"] *,
+    div[id^="layer_postcode"] *,
+    div[class*="postcode"] *,
+    .postcode-layer * {
+        font-size: 14px !important;
+    }
+    
+    div[id*="postcode"] input,
+    div[id^="layer_postcode"] input,
+    div[class*="postcode"] input,
+    .postcode-layer input {
+        font-size: 16px !important; /* iOS 줌 방지 */
+        padding: 12px !important;
+    }
+}
+
+/* 매우 작은 스마트폰 (320px 이하) */
+@media (max-width: 320px) {
+    div[id*="postcode"] iframe,
+    div[id^="layer_postcode"] iframe,
+    div[class*="postcode"] iframe,
+    .postcode-layer iframe {
+        width: 100% !important;
+        height: 85% !important;
+        border-radius: 4px !important;
+    }
+    
+    div[id*="postcode"] input,
+    div[id^="layer_postcode"] input,
+    div[class*="postcode"] input,
+    .postcode-layer input {
+        font-size: 16px !important;
+        padding: 10px !important;
+    }
+    
+    div[id*="postcode"] button,
+    div[id^="layer_postcode"] button,
+    div[class*="postcode"] button,
+    .postcode-layer button {
+        font-size: 16px !important;
+        padding: 10px !important;
+    }
+}
+
+/* --- 기존 모바일 반응형 --- */
 
 /* 태블릿 (최대 768px) */
 @media (max-width: 768px) {
@@ -705,3 +764,516 @@ form::-webkit-scrollbar-thumb:active {
         margin-top: 15px;
     }
 }
+    .postcode-layer {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 99999 !important;
+        background: rgba(0,0,0,0.8) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* 팝업 내부 iframe 또는 컨텐츠 */
+    div[id*="postcode"] iframe,
+    div[id^="layer_postcode"] iframe,
+    div[class*="postcode"] iframe,
+    .postcode-layer iframe {
+        width: 95% !important;
+        height: 85% !important;
+        max-width: 400px !important;
+        border: 2px solid #fff !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+        background: white !important;
+    }
+    
+    /* 팝업 닫기 버튼 크기 조정 */
+    div[id*="postcode"] .close-btn,
+    div[id^="layer_postcode"] .close-btn,
+    div[class*="postcode"] .close-btn,
+    .postcode-layer .close-btn,
+    div[id*="postcode"] button,
+    div[id^="layer_postcode"] button,
+    div[class*="postcode"] button,
+    .postcode-layer button {
+        font-size: 18px !important;
+        padding: 12px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        touch-action: manipulation !important;
+    }
+    
+    /* 검색 입력창 */
+    div[id*="postcode"] input[type="text"],
+    div[id^="layer_postcode"] input[type="text"],
+    div[class*="postcode"] input[type="text"],
+    .postcode-layer input[type="text"] {
+        font-size: 16px !important; /* iOS 줌 방지 */
+        padding: 15px !important;
+        border-radius: 4px !important;
+        min-height: 44px !important;
+        touch-action: manipulation !important;
+    }
+    
+    /* 주소 목록 항목들 */
+    div[id*="postcode"] .search-result-item,
+    div[id^="layer_postcode"] .search-result-item,
+    div[class*="postcode"] .search-result-item,
+    .postcode-layer .search-result-item,
+    div[id*="postcode"] li,
+    div[id^="layer_postcode"] li,
+    div[class*="postcode"] li,
+    .postcode-layer li {
+        padding: 15px !important;
+        border-bottom: 1px solid #eee !important;
+        min-height: 60px !important;
+        font-size: 14px !important;
+        touch-action: manipulation !important;
+    }
+    
+    /* 팝업 내부 모든 클릭 가능한 요소들 */
+    div[id*="postcode"] a,
+    div[id^="layer_postcode"] a,
+    div[class*="postcode"] a,
+    .postcode-layer a,
+    div[id*="postcode"] .clickable,
+    div[id^="layer_postcode"] .clickable,
+    div[class*="postcode"] .clickable,
+    .postcode-layer .clickable {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        padding: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        touch-action: manipulation !important;
+    }
+
+
+/* 태블릿 환경 (769px ~ 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    div[id*="postcode"],
+    div[id^="layer_postcode"],
+    div[class*="postcode"],
+    .postcode-layer {
+        position: fixed !important;
+        top: 5% !important;
+        left: 10% !important;
+        width: 80% !important;
+        height: 90% !important;
+        z-index: 99999 !important;
+    }
+    
+    div[id*="postcode"] iframe,
+    div[id^="layer_postcode"] iframe,
+    div[class*="postcode"] iframe,
+    .postcode-layer iframe {
+        width: 100% !important;
+        height: 100% !important;
+        border: 2px solid #000 !important;
+    }
+}
+
+/* 작은 모바일 환경 (아이폰 SE 등, 375px 이하) */
+@media (max-width: 375px) {
+    div[id*="postcode"],
+    div[id^="layer_postcode"],
+    div[class*="postcode"],
+    .postcode-layer {
+        padding: 10px !important;
+    }
+    
+    div[id*="postcode"] iframe,
+    div[id^="layer_postcode"] iframe,
+    div[class*="postcode"] iframe,
+    .postcode-layer iframe {
+        width: 100% !important;
+        height: 90% !important;
+        max-width: none !important;
+    }
+    
+	
+	div[id*="postcode"],
+	div[id^="layer_postcode"],
+	div[class*="postcode"],
+	.postcode-layer {
+	    z-index: 99999 !important;
+	}
+}
+
+	/* 모바일 환경에서 다음 우편번호 팝업 최적화 */
+	@media (max-width: 768px) {
+	    /* 다음 우편번호 서비스 팝업 컨테이너 */
+	    div[id*="postcode"],
+	    div[id^="layer_postcode"],
+	    div[class*="postcode"],
+	    .postcode-layer {
+	        position: fixed !important;
+	        top: 0 !important;
+	        left: 0 !important;
+	        width: 100vw !important;
+	        height: 100vh !important;
+	        z-index: 99999 !important;
+	        background: rgba(0,0,0,0.8) !important;
+	        display: flex !important;
+	        align-items: center !important;
+	        justify-content: center !important;
+	    }
+	    
+	    /* 팝업 내부 iframe 또는 컨텐츠 */
+	    div[id*="postcode"] iframe,
+	    div[id^="layer_postcode"] iframe,
+	    div[class*="postcode"] iframe,
+	    .postcode-layer iframe {
+	        width: 95% !important;
+	        height: 85% !important;
+	        max-width: 400px !important;
+	        border: 2px solid #fff !important;
+	        border-radius: 8px !important;
+	        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+	        background: white !important;
+	    }
+	    
+	    /* 팝업 닫기 버튼 크기 조정 */
+	    div[id*="postcode"] .close-btn,
+	    div[id^="layer_postcode"] .close-btn,
+	    div[class*="postcode"] .close-btn,
+	    .postcode-layer .close-btn,
+	    div[id*="postcode"] button,
+	    div[id^="layer_postcode"] button,
+	    div[class*="postcode"] button,
+	    .postcode-layer button {
+	        font-size: 18px !important;
+	        padding: 12px !important;
+	        min-width: 44px !important;
+	        min-height: 44px !important;
+	        touch-action: manipulation !important;
+	    }
+	    
+	    /* 검색 입력창 */
+	    div[id*="postcode"] input[type="text"],
+	    div[id^="layer_postcode"] input[type="text"],
+	    div[class*="postcode"] input[type="text"],
+	    .postcode-layer input[type="text"] {
+	        font-size: 16px !important; /* iOS 줌 방지 */
+	        padding: 15px !important;
+	        border-radius: 4px !important;
+	        min-height: 44px !important;
+	        touch-action: manipulation !important;
+	    }
+	    
+	    /* 주소 목록 항목들 */
+	    div[id*="postcode"] .search-result-item,
+	    div[id^="layer_postcode"] .search-result-item,
+	    div[class*="postcode"] .search-result-item,
+	    .postcode-layer .search-result-item,
+	    div[id*="postcode"] li,
+	    div[id^="layer_postcode"] li,
+	    div[class*="postcode"] li,
+	    .postcode-layer li {
+	        padding: 15px !important;
+	        border-bottom: 1px solid #eee !important;
+	        min-height: 60px !important;
+	        font-size: 14px !important;
+	        touch-action: manipulation !important;
+	    }
+	    
+	    /* 팝업 내부 모든 클릭 가능한 요소들 */
+	    div[id*="postcode"] a,
+	    div[id^="layer_postcode"] a,
+	    div[class*="postcode"] a,
+	    .postcode-layer a,
+	    div[id*="postcode"] .clickable,
+	    div[id^="layer_postcode"] .clickable,
+	    div[class*="postcode"] .clickable,
+	    .postcode-layer .clickable {
+	        min-height: 44px !important;
+	        min-width: 44px !important;
+	        padding: 12px !important;
+	        display: flex !important;
+	        align-items: center !important;
+	        justify-content: center !important;
+	        touch-action: manipulation !important;
+	    }
+	    
+	    /* 일반 텍스트 크기 조정 */
+	    div[id*="postcode"] *,
+	    div[id^="layer_postcode"] *,
+	    div[class*="postcode"] *,
+	    .postcode-layer * {
+	        font-size: 14px !important;
+	    }
+	    
+	    div[id*="postcode"] input,
+	    div[id^="layer_postcode"] input,
+	    div[class*="postcode"] input,
+	    .postcode-layer input {
+	        font-size: 16px !important; /* iOS 줌 방지 */
+	        padding: 12px !important;
+	    }
+	}
+
+	/* 태블릿 환경 (769px ~ 1024px) */
+	@media (min-width: 769px) and (max-width: 1024px) {
+	    div[id*="postcode"],
+	    div[id^="layer_postcode"],
+	    div[class*="postcode"],
+	    .postcode-layer {
+	        position: fixed !important;
+	        top: 5% !important;
+	        left: 10% !important;
+	        width: 80% !important;
+	        height: 90% !important;
+	        z-index: 99999 !important;
+	    }
+	    
+	    div[id*="postcode"] iframe,
+	    div[id^="layer_postcode"] iframe,
+	    div[class*="postcode"] iframe,
+	    .postcode-layer iframe {
+	        width: 100% !important;
+	        height: 100% !important;
+	        border: 2px solid #000 !important;
+	    }
+	}
+
+	/* 작은 모바일 환경 (아이폰 SE 등, 375px 이하) */
+	@media (max-width: 375px) {
+	    div[id*="postcode"],
+	    div[id^="layer_postcode"],
+	    div[class*="postcode"],
+	    .postcode-layer {
+	        padding: 10px !important;
+	    }
+	    
+	    div[id*="postcode"] iframe,
+	    div[id^="layer_postcode"] iframe,
+	    div[class*="postcode"] iframe,
+	    .postcode-layer iframe {
+	        width: 100% !important;
+	        height: 90% !important;
+	        max-width: none !important;
+	    }
+	}
+
+	/* 매우 작은 스마트폰 (320px 이하) */
+	@media (max-width: 320px) {
+	    div[id*="postcode"] iframe,
+	    div[id^="layer_postcode"] iframe,
+	    div[class*="postcode"] iframe,
+	    .postcode-layer iframe {
+	        width: 100% !important;
+	        height: 85% !important;
+	        border-radius: 4px !important;
+	    }
+	    
+	    div[id*="postcode"] input,
+	    div[id^="layer_postcode"] input,
+	    div[class*="postcode"] input,
+	    .postcode-layer input {
+	        font-size: 16px !important;
+	        padding: 10px !important;
+	    }
+	    
+	    div[id*="postcode"] button,
+	    div[id^="layer_postcode"] button,
+	    div[class*="postcode"] button,
+	    .postcode-layer button {
+	        font-size: 16px !important;
+	        padding: 10px !important;
+	    }
+	}
+
+	/* --- 기존 모바일 반응형 --- */
+
+	/* 태블릿 (최대 768px) */
+	@media (max-width: 768px) {
+	    .windows95-dialog {
+	        width: 95%; /* 작은 화면에서 더 넓게 */
+	        padding: 10px;
+	        max-width: 550px; /* 최대 너비 설정 */
+	    }
+
+	    .title-bar {
+	        font-size: 14px;
+	        padding: 3px 5px;
+	    }
+
+	    .input-label {
+	        width: 100%; /* 레이블 너비 100% */
+	        text-align: left; /* 레이블 왼쪽 정렬 */
+	        padding-right: 0;
+	        margin-bottom: 5px; /* 레이블 아래 마진 */
+	        font-size: 14px;
+	    }
+
+	    .input-group {
+	        flex-direction: column; /* 요소를 수직으로 쌓기 */
+	        align-items: flex-start;
+	        margin-bottom: 15px; /* 간격 증가 */
+	    }
+
+	    .input-group > *:not(.input-label) {
+	        width: 100%; /* 레이블을 제외한 나머지 요소 전체 너비 */
+	    }
+
+	    .windows95-input {
+	        height: 44px; /* 입력 필드 높이 크게 증가 */
+	        font-size: 16px; /* 폰트 크기 증가 */
+	        padding: 8px 10px; /* 패딩 조정 */
+	        min-width: unset; /* 최소 너비 해제 */
+	    }
+
+	    .input-with-button {
+	        flex-direction: column; /* 버튼과 인풋을 세로로 쌓기 */
+	        align-items: flex-start;
+	        gap: 8px; /* 간격 추가 */
+	    }
+
+	    .windows95-button.btn-small {
+	        width: 100%; /* 작은 버튼도 너비 100% */
+	        margin-left: 0; /* 마진 제거 */
+	        height: 44px; /* 높이 증가 */
+	        font-size: 16px; /* 폰트 크기 증가 */
+	        padding: 8px 10px; /* 패딩 조정 */
+	    }
+
+	    .form-text,
+	    .password-hint,
+	    .warn-msg,
+	    #timer {
+	        font-size: 13px; /* 힌트 및 경고 메시지 폰트 크기 조정 */
+	        text-align: left; /* 왼쪽 정렬 */
+	        padding-left: 0;
+	    }
+
+	    .form-check-group {
+	        flex-direction: column; /* 라디오 버튼도 세로로 쌓기 */
+	        align-items: flex-start;
+	        gap: 8px; /* 라디오 버튼 간격 추가 */
+	    }
+
+	    .windows95-button {
+	        height: 50px; /* 메인 버튼 높이 증가 */
+	        font-size: 18px; /* 메인 버튼 폰트 크기 증가 */
+	        padding: 10px 0; /* 패딩 조정 */
+	        min-width: 120px; /* 최소 너비 조정 */
+	    }
+
+	    .button-group {
+	        flex-direction: column; /* 버튼 세로로 쌓기 */
+	        align-items: center; /* 가운데 정렬 */
+	        gap: 12px; /* 간격 증가 */
+	        margin-top: 25px; /* 상단 마진 증가 */
+	    }
+	}
+
+	/* 스마트폰 (최대 480px) */
+	@media (max-width: 480px) {
+	    .windows95-dialog {
+	        width: 100%; /* 스마트폰에서 거의 전체 너비 사용 */
+	        max-width: none;
+	        padding: 8px;
+	    }
+
+	    .title-bar {
+	        font-size: 13px;
+	        padding: 2px 3px;
+	    }
+
+	    .dialog-content {
+	        padding: 12px;
+	    }
+
+	    legend {
+	        font-size: 14px;
+	        padding: 2px 4px;
+	    }
+
+	    .input-label {
+	        font-size: 13px;
+	        margin-bottom: 3px;
+	    }
+
+	    .windows95-input {
+	        height: 48px; /* 입력 필드 높이 더 크게 */
+	        font-size: 17px; /* 폰트 크기 유지 */
+	        padding: 10px 12px; /* 패딩 조정 */
+	    }
+
+	    .windows95-button.btn-small {
+	        height: 48px; /* 작은 버튼 높이 유지 */
+	        font-size: 17px; /* 폰트 크기 유지 */
+	        padding: 10px 12px;
+	    }
+
+	    .form-text,
+	    .password-hint,
+	    .warn-msg,
+	    #timer {
+	        font-size: 12px; /* 폰트 크기 더 작게 */
+	    }
+
+	    .form-check-label {
+	        font-size: 13px;
+	    }
+
+	    .windows95-button {
+	        height: 55px; /* 메인 버튼 높이 더 크게 */
+	        font-size: 20px; /* 메인 버튼 폰트 크기 더 크게 */
+	        padding: 12px 0;
+	    }
+
+	    .button-group {
+	        gap: 10px;
+	        margin-top: 20px;
+	    }
+	}
+
+	/* 매우 작은 스마트폰 (최대 320px) */
+	@media (max-width: 320px) {
+	    .windows95-dialog {
+	        padding: 5px;
+	    }
+	    .dialog-content {
+	        padding: 10px;
+	    }
+	    legend {
+	        font-size: 13px;
+	    }
+	    .input-label {
+	        font-size: 12px;
+	    }
+	    .windows95-input {
+	        height: 44px;
+	        font-size: 15px;
+	        padding: 8px 10px;
+	    }
+	    .windows95-button.btn-small {
+	        height: 44px;
+	        font-size: 15px;
+	        padding: 8px 10px;
+	    }
+	    .form-text,
+	    .password-hint,
+	    .warn-msg,
+	    #timer {
+	        font-size: 11px;
+	    }
+	    .form-check-label {
+	        font-size: 12px;
+	    }
+	    .windows95-button {
+	        height: 50px;
+	        font-size: 18px;
+	        padding: 10px 0;
+	    }
+	    .button-group {
+	        gap: 8px;
+	        margin-top: 15px;
+	    }
+	}

@@ -5,9 +5,9 @@
 <head>
 	<style>
 		body, html {
-					font-family: 'dalmoori', sans-serif;
-
-				}
+			font-family: 'dalmoori', sans-serif;
+		}
+		
 		/* 🔥 아이프레임에 꽉 차도록 윈도우95 스타일 */
 		.win95-container {
 			background-color: #c0c0c0;
@@ -15,9 +15,9 @@
 			padding: 10px;
 			margin: 0;
 			font-size: 15px;
-			height: 100vh !important; /* 🔥 전체 높이 차지 */
+			height: 100vh !important;
 			max-height: 100vh !important;
-			overflow-y: auto !important; /* 🔥 스크롤 강제 활성화 */
+			overflow-y: auto !important;
 			box-sizing: border-box;
 		}
 
@@ -31,12 +31,14 @@
 			margin-bottom: 10px;
 		}
 
+		/* 🔥 데스크톱용 탭 (기본) */
 		.win95-category-tabs {
 			background-color: #c0c0c0;
 			border: none;
 			margin-bottom: 10px;
 			display: flex;
 			gap: 2px;
+			flex-wrap: wrap;
 		}
 
 		.win95-tab {
@@ -47,6 +49,7 @@
 			color: black;
 			font-size: 15px;
 			cursor: pointer;
+			white-space: nowrap;
 		}
 
 		.win95-tab:hover {
@@ -60,22 +63,128 @@
 			background-color: #ffffff;
 		}
 
+		/* 🔥 모바일용 드롭다운 (숨김 상태) */
+		.win95-category-dropdown {
+			display: none;
+			background-color: #c0c0c0;
+			margin-bottom: 10px;
+			position: relative;
+		}
+
+		.win95-dropdown-button {
+			width: 100%;
+			background-color: #c0c0c0;
+			border: 2px outset #c0c0c0;
+			padding: 10px 15px;
+			text-align: left;
+			font-size: 15px;
+			cursor: pointer;
+			position: relative;
+			color: black;
+			font-family: inherit;
+		}
+
+		.win95-dropdown-button:hover {
+			background-color: #e0e0e0;
+		}
+
+		.win95-dropdown-button:active {
+			border: 2px inset #c0c0c0;
+		}
+
+		.win95-dropdown-arrow {
+			position: absolute;
+			right: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 0;
+			height: 0;
+			border-left: 6px solid transparent;
+			border-right: 6px solid transparent;
+			border-top: 8px solid #000;
+			transition: transform 0.2s;
+		}
+
+		.win95-dropdown-button.active .win95-dropdown-arrow {
+			transform: translateY(-50%) rotate(180deg);
+		}
+
+		.win95-dropdown-menu {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			background-color: #c0c0c0;
+			border: 2px inset #c0c0c0;
+			box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+			z-index: 1000;
+			max-height: 300px;
+			overflow-y: auto;
+			display: none;
+		}
+
+		.win95-dropdown-menu.show {
+			display: block;
+		}
+
+		.win95-dropdown-item {
+			display: block;
+			padding: 10px 15px;
+			text-decoration: none;
+			color: black;
+			border-bottom: 1px solid #808080;
+			background-color: #c0c0c0;
+			font-size: 15px;
+		}
+
+		.win95-dropdown-item:last-child {
+			border-bottom: none;
+		}
+
+		.win95-dropdown-item:hover {
+			background-color: #0000ff;
+			color: white;
+			text-decoration: none;
+		}
+
+		.win95-dropdown-item.active {
+			background-color: #000080;
+			color: white;
+		}
+
+		/* 🔥 드롭다운 메뉴 스크롤바 */
+		.win95-dropdown-menu::-webkit-scrollbar {
+			width: 16px;
+		}
+
+		.win95-dropdown-menu::-webkit-scrollbar-track {
+			background-color: #c0c0c0;
+			border: 1px solid #808080;
+		}
+
+		.win95-dropdown-menu::-webkit-scrollbar-thumb {
+			background-color: #c0c0c0;
+			border: 1px solid #808080;
+			box-shadow: 1px 1px 0 #dfdfdf, -1px -1px 0 #808080;
+		}
+
+		.win95-dropdown-menu::-webkit-scrollbar-thumb:hover {
+			background-color: #d4d0c8;
+		}
+
 		.win95-grid {
 			display: grid;
 			grid-template-columns: repeat(6, 1fr);
 			gap: 10px;
 			margin: 15px 0;
-			min-height: auto; /* 🔥 최소 높이 자동 */
-			overflow: visible; /* 🔥 내용 표시 보장 */
+			min-height: auto;
+			overflow: visible;
 		}
 
-		/* 🔥 반응형 미디어 쿼리에도 스크롤 설정 */
+		/* 🔥 반응형 미디어 쿼리 */
 		@media (max-width: 1400px) {
 			.win95-grid {
 				grid-template-columns: repeat(5, 1fr);
-			}
-			.win95-container {
-				overflow-y: auto !important;
 			}
 		}
 
@@ -83,31 +192,51 @@
 			.win95-grid {
 				grid-template-columns: repeat(4, 1fr);
 			}
-			.win95-container {
-				overflow-y: auto !important;
-			}
 		}
 
 		@media (max-width: 900px) {
 			.win95-grid {
 				grid-template-columns: repeat(3, 1fr);
 			}
-			.win95-container {
-				overflow-y: auto !important;
-				height: 100vh !important;
-			}
 		}
 
-		@media (max-width: 600px) {
+		/* 🔥 모바일에서 탭 → 드롭다운 전환 */
+		@media (max-width: 768px) {
+			.win95-category-tabs {
+				display: none; /* 탭 숨김 */
+			}
+			
+			.win95-category-dropdown {
+				display: block; /* 드롭다운 표시 */
+			}
+			
 			.win95-grid {
 				grid-template-columns: repeat(2, 1fr);
+				gap: 8px;
 			}
+			
 			.win95-container {
-				overflow-y: auto !important;
-				height: 100vh !important;
+				padding: 8px;
 			}
 		}
 
+		@media (max-width: 480px) {
+			.win95-grid {
+				grid-template-columns: repeat(2, 1fr);
+				gap: 6px;
+			}
+			
+			.win95-container {
+				padding: 5px;
+			}
+			
+			.win95-title {
+				font-size: 14px;
+				padding: 4px 8px;
+			}
+		}
+
+		/* 기존 상품 카드 스타일들 */
 		.win95-product-card {
 			background-color: #ffffff;
 			border: 2px inset #c0c0c0;
@@ -264,7 +393,7 @@
 			font-size: 16px;
 			color: #800000;
 			margin: 20px 0;
-			min-height: 200px; /* 🔥 최소 높이 설정 */
+			min-height: 200px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -318,9 +447,9 @@
 		<div class="win95-container">
 			
 			<!-- 윈도우95 타이틀 바 -->
-			<div class="win95-title">📦 포인트샵 목록</div>
+			<div class="win95-title">포인트샵 목록</div>
 
-			<!-- 카테고리 탭 -->
+			<!-- 🔥 데스크톱용 카테고리 탭 -->
 			<div class="win95-category-tabs">
 				<a class="win95-tab" th:href="@{/point/shop/list}"
 					th:classappend="${selectedCategoryId} == null ? 'active' : ''">전체</a>
@@ -330,9 +459,38 @@
 					th:classappend="${selectedCategoryId} == ${category.pointCategoryId} ? 'active' : ''"></a>
 			</div>
 
+			<!-- 🔥 모바일용 카테고리 드롭다운 -->
+			<div class="win95-category-dropdown">
+				<button class="win95-dropdown-button" id="dropdownButton">
+					<span id="selectedCategory">
+						<span th:if="${selectedCategoryId == null}">📂 전체 카테고리</span>
+						<span th:unless="${selectedCategoryId == null}">
+							<span th:each="category : ${pointCategoryList}">
+								<span th:if="${category.pointCategoryId == selectedCategoryId}" 
+									  th:text="'📁 ' + ${category.pointCategoryName}"></span>
+							</span>
+						</span>
+					</span>
+					<div class="win95-dropdown-arrow"></div>
+				</button>
+				<div class="win95-dropdown-menu" id="categoryDropdown">
+					<a class="win95-dropdown-item" 
+					   th:href="@{/point/shop/list}"
+					   th:classappend="${selectedCategoryId == null ? 'active' : ''}">
+						📂 전체 상품
+					</a>
+					<a class="win95-dropdown-item" 
+					   th:each="category : ${pointCategoryList}"
+					   th:href="@{/point/shop/list(pointCategoryId=${category.pointCategoryId})}"
+					   th:text="'📁 ' + ${category.pointCategoryName}"
+					   th:classappend="${selectedCategoryId == category.pointCategoryId ? 'active' : ''}">
+					</a>
+				</div>
+			</div>
+
 			<!-- 상품이 없을 경우 -->
 			<div th:if="${#lists.isEmpty(pointShopList)}" class="win95-no-products">
-				💾 등록된 상품이 없습니다.
+				등록된 상품이 없습니다.
 			</div>
 
 			<!-- 상품 그리드 -->
@@ -395,6 +553,48 @@
 			</div>
 
 		</div>
+		
+		<!-- 🔥 드롭다운 JavaScript -->
+		<script>
+			// 🔥 DOM이 로드된 후 실행
+			document.addEventListener('DOMContentLoaded', function() {
+				const dropdownButton = document.getElementById('dropdownButton');
+				const dropdown = document.getElementById('categoryDropdown');
+
+				// 드롭다운 버튼 클릭 이벤트
+				if (dropdownButton && dropdown) {
+					dropdownButton.addEventListener('click', function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						
+						dropdown.classList.toggle('show');
+						dropdownButton.classList.toggle('active');
+					});
+
+					// 🔥 드롭다운 외부 클릭 시 닫기
+					document.addEventListener('click', function(event) {
+						if (!dropdownButton.contains(event.target) && !dropdown.contains(event.target)) {
+							dropdown.classList.remove('show');
+							dropdownButton.classList.remove('active');
+						}
+					});
+
+					// 🔥 화면 크기 변경 시 드롭다운 닫기
+					window.addEventListener('resize', function() {
+						dropdown.classList.remove('show');
+						dropdownButton.classList.remove('active');
+					});
+
+					// 🔥 ESC 키로 드롭다운 닫기
+					document.addEventListener('keydown', function(event) {
+						if (event.key === 'Escape') {
+							dropdown.classList.remove('show');
+							dropdownButton.classList.remove('active');
+						}
+					});
+				}
+			});
+		</script>
 	</div>
 </body>
 </html>

@@ -395,6 +395,11 @@
 		        let messageIds = new Set();
 		        let chatEnded = false;
 		        let initialized = false;
+		        
+		        // 🔥 중복 방지를 위한 고유 ID 생성 함수
+		        function generateMessageId(message) {
+		            return `${message.type}_${message.sender}_${message.content}_${message.timestamp || Date.now()}`;
+		        }
 
 		        // 🔥 DOM 요소 확인 함수
 		        function waitForElements() {
@@ -617,6 +622,13 @@
 		                stompClient.subscribe('/topic/room.' + roomId, function(message) {
 		                    const chatMessage = JSON.parse(message.body);
 		                    
+		                    // 🔥 중복 체크: 내가 보낸 메시지는 서버에서 받지 않음
+		                    if (chatMessage.sender === username && 
+		                        (chatMessage.type === 'END' || chatMessage.type === 'RESTART' || chatMessage.type === 'CHAT')) {
+		                        console.log('내가 보낸 메시지 무시:', chatMessage.content);
+		                        return;
+		                    }
+		                    
 		                    if (displayMessage(chatMessage, true)) {
 		                        if (chatMessage.sender === '관리자' && chatEnded) {
 		                            chatEnded = false;
@@ -651,7 +663,9 @@
 		                    timestamp: new Date().getTime()
 		                };
 
+		                // 🔥 로컬에서 즉시 표시
 		                displayMessage(restartMessage, false);
+		                // 서버에 전송
 		                stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(restartMessage));
 		                
 		                chatEnded = false;
@@ -666,6 +680,10 @@
 		            };
 
 		            try {
+		                // 🔥 내 메시지는 로컬에서 즉시 표시
+		                displayMessage(chatMessage, false);
+		                
+		                // 서버에 전송
 		                stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
 		                window.chatElements.messageInput.value = '';
 		                window.chatElements.messageInput.style.height = 'auto';
@@ -697,7 +715,10 @@
 		                    timestamp: new Date().getTime()
 		                };
 
+		                // 🔥 로컬에서 즉시 표시 (한 번만)
 		                displayMessage(endMessage, false);
+		                
+		                // 서버에 전송
 		                stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(endMessage));
 		                
 		                chatEnded = true;
@@ -708,10 +729,17 @@
 		        function displayMessage(message, checkDuplicate = false) {
 		            if (message.type === 'JOIN') return false;
 		            
-		            const messageId = message.timestamp || message.createdAt || (message.sender + message.content + Date.now());
+		            // 🔥 고유 ID로 중복 체크 강화
+		            const messageId = generateMessageId(message);
 		            
-		            if (checkDuplicate && messageIds.has(messageId)) return false;
-		            if (checkDuplicate) messageIds.add(messageId);
+		            if (checkDuplicate && messageIds.has(messageId)) {
+		                console.log('중복 메시지 무시:', message.content);
+		                return false;
+		            }
+		            
+		            if (checkDuplicate) {
+		                messageIds.add(messageId);
+		            }
 		            
 		            const messageDiv = document.createElement('div');
 		            

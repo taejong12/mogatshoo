@@ -2,121 +2,397 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>모갓슈 인트로</title>
-	<style>
-	        /* 기본 스타일 초기화 */
-	        body, html {
-	            margin: 0;
-	            padding: 0;
-	            height: 100%;
-	            width: 100%;
-	            overflow: hidden; /* 스크롤바 제거 */
-	            background-color: #000; /* 비디오 로드 전/오류 시 검은색 배경 */
-	        }
+    <style>
+        /* 기본 스타일 초기화 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* 스크롤바 제거 */
+            background-color: #000; /* 비디오 로드 전/오류 시 검은색 배경 */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: none; /* 터치 스크롤 방지 */
+        }
 
-	        /* 폰트 정의 (여기서는 필요 없을 수 있지만, 혹시 몰라 포함) */
-	        @font-face {
-	            font-family: 'dalmoori';
-	            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
-	            font-weight: normal;
-	            font-style: normal;
-	        }
+        /* 폰트 정의 */
+        @font-face {
+            font-family: 'dalmoori';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2102-01@1.0/dalmoori.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
 
-	        /* 비디오 컨테이너: 화면 전체를 덮음 */
-	        .video-container {
-	            position: fixed;
-	            top: 0;
-	            left: 0;
-	            width: 100vw;
-	            height: 100vh;
-	            z-index: 1; /* 다른 요소 위에 올 필요 없음 (영상만 있으므로) */
-	            overflow: hidden;
-	        }
+        /* 비디오 컨테이너: 화면 전체를 덮음 */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* 모바일 브라우저의 상/하단 바 고려 */
+            width: 100dvw; /* Dynamic Viewport Width */
+            height: 100dvh; /* Dynamic Viewport Height */
+            z-index: 1;
+            overflow: hidden;
+            background: #000;
+        }
 
-	        /* 비디오 자체 스타일 */
-	        .video-bg {
-	            position: absolute;
-	            top: 50%;
-	            left: 50%;
-	            min-width: 100%;
-	            min-height: 100%;
-	            width: auto;
-	            height: auto;
-	            transform: translate(-50%, -50%);
-	            object-fit: cover;
-	        }
-	    </style>
-	</head>
-	<body>
-	    <div class="video-container" id="videoContainer">
-	        <video class="video-bg" autoplay muted playsinline>
-	            <source src="/videos/main2.mp4" type="video/mp4">
-	            Your browser does not support the video tag.
-	        </video>
-	    </div>
+        /* 비디오 자체 스타일 */
+        .video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            /* 모바일 성능 최적화 */
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            will-change: transform;
+        }
 
-	    <script th:inline="javascript">
-	        // Thymeleaf를 사용하여 메인 페이지의 URL을 JavaScript 변수에 주입합니다.
-	        const redirectUrl = /*[[@{/}]]*/ '/';
+        /* 로딩 인디케이터 */
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: 'dalmoori', sans-serif;
+            font-size: 18px;
+            z-index: 10;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            text-align: center;
+        }
 
-	        document.addEventListener('DOMContentLoaded', function () {
-	            const video = document.querySelector('.video-bg');
-	            const videoContainer = document.getElementById('videoContainer');
+        .loading-indicator.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
 
-	            // 비디오 로드 오류 처리
-	            video.addEventListener('error', function (e) {
-	                console.error('Video load error:', e);
-	                videoContainer.style.backgroundColor = '#2B2BD8';
-	                window.location.href = redirectUrl; // 오류 시에도 메인으로 리다이렉트
-	            });
+        /* 스피너 애니메이션 */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
 
-	            // 비디오 재생 완료 이벤트 처리
-	            video.addEventListener('ended', function() {
-	                console.log('Video playback ended. Redirecting to main page...');
-	                window.location.href = redirectUrl;
-	            });
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-	            // 안전 장치: 3초 타이머
-	            setTimeout(function () {
-	                // 현재 경로가 리다이렉트 될 목적지 페이지가 아니면 리다이렉트
-	                if (window.location.pathname !== redirectUrl) {
-	                    console.log('3-second timer elapsed. Forcing redirect to main page...');
-	                    window.location.href = redirectUrl;
-	                }
-	            }, 3000); // 3초 영상에 맞춰 타이머를 3초로 설정
+        /* 모바일 리다이렉트 메시지 */
+        .mobile-redirect-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: 'dalmoori', sans-serif;
+            font-size: 20px;
+            text-align: center;
+            z-index: 10;
+            line-height: 1.6;
+        }
 
-	            // 비디오 최적화 함수
-	            function optimizeVideo() {
-	                const windowWidth = window.innerWidth;
-	                const windowHeight = window.innerHeight;
-	                const aspectRatio = 16 / 9;
-	                const windowRatio = windowWidth / windowHeight;
+        .mobile-redirect-message .logo {
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
 
-	                if (windowRatio < aspectRatio) {
-	                    video.style.width = '100%';
-	                    video.style.height = 'auto';
-	                } else {
-	                    video.style.width = 'auto';
-	                    video.style.height = '100%';
-	                }
-	            }
+        .mobile-redirect-message .subtitle {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
 
-	            optimizeVideo();
-	            window.addEventListener('resize', optimizeVideo);
+        .mobile-redirect-message .countdown {
+            font-size: 18px;
+            color: #ffdd44;
+            margin-top: 20px;
+        }
 
-	            // 비디오 자동 재생 시도
-	            const playPromise = video.play();
-	            if (playPromise !== undefined) {
-	                playPromise.then(_ => {
-	                    console.log('Video autoplay successful.');
-	                }).catch(error => {
-	                    console.log('Video autoplay failed, trying muted playback:', error);
-	                    video.muted = true;
-	                    video.play().catch(e => console.error('Muted autoplay also failed:', e));
-	                });
-	            }
-	        });
-	    </script>
-	</body>
-	</html>
+        /* 데스크톱에서만 비디오 표시 */
+        @media (min-width: 769px) {
+            .video-bg {
+                display: block;
+                transform: scale(1.01); /* 데스크톱에서 약간 확대해서 경계선 방지 */
+            }
+            
+            .mobile-redirect-message {
+                display: none;
+            }
+        }
+
+        /* 태블릿과 모바일에서는 비디오 숨김 */
+        @media (max-width: 768px) {
+            .video-bg {
+                display: none !important;
+            }
+            
+            .loading-indicator {
+                display: none !important;
+            }
+            
+            .mobile-redirect-message {
+                display: block;
+            }
+
+            .video-container {
+                /* 모바일 Safe Area 지원 (iPhone X 이상) */
+                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+                box-sizing: border-box;
+                /* 모바일에서 더 정확한 크기 */
+                width: 100vw;
+                height: 100vh;
+                width: 100dvw;
+                height: 100dvh;
+            }
+        }
+
+        /* 작은 화면에서 텍스트 크기 조정 */
+        @media (max-width: 480px) {
+            .mobile-redirect-message {
+                font-size: 18px;
+                padding: 20px;
+            }
+            
+            .mobile-redirect-message .logo {
+                font-size: 28px;
+                margin-bottom: 15px;
+            }
+            
+            .mobile-redirect-message .subtitle {
+                font-size: 14px;
+                margin-bottom: 25px;
+            }
+            
+            .mobile-redirect-message .countdown {
+                font-size: 16px;
+            }
+        }
+
+        /* 매우 작은 화면 */
+        @media (max-width: 375px) {
+            .mobile-redirect-message {
+                font-size: 16px;
+                padding: 15px;
+            }
+            
+            .mobile-redirect-message .logo {
+                font-size: 24px;
+                margin-bottom: 12px;
+            }
+            
+            .mobile-redirect-message .subtitle {
+                font-size: 13px;
+                margin-bottom: 20px;
+            }
+            
+            .mobile-redirect-message .countdown {
+                font-size: 15px;
+            }
+        }
+
+        /* 고해상도 디스플레이 최적화 */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .video-bg {
+                /* 레티나 디스플레이에서 선명도 향상 */
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container" id="videoContainer">
+        <!-- 데스크톱용 로딩 인디케이터 -->
+        <div class="loading-indicator" id="loadingIndicator">
+            <div class="spinner"></div>
+            <div>로딩 중...</div>
+        </div>
+        
+        <!-- 데스크톱용 비디오 -->
+        <video class="video-bg" id="introVideo" preload="auto" muted playsinline webkit-playsinline>
+            <source src="/videos/main2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        
+        <!-- 모바일용 리다이렉트 메시지 -->
+        <div class="mobile-redirect-message" id="mobileMessage">
+            <div class="logo">모갓슈</div>
+            <div class="subtitle"><br>메인 페이지로 이동합니다</div>
+            <div class="countdown" id="countdown">3초 후 이동...</div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // Thymeleaf를 사용하여 메인 페이지의 URL을 JavaScript 변수에 주입
+        const redirectUrl = /*[[@{/}]]*/ '/';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.getElementById('introVideo');
+            const videoContainer = document.getElementById('videoContainer');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const mobileMessage = document.getElementById('mobileMessage');
+            const countdownElement = document.getElementById('countdown');
+
+            // 모바일/태블릿 감지
+            function isMobileDevice() {
+                return window.innerWidth <= 768 || 
+                       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+
+            // 모바일에서는 즉시 리다이렉트 (카운트다운 포함)
+            if (isMobileDevice()) {
+                console.log('모바일 기기 감지 - 비디오 건너뛰고 리다이렉트');
+                
+                let countdown = 3;
+                
+                const countdownTimer = setInterval(() => {
+                    countdown--;
+                    if (countdown > 0) {
+                        countdownElement.textContent = `${countdown}초 후 이동...`;
+                    } else {
+                        countdownElement.textContent = '이동 중...';
+                        clearInterval(countdownTimer);
+                        window.location.href = redirectUrl;
+                    }
+                }, 1000);
+                
+                // 화면 터치 시 즉시 이동
+                document.addEventListener('touchstart', function() {
+                    clearInterval(countdownTimer);
+                    window.location.href = redirectUrl;
+                });
+                
+                document.addEventListener('click', function() {
+                    clearInterval(countdownTimer);
+                    window.location.href = redirectUrl;
+                });
+                
+                return; // 나머지 비디오 관련 코드 실행하지 않음
+            }
+
+            // 데스크톱에서만 비디오 재생
+            console.log('데스크톱 기기 - 비디오 재생 시작');
+
+            // 비디오 로딩 완료 시 로딩 인디케이터 숨김
+            video.addEventListener('loadeddata', function() {
+                loadingIndicator.classList.add('hidden');
+            });
+
+            // 비디오 로드 오류 처리
+            video.addEventListener('error', function (e) {
+                console.error('Video load error:', e);
+                loadingIndicator.innerHTML = '<div>영상을 불러올 수 없습니다<br>메인 페이지로 이동합니다</div>';
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 2000);
+            });
+
+            // 비디오 재생 완료 이벤트 처리
+            video.addEventListener('ended', function() {
+                console.log('Video playback ended. Redirecting to main page...');
+                window.location.href = redirectUrl;
+            });
+
+            // 안전 장치: 6초 타이머 (데스크톱용)
+            setTimeout(function () {
+                if (window.location.pathname !== redirectUrl) {
+                    console.log('6-second timer elapsed. Forcing redirect to main page...');
+                    window.location.href = redirectUrl;
+                }
+            }, 6000);
+
+            // 데스크톱 비디오 크기 조정
+            function optimizeVideoForDesktop() {
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                const aspectRatio = 16 / 9;
+                const windowRatio = windowWidth / windowHeight;
+
+                if (windowRatio < aspectRatio) {
+                    video.style.width = '100%';
+                    video.style.height = 'auto';
+                } else {
+                    video.style.width = 'auto';
+                    video.style.height = '100%';
+                }
+            }
+
+            // 화면 리사이즈 처리 (데스크톱 전용)
+            function handleResize() {
+                // 리사이즈 중에 모바일 크기가 되면 리다이렉트
+                if (isMobileDevice()) {
+                    console.log('화면 크기가 모바일로 변경됨 - 리다이렉트');
+                    window.location.href = redirectUrl;
+                    return;
+                }
+                optimizeVideoForDesktop();
+            }
+
+            // 이벤트 리스너 등록
+            optimizeVideoForDesktop();
+            window.addEventListener('resize', handleResize);
+
+            // 데스크톱에서 자동재생 시도
+            function attemptAutoplay() {
+                const playPromise = video.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Video autoplay successful.');
+                        loadingIndicator.classList.add('hidden');
+                    }).catch(error => {
+                        console.log('Video autoplay failed:', error);
+                        loadingIndicator.innerHTML = '<div>클릭하여 재생</div>';
+                        
+                        const startVideo = () => {
+                            video.play().then(() => {
+                                loadingIndicator.classList.add('hidden');
+                                document.removeEventListener('click', startVideo);
+                            }).catch(e => console.error('Manual play failed:', e));
+                        };
+                        
+                        document.addEventListener('click', startVideo);
+                    });
+                }
+            }
+
+            // 페이지 로드 완료 후 자동재생 시도
+            if (video.readyState >= 3) {
+                attemptAutoplay();
+            } else {
+                video.addEventListener('canplaythrough', attemptAutoplay);
+            }
+
+            // 백그라운드에서 돌아왔을 때 처리
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden && video.paused) {
+                    video.play().catch(e => console.log('Resume play failed:', e));
+                }
+            });
+
+            // 컨텍스트 메뉴 방지
+            video.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>
