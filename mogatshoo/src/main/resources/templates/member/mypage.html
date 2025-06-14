@@ -86,9 +86,10 @@
                 
                 <!-- 탈모분석 결과 -->
                 <div class="analysis-result">
-                    <img th:src="@{${picture.firebaseStorageUrl}}" class="analysis-image" alt="탈모분석 이미지">
+                    <img th:src="@{${picture.firebaseStorageUrl}}" class="analysis-image" loading="lazy"
+					     decoding="async" fetchpriority="high">
                     <div class="analysis-text">
-                        <div id="hairMsg">분석 결과를 불러오는 중...</div>
+                        <div id="hairMsg">분석 결과</div>
                     </div>
                 </div>
                 

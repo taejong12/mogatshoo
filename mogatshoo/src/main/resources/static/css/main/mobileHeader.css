@@ -82,13 +82,66 @@
 }
 
 /* ========================================
-   🔥 드롭다운 메뉴 스타일 (새 추가)
+   🔥 고유 이름의 모바일 헤더 스타일
    ======================================== */
-.mobile-menu-container {
+
+/* 고유 모바일 헤더 */
+.unique-mobile-header {
+	display: none; /* 기본: 숨김 */
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 60px;
+	background: linear-gradient(135deg, #008080 0%, #006666 100%);
+	color: white;
+	z-index: 2000;
+	box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.unique-header-content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+	height: 100%;
+}
+
+/* ========================================
+   고유 로고 영역
+   ======================================== */
+.unique-header-logo {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 18px;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+	transition: opacity 0.2s;
+}
+
+.unique-header-logo:hover {
+	opacity: 0.8;
+	color: white;
+	text-decoration: none;
+}
+
+.unique-header-logo img {
+	width: 32px;
+	height: 32px;
+	border-radius: 6px;
+}
+
+/* ========================================
+   고유 메뉴 컨테이너
+   ======================================== */
+.unique-menu-wrapper {
 	position: relative;
 }
 
-.mobile-dropdown-toggle {
+.unique-menu-btn {
 	background: none;
 	border: none;
 	color: white;
@@ -101,18 +154,18 @@
 	justify-content: center;
 }
 
-.mobile-dropdown-toggle:hover {
+.unique-menu-btn:hover {
 	background-color: rgba(255, 255, 255, 0.1);
 }
 
-.mobile-dropdown-toggle:active {
+.unique-menu-btn:active {
 	background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* ========================================
-   햄버거 아이콘 애니메이션
+   고유 햄버거 아이콘
    ======================================== */
-.hamburger-icon {
+.unique-hamburger {
 	width: 24px;
 	height: 18px;
 	position: relative;
@@ -121,7 +174,7 @@
 	justify-content: space-between;
 }
 
-.hamburger-icon .line {
+.unique-line {
 	display: block;
 	height: 2px;
 	width: 100%;
@@ -130,23 +183,23 @@
 	transition: all 0.3s ease;
 }
 
-/* 메뉴 열렸을 때 햄버거 → X 변환 */
-.mobile-dropdown-toggle.active .hamburger-icon .line:nth-child(1) {
+/* 고유 햄버거 → X 변환 애니메이션 */
+.unique-menu-btn.unique-active .unique-hamburger .unique-line:nth-child(1) {
 	transform: rotate(45deg) translate(6px, 6px);
 }
 
-.mobile-dropdown-toggle.active .hamburger-icon .line:nth-child(2) {
+.unique-menu-btn.unique-active .unique-hamburger .unique-line:nth-child(2) {
 	opacity: 0;
 }
 
-.mobile-dropdown-toggle.active .hamburger-icon .line:nth-child(3) {
+.unique-menu-btn.unique-active .unique-hamburger .unique-line:nth-child(3) {
 	transform: rotate(-45deg) translate(6px, -6px);
 }
 
 /* ========================================
-   🔥 드롭다운 메뉴
+   🔥 고유 드롭다운 패널
    ======================================== */
-.mobile-dropdown-menu {
+.unique-dropdown-panel {
 	position: absolute;
 	top: 100%;
 	right: 0;
@@ -164,24 +217,24 @@
 	border: 1px solid rgba(0,0,0,0.1);
 }
 
-.mobile-dropdown-menu.active {
+.unique-dropdown-panel.unique-active {
 	opacity: 1;
 	visibility: visible;
 	transform: translateY(0);
 }
 
 /* ========================================
-   🔥 드롭다운 섹션
+   고유 드롭다운 섹션
    ======================================== */
-.dropdown-section {
+.unique-menu-section {
 	padding: 8px 0;
 }
 
-.dropdown-section:not(:last-child) {
+.unique-menu-section:not(:last-child) {
 	border-bottom: 1px solid #eee;
 }
 
-.dropdown-section-title {
+.unique-section-title {
 	padding: 12px 20px 8px;
 	font-size: 12px;
 	font-weight: bold;
@@ -191,9 +244,9 @@
 }
 
 /* ========================================
-   🔥 드롭다운 아이템
+   고유 드롭다운 아이템
    ======================================== */
-.dropdown-item {
+.unique-menu-link {
 	display: flex;
 	align-items: center;
 	padding: 12px 20px;
@@ -203,43 +256,43 @@
 	cursor: pointer;
 }
 
-.dropdown-item:hover {
+.unique-menu-link:hover {
 	background-color: #f8f9fa;
 	color: #333;
 	text-decoration: none;
 }
 
-.dropdown-item:active {
+.unique-menu-link:active {
 	background-color: #e9ecef;
 }
 
-.dropdown-item img {
+.unique-menu-link img {
 	width: 20px;
 	height: 20px;
 	margin-right: 12px;
 	border-radius: 4px;
 }
 
-.dropdown-item span {
+.unique-menu-link span {
 	font-size: 14px;
 	font-weight: 500;
 }
 
-/* 로그아웃 아이템 특별 스타일 */
-.logout-item {
+/* 고유 로그아웃 아이템 특별 스타일 */
+.unique-logout-link {
 	color: #dc3545;
 	border-top: 1px solid #eee;
 }
 
-.logout-item:hover {
+.unique-logout-link:hover {
 	background-color: #fff5f5;
 	color: #dc3545;
 }
 
 /* ========================================
-   🔥 드롭다운 오버레이
+   고유 드롭다운 오버레이
    ======================================== */
-.mobile-dropdown-overlay {
+.unique-menu-overlay {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -252,9 +305,57 @@
 	transition: all 0.3s ease;
 }
 
-.mobile-dropdown-overlay.active {
+.unique-menu-overlay.unique-active {
 	opacity: 1;
 	visibility: visible;
+}
+
+/* ========================================
+   모바일 반응형 (768px 이하에서만 적용)
+   ======================================== */
+@media (max-width: 768px) {
+	/* 고유 모바일 헤더 표시 */
+	.unique-mobile-header {
+		display: block;
+	}
+}
+
+/* ========================================
+   추가 충돌 방지
+   ======================================== */
+.unique-mobile-header *,
+.unique-mobile-header *:before,
+.unique-mobile-header *:after {
+	box-sizing: border-box;
+}
+
+.unique-menu-btn {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+.unique-menu-link {
+	text-decoration: none;
+}
+
+/* 스크롤바 스타일링 */
+.unique-dropdown-panel::-webkit-scrollbar {
+	width: 6px;
+}
+
+.unique-dropdown-panel::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	border-radius: 3px;
+}
+
+.unique-dropdown-panel::-webkit-scrollbar-thumb {
+	background: #c1c1c1;
+	border-radius: 3px;
+}
+
+.unique-dropdown-panel::-webkit-scrollbar-thumb:hover {
+	background: #a8a8a8;
 }
 
 /* ========================================

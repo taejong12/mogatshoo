@@ -55,7 +55,8 @@
                                          class="option-image"
                                          onload="this.style.opacity='1';"
                                          onerror="handleImageError(this);"
-                                         style="opacity: 0; transition: opacity 0.3s ease;">
+                                         style="opacity: 0; transition: opacity 0.3s ease;"
+										 loading="lazy" decoding="async" fetchpriority="high">
                                 </div>
                                 <div class="option-text">옵션 [[${stat.count}]]</div>
                             </div>

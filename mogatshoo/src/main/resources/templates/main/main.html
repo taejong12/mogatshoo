@@ -1,296 +1,331 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      layout:decorate="~{fragments/layout}" th:with="layoutTitle='mogatshoo'">
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{fragments/layout}"
+	th:with="layoutTitle='mogatshoo'">
 
 <head>
-    <style>
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'dalmoori', sans-serif;
-            background-color: #008080;
-            /* overflow-x: hidden; 메인 페이지는 스크롤이 필요할 수 있으므로 제거 */
-        }
+	<style>
+		body,
+		html {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			font-family: 'dalmoori', sans-serif;
+			background-color: #008080;
+			/* overflow-x: hidden; 메인 페이지는 스크롤이 필요할 수 있으므로 제거 */
+		}
 
-        /* 🔥 데스크톱 메인 콘텐츠 (기존 스타일) */
-        .desktop-main-content {
-            display: block;
-        }
+		/* 🔥 데스크톱 메인 콘텐츠 (기존 스타일) */
+		.desktop-main-content {
+			display: block;
+		}
 
-        /* 이메일 박스 스타일 (메인 페이지에만 있음) */
-        .emailBox {
-            background-color: #008080;
-            font-size: 20px;
-            color: aliceblue;
-            position: absolute; /* 메인 페이지의 다른 콘텐츠 위에 위치 */
-            bottom: 20px;
-            right: 10px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            /*z-index를 높여 다른 콘텐츠 위에 보이게 할 수 있음 */
-            z-index: 100;
-        }
+		/* 이메일 박스 스타일 (메인 페이지에만 있음) */
+		.emailBox {
+			background-color: #008080;
+			font-size: 20px;
+			color: aliceblue;
+			position: absolute;
+			/* 메인 페이지의 다른 콘텐츠 위에 위치 */
+			bottom: 20px;
+			right: 10px;
+			padding: 10px 20px;
+			border-radius: 5px;
+			/*z-index를 높여 다른 콘텐츠 위에 보이게 할 수 있음 */
+			z-index: 100;
+		}
 
-        /* 🔥 모바일 전용 앱 그리드 스타일 */
-        .mobile-app-grid {
-            display: none; /* 기본: 숨김 */
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            padding: 20px;
-            background: #f8f9fa;
-            min-height: calc(100vh - 60px); /* 헤더 높이 제외 */
-        }
+		/* 🔥 모바일 전용 앱 그리드 스타일 */
+		.mobile-app-grid {
+			display: none;
+			/* 기본: 숨김 */
+			grid-template-columns: repeat(3, 1fr);
+			/* 기본: 3열 */
+			gap: 15px;
+			padding: 20px;
+			background: #f8f9fa;
+			min-height: calc(100vh - 60px);
+			/* 헤더 높이 제외 */
+		}
 
-        .app-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 10px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            text-decoration: none;
-            color: #333;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
+		.app-card {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding: 20px 10px;
+			background: white;
+			border-radius: 15px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			text-decoration: none;
+			color: #333;
+			transition: all 0.3s ease;
+			cursor: pointer;
+			border: 2px solid transparent;
+		}
 
-        .app-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            border-color: #008080;
-            color: #333;
-            text-decoration: none;
-        }
+		.app-card:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+			border-color: #008080;
+			color: #333;
+			text-decoration: none;
+		}
 
-        .app-card:active {
-            transform: translateY(-1px);
-            background-color: #f0f8ff;
-        }
+		.app-card:active {
+			transform: translateY(-1px);
+			background-color: #f0f8ff;
+		}
 
-        .app-icon {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 8px;
-            border-radius: 12px;
-            background: #008080;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+		.app-icon {
+			width: 48px;
+			height: 48px;
+			margin-bottom: 8px;
+			border-radius: 12px;
+			background: #008080;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 
-        .app-icon img {
-            width: 32px;
-            height: 32px;
-            filter: invert(1); /* 아이콘을 흰색으로 */
-        }
+		.app-icon img {
+			width: 32px;
+			height: 32px;
+			filter: invert(1);
+			/* 아이콘을 흰색으로 */
+		}
 
-        .app-title {
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-            line-height: 1.3;
-            color: #333;
-        }
+		.app-title {
+			font-size: 12px;
+			font-weight: 600;
+			text-align: center;
+			line-height: 1.3;
+			color: #333;
+		}
 
-        /* 🔥 섹션 구분선 */
-        .app-section-divider {
-            grid-column: 1 / -1;
-            height: 2px;
-            background: linear-gradient(to right, transparent, #008080, transparent);
-            margin: 10px 0;
-            border-radius: 1px;
-        }
+		/* 🔥 섹션 구분선 */
+		.app-section-divider {
+			grid-column: 1 / -1;
+			height: 2px;
+			background: linear-gradient(to right, transparent, #008080, transparent);
+			margin: 10px 0;
+			border-radius: 1px;
+		}
 
-        .app-section-title {
-            grid-column: 1 / -1;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: #008080;
-            margin: 10px 0 5px 0;
-            padding: 5px;
-            background: rgba(0, 128, 128, 0.1);
-            border-radius: 8px;
-        }
+		.app-section-title {
+			grid-column: 1 / -1;
+			text-align: center;
+			font-size: 14px;
+			font-weight: bold;
+			color: #008080;
+			margin: 10px 0 5px 0;
+			padding: 5px;
+			background: rgba(0, 128, 128, 0.1);
+			border-radius: 8px;
+		}
 
-        /* 🔥 모바일에서만 앱 그리드 표시, 데스크톱 콘텐츠 숨김 */
-        @media (max-width: 768px) {
-            /* 모바일 앱 그리드 표시 */
-            .mobile-app-grid {
-                display: grid !important;
-            }
+		/* 🔥 내정보 섹션 전용 2열 그리드 */
+		.user-info-section {
+			display: contents;
+			/* 기본 그리드 흐름 유지 */
+		}
 
-            /* 데스크톱 콘텐츠 숨김 */
-            .desktop-main-content {
-                display: none !important;
-            }
-            
-            /* 이메일 박스도 모바일에서 숨김 */
-            .emailBox {
-                display: none !important;
-            }
-        }
-    </style>
+		/* 🔥 모바일에서만 앱 그리드 표시, 데스크톱 콘텐츠 숨김 */
+		@media (max-width: 768px) {
+
+			/* 모바일 앱 그리드 표시 */
+			.mobile-app-grid {
+				display: grid !important;
+			}
+
+			/* 데스크톱 콘텐츠 숨김 */
+			.desktop-main-content {
+				display: none !important;
+			}
+
+			/* 이메일 박스도 모바일에서 숨김 */
+			.emailBox {
+				display: none !important;
+			}
+
+			/* 🔥 내정보 섹션은 2열로 변경 */
+			.user-info-section {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 15px;
+				grid-column: 1 / -1;
+				/* 전체 너비 사용 */
+				margin-top: 10px;
+			}
+
+			/* 내정보 섹션의 제목과 구분선은 2열 전체를 차지 */
+			.user-info-section .app-section-divider {
+				grid-column: 1 / -1;
+			}
+
+			.user-info-section .app-section-title {
+				grid-column: 1 / -1;
+			}
+		}
+
+		/* 🔥 작은 모바일 화면에서는 카드 패딩 조정 */
+		@media (max-width: 480px) {
+			.mobile-app-grid {
+				padding: 15px;
+				gap: 12px;
+			}
+
+			.app-card {
+				padding: 15px 8px;
+			}
+
+			.app-icon {
+				width: 42px;
+				height: 42px;
+				margin-bottom: 6px;
+			}
+
+			.app-icon img {
+				width: 28px;
+				height: 28px;
+			}
+
+			.app-title {
+				font-size: 11px;
+			}
+		}
+	</style>
 </head>
 
 <body>
-    <div layout:fragment="content">
-        
-        <!-- 🔥 모바일 전용 앱 그리드 (모바일에서만 표시) -->
-        <div class="mobile-app-grid" id="mobileAppGrid">
-            
-            <!-- 공통 앱들 -->
-            <div class="app-section-title">메인 서비스</div>
-            
-            <a th:href="@{/fortune/start}" class="app-card">
-                <div class="app-icon">
-                    <img src="/img/icons/computer.png" alt="운세">
-                </div>
-                <div class="app-title">오늘운세</div>
-            </a>
-            
-            <a th:href="@{/hairLossTest/testHair}" class="app-card">
-                <div class="app-icon">
-                    <img src="/img/icons/computer.png" alt="탈모진단">
-                </div>
-                <div class="app-title">탈모진단</div>
-            </a>
-            
-            <a th:href="@{/hospitalMap/hospitals}" class="app-card">
-                <div class="app-icon">
-                    <img src="/img/icons/computer.png" alt="병원지도">
-                </div>
-                <div class="app-title">병원지도</div>
-            </a>
-            
-            <a th:href="@{/point/shop/list}" class="app-card">
-                <div class="app-icon">
-                    <img src="/img/icons/computer.png" alt="포인트샵">
-                </div>
-                <div class="app-title">포인트샵</div>
-            </a>
-            
-            <a th:href="@{/qanda/user}" class="app-card">
-                <div class="app-icon">
-                    <img src="/img/icons/computer.png" alt="Q&A">
-                </div>
-                <div class="app-title">Q & A</div>
-            </a>
-            
-            <a th:href="@{/voting}" class="app-card">
-                <div class="app-icon">
-                    <img src="/img/icons/computer.png" alt="투표">
-                </div>
-                <div class="app-title">투표</div>
-            </a>
+	<div layout:fragment="content">
 
-            <!-- 🔥 비로그인 상태일 때만 표시 -->
-            <div sec:authorize="isAnonymous()">
-                <div class="app-section-divider"></div>
-                <div class="app-section-title">계정</div>
-                
-                <a th:href="@{/member/login}" class="app-card">
-                    <div class="app-icon">
-                        <img src="/img/footer/myInfo.png" alt="로그인">
-                    </div>
-                    <div class="app-title">로그인</div>
-                </a>
-                
-                <a th:href="@{/member/join}" class="app-card">
-                    <div class="app-icon">
-                        <img src="/img/footer/myInfo.png" alt="회원가입">
-                    </div>
-                    <div class="app-title">회원가입</div>
-                </a>
-            </div>
+		<!-- 🔥 모바일 전용 앱 그리드 (모바일에서만 표시) -->
+		<div class="mobile-app-grid" id="mobileAppGrid">
 
-            <!-- 🔥 로그인 상태일 때만 표시 -->
-            <div sec:authorize="isAuthenticated()">
-                <div class="app-section-divider"></div>
-                <div class="app-section-title">내 정보</div>
-                
-                <a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="app-card">
-                    <div class="app-icon">
-                        <img src="/img/footer/myInfo.png" alt="마이페이지">
-                    </div>
-                    <div class="app-title" th:text="${#authentication.principal.nickName} + '님'">마이페이지</div>
-                </a>
-                
-                <a th:href="@{/point/detail/list(memberId=${#authentication.name})}" class="app-card">
-                    <div class="app-icon">
-                        <img src="/img/footer/point.png" alt="포인트">
-                    </div>
-                    <div class="app-title">포인트</div>
-                </a>
-                
-                <a th:href="@{/point/shop/buyList}" class="app-card">
-                    <div class="app-icon">
-                        <img src="/img/footer/point.png" alt="결제 내역">
-                    </div>
-                    <div class="app-title">결제 내역</div>
-                </a>
-                
-                <!-- 로그아웃 앱 -->
-                <div class="app-card" onclick="showMobileLogout()">
-                    <div class="app-icon">
-                        <img src="/img/footer/logout.png" alt="로그아웃">
-                    </div>
-                    <div class="app-title">로그아웃</div>
-                </div>
-            </div>
-        </div>
+			<!-- 공통 앱들 -->
+			<div class="app-section-title">메인 서비스</div>
 
-        <!-- 🔥 기존 데스크톱 메인 콘텐츠 (모바일에서만 숨김) -->
-        <div class="desktop-main-content">
-            <div id="win98Container">
-                <!-- 기존 콘텐츠들을 여기에 추가할 수 있습니다 -->
-                
-               
-                
-                <!-- 기존 이메일 박스 -->
-                <div class="emailBox">
-                    <h2>mogatshoo : itmogatshoo@gmail.com</h2>
-                </div>
-            </div>
-        </div>
+			<a th:href="@{/voting}" class="app-card">
+				<div class="app-icon">
+					<img src="/img/icons/computer.png" alt="투표">
+				</div>
+				<div class="app-title">탈모왕중왕</div>
+			</a>
 
-    </div>
+			<a th:href="@{/hairLossTest/testHair}" class="app-card">
+				<div class="app-icon">
+					<img src="/img/icons/computer.png" alt="탈모진단">
+				</div>
+				<div class="app-title">탈모진단</div>
+			</a>
+			
+			<a th:href="@{/fortune/start}" class="app-card">
+				<div class="app-icon">
+					<img src="/img/icons/computer.png" alt="운세">
+				</div>
+				<div class="app-title">오늘운세</div>
+			</a>
+			
+			<a th:href="@{/hospitalMap/hospitals}" class="app-card">
+				<div class="app-icon">
+					<img src="/img/icons/computer.png" alt="병원지도">
+				</div>
+				<div class="app-title">병원지도</div>
+			</a>
 
-    <!-- 🔥 모바일 전용 스크립트 -->
-    <script>
-        // 모바일 앱 카드 클릭 이벤트 및 로그아웃 처리
-        document.addEventListener('DOMContentLoaded', function() {
-            const appCards = document.querySelectorAll('.app-card');
-            
-            appCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    // 터치 피드백
-                    this.style.transform = 'translateY(0px)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 150);
-                });
-            });
-        });
+			<a th:href="@{/point/shop/list}" class="app-card">
+				<div class="app-icon">
+					<img src="/img/icons/computer.png" alt="포인트샵">
+				</div>
+				<div class="app-title">포인트샵</div>
+			</a>
 
-        // 모바일 로그아웃 함수
-        function showMobileLogout() {
-            // 모바일 헤더의 로그아웃 모달 사용
-            if (typeof showMobileLogoutModal === 'function') {
-                showMobileLogoutModal();
-            } else {
-                // 기본 확인 창
-                if (confirm('정말 로그아웃 하시겠습니까?')) {
-                    window.location.href = '/logout';
-                }
-            }
-        }
-    </script>
+			<a th:href="@{/qanda/user}" class="app-card">
+				<div class="app-icon">
+					<img src="/img/icons/computer.png" alt="Q&A">
+				</div>
+				<div class="app-title">Q & A</div>
+			</a>
+
+			<!-- 🔥 비로그인 상태일 때만 표시 -->
+			<div sec:authorize="isAnonymous()">
+				<div class="app-section-divider"></div>
+				<div class="app-section-title">계정</div>
+
+				<a th:href="@{/member/login}" class="app-card">
+					<div class="app-icon">
+						<img src="/img/footer/myInfo.png" alt="로그인">
+					</div>
+					<div class="app-title">로그인</div>
+				</a>
+
+				<a th:href="@{/member/join}" class="app-card">
+					<div class="app-icon">
+						<img src="/img/footer/myInfo.png" alt="회원가입">
+					</div>
+					<div class="app-title">회원가입</div>
+				</a>
+			</div>
+
+			<!-- 🔥 로그인 상태일 때만 표시 (2열 그리드로 변경) -->
+			<div sec:authorize="isAuthenticated()" class="user-info-section">
+				<div class="app-section-divider"></div>
+				<div class="app-section-title">내 정보</div>
+
+				<a th:href="@{/member/mypage(memberId=${#authentication.name})}" class="app-card">
+					<div class="app-icon">
+						<img src="/img/footer/myInfo.png" alt="마이페이지">
+					</div>
+					<div class="app-title" th:text="${#authentication.principal.nickName} + '님'">마이페이지</div>
+				</a>
+
+				<a th:href="@{/point/detail/list(memberId=${#authentication.name})}" class="app-card">
+					<div class="app-icon">
+						<img src="/img/footer/point.png" alt="포인트">
+					</div>
+					<div class="app-title">포인트</div>
+				</a>
+
+				<a th:href="@{/point/shop/buyList}" class="app-card">
+					<div class="app-icon">
+						<img src="/img/footer/point.png" alt="결제 내역">
+					</div>
+					<div class="app-title">결제 내역</div>
+				</a>
+
+				<!-- 로그아웃 앱 -->
+				<div class="app-card" onclick="showMobileLogout()">
+					<div class="app-icon">
+						<img src="/img/footer/logout.png" alt="로그아웃">
+					</div>
+					<div class="app-title">로그아웃</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 🔥 기존 데스크톱 메인 콘텐츠 (모바일에서만 숨김) -->
+		<div class="desktop-main-content">
+			<div id="win98Container">
+				<!-- 기존 콘텐츠들을 여기에 추가할 수 있습니다 -->
+
+
+
+				<!-- 기존 이메일 박스 -->
+				<div class="emailBox">
+					<h2>mogatshoo : itmogatshoo@gmail.com</h2>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- 🔥 모바일 전용 스크립트 -->
+		<script>
+			function showMobileLogout() {
+				if (confirm('정말 로그아웃 하시겠습니까?')) {
+					window.location.href = '/logout';
+				}
+			}
+		</script>
+	</div>
 </body>
-
 </html>

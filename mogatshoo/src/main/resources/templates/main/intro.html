@@ -46,15 +46,18 @@
         /* 비디오 자체 스타일 */
         .video-bg {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
             object-fit: cover;
             object-position: center;
             /* 모바일 성능 최적화 */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+            -webkit-transform: translate(-50%, -50%) translateZ(0);
+            transform: translate(-50%, -50%) translateZ(0);
             will-change: transform;
         }
 
@@ -130,7 +133,17 @@
         @media (min-width: 769px) {
             .video-bg {
                 display: block;
-                transform: scale(1.01); /* 데스크톱에서 약간 확대해서 경계선 방지 */
+                /* 🔥 원래 방식 복원: 간단하고 확실한 전체화면 */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                min-width: 100%;
+                min-height: 100%;
+                width: auto;
+                height: auto;
+                object-fit: cover;
+                object-position: center;
             }
             
             .mobile-redirect-message {
@@ -234,8 +247,8 @@
         
         <!-- 모바일용 리다이렉트 메시지 -->
         <div class="mobile-redirect-message" id="mobileMessage">
-            <div class="logo">모갓슈</div>
-            <div class="subtitle"><br>메인 페이지로 이동합니다</div>
+            <div class="logo">모갓슈..??</div>
+            <div class="subtitle"><br>바로 메인 페이지로 이동합니다</div>
             <div class="countdown" id="countdown">3초 후 이동...</div>
         </div>
     </div>
@@ -319,23 +332,7 @@
                 }
             }, 6000);
 
-            // 데스크톱 비디오 크기 조정
-            function optimizeVideoForDesktop() {
-                const windowWidth = window.innerWidth;
-                const windowHeight = window.innerHeight;
-                const aspectRatio = 16 / 9;
-                const windowRatio = windowWidth / windowHeight;
-
-                if (windowRatio < aspectRatio) {
-                    video.style.width = '100%';
-                    video.style.height = 'auto';
-                } else {
-                    video.style.width = 'auto';
-                    video.style.height = '100%';
-                }
-            }
-
-            // 화면 리사이즈 처리 (데스크톱 전용)
+            // 🔥 원래 방식으로 복원: 간단한 화면 리사이즈 처리
             function handleResize() {
                 // 리사이즈 중에 모바일 크기가 되면 리다이렉트
                 if (isMobileDevice()) {
@@ -343,11 +340,10 @@
                     window.location.href = redirectUrl;
                     return;
                 }
-                optimizeVideoForDesktop();
+                // 데스크톱에서는 CSS가 알아서 처리하도록 함
             }
 
-            // 이벤트 리스너 등록
-            optimizeVideoForDesktop();
+            // 이벤트 리스너 등록 (단순화)
             window.addEventListener('resize', handleResize);
 
             // 데스크톱에서 자동재생 시도
