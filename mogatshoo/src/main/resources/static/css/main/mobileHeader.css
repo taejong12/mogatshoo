@@ -3,6 +3,9 @@
    ======================================== */
 
 /* 🔥 모바일 전용 헤더 - 데스크톱에서는 완전히 숨김 */
+body {
+	font-family: 'dalmoori', sans-serif;
+}
 .mobile-only-header {
 	display: none; /* 기본: 숨김 */
 	position: fixed;
