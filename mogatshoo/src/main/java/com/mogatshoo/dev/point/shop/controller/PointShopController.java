@@ -67,7 +67,7 @@ public class PointShopController {
 		int currentPage = pointShopPage.getNumber();
 		int totalPages = pointShopPage.getTotalPages();
 
-		int pageBlockSize = 10;
+		int pageBlockSize = 5;
 		int startPage = (currentPage / pageBlockSize) * pageBlockSize;
 		int endPage = Math.min(startPage + pageBlockSize, totalPages);
 
