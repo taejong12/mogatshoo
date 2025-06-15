@@ -560,29 +560,25 @@
 				</div>
 			</div>
 
+			<!-- 페이지네이션 -->
 			<div th:if="${!#lists.isEmpty(pointShopList)}" class="win95-pagination">
 
-				<!-- 이전 화살표 (첫 페이지가 아닐 때만) -->
-				<a th:if="${currentPage > 0}" class="win95-page-btn"
-					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${currentPage - 1})}">
-					◀
+				<!-- 이전 버튼 -->
+				<a th:if="${startPage >= 5}" class="win95-page-btn"
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${startPage - 5})}">
+					◀ 이전
 				</a>
 
-				<!-- 페이지 번호들 (최대 4개) -->
-				<th:block th:with="
-					pageStart=${currentPage - (currentPage % 4)},
-					pageEnd=${#numbers.min(pageStart + 4, totalPages)}
-				">
-					<a class="win95-page-btn" th:each="i : ${#numbers.sequence(pageStart, pageEnd - 1)}"
-						th:classappend="${i} == ${currentPage} ? 'active' : ''"
-						th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
-						th:text="${i + 1}"></a>
-				</th:block>
+				<!-- 페이지 번호 -->
+				<a class="win95-page-btn" th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
+					th:classappend="${i} == ${currentPage} ? 'active' : ''"
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${i})}"
+					th:text="${i + 1}"></a>
 
-				<!-- 다음 화살표 (마지막 페이지가 아닐 때만) -->
-				<a th:if="${currentPage < totalPages - 1}" class="win95-page-btn"
-					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${currentPage + 1})}">
-					▶
+				<!-- 다음 버튼 -->
+				<a th:if="${endPage < totalPages}" class="win95-page-btn"
+					th:href="@{/point/shop/list(pointCategoryId=${selectedCategoryId}, page=${endPage})}">
+					다음 ▶
 				</a>
 			</div>
 		</div>
