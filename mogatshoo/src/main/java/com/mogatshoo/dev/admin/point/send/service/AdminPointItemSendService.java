@@ -11,4 +11,6 @@ public interface AdminPointItemSendService {
 
 	Page<AdminPointItemSendEntity> findByPointItemSendCheck(String pointItemSendCheck, Pageable pageable);
 
+	AdminPointItemSendEntity findById(Long pointOrderHistoryId);
+
 }

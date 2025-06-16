@@ -7,15 +7,17 @@
 <body>
 	<div layout:fragment="content">
 		<!-- 발송, 미발송 체크 -->
-		<form id="sendFilterForm" th:action="@{/admin/point/send/list}"
-			method="get">
-			<select name="sendStatus"
-				onchange="document.getElementById('sendFilterForm').submit()">
-				<option value="" th:selected="${sendStatus == null}">전체</option>
-				<option value="Y" th:selected="${sendStatus == 'Y'}">발송</option>
-				<option value="N" th:selected="${sendStatus == 'N'}">미발송</option>
-			</select>
-		</form>
+		<div class="d-flex justify-content-end mb-3">
+			<form id="sendFilterForm" th:action="@{/admin/point/send/list}"
+				method="get">
+				<select class="form-select w-auto" name="sendStatus"
+					onchange="document.getElementById('sendFilterForm').submit()">
+					<option value="" th:selected="${sendStatus == null}">전체</option>
+					<option value="Y" th:selected="${sendStatus == 'Y'}">발송</option>
+					<option value="N" th:selected="${sendStatus == 'N'}">미발송</option>
+				</select>
+			</form>
+		</div>
 
 		<!-- 포인트 상품 테이블 -->
 		<table class="table table-bordered">
@@ -45,8 +47,9 @@
 					<td
 						th:text="${historyList.pointOrderHistoryUpdate != null ? #temporals.format(historyList.pointOrderHistoryUpdate, 'yyyy-MM-dd HH:mm') : '-'}">발송일</td>
 					<td class="text-center"><a class="btn btn-outline-secondary"
-						th:href="@{/admin/point/send/detail/{id}(id=${historyList.pointOrderHistoryId})}">상세보기</a>
-					</td>
+						th:if="${historyList.pointItemSendCheck == 'N'}"
+						th:href="@{/admin/point/send/item/{id}(id=${historyList.pointOrderHistoryId})}">
+							기프티콘발송</a></td>
 				</tr>
 				<tr th:if="${#lists.isEmpty(pointOrderHistoryList)}">
 					<td colspan="8" class="text-center align-middle">등록된 구매내역이

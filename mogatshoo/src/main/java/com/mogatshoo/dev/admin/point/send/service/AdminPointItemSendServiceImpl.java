@@ -31,12 +31,31 @@ public class AdminPointItemSendServiceImpl implements AdminPointItemSendService 
 			return page;
 		} catch (Exception e) {
 			logger.error("포인트상품 구매내역 전체 조회 중 오류 발생", e);
-			return Page.empty();
+			return Page.empty(pageable); // 페이지 정보 포함해 반환
 		}
 	}
 
 	@Override
 	public Page<AdminPointItemSendEntity> findByPointItemSendCheck(String pointItemSendCheck, Pageable pageable) {
-		return adminPointItemSendRepository.findByPointItemSendCheck(pointItemSendCheck, pageable);
+		try {
+			Page<AdminPointItemSendEntity> page = adminPointItemSendRepository
+					.findByPointItemSendCheck(pointItemSendCheck, pageable);
+			logger.info("발송상태 '{}'에 대한 구매내역 조회 성공: {}건", pointItemSendCheck, page.getTotalElements());
+			return page;
+		} catch (Exception e) {
+			logger.error("발송상태 '{}' 구매내역 조회 중 오류 발생", pointItemSendCheck, e);
+			return Page.empty(pageable); // 빈 페이지 반환 (페이지 정보 유지)
+		}
+	}
+
+	@Override
+	public AdminPointItemSendEntity findById(Long pointOrderHistoryId) {
+		try {
+			return adminPointItemSendRepository.findById(pointOrderHistoryId)
+					.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 구매내역 ID: " + pointOrderHistoryId));
+		} catch (Exception e) {
+			logger.error("구매내역 ID {}에 대한 상세조회 중 오류 발생", pointOrderHistoryId, e);
+			throw e;
+		}
 	}
 }
