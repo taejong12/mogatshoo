@@ -25,7 +25,8 @@ public class PointEntity {
 	@Column(columnDefinition = "int default 0")
 	private Integer point;
 
-	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp ON UPDATE current_timestamp")
+	// 수정일
+	@Column(columnDefinition = "DATETIME")
 	private LocalDateTime pointUpdate;
 
 	// 수정일 자동 설정

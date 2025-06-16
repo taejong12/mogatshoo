@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mogatshoo.dev.admin.point.send.entity.PointItemSendLogEntity;
 import com.mogatshoo.dev.common.mail.service.EmailService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class EmailControllerImpl implements EmailController {
+
 	private static final Logger logger = LoggerFactory.getLogger(EmailControllerImpl.class);
 
 	@Autowired
@@ -115,5 +117,35 @@ public class EmailControllerImpl implements EmailController {
 
 		mailService.findByIdSendEmail(title, memberEntity.getMemberEmail(), html);
 	}
-	
+
+	@Override
+	public void sendGiftImg(PointItemSendLogEntity pointItemSendLogEntity) {
+
+		String title = "🎁 [mogatshoo] 기프티콘 발송 완료 안내";
+		String imgUrl = pointItemSendLogEntity.getImgURL();
+
+		String html = "<!DOCTYPE html>";
+		html += "<html><body style='font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;'>";
+		html += "<div style='max-width: 600px; margin: auto; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 40px;'>";
+
+		html += "<h2 style='color: #2c3e50; text-align: center; margin-bottom: 30px;'>🎁 기프티콘이 도착했습니다!</h2>";
+		html += "<p style='font-size: 16px; color: #444; line-height: 1.6;'>안녕하세요, <strong>mogatshoo</strong>입니다.<br>회원님께서 구매하신 기프티콘을 아래와 같이 보내드립니다.</p>";
+
+		html += "<div style='text-align: center; margin: 30px 0;'>";
+		html += "<img src='" + imgUrl
+				+ "' alt='기프티콘 이미지' style='max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'/>";
+		html += "</div>";
+
+		html += "<p style='font-size: 14px; color: #888;'>※ 본 이메일은 회원님의 요청에 따라 발송되었으며, 개인정보 보호를 위해 외부에 공개되지 않습니다.</p>";
+		html += "<p style='font-size: 14px; color: #999;'>※ 본 메일은 발신 전용입니다. 문의 사항은 <a href='https://mogatshoo.onrender.com/qanda/user' style='color: #3498db; text-decoration: none;'>고객센터</a>를 이용해주세요.</p>";
+
+		html += "<p style='font-size: 14px; color: #555; margin-top: 30px;'>감사합니다.<br><strong>mogatshoo 드림</strong></p>";
+		html += "</div>";
+		html += "</body></html>";
+
+		String email = pointItemSendLogEntity.getMemberEmail();
+
+		mailService.sendGiftImg(title, email, html);
+	}
+
 }

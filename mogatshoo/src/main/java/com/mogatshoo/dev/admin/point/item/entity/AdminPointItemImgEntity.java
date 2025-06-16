@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -34,11 +35,11 @@ public class AdminPointItemImgEntity {
 	private String pointItemImgPath;
 
 	// 등록일
-	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
+	@Column(columnDefinition = "DATETIME", nullable = false)
 	private LocalDateTime pointItemImgCreate;
 
 	// 수정일
-	@Column(insertable = false, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+	@Column(columnDefinition = "DATETIME")
 	private LocalDateTime pointItemImgUpdate;
 
 	// 상품아이디
@@ -46,9 +47,15 @@ public class AdminPointItemImgEntity {
 	private Long pointItemId;
 
 	// 이지미 URL
-	@Column(name="point_item_img_url", nullable = false)
+	@Column(name = "point_item_img_url", nullable = false)
 	private String pointItemImgURL;
-	
+
+	// 생성일 설정
+	@PrePersist
+	protected void onCreate() {
+		this.pointItemImgCreate = LocalDateTime.now();
+	}
+
 	// 수정일 자동 설정
 	@PreUpdate
 	protected void onUpdate() {

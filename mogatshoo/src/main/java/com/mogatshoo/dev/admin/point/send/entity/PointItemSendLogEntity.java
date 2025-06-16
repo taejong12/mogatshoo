@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Getter;
@@ -51,8 +52,8 @@ public class PointItemSendLogEntity {
 	@Column(name = "img_url", nullable = false)
 	private String imgURL;
 
-	// create 발송일
-	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
+	// 등록일
+	@Column(columnDefinition = "DATETIME", nullable = false)
 	private LocalDateTime pointItemSendLogCreate;
 
 	// 구매내역 아이디
@@ -62,5 +63,11 @@ public class PointItemSendLogEntity {
 	// 이미지 파일 임시 저장
 	@Transient
 	private MultipartFile imgFile;
+
+	// 생성일 설정
+	@PrePersist
+	protected void onCreate() {
+		this.pointItemSendLogCreate = LocalDateTime.now();
+	}
 
 }

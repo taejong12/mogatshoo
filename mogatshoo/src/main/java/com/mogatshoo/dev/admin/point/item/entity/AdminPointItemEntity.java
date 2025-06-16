@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -45,11 +46,11 @@ public class AdminPointItemEntity {
 	private Integer pointItemStock;
 
 	// 등록일
-	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
+	@Column(columnDefinition = "DATETIME", nullable = false)
 	private LocalDateTime pointItemCreate;
 
 	// 수정일
-	@Column(insertable = false, updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+	@Column(columnDefinition = "DATETIME")
 	private LocalDateTime pointItemUpdate;
 
 	// 판매여부 (Y/N)
@@ -63,11 +64,17 @@ public class AdminPointItemEntity {
 	// 회원아이디
 	@Column(nullable = false)
 	private String memberId;
-	
+
 	// 이미지 파일
 	@Transient
 	private MultipartFile imgFile;
-	
+
+	// 생성일 설정
+	@PrePersist
+	protected void onCreate() {
+		this.pointItemCreate = LocalDateTime.now();
+	}
+
 	// 수정일 자동 설정
 	@PreUpdate
 	protected void onUpdate() {

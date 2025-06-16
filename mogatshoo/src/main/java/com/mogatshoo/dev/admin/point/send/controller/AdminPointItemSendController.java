@@ -18,6 +18,7 @@ import com.mogatshoo.dev.admin.point.send.entity.AdminPointItemSendEntity;
 import com.mogatshoo.dev.admin.point.send.entity.PointItemSendLogEntity;
 import com.mogatshoo.dev.admin.point.send.service.AdminPointItemSendService;
 import com.mogatshoo.dev.common.mail.controller.EmailController;
+import com.mogatshoo.dev.config.file.FirebaseStorageService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
 
@@ -33,7 +34,10 @@ public class AdminPointItemSendController {
 
 	@Autowired
 	private EmailController emailController;
-	
+
+	@Autowired
+	private FirebaseStorageService firebaseStorageService;
+
 	@GetMapping("/list")
 	public String PointItemSendListPage(@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "sendStatus", required = false) String sendStatus, Model model) {
@@ -87,17 +91,18 @@ public class AdminPointItemSendController {
 
 	@PostMapping("/item")
 	public String sendItem(@ModelAttribute PointItemSendLogEntity pointItemSendLogEntity) {
-		
-		System.out.println("============================pointItemSendLogEntity");
-		System.out.println(pointItemSendLogEntity);
+
 		// 1. 스토리지 이미지 저장
-		
-	
+		pointItemSendLogEntity = firebaseStorageService.saveGiftImg(pointItemSendLogEntity);
+
 		// 2. 이메일 전송
-		//emailController.sendGiftImg();
-		
+		emailController.sendGiftImg(pointItemSendLogEntity);
+
 		// 3. DB 저장 (발송 여부 N -> Y 변경, 발송 로그 저장)
-		
+		Long historyId = pointItemSendLogEntity.getPointOrderHistoryId();
+		adminPointItemSendService.updatePointItemSendCheck(historyId);
+		adminPointItemSendService.saveSendLog(pointItemSendLogEntity);
+
 		return "redirect:/admin/point/send/complete";
 	}
 

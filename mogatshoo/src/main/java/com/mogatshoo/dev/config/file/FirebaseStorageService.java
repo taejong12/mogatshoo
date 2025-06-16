@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemEntity;
 import com.mogatshoo.dev.admin.point.item.entity.AdminPointItemImgEntity;
+import com.mogatshoo.dev.admin.point.send.entity.PointItemSendLogEntity;
 
 @Service
 public class FirebaseStorageService {
@@ -392,27 +394,28 @@ public class FirebaseStorageService {
 			String newFolderPrefix = "point-items/" + newCategoryName + "/";
 
 			// DB 이미지 경로를 빠르게 찾기 위한 Map 구성
-			Map<String, AdminPointItemImgEntity> imgPathMap = 
+			Map<String, AdminPointItemImgEntity> imgPathMap =
 					// 리스트를 하나하나 반복할 수 있게 스트림으로 변경
 					oldImgList.stream()
-					// 스트림을 다른 형태(여기선 Map)으로 변경
-					// Key: imgEntity.getPointItemImgPath()
-					// Value: imgEntity 객체 자체
-					.collect(Collectors.toMap(AdminPointItemImgEntity::getPointItemImgPath, Function.identity()));
+							// 스트림을 다른 형태(여기선 Map)으로 변경
+							// Key: imgEntity.getPointItemImgPath()
+							// Value: imgEntity 객체 자체
+							.collect(Collectors.toMap(AdminPointItemImgEntity::getPointItemImgPath,
+									Function.identity()));
 
 			// 스트림(Stream)이란?
 			// 데이터를 하나씩 흘려보내면서 처리하는 구조
-			
+
 			// collect()란?
 			// 스트림으로 처리한 결과를 List, Set, Map 등 원하는 컬렉션으로 다시 모을 때 사용
 			// 리스트를 스트림으로 변환 -> 결과를 Map으로 모음
-			
+
 			// Collectors.toMap(keyMapper, valueMapper)
 			// keyMapper: 스트림의 각 요소에서 "키"로 사용할 값을 뽑는 함수
 			// valueMapper: 스트림의 각 요소에서 "값"으로 사용할 값을 뽑는 함수
-			
+
 			// Function.identity()는 그냥 그 객체 자체를 뜻함 (x -> x와 같음)
-			
+
 			// 기존 카테고리의 모든 파일 처리
 			storage.list(storageBucket, Storage.BlobListOption.prefix(oldFolderPrefix)).iterateAll().forEach(blob -> {
 				try {
@@ -461,4 +464,52 @@ public class FirebaseStorageService {
 	public Storage getStorage() {
 		return this.storage;
 	}
+
+	// 기프티콘 이미지 저장
+	public PointItemSendLogEntity saveGiftImg(PointItemSendLogEntity pointItemSendLogEntity) {
+		try {
+			if (!isEnabled) {
+				throw new IllegalStateException("Firebase Storage 서비스가 비활성화되어 있습니다.");
+			}
+
+			MultipartFile imgFile = pointItemSendLogEntity.getImgFile();
+
+			if (imgFile == null || imgFile.isEmpty()) {
+				throw new IllegalArgumentException("업로드할 이미지 파일이 없습니다.");
+			}
+
+			String originalFilename = imgFile.getOriginalFilename();
+			if (originalFilename == null || originalFilename.trim().isEmpty()) {
+				throw new IllegalArgumentException("파일 이름이 유효하지 않습니다.");
+			}
+
+			// 파일명 생성
+			String newFileName = UUID.randomUUID().toString() + "_" + originalFilename;
+
+			// 업로드 경로 지정
+			String memberEmail = pointItemSendLogEntity.getMemberEmail();
+			String filePath = "point/item/send/" + memberEmail + "/" + newFileName;
+
+			// Firebase 업로드
+			BlobId blobId = BlobId.of(storageBucket, filePath);
+			BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(imgFile.getContentType()).build();
+
+			storage.create(blobInfo, imgFile.getBytes());
+
+			logger.info("파일 업로드 완료 - 경로: {}", filePath);
+			logger.debug("생성된 파일 URL: {}", getFileUrl(filePath));
+
+			// 엔티티에 정보 설정
+			pointItemSendLogEntity.setImgName(newFileName);
+			pointItemSendLogEntity.setImgPath(filePath);
+			pointItemSendLogEntity.setImgURL(getFileUrl(filePath));
+
+			return pointItemSendLogEntity;
+
+		} catch (Exception e) {
+			logger.error("기프티콘 이미지 업로드 중 오류 발생: {}", e.getMessage(), e);
+			throw new RuntimeException("기프티콘 이미지 업로드에 실패했습니다.", e);
+		}
+	}
+
 }

@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,10 +34,22 @@ public class PointShopCategoryEntity {
 	private Integer pointCategorySortOrder;
 
 	// 등록일
-	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
+	@Column(columnDefinition = "DATETIME", nullable = false)
 	private LocalDateTime pointCategoryCreate;
 
 	// 수정일
-	@Column(insertable = false, updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+	@Column(columnDefinition = "DATETIME")
 	private LocalDateTime pointCategoryUpdate;
+
+	// 생성일 설정
+	@PrePersist
+	protected void onCreate() {
+		this.pointCategoryCreate = LocalDateTime.now();
+	}
+
+	// 수정일 자동 설정
+	@PreUpdate
+	protected void onUpdate() {
+		this.pointCategoryUpdate = LocalDateTime.now();
+	}
 }

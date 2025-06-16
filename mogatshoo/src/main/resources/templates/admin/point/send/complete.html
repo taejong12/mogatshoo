@@ -1,10 +1,58 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/fragments/layout}">
+<head th:with="layoutTitle='발송완료'">
 </head>
 <body>
+	<div layout:fragment="content">
 
+		<div class="col-12 col-md-6">
+			<h1 class="my-4 text-center">발송완료</h1>
+
+			<div class="card shadow-sm mb-5">
+				<div class="card-body">
+
+					<!-- 기프티콘 이미지 -->
+					<div class="mb-4 text-center">
+						<label class="form-label fw-bold">기프티콘 이미지</label>
+						<div>
+							<img th:if="${itemImg != null}"
+								th:src="@{${itemImg.pointItemImgURL}}"
+								class="img-fluid border rounded"
+								style="max-width: 300px; object-fit: contain;" alt="상품 이미지">
+						</div>
+					</div>
+
+					<!-- 상품 정보 목록 -->
+					<div class="mb-3">
+						<label class="form-label fw-bold">상품이름</label>
+						<p class="form-control-plaintext"
+							th:text="${pointItem.pointItemName}">상품이름</p>
+					</div>
+
+					<div>발송수량</div>
+					
+					<div>회원아이디</div>
+					
+					<div>회원이메일</div>
+					
+					<div>발송인</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">발송일</label>
+						<p class="form-control-plaintext"
+							th:text="${pointItem.pointItemCreate}">발송일</p>
+					</div>
+
+					<!-- 버튼 -->
+					<div class="d-flex justify-content-center aling-items-center gap-2">
+						<a class="btn btn-primary" th:href="@{/admin/point/send/list}">
+							목록</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

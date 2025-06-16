@@ -25,16 +25,22 @@ public class AdminPointCategoryEntity {
 	private Integer pointCategorySortOrder;
 
 	// 등록일
-	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
+	@Column(columnDefinition = "DATETIME", nullable = false)
 	private LocalDateTime pointCategoryCreate;
 
 	// 수정일
-	@Column(insertable = false, updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+	@Column(columnDefinition = "DATETIME")
 	private LocalDateTime pointCategoryUpdate;
 
 	// 회원아이디
 	@Column(nullable = false)
 	private String memberId;
+
+	// 생성일 설정
+	@PrePersist
+	protected void onCreate() {
+		this.pointCategoryCreate = LocalDateTime.now();
+	}
 
 	// 수정일 자동 설정
 	@PreUpdate

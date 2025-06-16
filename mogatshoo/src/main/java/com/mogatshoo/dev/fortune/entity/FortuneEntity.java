@@ -1,6 +1,5 @@
 package com.mogatshoo.dev.fortune.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import groovy.transform.ToString;
@@ -9,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -31,12 +31,20 @@ public class FortuneEntity {
 	@Column
 	private String fortuneItem;
 	
-	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
-	private LocalDateTime fortuneCreate;
+	// 등록일
+		@Column(columnDefinition = "DATETIME", nullable = false)
+		private LocalDateTime fortuneCreate;
+
+		// 수정일
+		@Column(columnDefinition = "DATETIME")
+		private LocalDateTime fortuneUpdate;
 	
-	@Column(insertable = false, updatable = true, columnDefinition = "timestamp default current_timestamp ON UPDATE current_timestamp")
-	private LocalDateTime fortuneUpdate;
-	
+		// 생성일 설정
+		@PrePersist
+		protected void onCreate() {
+			this.fortuneCreate = LocalDateTime.now();
+		}
+		
 	// 수정일 자동 설정
 	@PreUpdate
 	protected void onUpdate() {

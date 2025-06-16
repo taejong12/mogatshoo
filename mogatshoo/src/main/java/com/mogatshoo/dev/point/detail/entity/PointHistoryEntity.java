@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,9 +35,17 @@ public class PointHistoryEntity {
 	@Column(nullable = false)
 	private String type;
 
-	@Column(insertable = false, updatable = false, columnDefinition = "timestamp default current_timestamp")
+	// 등록일
+	@Column(columnDefinition = "DATETIME", nullable = false)
 	private LocalDateTime pointCreate;
 
 	@Column(nullable = false)
 	private String memberId;
+
+	// 생성일 설정
+	@PrePersist
+	protected void onCreate() {
+		this.pointCreate = LocalDateTime.now();
+	}
+
 }
