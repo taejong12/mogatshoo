@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.mogatshoo.app",
+    "sha256_cert_fingerprints": ["F6:C8:45:69:81:3F:CD:48:44:40:75:84:01:28:79:1A:A5:06:B8:76:3F:36:90:87:9D:A1:58:96:14:64:4B:0A"]
+  }
+}]
