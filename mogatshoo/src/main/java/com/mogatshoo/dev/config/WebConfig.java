@@ -81,4 +81,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/.well-known/");
        
     }
+    
 }
