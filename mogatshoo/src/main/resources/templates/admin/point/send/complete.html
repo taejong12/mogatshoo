@@ -7,7 +7,7 @@
 <body>
 	<div layout:fragment="content">
 
-		<div class="col-12 col-md-6">
+		<div class="col-12 col-md-6 mx-auto">
 			<h1 class="my-4 text-center">발송완료</h1>
 
 			<div class="card shadow-sm mb-5">
@@ -17,42 +17,49 @@
 					<div class="mb-4 text-center">
 						<label class="form-label fw-bold">기프티콘 이미지</label>
 						<div>
-							<img th:if="${itemImg != null}"
-								th:src="@{${itemImg.pointItemImgURL}}"
+							<img th:src="@{${sendLog.imgURL}}"
 								class="img-fluid border rounded"
 								style="max-width: 300px; object-fit: contain;" alt="상품 이미지">
 						</div>
 					</div>
 
-					<!-- 상품 정보 목록 -->
+					<!-- 정보 목록 -->
 					<div class="mb-3">
 						<label class="form-label fw-bold">상품이름</label>
-						<p class="form-control-plaintext"
-							th:text="${pointItem.pointItemName}">상품이름</p>
+						<p class="form-control-plaintext" th:text="${itemName}">상품이름</p>
 					</div>
 
-					<div>발송수량</div>
-					
-					<div>회원아이디</div>
-					
-					<div>회원이메일</div>
-					
-					<div>발송인</div>
+					<div class="mb-3">
+						<label class="form-label fw-bold">회원아이디</label>
+						<p class="form-control-plaintext" th:text="${sendLog.memberId}">회원아이디</p>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">회원이메일</label>
+						<p class="form-control-plaintext" th:text="${sendLog.memberEmail}">회원이메일</p>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">발송인</label>
+						<p class="form-control-plaintext" th:text="${sendLog.adminId}">발송인</p>
+					</div>
 
 					<div class="mb-3">
 						<label class="form-label fw-bold">발송일</label>
 						<p class="form-control-plaintext"
-							th:text="${pointItem.pointItemCreate}">발송일</p>
+							th:text="${#temporals.format(sendLog.pointItemSendLogCreate, 'yyyy-MM-dd HH:mm')}">발송일</p>
 					</div>
 
 					<!-- 버튼 -->
-					<div class="d-flex justify-content-center aling-items-center gap-2">
+					<div
+						class="d-flex justify-content-center align-items-center gap-2 mt-4">
 						<a class="btn btn-primary" th:href="@{/admin/point/send/list}">
-							목록</a>
+							목록 </a>
 					</div>
 				</div>
 			</div>
 		</div>
+
 	</div>
 </body>
 </html>

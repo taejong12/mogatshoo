@@ -18,4 +18,8 @@ public interface AdminPointItemSendService {
 
 	void saveSendLog(PointItemSendLogEntity pointItemSendLogEntity);
 
+	PointItemSendLogEntity findBySendLogId(Long logId);
+
+	AdminPointItemSendEntity findByHistoryId(Long historyId);
+
 }

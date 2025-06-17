@@ -22,6 +22,8 @@ import com.mogatshoo.dev.config.file.FirebaseStorageService;
 import com.mogatshoo.dev.member.entity.MemberEntity;
 import com.mogatshoo.dev.member.service.MemberService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/admin/point/send")
 public class AdminPointItemSendController {
@@ -90,7 +92,7 @@ public class AdminPointItemSendController {
 	}
 
 	@PostMapping("/item")
-	public String sendItem(@ModelAttribute PointItemSendLogEntity pointItemSendLogEntity) {
+	public String sendItem(@ModelAttribute PointItemSendLogEntity pointItemSendLogEntity, HttpSession session) {
 
 		// 1. 스토리지 이미지 저장
 		pointItemSendLogEntity = firebaseStorageService.saveGiftImg(pointItemSendLogEntity);
@@ -103,11 +105,32 @@ public class AdminPointItemSendController {
 		adminPointItemSendService.updatePointItemSendCheck(historyId);
 		adminPointItemSendService.saveSendLog(pointItemSendLogEntity);
 
+		Long logId = pointItemSendLogEntity.getPointItemSendLogId();
+		System.out.println("==============logId");
+		System.out.println(logId);
+		session.setAttribute("saveLogId", logId);
 		return "redirect:/admin/point/send/complete";
 	}
 
 	@GetMapping("/complete")
-	public String completePage() {
+	public String completePage(HttpSession session, Model model) {
+		Long logId = (Long) session.getAttribute("saveLogId");
+
+		if (logId == null) {
+			// 직접 접근 시 차단
+			return "redirect:/admin/point/send/list";
+		}
+
+		session.removeAttribute("saveLogId");
+
+		PointItemSendLogEntity sendLog = adminPointItemSendService.findBySendLogId(logId);
+
+		Long historyId = sendLog.getPointOrderHistoryId();
+		AdminPointItemSendEntity adminPointItemSendEntity = adminPointItemSendService.findByHistoryId(historyId);
+		String itemName = adminPointItemSendEntity.getPointItemName();
+		
+		model.addAttribute("sendLog", sendLog);
+		model.addAttribute("itemName", itemName);
 		return "admin/point/send/complete";
 	}
 

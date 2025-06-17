@@ -26,7 +26,7 @@ public class AdminPointItemSendServiceImpl implements AdminPointItemSendService 
 
 	@Autowired
 	private PointItemSendLogRepository pointItemSendLogRepository;
-	
+
 	@Autowired
 	private CommonUserName commonUserName;
 
@@ -93,6 +93,38 @@ public class AdminPointItemSendServiceImpl implements AdminPointItemSendService 
 			logger.error("기프티콘 발송 로그 저장 중 오류 발생 - 주문 ID: {}, 수신자 이메일: {}",
 					pointItemSendLogEntity.getPointOrderHistoryId(), pointItemSendLogEntity.getMemberEmail(), e);
 			throw new RuntimeException("기프티콘 발송 로그 저장 중 오류가 발생했습니다.", e);
+		}
+	}
+
+	@Override
+	public PointItemSendLogEntity findBySendLogId(Long logId) {
+		try {
+			PointItemSendLogEntity entity = pointItemSendLogRepository.findById(logId).orElse(null);
+			if (entity != null) {
+				logger.info("기프티콘 발송 로그 조회 성공 - ID: {}", logId);
+			} else {
+				logger.warn("기프티콘 발송 로그 조회 실패 - 존재하지 않음 (ID: {})", logId);
+			}
+			return entity;
+		} catch (Exception e) {
+			logger.error("기프티콘 발송 로그 조회 중 오류 발생 - ID: {}", logId, e);
+			return null;
+		}
+	}
+
+	@Override
+	public AdminPointItemSendEntity findByHistoryId(Long historyId) {
+		try {
+			AdminPointItemSendEntity entity = adminPointItemSendRepository.findById(historyId).orElse(null);
+			if (entity != null) {
+				logger.info("구매내역 조회 성공 - ID: {}", historyId);
+			} else {
+				logger.warn("구매내역 조회 실패 - 존재하지 않음 (ID: {})", historyId);
+			}
+			return entity;
+		} catch (Exception e) {
+			logger.error("구매내역 조회 중 오류 발생 - ID: {}", historyId, e);
+			return null;
 		}
 	}
 }

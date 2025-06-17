@@ -7,12 +7,13 @@
 <body>
 	<div layout:fragment="content">
 
-		<div class="col-12 col-md-6">
+		<div class="col-12 col-md-6 mx-auto">
 			<h1 class="my-4 text-center">상품발송</h1>
 
 			<div class="card shadow-sm mb-5">
 				<div class="card-body">
 					<form name="sendPointItemForm" enctype="multipart/form-data">
+
 						<!-- 기프티콘 이미지 업로드 -->
 						<div class="mb-3">
 							<label for="imgFile" class="form-label">기프티콘 첨부</label> <input
@@ -23,7 +24,7 @@
 									class="img-thumbnail d-none"
 									style="width: 100%; max-width: 600px; height: auto; object-fit: contain;">
 							</div>
-							<div id="imgWarnMsg"></div>
+							<div id="imgWarnMsg" class="form-text text-danger mt-1"></div>
 						</div>
 
 						<!-- 상품 정보 목록 -->
@@ -54,12 +55,12 @@
 						</div>
 
 						<input type="hidden" name="pointOrderHistoryId"
-							th:value="${history.pointOrderHistoryId}">
+							th:value="${history.pointOrderHistoryId}" />
 
 						<!-- 버튼 -->
 						<div
-							class="d-flex justify-content-center aling-items-center gap-2">
-							<button class="btn btn-secondary" type="button"
+							class="d-flex justify-content-center align-items-center gap-2 mt-4">
+							<button class="btn btn-primary" type="button"
 								onclick="fu_sendPointItem()">발송</button>
 							<button class="btn btn-secondary" type="button"
 								onclick="history.back()">취소</button>
@@ -69,11 +70,9 @@
 			</div>
 		</div>
 
-		<!-- 발송버튼 클릭 -->
+		<!-- JS -->
 		<script th:src="@{/js/admin/point/send/item/fu_sendPointItem.js}"></script>
-		<!-- 이미지 미리보기 이벤트 -->
 		<script th:src="@{/js/admin/point/send/item/ev_thumbnailImage.js}"></script>
-		<!-- 경고문구 -->
 		<script th:src="@{/js/common/fu_showWarning.js}"></script>
 	</div>
 </body>

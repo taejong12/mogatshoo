@@ -6,7 +6,8 @@
 </head>
 <body>
 	<div layout:fragment="content">
-		<!-- 발송, 미발송 체크 -->
+
+		<!-- 발송 상태 필터 -->
 		<div class="d-flex justify-content-end mb-3">
 			<form id="sendFilterForm" th:action="@{/admin/point/send/list}"
 				method="get">
@@ -20,70 +21,68 @@
 		</div>
 
 		<!-- 포인트 상품 테이블 -->
-		<table class="table table-bordered">
-			<thead>
-				<tr class="text-center">
-					<th>상품이름</th>
-					<th>구매수량</th>
-					<th>총사용포인트</th>
-					<th>주문상태</th>
-					<th>상품발송확인</th>
-					<th>결제일</th>
-					<th>발송일</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="historyList : ${pointOrderHistoryList}"
-					class="align-middle">
-					<td th:text="${historyList.pointItemName}">상품이름</td>
-					<td th:text="${historyList.pointOrderHistoryQuantity + '개'}">구매수량</td>
-					<td th:text="${historyList.pointOrderHistoryTotalPrice + 'P'}">총사용포인트</td>
-					<td th:text="${historyList.pointOrderHistoryStatus}">주문상태</td>
-					<td
-						th:text="${historyList.pointItemSendCheck == 'Y' ? '발송완료' : '미발송'}">상품발송확인</td>
-					<td
-						th:text="${#temporals.format(historyList.pointOrderHistoryCreate, 'yyyy-MM-dd HH:mm')}">결제일</td>
-					<td
-						th:text="${historyList.pointOrderHistoryUpdate != null ? #temporals.format(historyList.pointOrderHistoryUpdate, 'yyyy-MM-dd HH:mm') : '-'}">발송일</td>
-					<td class="text-center"><a class="btn btn-outline-secondary"
-						th:if="${historyList.pointItemSendCheck == 'N'}"
-						th:href="@{/admin/point/send/item/{id}(id=${historyList.pointOrderHistoryId})}">
-							기프티콘발송</a></td>
-				</tr>
-				<tr th:if="${#lists.isEmpty(pointOrderHistoryList)}">
-					<td colspan="8" class="text-center align-middle">등록된 구매내역이
-						없습니다.</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="table-responsive">
+			<table class="table table-bordered align-middle text-center">
+				<thead class="table-light">
+					<tr>
+						<th>상품이름</th>
+						<th>구매수량</th>
+						<th>총사용포인트</th>
+						<th>주문상태</th>
+						<th>상품발송확인</th>
+						<th>결제일</th>
+						<th>발송일</th>
+						<th>관리</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="historyList : ${pointOrderHistoryList}">
+						<td th:text="${historyList.pointItemName}">상품이름</td>
+						<td th:text="${historyList.pointOrderHistoryQuantity + '개'}">구매수량</td>
+						<td th:text="${historyList.pointOrderHistoryTotalPrice + 'P'}">총사용포인트</td>
+						<td th:text="${historyList.pointOrderHistoryStatus}">주문상태</td>
+						<td
+							th:text="${historyList.pointItemSendCheck == 'Y' ? '발송완료' : '미발송'}">상품발송확인</td>
+						<td
+							th:text="${#temporals.format(historyList.pointOrderHistoryCreate, 'yyyy-MM-dd HH:mm')}">결제일</td>
+						<td
+							th:text="${historyList.pointOrderHistoryUpdate != null ? #temporals.format(historyList.pointOrderHistoryUpdate, 'yyyy-MM-dd HH:mm') : '-'}">발송일</td>
+						<td><a class="btn btn-outline-primary btn-sm"
+							th:if="${historyList.pointItemSendCheck == 'N'}"
+							th:href="@{/admin/point/send/item/{id}(id=${historyList.pointOrderHistoryId})}">
+								기프티콘 발송 </a></td>
+					</tr>
+					<tr th:if="${#lists.isEmpty(pointOrderHistoryList)}">
+						<td colspan="8" class="text-center">등록된 구매내역이 없습니다.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 
 		<!-- 페이지네이션 -->
 		<nav th:if="${!#lists.isEmpty(pointOrderHistoryList)}"
 			aria-label="Page navigation">
-			<ul class="pagination justify-content-center">
+			<ul class="pagination justify-content-center mt-4">
 
-				<!-- 이전 버튼: startPage가 10 이상일 때만 보임 -->
+				<!-- 이전 -->
 				<li class="page-item" th:if="${startPage >= 10}"><a
 					class="page-link"
 					th:href="@{/admin/point/send/list(page=${startPage - 10}, sendStatus=${sendStatus})}"
-					aria-label="Previous"> <span aria-hidden="true">&laquo;이전</span>
-				</a></li>
+					aria-label="Previous"> &laquo; 이전 </a></li>
 
-				<!-- 페이지 번호 -->
+				<!-- 번호 -->
 				<li class="page-item"
 					th:each="i : ${#numbers.sequence(startPage, endPage - 1)}"
-					th:classappend="${i} == ${currentPage} ? ' active' : ''"><a
+					th:classappend="${i} == ${currentPage} ? 'active' : ''"><a
 					class="page-link"
 					th:href="@{/admin/point/send/list(page=${i}, sendStatus=${sendStatus})}"
-					th:text="${i + 1}"> </a></li>
+					th:text="${i + 1}"></a></li>
 
-				<!-- 다음 버튼: endPage가 totalPages보다 작을 때만 보임 -->
+				<!-- 다음 -->
 				<li class="page-item" th:if="${endPage < totalPages}"><a
 					class="page-link"
 					th:href="@{/admin/point/send/list(page=${endPage}, sendStatus=${sendStatus})}"
-					aria-label="Next"> <span aria-hidden="true">다음 &raquo;</span>
-				</a></li>
+					aria-label="Next"> 다음 &raquo; </a></li>
 
 			</ul>
 		</nav>
