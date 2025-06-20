@@ -5,6 +5,13 @@
 <head th:with="layoutTitle='회원가입'">
 	<link rel="stylesheet" th:href="@{/css/member/join.css}">
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<meta http-equiv="Content-Security-Policy" content="
+	        default-src 'self';
+	        script-src 'self' 'unsafe-inline' 'unsafe-eval' t1.daumcdn.net ssl.daumcdn.net;
+	        frame-src 'self' postcode.map.daum.net;
+	        connect-src 'self' postcode.map.daum.net;
+	        img-src 'self' data: *;
+	        style-src 'self' 'unsafe-inline';">
 </head>
 
 <body>

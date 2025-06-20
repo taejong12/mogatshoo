@@ -782,9 +782,9 @@ div[class*="postcode"],
     div[id^="layer_postcode"] iframe,
     div[class*="postcode"] iframe,
     .postcode-layer iframe {
-        width: 95% !important;
-        height: 85% !important;
-        max-width: 400px !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 740px !important;
         border: 2px solid #fff !important;
         border-radius: 8px !important;
         box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
@@ -801,9 +801,6 @@ div[class*="postcode"],
     div[class*="postcode"] button,
     .postcode-layer button {
         font-size: 18px !important;
-        padding: 12px !important;
-        min-width: 44px !important;
-        min-height: 44px !important;
         touch-action: manipulation !important;
     }
     
