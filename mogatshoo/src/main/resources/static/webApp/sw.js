@@ -11,7 +11,8 @@ const urlsToCache = [
 const DAUM_DOMAINS = [
     't1.daumcdn.net',
     'ssl.daumcdn.net', 
-    'postcode.map.daum.net'
+    'postcode.map.daum.net',
+	'postcode-search.map.daum.net' 
 ];
 
 // 서비스 워커 설치
