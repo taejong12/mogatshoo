@@ -146,36 +146,6 @@
 				</div>
 			</div>
 		</div>
-		<div id="debug-info" style="position:fixed; top:0; left:0; background:red; color:white; z-index:9999; padding:10px; font-size:12px;"></div>
-
-		<script>
-		function showDebugInfo(message) {
-		    const debugDiv = document.getElementById('debug-info');
-		    debugDiv.innerHTML += message + '<br>';
-		}
-
-		// 다음 스크립트 로드 상태 확인
-		window.addEventListener('load', function() {
-		    showDebugInfo('페이지 로드 완료');
-		    showDebugInfo('daum 객체: ' + (typeof daum));
-		    showDebugInfo('User Agent: ' + navigator.userAgent.substring(0, 50));
-		});
-
-		// 에러 감지
-		window.addEventListener('error', function(e) {
-		    showDebugInfo('에러: ' + e.message);
-		});
-		</script>
-		<!-- 스크립트 태그에 onload 이벤트 추가 -->
-		<script 
-		    src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
-		    onload="alert('다음 스크립트 로드 성공!')"
-		    onerror="alert('다음 스크립트 로드 실패!')">
-		</script>
-		
-		
-		
-
 		<script type="text/javascript">
 			let idCheck = false;
 			let nickNameCheck = false;
