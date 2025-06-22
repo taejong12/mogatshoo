@@ -1,141 +1,183 @@
-function fu_addrSearch(){
-    // 기존 오버레이가 있다면 제거
-    const existingOverlay = document.querySelector('[id*="postcode"]');
-    if (existingOverlay && existingOverlay.parentNode) {
-        document.body.removeChild(existingOverlay.parentNode);
+function fu_addrSearch() {
+    // PWA 환경인지 확인
+    const isPWA = window.navigator.standalone === true || 
+                  window.matchMedia('(display-mode: standalone)').matches ||
+                  document.referrer.includes('android-app://');
+    
+    console.log('PWA 환경:', isPWA);
+    
+    // 다음 스크립트가 로드되어 있는지 확인
+    if (typeof daum === 'undefined' || !daum.Postcode) {
+        if (isPWA) {
+            // PWA에서 스크립트 재로딩 시도
+            loadDaumScriptForPWA();
+        } else {
+            alert('주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+        }
+        return;
     }
     
-    // 팝업스러운 모달 레이어 생성
+    // PWA에서는 embed 방식, 웹에서는 기존 방식
+    if (isPWA) {
+        openPostcodeForPWA();
+    } else {
+        openPostcodeForWeb();
+    }
+}
+
+// PWA용 스크립트 재로딩
+function loadDaumScriptForPWA() {
+    console.log('PWA용 다음 스크립트 재로딩 시작');
+    
+    const script = document.createElement('script');
+    script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    script.crossOrigin = 'anonymous';
+    
+    script.onload = function() {
+        console.log('PWA 스크립트 로드 성공');
+        openPostcodeForPWA();
+    };
+    
+    script.onerror = function() {
+        console.error('PWA 스크립트 로드 실패');
+        alert('주소 검색 서비스에 연결할 수 없습니다. 네트워크 상태를 확인해주세요.');
+    };
+    
+    document.head.appendChild(script);
+}
+
+// PWA용 embed 방식
+function openPostcodeForPWA() {
+    console.log('PWA용 주소찾기 실행');
+    
+    // 기존 모달 제거
+    const existing = document.getElementById('pwa-postcode-modal');
+    if (existing) existing.remove();
+    
+    // PWA용 모달 생성
     const overlay = document.createElement('div');
+    overlay.id = 'pwa-postcode-modal';
     overlay.style.cssText = `
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 9998;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 999999;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 20px;
-        box-sizing: border-box;
+        padding: 10px;
     `;
     
-    const layer = document.createElement('div');
-    layer.id = 'postcode-layer';
-    layer.style.cssText = `
+    const modal = document.createElement('div');
+    modal.style.cssText = `
         background: white;
-        border: 2px solid #c0c0c0;
-        border-radius: 0;
-        box-shadow: 2px 2px 0px #808080, 4px 4px 0px #404040;
-        width: 100%;
-        max-width: 740px;
+        border-radius: 8px;
+        width: 95%;
+        max-width: 500px;
         height: 90%;
-        max-height: 700px;
+        max-height: 600px;
         display: flex;
         flex-direction: column;
-        position: relative;
-        
-        /* 모바일에서는 전체화면 */
-        @media (max-width: 768px) {
-            width: 100%;
-            height: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 0;
-        }
+        overflow: hidden;
     `;
     
-    // 헤더 생성 (Windows95 타이틀바 스타일)
     const header = document.createElement('div');
     header.style.cssText = `
+        background: #4CAF50;
+        color: white;
+        padding: 15px;
+        font-weight: bold;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 2px 4px;
-        background: linear-gradient(90deg, #0000ff 0%, #0080ff 100%);
-        color: white;
-        font-weight: bold;
-        font-size: 11px;
-        height: 20px;
-        box-sizing: border-box;
     `;
     
-    const title = document.createElement('span');
-    title.textContent = '주소 검색';
-    title.style.cssText = 'padding-left: 2px;';
-    header.appendChild(title);
-    
-    // Windows95 스타일 닫기 버튼
-    const closeBtn = document.createElement('button');
-    closeBtn.innerHTML = '×';
-    closeBtn.style.cssText = `
-        width: 16px;
-        height: 16px;
-        background: #c0c0c0;
-        border: 1px outset #c0c0c0;
-        font-size: 12px;
-        font-weight: bold;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: black;
-        box-sizing: border-box;
+    header.innerHTML = `
+        <span>주소 검색</span>
+        <button onclick="document.getElementById('pwa-postcode-modal').remove()" 
+                style="background: transparent; border: none; color: white; font-size: 20px; cursor: pointer;">✕</button>
     `;
-    closeBtn.onclick = function() {
-        document.body.removeChild(overlay);
-    };
-    closeBtn.onmousedown = function() {
-        this.style.border = '1px inset #c0c0c0';
-    };
-    closeBtn.onmouseup = function() {
-        this.style.border = '1px outset #c0c0c0';
-    };
-    header.appendChild(closeBtn);
     
-    // 주소검색 영역
-    const postcodeArea = document.createElement('div');
-    postcodeArea.style.cssText = `
+    const container = document.createElement('div');
+    container.style.cssText = `
         flex: 1;
         width: 100%;
-        height: calc(100% - 24px);
-        border: 1px inset #c0c0c0;
-        margin: 1px;
-        box-sizing: border-box;
     `;
     
-    overlay.appendChild(layer);
-    layer.appendChild(header);
-    layer.appendChild(postcodeArea);
+    modal.appendChild(header);
+    modal.appendChild(container);
+    overlay.appendChild(modal);
     document.body.appendChild(overlay);
     
-    // 오버레이 클릭 시 닫기 (모달 바깥쪽 클릭)
-    overlay.onclick = function(e) {
-        if (e.target === overlay) {
-            document.body.removeChild(overlay);
+    // PWA용 CSS 강제 적용 (크기 꽉 차게)
+    const style = document.createElement('style');
+    style.textContent = `
+        #pwa-postcode-modal iframe {
+            width: 100% !important;
+            height: 100% !important;
+            min-width: 100% !important;
+            min-height: 100% !important;
+            border: none !important;
         }
-    };
+        #pwa-postcode-modal div[id*="__daum__layer"] {
+            width: 100% !important;
+            height: 100% !important;
+            min-width: 100% !important;
+            min-height: 100% !important;
+        }
+    `;
+    document.head.appendChild(style);
     
-    // 다음주소 embed 방식으로 실행
-    new daum.Postcode({
-        oncomplete: function(data) {
-            // 주소 정보 입력
-            document.getElementById('memberZipcode').value = data.zonecode;
-            document.getElementById("memberAddress1").value = data.roadAddress;
-            
-            // 상세주소 입력란으로 포커스 이동
-            document.getElementById('memberAddress2').focus();
-            
-            // 레이어 닫기
-            document.body.removeChild(overlay);
-        },
-        onresize: function(size) {
-            // 모바일에서 키보드가 올라올 때 대응
-            postcodeArea.style.height = size.height + 'px';
-        },
-        width: '100%',
-        height: '100%'
-    }).embed(postcodeArea);
+    // 다음 주소찾기 embed (새로고침 로직 제거)
+    try {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                console.log('PWA 주소 선택:', data);
+                
+                document.getElementById('memberZipcode').value = data.zonecode;
+                document.getElementById('memberAddress1').value = data.roadAddress;
+                document.getElementById('memberAddress2').focus();
+                
+                overlay.remove();
+            },
+            onclose: function(state) {
+                if (state === 'FORCE_CLOSE') {
+                    overlay.remove();
+                }
+            },
+            width: '100%',
+            height: '100%'
+        }).embed(container);
+        
+    } catch (error) {
+        console.error('PWA 주소찾기 오류:', error);
+        alert('주소 검색 중 오류가 발생했습니다.');
+        overlay.remove();
+    }
+}
+
+// 웹용 기존 방식
+function openPostcodeForWeb() {
+    console.log('웹용 주소찾기 실행');
+    
+    try {
+        // 기존 팝업 방식 (웹에서는 정상 작동)
+        new daum.Postcode({
+            oncomplete: function(data) {
+                console.log('웹 주소 선택:', data);
+                
+                document.getElementById('memberZipcode').value = data.zonecode;
+                document.getElementById('memberAddress1').value = data.roadAddress;
+                document.getElementById('memberAddress2').focus();
+            }
+        }).open();
+        
+    } catch (error) {
+        console.error('웹 주소찾기 오류:', error);
+        // 웹에서도 실패하면 embed 방식으로 폴백
+        openPostcodeForPWA();
+    }
 }
