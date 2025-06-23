@@ -117,7 +117,7 @@
 
 ## 🤝 기여자
 ### 종로 itkgbank 핀테그 풀스텍 수강자 
-- 서하나 : [노션 포트폴리오](https://www.notion.so/1b9db822a28e801eb04af2f96ab48d5a)
+- 서하나 : [React포트폴리오](https://hana-dev-portfolio.netlify.app/)
 - 최승필 : [노션 포트폴리오](https://www.notion.so/1e3c0872a5f880ac8e10e228219cd836?pvs=4)
 - 유태종 : [깃허브](https://github.com/taejong12)
 
