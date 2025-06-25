@@ -29,7 +29,7 @@
 
 ## 🛠️ 기술 스택
 ### Database ERD 
-미정
+[ERD](https://www.erdcloud.com/d/QPfut7HAB26ifiSkb)
 
 
 ## 프로젝트 소개
