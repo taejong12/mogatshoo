@@ -72,7 +72,7 @@ public class SecurityConfig {
 
 						// 관리자만 접근 가능
 						.requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
-						.requestMatchers(new AntPathRequestMatcher("/qanda/**")).hasRole("ADMIN")
+						.requestMatchers(new AntPathRequestMatcher("/qanda/admin")).hasRole("ADMIN")
 						// 그 외 모든 요청은 인증 필요(로그인)
 						.anyRequest().authenticated())
 
