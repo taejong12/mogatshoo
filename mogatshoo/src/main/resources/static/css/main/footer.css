@@ -481,6 +481,73 @@
 	background-color: #d4d4d4;
 }
 
+/* footer.css에 추가할 CSS */
+
+/* 기본 iframe 윈도우 스타일 (데스크톱) */
+#win95Window {
+    position: fixed !important;
+    width: 1300px !important;
+    height: 580px !important;
+    left: 150px !important;
+    top: 50px !important;
+    z-index: 1000 !important;
+    transform: none !important;
+    transition: all 0.1s ease !important;
+}
+
+#windowContentFrame {
+    width: 1300px !important;
+    height: 580px !important;
+    border: none !important;
+    transition: all 0.1s ease !important;
+}
+
+/* 768px 이하에서 전체 화면으로 변경 */
+@media (max-width: 768px) {
+    #win95Window {
+        width: 100vw !important;
+        height: 100vh !important;
+        left: 0px !important;
+        top: 0px !important;
+        transform: none !important;
+    }
+    
+    #windowContentFrame {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
+
+/* 좀 더 세밀한 반응형 */
+@media (max-width: 1024px) and (min-width: 769px) {
+    #win95Window {
+        width: 95vw !important;
+        height: 90vh !important;
+        left: 2.5vw !important;
+        top: 5vh !important;
+    }
+    
+    #windowContentFrame {
+        width: calc(95vw - 20px) !important;
+        height: calc(90vh - 40px) !important;
+    }
+}
+
+/* 매우 작은 화면 */
+@media (max-width: 480px) {
+    #win95Window {
+        width: 100vw !important;
+        height: 100vh !important;
+        left: 0px !important;
+        top: 0px !important;
+    }
+    
+    #windowContentFrame {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
+
 @media (max-width: 480px) {
 	.footer {
 			display: none !important;

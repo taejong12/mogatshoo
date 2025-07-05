@@ -529,3 +529,30 @@ window.addEventListener('resize', () => {
 		console.log('🖥️ 데스크톱 모드로 전환 - 푸터 표시');
 	}
 });
+
+// footer.js에서 기존 openFooterInIframe 함수를 이것으로 교체
+
+// 🔥 초간단 버전 - CSS가 알아서 처리하게 함
+function openFooterInIframe(file, title) {
+    console.log('🚀 초간단 iframe 열기:', file, title);
+    
+    // 윈도우 제목 설정
+    $('.win95-title-text').text(title);
+    
+    // 윈도우 보이기 (CSS가 크기 알아서 처리)
+    $('#win95Window').show();
+    
+    // iframe 소스 설정
+    $('#windowContentFrame').attr('src', file);
+    
+    console.log('✅ 완료 - CSS가 반응형 처리함');
+}
+
+// 🔥 기존 복잡한 adjustWindowSize 함수들 모두 삭제하고
+// 이것만 남겨두세요
+$(document).ready(function() {
+    console.log('📱🖥️ CSS 반응형 iframe 준비완료');
+    
+    // resize 이벤트도 필요 없음 - CSS가 알아서 처리
+    console.log('🎯 모든 크기 조정은 CSS가 담당');
+});
