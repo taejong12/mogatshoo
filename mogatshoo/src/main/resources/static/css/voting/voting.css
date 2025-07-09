@@ -1,59 +1,48 @@
-/* 기본 스타일 리셋 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* 투표 페이지 전용 CSS - 스코핑 적용 */
+/* 모든 스타일을 .voting-page 클래스 하위에만 적용 */
 
-html, body {
-    height: auto !important;
-    min-height: 100vh !important;
-    margin: 0;
-    padding: 0;
+/* 투표 페이지 컨테이너에만 적용되는 기본 스타일 */
+.voting-page {
     background-color: #c0c0c0;
     font-family: 'dalmoori', 'MS Sans Serif', sans-serif;
     font-size: 15px;
     color: #000000;
-    overflow-x: hidden;
-    overflow-y: auto !important; /* 🔥 body에만 스크롤 허용 */
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
-/* 🔥 기존 레이아웃 클래스 오버라이드 */
-.win95-content {
-    background-color: #c0c0c0 !important;
-    height: auto !important; /* 고정 높이 제거 */
-    max-height: 100vh !important;
-    overflow: visible !important; /* hidden 해제 */
-    border: 1px inset #a0a0a0 !important;
+/* 투표 페이지 내부 요소들의 기본 리셋 */
+.voting-page * {
+    box-sizing: border-box;
 }
 
-/* 🔥 스크롤 문제 해결 - 메인 컨테이너 */
-.vote-container {
-    background-color: var(--win95-gray);
-    border: 2px outset var(--win95-gray);
+/* 투표 컨테이너 */
+.voting-page .vote-container {
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     width: 100%;
     max-width: 1300px;
-    min-height: 100vh !important;
-    height: auto !important; /* 고정 높이 제거 */
+    min-height: 100vh;
+    height: auto;
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: visible !important; /* 🔥 컨테이너 스크롤 제거 */
+    overflow: visible;
     margin: 0 auto;
 }
 
-/* 🔥 레이아웃 관련 요소들의 overflow 설정 */
-#vote-content {
-    min-height: 100vh !important;
-    height: auto !important; /* 고정 높이 제거 */
+/* 투표 컨텐츠 */
+.voting-page #vote-content {
+    min-height: 100vh;
+    height: auto;
     padding: 10px;
     background-color: #c0c0c0;
-    overflow: visible !important; /* 🔥 스크롤 제거 */
+    overflow: visible;
 }
 
 /* 시작 화면 스타일 - 윈도우 95 다이얼로그 박스 */
-.start-section {
+.voting-page .start-section {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -68,7 +57,7 @@ html, body {
     z-index: 100;
 }
 
-.start-section::before {
+.voting-page .start-section::before {
     content: "";
     display: block;
     height: 20px;
@@ -77,7 +66,7 @@ html, body {
     position: relative;
 }
 
-.start-section::after {
+.voting-page .start-section::after {
     content: "투표 시스템";
     position: absolute;
     top: 2px;
@@ -88,7 +77,7 @@ html, body {
     line-height: 16px;
 }
 
-.start-section h1 {
+.voting-page .start-section h1 {
     color: #000080;
     font-size: 24px;
     margin: 20px 0 15px 0;
@@ -97,7 +86,7 @@ html, body {
     text-shadow: 1px 1px 0px #ffffff;
 }
 
-.start-section p {
+.voting-page .start-section p {
     color: #000000;
     font-size: 16px;
     margin-bottom: 25px;
@@ -105,7 +94,7 @@ html, body {
     padding: 0 20px;
 }
 
-.start-btn {
+.voting-page .start-btn {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     border-radius: 0;
@@ -119,17 +108,17 @@ html, body {
     box-shadow: none;
 }
 
-.start-btn:hover {
+.voting-page .start-btn:hover {
     background-color: #d4d0c8;
     border: 2px outset #d4d0c8;
 }
 
-.start-btn:active {
+.voting-page .start-btn:active {
     border: 2px inset #c0c0c0;
     background-color: #a0a0a0;
 }
 
-.vote-instructions {
+.voting-page .vote-instructions {
     color: #000000;
     font-size: 16px;
     text-align: center;
@@ -138,7 +127,7 @@ html, body {
 }
 
 /* 질문 컨테이너 - 윈도우 95 텍스트 영역 */
-.question-container {
+.voting-page .question-container {
     background-color: #ffffff;
     border: 2px inset #c0c0c0;
     border-radius: 0;
@@ -147,7 +136,7 @@ html, body {
     box-shadow: none;
 }
 
-.question-text {
+.voting-page .question-text {
     font-size: 18px;
     margin-bottom: 12px;
     color: #000000;
@@ -156,23 +145,23 @@ html, body {
     font-family: 'dalmoori', sans-serif;
 }
 
-.question-serial {
+.voting-page .question-serial {
     font-size: 15px;
     color: #000080;
     font-weight: normal;
     margin-bottom: 0;
 }
 
-/* 🔥 투표 옵션 그리드 - 스크롤 문제 해결 */
-.options-container {
+/* 투표 옵션 그리드 */
+.voting-page .options-container {
     margin: 15px 0;
     background-color: #c0c0c0;
     border: 2px inset #c0c0c0;
     padding: 12px;
-    overflow: visible; /* 🔥 옵션 컨테이너 스크롤 제거 */
+    overflow: visible;
 }
 
-.options-grid {
+.voting-page .options-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 12px;
@@ -180,12 +169,12 @@ html, body {
     overflow: visible;
 }
 
-.option-item {
+.voting-page .option-item {
     display: flex;
     flex-direction: column;
 }
 
-.picture-option {
+.voting-page .picture-option {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     border-radius: 0;
@@ -197,18 +186,18 @@ html, body {
     height: 100%;
 }
 
-.picture-option:hover {
+.voting-page .picture-option:hover {
     background-color: #d4d0c8;
     border: 2px outset #d4d0c8;
 }
 
-.picture-option:active,
-.picture-option.selected {
+.voting-page .picture-option:active,
+.voting-page .picture-option.selected {
     border: 2px inset #c0c0c0;
     background-color: #a0a0a0;
 }
 
-.pic-container {
+.voting-page .pic-container {
     flex: 1;
     display: flex;
     align-items: center;
@@ -220,28 +209,27 @@ html, body {
     margin: 4px;
 }
 
-/* 🔥 이미지 로딩 최적화 */
-.option-image {
+/* 이미지 로딩 최적화 */
+.voting-page .option-image {
     max-width: 100%;
     max-height: 200px;
     object-fit: cover;
     border: 1px solid #808080;
     transition: opacity 0.3s ease;
-    loading: lazy;
     width: auto;
     height: auto;
     image-rendering: auto;
     image-rendering: optimizeQuality;
 }
 
-.option-image:not([src]) {
+.voting-page .option-image:not([src]) {
     background-color: #f0f0f0;
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='%23999' font-size='12'%3E로딩중...%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.option-text {
+.voting-page .option-text {
     background-color: #c0c0c0;
     color: #000000;
     padding: 12px;
@@ -253,15 +241,15 @@ html, body {
 }
 
 /* 투표 완료 메시지 - 윈도우 95 메시지박스 */
-.vote-complete-container {
+.voting-page .vote-complete-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: visible; /* 🔥 완료 컨테이너 스크롤 제거 */
+    overflow: visible;
 }
 
-.complete-message {
+.voting-page .complete-message {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     border-radius: 0;
@@ -272,7 +260,7 @@ html, body {
     position: relative;
 }
 
-.complete-message::before {
+.voting-page .complete-message::before {
     content: "";
     display: block;
     height: 20px;
@@ -280,7 +268,7 @@ html, body {
     margin: 0;
 }
 
-.complete-message::after {
+.voting-page .complete-message::after {
     content: "완료";
     position: absolute;
     top: 2px;
@@ -291,13 +279,13 @@ html, body {
     line-height: 16px;
 }
 
-.complete-message .icon {
+.voting-page .complete-message .icon {
     font-size: 48px;
     margin: 20px 0 15px 0;
     color: #000080;
 }
 
-.complete-message h3 {
+.voting-page .complete-message h3 {
     color: #000080;
     margin-bottom: 12px;
     font-size: 20px;
@@ -305,7 +293,7 @@ html, body {
     text-shadow: 1px 1px 0px #ffffff;
 }
 
-.complete-message p {
+.voting-page .complete-message p {
     color: #000000;
     font-size: 16px;
     line-height: 1.5;
@@ -314,7 +302,7 @@ html, body {
 }
 
 /* 버튼 스타일 - 윈도우 95 버튼 */
-.btn-group {
+.voting-page .btn-group {
     display: flex;
     gap: 8px;
     justify-content: center;
@@ -323,7 +311,7 @@ html, body {
     padding: 0 15px 15px 15px;
 }
 
-.btn {
+.voting-page .btn {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     border-radius: 0;
@@ -339,44 +327,44 @@ html, body {
     font-weight: normal;
 }
 
-.btn:hover {
+.voting-page .btn:hover {
     background-color: #d4d0c8;
     border: 2px outset #d4d0c8;
     color: #000000;
     text-decoration: none;
 }
 
-.btn:active {
+.voting-page .btn:active {
     border: 2px inset #c0c0c0;
     background-color: #a0a0a0;
 }
 
-.btn-primary {
+.voting-page .btn-primary {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     color: #000000;
 }
 
-.btn-secondary {
+.voting-page .btn-secondary {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     color: #000000;
 }
 
-.btn-confirm {
+.voting-page .btn-confirm {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     color: #000000;
 }
 
-.btn-cancel {
+.voting-page .btn-cancel {
     background-color: #c0c0c0;
     border: 2px outset #c0c0c0;
     color: #000000;
 }
 
 /* 투표 확인 모달 - 윈도우 95 다이얼로그 */
-.vote-modal {
+.voting-page .vote-modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -385,10 +373,10 @@ html, body {
     width: 100%;
     height: 100%;
     background-color: rgba(192, 192, 192, 0.7);
-    overflow-y: auto; /* 🔥 모달만 스크롤 허용 */
+    overflow-y: auto;
 }
 
-.modal-content {
+.voting-page .modal-content {
     background-color: #c0c0c0;
     margin: 10% auto;
     border: 2px outset #c0c0c0;
@@ -401,7 +389,7 @@ html, body {
     position: relative;
 }
 
-.modal-content::before {
+.voting-page .modal-content::before {
     content: "";
     display: block;
     height: 20px;
@@ -409,7 +397,7 @@ html, body {
     margin: 0;
 }
 
-.modal-content::after {
+.voting-page .modal-content::after {
     content: "투표 확인";
     position: absolute;
     top: 2px;
@@ -420,7 +408,7 @@ html, body {
     line-height: 16px;
 }
 
-.modal-content h3 {
+.voting-page .modal-content h3 {
     color: #000080;
     margin: 20px 0 15px 0;
     font-size: 18px;
@@ -428,7 +416,7 @@ html, body {
     text-shadow: 1px 1px 0px #ffffff;
 }
 
-.modal-picture {
+.voting-page .modal-picture {
     width: 150px;
     height: 150px;
     object-fit: cover;
@@ -436,11 +424,10 @@ html, body {
     margin: 15px auto;
     display: block;
     box-shadow: none;
-    loading: lazy;
     image-rendering: auto;
 }
 
-.modal-buttons {
+.voting-page .modal-buttons {
     display: flex;
     gap: 12px;
     justify-content: center;
@@ -449,7 +436,7 @@ html, body {
 }
 
 /* 로딩 스타일 - 윈도우 95 진행 표시기 */
-.loading-overlay {
+.voting-page .loading-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -458,10 +445,10 @@ html, body {
     height: 100%;
     background: rgba(192, 192, 192, 0.8);
     z-index: 2000;
-    overflow: visible; /* 🔥 로딩 오버레이 스크롤 제거 */
+    overflow: visible;
 }
 
-.loading-content {
+.voting-page .loading-content {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -476,7 +463,7 @@ html, body {
     width: 300px;
 }
 
-.loading-content::before {
+.voting-page .loading-content::before {
     content: "";
     display: block;
     height: 20px;
@@ -484,7 +471,7 @@ html, body {
     margin: 0;
 }
 
-.loading-content::after {
+.voting-page .loading-content::after {
     content: "처리 중...";
     position: absolute;
     top: 2px;
@@ -495,27 +482,27 @@ html, body {
     line-height: 16px;
 }
 
-.loading-spinner {
+.voting-page .loading-spinner {
     font-size: 32px;
     color: #000080;
     margin: 20px 0 10px 0;
-    animation: spin 1s linear infinite;
+    animation: votingPageSpin 1s linear infinite;
 }
 
-.loading-content p {
+.voting-page .loading-content p {
     color: #000000;
     font-size: 16px;
     margin-bottom: 20px;
     padding: 0 20px;
 }
 
-@keyframes spin {
+@keyframes votingPageSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
 /* 알림 메시지 - 윈도우 95 상태표시줄 */
-.alert {
+.voting-page .alert {
     padding: 12px 16px;
     margin: 8px 0;
     border: 2px inset #c0c0c0;
@@ -527,25 +514,25 @@ html, body {
     background-color: #ffffff;
 }
 
-.alert i {
+.voting-page .alert i {
     margin-right: 8px;
     font-size: 16px;
 }
 
-.alert-success {
+.voting-page .alert-success {
     background-color: #ffffff;
     color: #008000;
     border: 2px inset #c0c0c0;
 }
 
-.alert-error {
+.voting-page .alert-error {
     background-color: #ffffff;
     color: #800000;
     border: 2px inset #c0c0c0;
 }
 
 /* 투표 성공 애니메이션 - 윈도우 95 스타일 */
-.vote-success {
+.voting-page .vote-success {
     animation: voteSuccess 0.5s ease;
 }
 
@@ -555,152 +542,146 @@ html, body {
     100% { border: 2px outset #c0c0c0; }
 }
 
-/* 🔥 반응형 디자인 최적화 */
+/* 투표 페이지 전용 스크롤바 스타일 */
+.voting-page::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+.voting-page::-webkit-scrollbar-track {
+    background-color: #c0c0c0;
+    border: 1px solid #808080;
+    box-shadow: inset 1px 1px 0 #dfdfdf, 
+                inset -1px -1px 0 #808080;
+}
+
+.voting-page::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border: 1px solid #808080;
+    box-shadow: 1px 1px 0 #dfdfdf, 
+                -1px -1px 0 #808080;
+    min-height: 20px;
+}
+
+.voting-page::-webkit-scrollbar-thumb:hover {
+    background-color: #d4d0c8;
+}
+
+.voting-page::-webkit-scrollbar-thumb:active {
+    background-color: #a0a0a0;
+    box-shadow: inset 1px 1px 0 #808080, 
+                inset -1px -1px 0 #dfdfdf;
+}
+
+.voting-page::-webkit-scrollbar-button {
+    background-color: #c0c0c0;
+    border: 1px solid #808080;
+    box-shadow: 1px 1px 0 #dfdfdf, 
+                -1px -1px 0 #808080;
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.voting-page::-webkit-scrollbar-button:hover {
+    background-color: #d4d0c8;
+}
+
+.voting-page::-webkit-scrollbar-button:active {
+    background-color: #a0a0a0;
+    box-shadow: inset 1px 1px 0 #808080, 
+                inset -1px -1px 0 #dfdfdf;
+}
+
+/* 세로 스크롤바 화살표 */
+.voting-page::-webkit-scrollbar-button:vertical:start:decrement {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 3l3 4H3z' fill='%23000000'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px 8px;
+}
+
+.voting-page::-webkit-scrollbar-button:vertical:end:increment {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 9L3 5h6z' fill='%23000000'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px 8px;
+}
+
+/* 스크롤바 코너 */
+.voting-page::-webkit-scrollbar-corner {
+    background-color: #c0c0c0;
+    border: 1px solid #808080;
+    box-shadow: 1px 1px 0 #dfdfdf, 
+                -1px -1px 0 #808080;
+}
+
+/* 반응형 디자인 최적화 */
 @media (max-width: 768px) {
-    .vote-container {
+    .voting-page .vote-container {
         padding: 4px;
         background-color: #c0c0c0;
     }
 
-    .options-grid {
+    .voting-page .options-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
     }
 
-    .vote-header h1 {
+    .voting-page .vote-header h1 {
         font-size: 18px;
     }
 
-    .question-text {
+    .voting-page .question-text {
         font-size: 16px;
     }
 
-    .pic-container {
+    .voting-page .pic-container {
         min-height: 180px;
     }
 
-    .option-image {
+    .voting-page .option-image {
         max-height: 160px;
     }
 
-    .modal-content {
+    .voting-page .modal-content {
         margin: 20% auto;
         max-width: 350px;
     }
 
-    .start-section {
+    .voting-page .start-section {
         width: 400px;
     }
 
-    .start-section h1 {
+    .voting-page .start-section h1 {
         font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
-    .options-grid {
+    .voting-page .options-grid {
         grid-template-columns: 1fr;
     }
 
-    .modal-buttons {
+    .voting-page .modal-buttons {
         flex-direction: column;
         gap: 8px;
     }
 
-    .btn-group {
+    .voting-page .btn-group {
         flex-direction: column;
         align-items: center;
     }
 
-    .start-section {
+    .voting-page .start-section {
         width: 320px;
     }
 
-    .start-section h1 {
+    .voting-page .start-section h1 {
         font-size: 18px;
     }
 
-    .start-section p {
+    .voting-page .start-section p {
         font-size: 15px;
     }
-}
-
-/* 🔥 윈도우 95 스크롤바 스타일 - 전체 페이지에 적용 */
-::-webkit-scrollbar {
-    width: 16px !important;
-    height: 16px !important;
-}
-
-::-webkit-scrollbar-track {
-    background-color: #c0c0c0 !important;
-    border: 1px solid #808080 !important;
-    box-shadow: inset 1px 1px 0 #dfdfdf, 
-                inset -1px -1px 0 #808080 !important;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #c0c0c0 !important;
-    border: 1px solid #808080 !important;
-    box-shadow: 1px 1px 0 #dfdfdf, 
-                -1px -1px 0 #808080 !important;
-    min-height: 20px !important;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #d4d0c8 !important;
-}
-
-::-webkit-scrollbar-thumb:active {
-    background-color: #a0a0a0 !important;
-    box-shadow: inset 1px 1px 0 #808080, 
-                inset -1px -1px 0 #dfdfdf !important;
-}
-
-::-webkit-scrollbar-button {
-    background-color: #c0c0c0 !important;
-    border: 1px solid #808080 !important;
-    box-shadow: 1px 1px 0 #dfdfdf, 
-                -1px -1px 0 #808080 !important;
-    width: 16px !important;
-    height: 16px !important;
-    display: block !important;
-}
-
-::-webkit-scrollbar-button:hover {
-    background-color: #d4d0c8 !important;
-}
-
-::-webkit-scrollbar-button:active {
-    background-color: #a0a0a0 !important;
-    box-shadow: inset 1px 1px 0 #808080, 
-                inset -1px -1px 0 #dfdfdf !important;
-}
-
-/* 세로 스크롤바 화살표 */
-::-webkit-scrollbar-button:vertical:start:decrement {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 3l3 4H3z' fill='%23000000'/%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-size: 8px 8px !important;
-}
-
-::-webkit-scrollbar-button:vertical:end:increment {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 9L3 5h6z' fill='%23000000'/%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-size: 8px 8px !important;
-}
-
-/* 스크롤바 코너 */
-::-webkit-scrollbar-corner {
-    background-color: #c0c0c0 !important;
-    border: 1px solid #808080 !important;
-    box-shadow: 1px 1px 0 #dfdfdf, 
-                -1px -1px 0 #808080 !important;
-}
-
-/* Firefox용 */
-html {
-    scrollbar-width: auto !important;
-    scrollbar-color: #c0c0c0 #dfdfdf !important;
 }

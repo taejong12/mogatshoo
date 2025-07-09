@@ -15,7 +15,8 @@
     </th:block>
 </head>
 <body>
-    <div layout:fragment="content">
+    <!-- 🔥 투표 페이지 전체를 voting-page 클래스로 감싸기 -->
+    <div class="voting-page" layout:fragment="content">
         <!-- 시작 섹션 (질문이 없는 경우) -->
         <div class="start-section" id="startSection" th:if="${question == null and (noMoreQuestions == null or noMoreQuestions == false)}">
             <h1>🗳️ 투표 시스템</h1>
