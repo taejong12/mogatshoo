@@ -7,6 +7,9 @@
 ## 📖 소개
 탈모인들을 위한 익명 공감 커뮤니티 앱
 
+## 배포한 홈페이지
+[웹페이지](https://mogatshoo.onrender.com/)
+
 ## 목표
 1. 익명 기반 공감 커뮤니티 구축
 탈모에 대한 민감한 고민을 익명으로 질문하고 투표할 수 있는 안전한 공간 제공
@@ -106,12 +109,15 @@
 [WBS](https://docs.google.com/spreadsheets/d/e/2PACX-1vQzEtGmdmMyMBthOnJAbT_waEKrh7CrcYlkn0MWF-p-uj1c8A41-e3g4SbYvJcqbloM8_0v5Tlf8lna/pubhtml)
 
 ## 📊 프로젝트 구조
-```
-미정
-```
+![1-5](https://github.com/user-attachments/assets/70fbb418-a250-4511-95f7-028332dc82f0)
+
 
 ## 🔖 사용 API
-- 미정
+- **카카오 지도 API** - 탈모 병원 위치 검색 및 길찾기
+- **OAuth2 API** - 카카오, 네이버, 구글 소셜 로그인
+- **JavaMail API** - 회원가입 및 비밀번호 찾기 이메일 인증
+- **Teachable Machine API** - AI 기반 탈모 이미지 분석
+- **Geolocation API** - 사용자 현재 위치 확인
 
 
 
