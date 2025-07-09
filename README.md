@@ -106,9 +106,8 @@
 [WBS](https://docs.google.com/spreadsheets/d/e/2PACX-1vQzEtGmdmMyMBthOnJAbT_waEKrh7CrcYlkn0MWF-p-uj1c8A41-e3g4SbYvJcqbloM8_0v5Tlf8lna/pubhtml)
 
 ## 📊 프로젝트 구조
-```
-미정
-```
+![1-5](https://github.com/user-attachments/assets/70fbb418-a250-4511-95f7-028332dc82f0)
+
 
 ## 🔖 사용 API
 - 미정
