@@ -110,7 +110,11 @@
 
 
 ## 🔖 사용 API
-- 미정
+- **카카오 지도 API** - 탈모 병원 위치 검색 및 길찾기
+- **OAuth2 API** - 카카오, 네이버, 구글 소셜 로그인
+- **JavaMail API** - 회원가입 및 비밀번호 찾기 이메일 인증
+- **Teachable Machine API** - AI 기반 탈모 이미지 분석
+- **Geolocation API** - 사용자 현재 위치 확인
 
 
 
