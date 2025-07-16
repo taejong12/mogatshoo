@@ -8,7 +8,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f0f2f5;
     min-height: 100vh;
-    overflow: hidden; /* body 스크롤 방지 */
+    overflow: auto; /* body 스크롤 방지 */
 }
 
 .admin-container {

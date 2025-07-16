@@ -27,23 +27,19 @@ const quickReplies = [
 function scrollToBottom(force = false) {
     const chatMessagesDiv = document.getElementById('chatMessages');
     if (!chatMessagesDiv) {
-        console.log('chatMessagesDiv를 찾을 수 없음');
         return;
     }
     
     // 사용자가 스크롤 중이고 강제가 아니라면 스크롤하지 않음
     if (isUserScrolling && !force) {
-        console.log('사용자 스크롤 중이므로 자동 스크롤 생략');
         return;
     }
     
-    console.log('스크롤 시작 - scrollHeight:', chatMessagesDiv.scrollHeight, 'clientHeight:', chatMessagesDiv.clientHeight);
     
     // 여러 방법으로 강제 스크롤 시도
     const scrollToBottomImmediate = () => {
         const maxScroll = chatMessagesDiv.scrollHeight - chatMessagesDiv.clientHeight;
         chatMessagesDiv.scrollTop = maxScroll;
-        console.log('스크롤 실행 - scrollTop:', chatMessagesDiv.scrollTop, 'maxScroll:', maxScroll);
     };
     
     // 즉시 실행
@@ -113,7 +109,6 @@ function setupScrollHandler() {
 // 페이지 로드 시 기존 문의 내역 불러오기
 async function loadExistingData() {
 	try {
-		console.log('기존 데이터 로드 시작...');
 
 		const response = await fetch('/qanda/api/rooms/summary', {
 			credentials: 'same-origin'
@@ -124,7 +119,6 @@ async function loadExistingData() {
 		}
 
 		const roomsSummary = await response.json();
-		console.log('로드된 방 정보:', roomsSummary);
 
 		activeRooms.clear();
 		currentMessages.clear();
@@ -159,10 +153,8 @@ async function loadExistingData() {
 		}
 
 		renderRoomList();
-		console.log('기존 데이터 로드 완료! activeRooms.size:', activeRooms.size);
 
 	} catch (error) {
-		console.error('기존 데이터 로드 실패:', error);
 	}
 }
 
@@ -333,7 +325,6 @@ function selectRoom(roomId) {
 
 	document.getElementById('adminContainer').classList.add('chat-open');
 
-	console.log('selectRoom 완료, currentRoomId:', currentRoomId);
 }
 
 // 채팅 영역 렌더링
@@ -646,7 +637,6 @@ function setupAutoReconnect() {
 	function attemptReconnect() {
 		if (reconnectAttempts < maxReconnectAttempts) {
 			reconnectAttempts++;
-			console.log(`재연결 시도 ${reconnectAttempts}/${maxReconnectAttempts}`);
 			updateConnectionStatus(`재연결 중... (${reconnectAttempts}/${maxReconnectAttempts})`, 'disconnected');
 			
 			setTimeout(() => {
@@ -667,7 +657,6 @@ function setupAutoReconnect() {
 
 // 페이지 로드 시 실행
 window.addEventListener('load', async function() {
-	console.log('페이지 로드 시작');
 
 	// 먼저 기존 데이터 로드
 	await loadExistingData();
